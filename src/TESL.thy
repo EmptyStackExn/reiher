@@ -1,116 +1,111 @@
-theory TESLTypes
+theory TESL
 imports Main
 
 begin
 
-text {* We define as follows the syntax of the Horn Affine Arithmetic *}
+text {* Defining as follows the syntax of primitives to describe symbolic runs *}
 
-datatype clock = Clk "int"
-type_synonym instant_index = "int"
+datatype clock = Clk "string"        ("\<lceil> _ \<rceil>")
+type_synonym instant_index = "nat"
 
 datatype tag =
-    Integer   "int"
-  | Unit
-  | Schematic "clock * instant_index"
+    Unit                              ("\<tau>\<^sub>u\<^sub>n\<^sub>i\<^sub>t")
+  | Integer "int"                     ("\<tau>\<^sub>i\<^sub>n\<^sub>t")
+  | Schematic "clock * instant_index" ("\<tau>\<^sub>v\<^sub>a\<^sub>r")
   | Add       "tag * tag"
 
-datatype HAA_atomic =
-    Timestamp "clock * instant_index * tag"
-  | Ticks     "clock * instant_index"
-  | NotTicks  "clock * instant_index"
-  | Affine    "tag * tag * tag * tag"
+datatype constr =
+    Timestamp "clock * instant_index * tag" ("\<Down>")
+  | Ticks     "clock * instant_index"       ("\<Up>")
+  | NotTicks  "clock * instant_index"       ("\<not>\<Up>")
+  | Affine    "tag * tag * tag * tag"       ("\<propto>")
 
-type_synonym HAA_system = "HAA_atomic set"
+type_synonym system = "constr list"
 
 text{* Define as follows the syntax of TESL *}
 
 datatype TESL_atomic =
-    Sporadic       "clock * tag"
-  | TagRelation    "clock * tag * clock * tag"
-  | Implies        "clock * clock"
-  | TimeDelayedBy  "clock * tag * clock * clock"
-  | WhenTickingOn  "clock * tag * clock"           (* Intermediate Form *)
-  | DelayedBy      "clock * int * clock * clock"
-  | TimesImpliesOn "clock * int * clock"           (* Intermediate Form *)
-  | FilteredBy     "clock * int * int * int * int * clock"
-  | SustainedFrom  "clock * clock * clock * clock"
-  | UntilRestart   "clock * clock * clock * clock" (* Intermediate Form *)
-  | Await          "clock list * clock list * clock list * clock"
-  | WhenClock      "clock * clock * clock"
-  | WhenNotClock   "clock * clock * clock"
+    Sporadic       "clock * tag"                 ("\<odot>")
+  | TagRelation    "clock * tag * clock * tag"   ("\<rightleftharpoons>")
+  | Implies        "clock * clock"               ("\<rightarrow>\<^sub>i\<^sub>m\<^sub>p\<^sub>l\<^sub>i\<^sub>e\<^sub>s")
+  | TimeDelayedBy  "clock * tag * clock * clock" ("\<rightarrow>\<^sub>t\<^sub>i\<^sub>m\<^sub>e\<^sub>d\<^sub>e\<^sub>l\<^sub>a\<^sub>y\<^sub>e\<^sub>d")
+  | SporadicOn     "clock * tag * clock"         ("\<Odot>")
 
-type_synonym TESL_formula = "TESL_atomic set"
+type_synonym TESL_formula = "TESL_atomic list"
 
-text{* Define as follows syntax and operations over ARS *}
-type_synonym TESL_ARS_conf = "HAA_system * instant_index * TESL_formula * TESL_formula"
-
-abbreviation ConstantlySubs where 
-  "ConstantlySubs f \<equiv> { f\<^sub>a \<in> f. case f\<^sub>a of
-    Implies _      \<Rightarrow> True
-  | TagRelation _  \<Rightarrow> True
-  | WhenClock _    \<Rightarrow> True
-  | WhenNotClock _ \<Rightarrow> True
-  | _ \<Rightarrow> False }"
-abbreviation ConsumingSubs where 
-  "ConsumingSubs f \<equiv> { f\<^sub>a \<in> f. case f\<^sub>a of
-    Sporadic _       \<Rightarrow> True
-  | WhenTickingOn _  \<Rightarrow> True
-  | TimesImpliesOn _ \<Rightarrow> True
-  | _ \<Rightarrow> False }"
-abbreviation ReproductiveSubs where 
-  "ReproductiveSubs f \<equiv> { f\<^sub>a \<in> f. case f\<^sub>a of
-    DelayedBy _     => True
-  | TimeDelayedBy _ => True
-  | _ \<Rightarrow> False }"
-abbreviation SelfModifyingSubs where 
-  "SelfModifyingSubs f \<equiv> { f\<^sub>a \<in> f. case f\<^sub>a of
-    TimesImpliesOn _ => True
-  | FilteredBy _     => True
-  | SustainedFrom _  => True
-  | UntilRestart _   => True
-  | Await _          => True
-  | _ \<Rightarrow> False }"
-
-(* Asserts if two tags have the same type *)
-abbreviation tags_have_same_type ("_ \<sim>: _") where
-  "\<tau> \<sim>: \<tau>' \<equiv> (case (\<tau>, \<tau>') of
-    (Integer _, Integer _) \<Rightarrow> True
-  | (Unit, Unit)           \<Rightarrow> True
-  | _                      \<Rightarrow> False)"
-
-(* Asserts if two tags have the same type *)
-abbreviation tags_leq ("_ \<le>: _") where
-  "\<tau> \<le>: \<tau>' \<equiv> (case (\<tau>, \<tau>') of
-    (Integer i1, Integer i2) \<Rightarrow> i1 \<le> i2
-  | (Unit, Unit)             \<Rightarrow> True
-  | _                        \<Rightarrow> False)"
-
-(* Decides if two configurations are structurally equivalent *)
-abbreviation ARS_cfg_eq :: "TESL_ARS_conf \<Rightarrow> TESL_ARS_conf \<Rightarrow> bool" ("_ @\<equiv> _") where
-  "cf1 @\<equiv> cf2 \<equiv> case (cf1, cf2) of ((\<Gamma>\<^sub>1, s\<^sub>1, \<phi>\<^sub>1, \<psi>\<^sub>1), (\<Gamma>\<^sub>2, s\<^sub>2, \<phi>\<^sub>2, \<psi>\<^sub>2)) \<Rightarrow>
-    (\<Gamma>\<^sub>1 = \<Gamma>\<^sub>2) \<and> (s\<^sub>1 = s\<^sub>2) \<and> (\<phi>\<^sub>1 = \<phi>\<^sub>2) \<and> (\<psi>\<^sub>1 = \<psi>\<^sub>2)"
-
-  (*
-function fpx :: "('a \<Rightarrow> 'a) \<Rightarrow> 'a \<Rightarrow> 'a"  where
-  "fpx ff x = (let x' = (ff x) 
-               in  if x = x' then x 
-                             else fpx (ff) x' 
-              )"
-by pat_completeness auto
+(* This type is slightly different from which originally implemented
+   Follows the intuition: past [\<Gamma>], current index [n], present [\<psi>], future [\<phi>]
 *)
-  
-function fpx :: "('a \<Rightarrow> 'a) \<Rightarrow> 'a \<Rightarrow> 'a"  where
-  "fpx ff x = (let x' = (ff x) 
-               in  if x = x' then x 
-                             else fpx (ff) x' 
-              )"
-by pat_completeness auto
-termination
-  sorry
-  
-value "(fpx (\<lambda>x. x) []) = []"
+type_synonym TESL_ARS_conf = "system * instant_index * TESL_formula * TESL_formula"
 
+abbreviation NoSporadic :: "TESL_formula \<Rightarrow> TESL_formula" where 
+  "NoSporadic f \<equiv> (List.filter (\<lambda>f\<^sub>a\<^sub>t\<^sub>o\<^sub>m. case f\<^sub>a\<^sub>t\<^sub>o\<^sub>m of
+      Sporadic _   \<Rightarrow> False
+    | SporadicOn _ \<Rightarrow> False
+    | _ \<Rightarrow> True) f)"
 
-(* value "ConstantlySubs { Sporadic(Clk (1::int), Integer 1), Implies (Clk 1, Clk 2) }" *)
+text{* Operational steps *}
+
+inductive kern_step
+  :: "system \<Rightarrow> instant_index \<Rightarrow> TESL_formula \<Rightarrow> TESL_formula \<Rightarrow> bool"
+  ("_, _ \<Turnstile> _, _" 50) where
+  simulation_end:
+  "set (NoSporadic \<phi>) = set \<phi> \<Longrightarrow>
+   \<Gamma>, n \<Turnstile> [], \<phi>"
+  (* Instant introduction *)
+| instant_i:
+  "\<Gamma>, Suc n \<Turnstile> \<phi>, NoSporadic \<phi> \<Longrightarrow>
+   \<Gamma>, n \<Turnstile> [], \<phi>"
+  (* Elimination of `sporadic` *)
+| sporadic_e1:
+  "\<Gamma>, n \<Turnstile> \<psi>, \<odot> (K, \<tau>) # \<phi> \<Longrightarrow>
+   \<Gamma>, n \<Turnstile> \<odot> (K, \<tau>) # \<psi>, \<phi>"
+| sporadic_e2:
+  "\<Up>(K, n) # \<Down>(K, n, \<tau>) # \<Gamma>, n \<Turnstile> \<psi>, \<phi> \<Longrightarrow>
+   \<Gamma>, n \<Turnstile> \<odot> (K, \<tau>) # \<psi>, \<phi>"
+  (* Elimination of `sporadic on` *)
+| sporadic_on_e1:
+  "\<Gamma>, n \<Turnstile> \<psi>, \<Odot> (K\<^sub>1, \<tau>, K\<^sub>2) # \<phi> \<Longrightarrow>
+   \<Gamma>, n \<Turnstile> \<Odot> (K\<^sub>1, \<tau>, K\<^sub>2) # \<psi>, \<phi>"
+| sporadic_on_e2:
+  "\<Up>(K\<^sub>2, n) # \<Down>(K\<^sub>1, n, \<tau>) # \<Gamma>, n \<Turnstile> \<psi>, \<phi> \<Longrightarrow>
+   \<Gamma>, n \<Turnstile> \<Odot> (K\<^sub>1, \<tau>, K\<^sub>2) # \<psi>, \<phi>"
+  (* Elimination of `tag relation` *)
+| tagrel_e:
+  "\<propto>(\<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>1, n), \<alpha>, \<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>2, n), \<beta>) # \<Gamma>, n \<Turnstile> \<psi>, \<phi> \<Longrightarrow>
+   \<Gamma>, n \<Turnstile> \<rightleftharpoons> (K\<^sub>1, \<alpha>, K\<^sub>2, \<beta>) # \<psi>, \<phi>"
+  (* Elimination of `implies` *)
+| implies_e1:
+  "\<not>\<Up>(K\<^sub>1, n) # \<Gamma>, n \<Turnstile> \<psi>, \<phi> \<Longrightarrow>
+   \<Gamma>, n \<Turnstile> \<rightarrow>\<^sub>i\<^sub>m\<^sub>p\<^sub>l\<^sub>i\<^sub>e\<^sub>s (K\<^sub>1, K\<^sub>2) # \<psi>, \<phi>"
+| implies_e2:
+  "\<Up>(K\<^sub>1, n) # \<Up>(K\<^sub>2, n) # \<Gamma>, n \<Turnstile> \<psi>, \<phi> \<Longrightarrow>
+   \<Gamma>, n \<Turnstile> \<rightarrow>\<^sub>i\<^sub>m\<^sub>p\<^sub>l\<^sub>i\<^sub>e\<^sub>s (K\<^sub>1, K\<^sub>2) # \<psi>, \<phi>"
+  (* Elimination of `time delayed by` *)
+| timedelayed_e1:
+  "\<not>\<Up>(K\<^sub>1, n) # \<Gamma>, n \<Turnstile> \<psi>, \<phi> \<Longrightarrow>
+   \<Gamma>, n \<Turnstile> \<rightarrow>\<^sub>t\<^sub>i\<^sub>m\<^sub>e\<^sub>d\<^sub>e\<^sub>l\<^sub>a\<^sub>y\<^sub>e\<^sub>d (K\<^sub>1, \<delta>\<tau>, K\<^sub>2, K\<^sub>3) # \<psi>, \<phi>"
+| timedelayed_e2:
+  "\<Up>(K\<^sub>1, n) # \<Down>(K\<^sub>2, n, \<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>2, n)) # \<Gamma>, n \<Turnstile> \<psi>, \<Odot>(K\<^sub>3, \<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>2, n), K\<^sub>2) # \<phi> \<Longrightarrow>
+   \<Gamma>, n \<Turnstile> \<rightarrow>\<^sub>t\<^sub>i\<^sub>m\<^sub>e\<^sub>d\<^sub>e\<^sub>l\<^sub>a\<^sub>y\<^sub>e\<^sub>d (K\<^sub>1, \<delta>\<tau>, K\<^sub>2, K\<^sub>3) # \<psi>, \<phi>"
+
+(* Running on a small example:
+  H1 sporadic 1, 2
+  H1 implies H2
+*)
+lemma small_example:
+  shows "[], 0 \<Turnstile> [], [
+    \<odot>(\<lceil>''H1''\<rceil>, \<tau>\<^sub>i\<^sub>n\<^sub>t 1),
+    \<odot>(\<lceil>''H1''\<rceil>, \<tau>\<^sub>i\<^sub>n\<^sub>t 2),
+    \<rightarrow>\<^sub>i\<^sub>m\<^sub>p\<^sub>l\<^sub>i\<^sub>e\<^sub>s(\<lceil>''H1''\<rceil>, \<lceil>''H2''\<rceil>)
+  ]"
+apply (rule instant_i, auto)
+  apply (rule sporadic_e2)
+  apply (rule sporadic_e1)
+  apply (rule implies_e2)
+apply (rule instant_i, auto)
+  apply (rule sporadic_e2)
+  apply (rule implies_e2)
+by (rule simulation_end, auto)
 
 end
