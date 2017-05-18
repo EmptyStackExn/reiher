@@ -1,5 +1,5 @@
 theory TESL
-imports Main
+imports Main 
 
 begin
 text {* We define as follows the syntax of primitives to describe symbolic runs *}

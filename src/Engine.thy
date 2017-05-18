@@ -3,6 +3,7 @@ imports
     Main
     "TESL"
     "RunConsistency"
+    "$ISABELLE_HOME/src/HOL/Eisbach/Eisbach_Tools" 
 
 begin
 text{* Operational steps *}
@@ -18,8 +19,8 @@ inductive kern_step
   :: "system \<Rightarrow> instant_index \<Rightarrow> TESL_formula \<Rightarrow> TESL_formula \<Rightarrow> bool"
   ("_, _ \<Turnstile> _ \<triangleright> _" 50) where
   simulation_end:
-  "consistent_run \<Gamma> \<Longrightarrow>
-   set (NoSporadic \<phi>) = set \<phi> \<Longrightarrow>
+  "set (NoSporadic \<phi>) = set \<phi> \<Longrightarrow>
+   consistent_run \<Gamma> \<Longrightarrow>
    \<Gamma>, n \<Turnstile> [] \<triangleright> \<phi>"
   (* Instant introduction *)
 | instant_i:
@@ -75,15 +76,11 @@ apply (rule instant_i, auto)
 apply (rule instant_i, auto)
   apply (rule sporadic_e2)
   apply (rule implies_e2)
-apply (rule simulation_end, auto)
-  sorry
-    
-lemma "\<exists>\<rho>. hamlet (\<rho> (Suc (Suc 0)) \<lceil> ''H1'' \<rceil>) \<and>
-        hamlet (\<rho> (Suc (Suc 0)) \<lceil> ''H2'' \<rceil>) \<and>
-        hamlet (\<rho> (Suc (Suc 0)) \<lceil> ''H1'' \<rceil>) \<and>
-        time (\<rho> (Suc (Suc 0)) \<lceil> ''H1'' \<rceil>) = \<tau>\<^sub>i\<^sub>n\<^sub>t 2 \<and>
-        hamlet (\<rho> (Suc 0) \<lceil> ''H1'' \<rceil>) \<and>
-        hamlet (\<rho> (Suc 0) \<lceil> ''H2'' \<rceil>) \<and> hamlet (\<rho> (Suc 0) \<lceil> ''H1'' \<rceil>) \<and> time (\<rho> (Suc 0) \<lceil> ''H1'' \<rceil>) = \<tau>\<^sub>i\<^sub>n\<^sub>t 1"
-  
+apply (rule simulation_end, simp)
+unfolding consistent_run_def
+by (rule_tac x="\<langle>\<langle> [\<Up> (\<lceil> ''H1'' \<rceil>, Suc (Suc 0)), \<Up> (\<lceil> ''H2'' \<rceil>, Suc (Suc 0)), \<Up> (\<lceil> ''H1'' \<rceil>, Suc (Suc 0)),
+              \<Down> (\<lceil> ''H1'' \<rceil>, Suc (Suc 0), \<tau>\<^sub>i\<^sub>n\<^sub>t 2), \<Up> (\<lceil> ''H1'' \<rceil>, Suc 0), \<Up> (\<lceil> ''H2'' \<rceil>, Suc 0),
+              \<Up> (\<lceil> ''H1'' \<rceil>, Suc 0), \<Down> (\<lceil> ''H1'' \<rceil>, Suc 0, \<tau>\<^sub>i\<^sub>n\<^sub>t 1)] \<rangle>\<rangle>" in exI,
+    simp)
 
 end
