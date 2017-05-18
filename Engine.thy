@@ -3,7 +3,6 @@ imports
     Main
     "TESL"
     "RunConsistency"
-    "$ISABELLE_HOME/src/HOL/Eisbach/Eisbach_Tools" 
 
 begin
 text{* Operational steps *}
@@ -76,11 +75,6 @@ apply (rule instant_i, auto)
 apply (rule instant_i, auto)
   apply (rule sporadic_e2)
   apply (rule implies_e2)
-apply (rule simulation_end, simp)
-unfolding consistent_run_def
-by (rule_tac x="\<langle>\<langle> [\<Up> (\<lceil> ''H1'' \<rceil>, Suc (Suc 0)), \<Up> (\<lceil> ''H2'' \<rceil>, Suc (Suc 0)), \<Up> (\<lceil> ''H1'' \<rceil>, Suc (Suc 0)),
-              \<Down> (\<lceil> ''H1'' \<rceil>, Suc (Suc 0), \<tau>\<^sub>i\<^sub>n\<^sub>t 2), \<Up> (\<lceil> ''H1'' \<rceil>, Suc 0), \<Up> (\<lceil> ''H2'' \<rceil>, Suc 0),
-              \<Up> (\<lceil> ''H1'' \<rceil>, Suc 0), \<Down> (\<lceil> ''H1'' \<rceil>, Suc 0, \<tau>\<^sub>i\<^sub>n\<^sub>t 1)] \<rangle>\<rangle>" in exI,
-    simp)
+by (rule simulation_end, simp, solve_run_witness)
 
 end

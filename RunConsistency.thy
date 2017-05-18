@@ -2,6 +2,7 @@ theory RunConsistency
 imports
     Main
     "TESL"
+    "$ISABELLE_HOME/src/HOL/Eisbach/Eisbach_Tools" 
 
 begin
 
@@ -43,19 +44,6 @@ fun symbolic_run_interpretation :: "constr list \<Rightarrow> run set" ("\<lbrak
 definition consistent_run :: "constr list \<Rightarrow> bool" where 
   "consistent_run \<Gamma> \<equiv> \<exists>\<rho>. \<rho> \<in> \<lbrakk>\<lbrakk> \<Gamma> \<rbrakk>\<rbrakk>"
 
-(* Small example by manual explicit witness *)
-(*
-lemma "consistent_run [\<Up> (\<lceil> ''H1'' \<rceil>, Suc 0)]"
-proof (auto)
-  show " \<exists>\<sigma>::time_frame. hamlet (\<sigma> (Suc 0) \<lceil> ''H1'' \<rceil>)" 
-  proof -
-    let ?f = "(\<lambda>n::nat. (\<lambda>c::clock. (True, \<tau>\<^sub>u\<^sub>n\<^sub>i\<^sub>t)))"
-    show ?thesis
-       by (rule_tac x="?f" in  exI, simp)
-  qed
-qed
-*)
-
 text \<open> Defining a method for witness construction \<close>
 
 (* Initial states *)
@@ -86,14 +74,18 @@ fun run_update' :: "constr list \<Rightarrow> run" ("\<langle>\<langle> _ \<rang
     "\<langle>\<langle> [] \<rangle>\<rangle>    = \<rho>\<^sub>\<odot>"
   | "\<langle>\<langle> \<gamma> # \<Gamma> \<rangle>\<rangle> = \<langle>\<langle> \<Gamma> \<rangle>\<rangle> \<langle> \<gamma> \<rangle>"
 
-(* Restarting the previous example with witness solver *)
-lemma "consistent_run [\<Up> (\<lceil> ''H1'' \<rceil>, Suc 0)]" (is "consistent_run ?\<Gamma>")
-unfolding consistent_run_def
-by (rule_tac x="\<langle>\<langle> ?\<Gamma> \<rangle>\<rangle>" in exI, simp)
+lemma witness_consistency:
+  "\<langle>\<langle> \<Gamma> \<rangle>\<rangle> \<in> \<lbrakk>\<lbrakk> \<Gamma> \<rbrakk>\<rbrakk> \<Longrightarrow> consistent_run \<Gamma>"
+  unfolding consistent_run_def by (rule exI, auto)
 
-lemma "consistent_run [\<Up> (\<lceil> ''H1'' \<rceil>, Suc 0), \<not>\<Up> (\<lceil> ''H1'' \<rceil>, Suc 0)]" (is "consistent_run ?\<Gamma>")
-unfolding consistent_run_def
-apply (rule_tac x="\<langle>\<langle> ?\<Gamma> \<rangle>\<rangle>" in exI, simp)
+method solve_run_witness = (rule witness_consistency, auto?)
+
+(* Restarting the previous example with witness solver *)
+lemma "consistent_run [\<Up> (\<lceil> ''H1'' \<rceil>, Suc 0)]"
+by solve_run_witness
+
+lemma "consistent_run [\<Up> (\<lceil> ''H1'' \<rceil>, Suc 0), \<not>\<Up> (\<lceil> ''H1'' \<rceil>, Suc 0)]"
+apply solve_run_witness
 oops
 
 end
