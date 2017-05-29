@@ -33,8 +33,8 @@ inductive kern_step
    \<Gamma>, n \<Turnstile> \<psi> \<triangleright> (K sporadic \<tau>) # \<phi> \<Longrightarrow>
    \<Gamma>, n \<Turnstile> (K sporadic \<tau>) # \<psi> \<triangleright> \<phi>"
 | sporadic_e2:
-  "consistent_run ((K \<Up> n) # (K \<Down> n, \<tau>) # \<Gamma>) \<Longrightarrow>
-   (K \<Up> n) # (K \<Down> n, \<tau>) # \<Gamma>, n \<Turnstile> \<psi> \<triangleright> \<phi> \<Longrightarrow>
+  "consistent_run ((K \<Up> n) # (K \<Down> n, \<lfloor>\<tau>\<rfloor>\<^sub>c\<^sub>s\<^sub>t) # \<Gamma>) \<Longrightarrow>
+   (K \<Up> n) # (K \<Down> n, \<lfloor>\<tau>\<rfloor>\<^sub>c\<^sub>s\<^sub>t) # \<Gamma>, n \<Turnstile> \<psi> \<triangleright> \<phi> \<Longrightarrow>
    \<Gamma>, n \<Turnstile> (K sporadic \<tau>) # \<psi> \<triangleright> \<phi>"
   (* Elimination of `sporadic on` *)
 | sporadic_on_e1:
@@ -47,8 +47,8 @@ inductive kern_step
    \<Gamma>, n \<Turnstile> (K\<^sub>1 sporadic \<tau> on K\<^sub>2) # \<psi> \<triangleright> \<phi>"
   (* Elimination of `tag relation` *)
 | tagrel_e:
-  "consistent_run (\<doteq>(\<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>1, n), \<alpha>, \<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>2, n), \<beta>) # \<Gamma>) \<Longrightarrow>
-   \<doteq>(\<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>1, n), \<alpha>, \<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>2, n), \<beta>) # \<Gamma>, n \<Turnstile> \<psi> \<triangleright> \<phi> \<Longrightarrow>
+  "consistent_run ((\<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>1, n) \<doteq> \<alpha> * \<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>2, n) + \<beta>) # \<Gamma>) \<Longrightarrow>
+   (\<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>1, n) \<doteq> \<alpha> * \<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>2, n) + \<beta>) # \<Gamma>, n \<Turnstile> \<psi> \<triangleright> \<phi> \<Longrightarrow>
    \<Gamma>, n \<Turnstile> (tag-relation K\<^sub>1 = \<alpha> * K\<^sub>2 + \<beta>) # \<psi> \<triangleright> \<phi>"
   (* Elimination of `implies` *)
 | implies_e1:
@@ -65,8 +65,8 @@ inductive kern_step
    (K\<^sub>1 \<not>\<Up> n) # \<Gamma>, n \<Turnstile> \<psi> \<triangleright> \<phi> \<Longrightarrow>
    \<Gamma>, n \<Turnstile> (K\<^sub>1 time-delayed by \<delta>\<tau> on K\<^sub>2 implies K\<^sub>3) # \<psi> \<triangleright> \<phi>"
 | timedelayed_e2:
-  "consistent_run ((K\<^sub>1 \<Up> n) # (K\<^sub>2 \<Down> n, \<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>2, n)) # \<Gamma>) \<Longrightarrow>
-   (K\<^sub>1 \<Up> n) # (K\<^sub>2 \<Down> n, \<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>2, n)) # \<Gamma>, n \<Turnstile> \<psi> \<triangleright> (K\<^sub>3 sporadic \<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>2, n) on K\<^sub>2) # \<phi> \<Longrightarrow>
+  "consistent_run ((K\<^sub>1 \<Up> n) # (K\<^sub>2 \<Down> n, \<lfloor>\<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>2, n)\<rfloor>\<^sub>v\<^sub>a\<^sub>r) # \<Gamma>) \<Longrightarrow>
+   (K\<^sub>1 \<Up> n) # (K\<^sub>2 \<Down> n, \<lfloor>\<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>2, n)\<rfloor>\<^sub>v\<^sub>a\<^sub>r) # \<Gamma>, n \<Turnstile> \<psi> \<triangleright> (K\<^sub>3 sporadic \<lfloor>\<lfloor>\<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>2, n)\<rfloor>\<^sub>v\<^sub>a\<^sub>r + \<lfloor>\<delta>\<tau>\<rfloor>\<^sub>c\<^sub>s\<^sub>t\<rfloor> on K\<^sub>2) # \<phi> \<Longrightarrow>
    \<Gamma>, n \<Turnstile> (K\<^sub>1 time-delayed by \<delta>\<tau> on K\<^sub>2 implies K\<^sub>3) # \<psi> \<triangleright> \<phi>"
 
 named_theorems init
