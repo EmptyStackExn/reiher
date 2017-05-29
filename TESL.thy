@@ -45,4 +45,5 @@ type_synonym TESL_formula = "TESL_atomic list"
 *)
 type_synonym TESL_ARS_conf = "system * instant_index * TESL_formula * TESL_formula"
 
+
 end

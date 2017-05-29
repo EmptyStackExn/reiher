@@ -35,7 +35,7 @@ fun symbolic_run_interpretation_primitive :: "constr \<Rightarrow> run set" ("\<
   | "\<lbrakk>\<lbrakk> \<Down>(c, n, \<tau>) \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m\<^sub>i\<^sub>t\<^sub>i\<^sub>v\<^sub>e = { (\<sigma>, \<eta>). time (\<sigma> n c) = \<tau> }"
   | "\<lbrakk>\<lbrakk> \<doteq> (\<tau>\<^sub>1, \<alpha>, \<tau>\<^sub>2, \<beta>) \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m\<^sub>i\<^sub>t\<^sub>i\<^sub>v\<^sub>e =
     (* TODO: \<alpha> and \<beta> to build a semi-ring *)
-    { (\<sigma>, \<eta>). (Rep_tag_eval \<eta>) \<tau>\<^sub>1 = (Rep_tag_eval \<eta>) \<tau>\<^sub>2 }" 
+    { (\<sigma>, \<eta>). (Rep_tag_eval \<eta>) \<tau>\<^sub>1 = ((Rep_tag_eval \<eta>) \<tau>\<^sub>2)}" 
 
 fun symbolic_run_interpretation :: "constr list \<Rightarrow> run set" ("\<lbrakk>\<lbrakk> _ \<rbrakk>\<rbrakk>") where
     "\<lbrakk>\<lbrakk> [] \<rbrakk>\<rbrakk>    = { _. True }"
@@ -78,14 +78,13 @@ lemma witness_consistency:
   "\<langle>\<langle> \<Gamma> \<rangle>\<rangle> \<in> \<lbrakk>\<lbrakk> \<Gamma> \<rbrakk>\<rbrakk> \<Longrightarrow> consistent_run \<Gamma>"
   unfolding consistent_run_def by (rule exI, auto)
 
-method solve_run_witness = (rule witness_consistency, auto?)
+method solve_run_witness =
+  rule witness_consistency,
+  auto,
+  (match conclusion in "False" \<Rightarrow> \<open>fail\<close> \<bar> _ \<Rightarrow> \<open>succeed\<close>)
 
-(* Restarting the previous example with witness solver *)
-lemma "consistent_run [\<Up> (\<lceil> ''H1'' \<rceil>, Suc 0)]"
-by solve_run_witness
-
-lemma "consistent_run [\<Up> (\<lceil> ''H1'' \<rceil>, Suc 0), \<not>\<Up> (\<lceil> ''H1'' \<rceil>, Suc 0)]"
-apply solve_run_witness
-oops
+method solve_run_witness' =
+  rule witness_consistency,
+  auto
 
 end
