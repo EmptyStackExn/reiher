@@ -10,24 +10,25 @@ begin
 *)
 lemma small_example:
   shows "[], 0 \<Turnstile> [] \<triangleright> [
-    \<odot>(\<lceil>''H1''\<rceil>, \<tau>\<^sub>i\<^sub>n\<^sub>t 1),
-    \<odot>(\<lceil>''H1''\<rceil>, \<tau>\<^sub>i\<^sub>n\<^sub>t 2),
-    \<lceil>''H1''\<rceil> \<rightarrow>\<^sub>i\<^sub>m\<^sub>p\<^sub>l\<^sub>i\<^sub>e\<^sub>s \<lceil>''H2''\<rceil>
+    \<lceil>''H1''\<rceil> sporadic \<tau>\<^sub>i\<^sub>n\<^sub>t 1,
+    \<lceil>''H1''\<rceil> sporadic \<tau>\<^sub>i\<^sub>n\<^sub>t 2,
+    \<lceil>''H1''\<rceil> implies \<lceil>''H2''\<rceil>
   ]"
-apply (heron_step_continue)
+apply (heron_next_step)
 (*
 apply (rule instant_i, auto, solve_run_witness)
   apply (rule sporadic_e2, solve_run_witness)
   apply (rule sporadic_e1, solve_run_witness)
   apply (rule implies_e2, solve_run_witness)
 *)
-apply (heron_step_continue) print_facts
+apply (heron_next_step) print_facts
 (*
 apply (rule instant_i, auto, solve_run_witness)
   apply (rule sporadic_e2, solve_run_witness)
   apply (rule implies_e2, solve_run_witness)
 *)
-by (heron_step_end)
+by (heron_end)
 (* by (rule simulation_end, simp, solve_run_witness') *)
+
 
 end

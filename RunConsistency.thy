@@ -30,9 +30,9 @@ abbreviation hamlet where "hamlet \<equiv> fst"
 abbreviation time where "time \<equiv> snd"
 
 fun symbolic_run_interpretation_primitive :: "constr \<Rightarrow> run set" ("\<lbrakk>\<lbrakk> _ \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m\<^sub>i\<^sub>t\<^sub>i\<^sub>v\<^sub>e") where
-    "\<lbrakk>\<lbrakk> \<Up>(c, n)    \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m\<^sub>i\<^sub>t\<^sub>i\<^sub>v\<^sub>e = { (\<sigma>, \<eta>). hamlet (\<sigma> n c) = True }"
-  | "\<lbrakk>\<lbrakk> \<not>\<Up>(c, n)   \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m\<^sub>i\<^sub>t\<^sub>i\<^sub>v\<^sub>e = { (\<sigma>, \<eta>). hamlet (\<sigma> n c) = False }"
-  | "\<lbrakk>\<lbrakk> \<Down>(c, n, \<tau>) \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m\<^sub>i\<^sub>t\<^sub>i\<^sub>v\<^sub>e = { (\<sigma>, \<eta>). time (\<sigma> n c) = \<tau> }"
+    "\<lbrakk>\<lbrakk> c \<Up> n    \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m\<^sub>i\<^sub>t\<^sub>i\<^sub>v\<^sub>e = { (\<sigma>, \<eta>). hamlet (\<sigma> n c) = True }"
+  | "\<lbrakk>\<lbrakk> c \<not>\<Up> n   \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m\<^sub>i\<^sub>t\<^sub>i\<^sub>v\<^sub>e = { (\<sigma>, \<eta>). hamlet (\<sigma> n c) = False }"
+  | "\<lbrakk>\<lbrakk> c \<Down> n, \<tau> \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m\<^sub>i\<^sub>t\<^sub>i\<^sub>v\<^sub>e = { (\<sigma>, \<eta>). time (\<sigma> n c) = \<tau> }"
   | "\<lbrakk>\<lbrakk> \<doteq> (\<tau>\<^sub>1, \<alpha>, \<tau>\<^sub>2, \<beta>) \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m\<^sub>i\<^sub>t\<^sub>i\<^sub>v\<^sub>e =
     (* TODO: \<alpha> and \<beta> to build a semi-ring *)
     { (\<sigma>, \<eta>). (Rep_tag_eval \<eta>) \<tau>\<^sub>1 = ((Rep_tag_eval \<eta>) \<tau>\<^sub>2)}" 
@@ -56,15 +56,15 @@ abbreviation initial_run :: "run" ("\<rho>\<^sub>\<odot>") where
 
 (* Update functionals *)
 fun time_frame_update :: "time_frame \<Rightarrow> constr \<Rightarrow> time_frame" ("_ \<langle> _ \<rangle>\<^sub>t\<^sub>i\<^sub>m\<^sub>e\<^sub>f\<^sub>r\<^sub>a\<^sub>m\<^sub>e") where
-    "\<sigma> \<langle> \<Up>(c, n) \<rangle>\<^sub>t\<^sub>i\<^sub>m\<^sub>e\<^sub>f\<^sub>r\<^sub>a\<^sub>m\<^sub>e = (\<lambda>n' c'. if c = c' \<and> n = n' then (True, time (\<sigma> n c)) else \<sigma> n' c')"
-  | "\<sigma> \<langle> \<not>\<Up>(c, n) \<rangle>\<^sub>t\<^sub>i\<^sub>m\<^sub>e\<^sub>f\<^sub>r\<^sub>a\<^sub>m\<^sub>e = (\<lambda>n' c'. if c = c' \<and> n = n' then (False, time (\<sigma> n c)) else \<sigma> n' c')"
-  | "\<sigma> \<langle> \<Down>(c, n, \<tau>) \<rangle>\<^sub>t\<^sub>i\<^sub>m\<^sub>e\<^sub>f\<^sub>r\<^sub>a\<^sub>m\<^sub>e = (\<lambda>n' c'. if c = c' \<and> n = n' then (hamlet (\<sigma> n c), \<tau>) else \<sigma> n' c')"
+    "\<sigma> \<langle> c \<Up> n \<rangle>\<^sub>t\<^sub>i\<^sub>m\<^sub>e\<^sub>f\<^sub>r\<^sub>a\<^sub>m\<^sub>e = (\<lambda>n' c'. if c = c' \<and> n = n' then (True, time (\<sigma> n c)) else \<sigma> n' c')"
+  | "\<sigma> \<langle> c \<not>\<Up> n \<rangle>\<^sub>t\<^sub>i\<^sub>m\<^sub>e\<^sub>f\<^sub>r\<^sub>a\<^sub>m\<^sub>e = (\<lambda>n' c'. if c = c' \<and> n = n' then (False, time (\<sigma> n c)) else \<sigma> n' c')"
+  | "\<sigma> \<langle> c \<Down> n, \<tau> \<rangle>\<^sub>t\<^sub>i\<^sub>m\<^sub>e\<^sub>f\<^sub>r\<^sub>a\<^sub>m\<^sub>e = (\<lambda>n' c'. if c = c' \<and> n = n' then (hamlet (\<sigma> n c), \<tau>) else \<sigma> n' c')"
   | "\<sigma> \<langle> \<doteq> (\<tau>\<^sub>1, \<alpha>, \<tau>\<^sub>2, \<beta>) \<rangle>\<^sub>t\<^sub>i\<^sub>m\<^sub>e\<^sub>f\<^sub>r\<^sub>a\<^sub>m\<^sub>e = \<sigma>"
 
 fun tag_eval_update :: "tag_eval \<Rightarrow> constr \<Rightarrow> tag_eval" ("_ \<langle> _ \<rangle>\<^sub>t\<^sub>a\<^sub>g\<^sub>e\<^sub>v\<^sub>a\<^sub>l") where
-    "\<eta> \<langle> \<Up>(c, n) \<rangle>\<^sub>t\<^sub>a\<^sub>g\<^sub>e\<^sub>v\<^sub>a\<^sub>l = \<eta>"
-  | "\<eta> \<langle> \<not>\<Up>(c, n) \<rangle>\<^sub>t\<^sub>a\<^sub>g\<^sub>e\<^sub>v\<^sub>a\<^sub>l = \<eta>"
-  | "\<eta> \<langle> \<Down>(c, n, \<tau>) \<rangle>\<^sub>t\<^sub>a\<^sub>g\<^sub>e\<^sub>v\<^sub>a\<^sub>l = Abs_tag_eval (\<lambda>\<tau>'. if \<tau>' = \<tau>\<^sub>v\<^sub>a\<^sub>r(c, n) then \<tau> else (Rep_tag_eval \<eta>) \<tau>')"
+    "\<eta> \<langle> c \<Up> n \<rangle>\<^sub>t\<^sub>a\<^sub>g\<^sub>e\<^sub>v\<^sub>a\<^sub>l = \<eta>"
+  | "\<eta> \<langle> c \<not>\<Up> n \<rangle>\<^sub>t\<^sub>a\<^sub>g\<^sub>e\<^sub>v\<^sub>a\<^sub>l = \<eta>"
+  | "\<eta> \<langle> c \<Down> n, \<tau> \<rangle>\<^sub>t\<^sub>a\<^sub>g\<^sub>e\<^sub>v\<^sub>a\<^sub>l = Abs_tag_eval (\<lambda>\<tau>'. if \<tau>' = \<tau>\<^sub>v\<^sub>a\<^sub>r(c, n) then \<tau> else (Rep_tag_eval \<eta>) \<tau>')"
   | "\<eta> \<langle> \<doteq> (\<tau>\<^sub>1, \<alpha>, \<tau>\<^sub>2, \<beta>) \<rangle>\<^sub>t\<^sub>a\<^sub>g\<^sub>e\<^sub>v\<^sub>a\<^sub>l = undefined" (* TODO *)
 
 fun run_update :: "run \<Rightarrow> constr \<Rightarrow> run" ("_ \<langle> _ \<rangle>") where

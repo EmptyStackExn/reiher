@@ -20,9 +20,9 @@ abbreviation is_concrete where
 
 (* Primitives for symbolic runs *)
 datatype constr =
-    Timestamp "clock * instant_index * tag" ("\<Down>")
-  | Ticks     "clock * instant_index"       ("\<Up>")
-  | NotTicks  "clock * instant_index"       ("\<not>\<Up>")
+    Timestamp "clock" "instant_index" "tag" ("_ \<Down> _, _")
+  | Ticks     "clock" "instant_index"       ("_ \<Up> _")
+  | NotTicks  "clock" "instant_index"       ("_ \<not>\<Up> _")
   | Affine    "tag * tag * tag * tag"       ("\<doteq>")
 
 type_synonym system = "constr list"
@@ -31,11 +31,11 @@ text{* Define as follows the syntax of TESL *}
 
 (* TESL language *)
 datatype TESL_atomic =
-    Sporadic       "clock * tag"                 ("\<odot>")
-  | TagRelation    "clock * tag * clock * tag"   ("\<rightleftharpoons>\<^sub>t\<^sub>a\<^sub>g\<^sub>r\<^sub>e\<^sub>l")
-  | Implies        "clock" "clock"               (infixr "\<rightarrow>\<^sub>i\<^sub>m\<^sub>p\<^sub>l\<^sub>i\<^sub>e\<^sub>s" 55)
-  | TimeDelayedBy  "clock * tag * clock * clock" ("\<rightarrow>\<^sub>t\<^sub>i\<^sub>m\<^sub>e\<^sub>d\<^sub>e\<^sub>l\<^sub>a\<^sub>y\<^sub>e\<^sub>d")
-  | SporadicOn     "clock * tag * clock"         ("\<Odot>")
+    Sporadic       "clock" "tag"                 (infixr "sporadic" 55)
+  | TagRelation    "clock" "tag" "clock" "tag"   ("tag-relation _ = _ * _ + _" 55)
+  | Implies        "clock" "clock"               (infixr "implies" 55)
+  | TimeDelayedBy  "clock" "tag" "clock" "clock" ("_ time-delayed by _ on _ implies _" 55)
+  | SporadicOn     "clock" "tag" "clock"         ("_ sporadic _ on _" 55)
 
 type_synonym TESL_formula = "TESL_atomic list"
 
