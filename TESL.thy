@@ -21,6 +21,7 @@ datatype tag_expr =
     Const "tag_const"           ("\<lfloor> _ \<rfloor>\<^sub>c\<^sub>s\<^sub>t")
   | Var   "tag_var"             ("\<lfloor> _ \<rfloor>\<^sub>v\<^sub>a\<^sub>r")
   | Add   "tag_expr" "tag_expr" ("\<lfloor> _ + _ \<rfloor>")
+  | Mult  "tag_expr" "tag_expr" ("\<lfloor> _ * _ \<rfloor>")
 
 (* Primitives for symbolic runs *)
 datatype constr =
