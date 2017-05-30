@@ -23,7 +23,7 @@ datatype tag_expr =
 
 (* Primitives for symbolic runs *)
 datatype constr =
-    Timestamp "clock" "instant_index" "tag_expr"          ("_ \<Down> _, _")
+    Timestamp "clock" "instant_index" "tag_expr"          ("_ \<Down> _ @ _")
   | Ticks     "clock" "instant_index"                     ("_ \<Up> _")
   | NotTicks  "clock" "instant_index"                     ("_ \<not>\<Up> _")
   | Affine    "tag_var" "tag_const" "tag_var" "tag_const" ("_ \<doteq> _ * _ + _")

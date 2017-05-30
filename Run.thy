@@ -1,7 +1,6 @@
 theory Run
 imports
     "TESL"
-    "$ISABELLE_HOME/src/HOL/Eisbach/Eisbach_Tools" 
 
 begin
 
@@ -16,8 +15,8 @@ abbreviation time where "time \<equiv> snd"
 fun symbolic_run_interpretation_primitive :: "constr \<Rightarrow> run set" ("\<lbrakk> _ \<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n") where
     "\<lbrakk> K \<Up> n  \<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n = { \<rho>. hamlet (\<rho> n K) = True }"
   | "\<lbrakk> K \<not>\<Up> n \<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n = { \<rho>. hamlet (\<rho> n K) = False }"
-  | "\<lbrakk> K \<Down> n, \<lfloor> \<tau> \<rfloor> \<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n = { \<rho>. time (\<rho> n K) = \<tau> }"
-  | "\<lbrakk> K \<Down> n, \<lfloor> \<tau>\<^sub>v\<^sub>a\<^sub>r(K', n') \<oplus> \<tau> \<rfloor> \<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n = { \<rho>. time (\<rho> n K) = time (\<rho> n' K') + \<tau> }"
+  | "\<lbrakk> K \<Down> n @ \<lfloor> \<tau> \<rfloor> \<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n = { \<rho>. time (\<rho> n K) = \<tau> }"
+  | "\<lbrakk> K \<Down> n @ \<lfloor> \<tau>\<^sub>v\<^sub>a\<^sub>r(K', n') \<oplus> \<tau> \<rfloor> \<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n = { \<rho>. time (\<rho> n K) = time (\<rho> n' K') + \<tau> }"
   | "\<lbrakk> \<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>1, n\<^sub>1) \<doteq> \<alpha> * \<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>2, n\<^sub>2) + \<beta> \<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n = { \<rho>. time (\<rho> n\<^sub>1 K\<^sub>1) = \<alpha> * time (\<rho> n\<^sub>2 K\<^sub>2) + \<beta> }"
 
 fun symbolic_run_interpretation :: "constr list \<Rightarrow> run set" ("\<lbrakk>\<lbrakk> _ \<rbrakk>\<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n") where
@@ -37,8 +36,8 @@ abbreviation initial_run :: "run" ("\<rho>\<^sub>\<odot>") where
 fun run_update :: "run \<Rightarrow> constr \<Rightarrow> run" ("_ \<langle> _ \<rangle>") where
     "\<rho> \<langle> K \<Up> n \<rangle>  = (\<lambda>n' K'. if K = K' \<and> n = n' then (True, time (\<rho> n K)) else \<rho> n' K')"
   | "\<rho> \<langle> K \<not>\<Up> n \<rangle> = (\<lambda>n' K'. if K = K' \<and> n = n' then (False, time (\<rho> n K)) else \<rho> n' K')"
-  | "\<rho> \<langle> K \<Down> n, \<lfloor> \<tau> \<rfloor> \<rangle> = (\<lambda>n' K'. if K = K' \<and> n = n' then (hamlet (\<rho> n K), \<tau>) else \<rho> n' K')"
-  | "\<rho> \<langle> K \<Down> n, \<lfloor> \<tau>\<^sub>v\<^sub>a\<^sub>r(K', n') \<oplus> \<tau> \<rfloor> \<rangle> = (\<lambda>n'' K''. if K = K'' \<and> n = n'' then (hamlet (\<rho> n K), time (\<rho> n' K') + \<tau>) else \<rho> n'' K'')"
+  | "\<rho> \<langle> K \<Down> n @ \<lfloor> \<tau> \<rfloor> \<rangle> = (\<lambda>n' K'. if K = K' \<and> n = n' then (hamlet (\<rho> n K), \<tau>) else \<rho> n' K')"
+  | "\<rho> \<langle> K \<Down> n @ \<lfloor> \<tau>\<^sub>v\<^sub>a\<^sub>r(K', n') \<oplus> \<tau> \<rfloor> \<rangle> = (\<lambda>n'' K''. if K = K'' \<and> n = n'' then (hamlet (\<rho> n K), time (\<rho> n' K') + \<tau>) else \<rho> n'' K'')"
   | "\<rho> \<langle> \<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>1, n\<^sub>1) \<doteq> \<alpha> * \<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>2, n\<^sub>2) + \<beta> \<rangle> =
      (if time (\<rho> n\<^sub>1 K\<^sub>1) = undefined \<and> time (\<rho> n\<^sub>2 K\<^sub>2) \<noteq> undefined
       then (\<lambda>n K. if K = K\<^sub>1 \<and> n = n\<^sub>1 then (hamlet (\<rho> n K), \<alpha> * time (\<rho> n\<^sub>2 K\<^sub>2) + \<beta>) else \<rho> n K)
@@ -54,24 +53,5 @@ fun run_update' :: "constr list \<Rightarrow> run" ("\<langle>\<langle> _ \<rang
 lemma witness_consistency:
   "\<langle>\<langle> \<Gamma> \<rangle>\<rangle> \<in> \<lbrakk>\<lbrakk> \<Gamma> \<rbrakk>\<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n \<Longrightarrow> consistent_run \<Gamma>"
   unfolding consistent_run_def by (rule exI, auto)
-
-method solve_run_witness =
-  rule witness_consistency,
-  auto,
-  (match conclusion in "False" \<Rightarrow> \<open>fail\<close> \<bar> _ \<Rightarrow> \<open>succeed\<close>)
-
-method solve_run_witness' =
-  rule witness_consistency,
-  auto
-
-(*
-lemma
-  "is_a_valuation \<eta> \<Longrightarrow>
-   \<eta> X = X' \<Longrightarrow>
-   Rep_time_frame (Abs_time_frame \<eta>) X = X'"
-  by (simp add: Abs_time_frame_inverse)
-*)
-
-
 
 end

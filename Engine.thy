@@ -1,9 +1,7 @@
 theory Engine
 imports
-    Main
     "TESL"
     "Run"
-    "$ISABELLE_HOME/src/HOL/Eisbach/Eisbach_Tools" 
 
 begin
 text{* Operational steps *}
@@ -33,8 +31,8 @@ inductive kern_step
    \<Gamma>, n \<Turnstile> \<psi> \<triangleright> (K sporadic \<tau>) # \<phi> \<Longrightarrow>
    \<Gamma>, n \<Turnstile> (K sporadic \<tau>) # \<psi> \<triangleright> \<phi>"
 | sporadic_e2:
-  "consistent_run ((K \<Up> n) # (K \<Down> n, \<lfloor>\<tau>\<rfloor>) # \<Gamma>) \<Longrightarrow>
-   (K \<Up> n) # (K \<Down> n, \<lfloor>\<tau>\<rfloor>) # \<Gamma>, n \<Turnstile> \<psi> \<triangleright> \<phi> \<Longrightarrow>
+  "consistent_run ((K \<Up> n) # (K \<Down> n @ \<lfloor>\<tau>\<rfloor>) # \<Gamma>) \<Longrightarrow>
+   (K \<Up> n) # (K \<Down> n @ \<lfloor>\<tau>\<rfloor>) # \<Gamma>, n \<Turnstile> \<psi> \<triangleright> \<phi> \<Longrightarrow>
    \<Gamma>, n \<Turnstile> (K sporadic \<tau>) # \<psi> \<triangleright> \<phi>"
   (* Elimination of `sporadic on` *)
 | sporadic_on_e1:
@@ -42,8 +40,8 @@ inductive kern_step
    \<Gamma>, n \<Turnstile> \<psi> \<triangleright> (K\<^sub>1 sporadic \<tau> on K\<^sub>2) # \<phi> \<Longrightarrow>
    \<Gamma>, n \<Turnstile> (K\<^sub>1 sporadic \<tau> on K\<^sub>2) # \<psi> \<triangleright> \<phi>"
 | sporadic_on_e2:
-  "consistent_run ((K\<^sub>2 \<Up> n) # (K\<^sub>1 \<Down> n, \<tau>) # \<Gamma>) \<Longrightarrow>
-   (K\<^sub>2 \<Up> n) # (K\<^sub>1 \<Down> n, \<tau>) # \<Gamma>, n \<Turnstile> \<psi> \<triangleright> \<phi> \<Longrightarrow>
+  "consistent_run ((K\<^sub>2 \<Up> n) # (K\<^sub>1 \<Down> n @ \<tau>) # \<Gamma>) \<Longrightarrow>
+   (K\<^sub>2 \<Up> n) # (K\<^sub>1 \<Down> n @ \<tau>) # \<Gamma>, n \<Turnstile> \<psi> \<triangleright> \<phi> \<Longrightarrow>
    \<Gamma>, n \<Turnstile> (K\<^sub>1 sporadic \<tau> on K\<^sub>2) # \<psi> \<triangleright> \<phi>"
   (* Elimination of `tag relation` *)
 | tagrel_e:
@@ -68,21 +66,5 @@ inductive kern_step
   "consistent_run ((K\<^sub>1 \<Up> n) # \<Gamma>) \<Longrightarrow>
    (K\<^sub>1 \<Up> n) # \<Gamma>, n \<Turnstile> \<psi> \<triangleright> (K\<^sub>3 sporadic \<lfloor>\<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>2, n) \<oplus> \<delta>\<tau>\<rfloor> on K\<^sub>2) # \<phi> \<Longrightarrow>
    \<Gamma>, n \<Turnstile> (K\<^sub>1 time-delayed by \<delta>\<tau> on K\<^sub>2 implies K\<^sub>3) # \<psi> \<triangleright> \<phi>"
-
-named_theorems init
-declare instant_i [init]
-
-named_theorems elims
-declare sporadic_e2 [elims]
-declare sporadic_e1 [elims]
-declare implies_e2 [elims]
-declare implies_e1 [elims]
-
-method heron_next_step =
-  rule init, auto, solve_run_witness, (rule elims, solve_run_witness)+
-
-method heron_end =
-  rule simulation_end, simp, solve_run_witness'
-
 
 end
