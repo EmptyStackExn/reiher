@@ -18,10 +18,8 @@ datatype tag_var =
     Schematic "clock * instant_index" ("\<tau>\<^sub>v\<^sub>a\<^sub>r")
 (* Expressions *)
 datatype tag_expr =
-    Const "tag_const"           ("\<lfloor> _ \<rfloor>\<^sub>c\<^sub>s\<^sub>t")
-  | Var   "tag_var"             ("\<lfloor> _ \<rfloor>\<^sub>v\<^sub>a\<^sub>r")
-  | Add   "tag_expr" "tag_expr" ("\<lfloor> _ + _ \<rfloor>")
-  | Mult  "tag_expr" "tag_expr" ("\<lfloor> _ * _ \<rfloor>")
+    Const    "tag_const"           ("\<lfloor> _ \<rfloor>")
+  | AddDelay "tag_var" "tag_const" ("\<lfloor> _ \<oplus> _ \<rfloor>")
 
 (* Primitives for symbolic runs *)
 datatype constr =
