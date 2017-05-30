@@ -35,10 +35,10 @@ text{* Define as follows the syntax of TESL *}
 (* TESL language *)
 datatype TESL_atomic =
     Sporadic       "clock" "tag_const"                     (infixr "sporadic" 55)
+  | SporadicOn     "clock" "tag_expr" "clock"              ("_ sporadic _ on _" 55)
   | TagRelation    "clock" "tag_const" "clock" "tag_const" ("tag-relation _ = _ * _ + _" 55)
   | Implies        "clock" "clock"                         (infixr "implies" 55)
   | TimeDelayedBy  "clock" "tag_const" "clock" "clock"     ("_ time-delayed by _ on _ implies _" 55)
-  | SporadicOn     "clock" "tag_expr" "clock"              ("_ sporadic _ on _" 55)
 
 type_synonym TESL_formula = "TESL_atomic list"
 
