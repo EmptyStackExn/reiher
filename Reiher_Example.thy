@@ -1,4 +1,4 @@
-theory Example
+theory Reiher_Example
 imports
   "Reiher"
 
@@ -16,12 +16,9 @@ abbreviation \<Phi>\<^sub>0 where "\<Phi>\<^sub>0 \<equiv> [
 ]"
 
 lemma "[], 0 \<Turnstile> [] \<triangleright> \<Phi>\<^sub>0"
-apply (heron_next_step)
-  ML_val\<open>print_run @{Isar.goal}\<close>
-apply (heron_next_step)
-  ML_val\<open>print_run @{Isar.goal}\<close>
-apply (heron_next_step)
-  ML_val\<open>print_run @{Isar.goal}\<close>
+apply (heron_next_step) print_run
+apply (heron_next_step) print_run
+apply (heron_next_step) print_run
 by (heron_end)
 
 end
