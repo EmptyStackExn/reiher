@@ -8,17 +8,9 @@ keywords "print_run"::diag
 begin
 
 section\<open> Pretty-printer for runs \<close>
+text\<open> This section defines a pretty-printer for derived symbolic runs by means of the
+       command [print_run] \<close>
 
-(* Wanted outer syntax to use when pretty-printing runs *)
-ML \<open>
-val _ =
-  Outer_Syntax.command @{command_keyword print_run} "print run in the current Isar goal"
-    (Parse.opt_bang >> (fn b => Toplevel.keep (fn _ =>
-      let val x = Isar_Cmd.diag_goal (* ??? *)
-      in writeln "Not yet printing!" (* Pretty.writeln_chunks o Toplevel.pretty_context*) end)));
-\<close>
-
-(* Temporary solution *)
 ML\<open>
 local
   datatype clock = Clk of string
@@ -129,9 +121,22 @@ fun print_run isar_state = let
     print_system (HOLogic.dest_nat run_index) (clocks_of_system parsed_constraints) parsed_constraints
   end
 
+fun print_run_from_goal (isar_goal: thm) = let
+  val imp_cst $ (true_prop $ (truc $ gamma $ run_index $ psi $ phi)) $ _ = Thm.prop_of isar_goal
+  val parsed_constraints = constr_context_of_term gamma
+  in
+    writeln "Run diagram:";
+    print_system (HOLogic.dest_nat run_index) (clocks_of_system parsed_constraints) parsed_constraints
+  end
+
 end
 
-(* val use_example = print_run @{Isar.goal}; *)
+val _ =
+  Outer_Syntax.command @{command_keyword print_run} "print Reiher run in the current Isar goal"
+      let val printer : (Toplevel.state -> unit) =
+        fn tl_state => let val {context = ctxt, goal = thm} = Proof.simple_goal (Toplevel.proof_of tl_state)
+                       in print_run_from_goal thm end
+      in (Scan.succeed (Toplevel.keep (printer))) end
 \<close>
 
 section\<open> Main solver at a glance \<close>
