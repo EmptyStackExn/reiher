@@ -29,18 +29,18 @@ fun TESL_interpretation_primitive
 fun TESL_interpretation_primitive_bounded
     :: "TESL_atomic \<Rightarrow> nat \<Rightarrow> run set" ("\<lbrakk> _ @\<le> _ \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L") where
     "\<lbrakk> K sporadic \<tau> @\<le> b \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
-        { \<rho>. \<exists>n<b::nat. hamlet ((Rep_run \<rho>) n K) = True \<and> time ((Rep_run \<rho>) n K) = \<tau> }"
+        { \<rho>. \<exists>n<b::nat. 0 < n \<and> hamlet ((Rep_run \<rho>) n K) = True \<and> time ((Rep_run \<rho>) n K) = \<tau> }"
   | "\<lbrakk> K\<^sub>1 sporadic \<lfloor>\<tau>\<rfloor> on K\<^sub>2 @\<le> b \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
-        { \<rho>. \<exists>n<b::nat. hamlet ((Rep_run \<rho>) n K\<^sub>1) = True \<and> time ((Rep_run \<rho>) n K\<^sub>2) = \<tau> }"
+        { \<rho>. \<exists>n<b::nat. 0 < n \<and> hamlet ((Rep_run \<rho>) n K\<^sub>1) = True \<and> time ((Rep_run \<rho>) n K\<^sub>2) = \<tau> }"
   | "\<lbrakk> K\<^sub>1 sporadic \<lfloor>\<tau>\<^sub>v\<^sub>a\<^sub>r(K, n) \<oplus> \<tau>\<rfloor> on K\<^sub>2 @\<le> b \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
-        { \<rho>. \<exists>n'<b::nat. hamlet ((Rep_run \<rho>) n' K\<^sub>1) = True
+        { \<rho>. \<exists>n'<b::nat. 0 < n' \<and> hamlet ((Rep_run \<rho>) n' K\<^sub>1) = True
                          \<and> time ((Rep_run \<rho>) n' K\<^sub>2) = time ((Rep_run \<rho>) n K) + \<tau> }"
   | "\<lbrakk> tag-relation K\<^sub>1 = \<alpha> * K\<^sub>2 + \<beta> @\<le> b \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
-        { \<rho>. \<forall>n<b::nat. time ((Rep_run \<rho>) n K\<^sub>1) = \<alpha> * time ((Rep_run \<rho>) n K\<^sub>2) + \<beta> }"
+        { \<rho>. \<forall>n<b::nat. 0 < n \<longrightarrow> time ((Rep_run \<rho>) n K\<^sub>1) = \<alpha> * time ((Rep_run \<rho>) n K\<^sub>2) + \<beta> }"
   | "\<lbrakk> master implies slave @\<le> b \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
-        { \<rho>. \<forall>n<b::nat. hamlet ((Rep_run \<rho>) n master) \<longrightarrow> hamlet ((Rep_run \<rho>) n slave) }"
+        { \<rho>. \<forall>n<b::nat. 0 < n \<longrightarrow> hamlet ((Rep_run \<rho>) n master) \<longrightarrow> hamlet ((Rep_run \<rho>) n slave) }"
   | "\<lbrakk> master time-delayed by \<delta>\<tau> on measuring implies slave @\<le> b \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
-        { \<rho>. \<forall>n<b. hamlet ((Rep_run \<rho>) n master) \<longrightarrow>
+        { \<rho>. \<forall>n<b. 0 < n \<longrightarrow> hamlet ((Rep_run \<rho>) n master) \<longrightarrow>
                  (let measured_time = time ((Rep_run \<rho>) n measuring) in
                   \<exists>m > n. hamlet ((Rep_run \<rho>) n master)
                           \<and> time ((Rep_run \<rho>) m measuring) = measured_time + \<delta>\<tau>
@@ -69,8 +69,7 @@ fun TESL_interpretation_primitive_bounded_rec
     "\<lbrakk> \<phi> @\<le> (0::nat) \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
         { _. True }"
   | "\<lbrakk> master implies slave @\<le> Suc n \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
-        { \<rho> \<in> \<lbrakk> master implies slave @\<le> n \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L.
-            (hamlet ((Rep_run \<rho>) n master) \<longrightarrow> hamlet ((Rep_run \<rho>) n slave)) }"
+        { \<rho> \<in> \<lbrakk> master implies slave @\<le> n \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L.(hamlet ((Rep_run \<rho>) n master) \<longrightarrow> hamlet ((Rep_run \<rho>) n slave)) }"
 *)
 
 
