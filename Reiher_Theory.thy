@@ -1,7 +1,7 @@
 theory Reiher_Theory
 imports
   "Reiher"
-  "DeepDenotational"
+  "Denotational"
 
 begin
 

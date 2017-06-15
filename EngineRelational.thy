@@ -2,6 +2,7 @@ theory EngineRelational
 imports
     "TESL"
     "Run"
+    "Reiher"
 
 begin
 
@@ -48,12 +49,12 @@ inductive explicit_operational
    \<Gamma>, n \<turnstile> (tag-relation K\<^sub>1 = \<alpha> * K\<^sub>2 + \<beta>) # \<psi> \<triangleright> \<phi>
    \<hookrightarrow> \<Gamma>', n \<turnstile> \<psi> \<triangleright> \<phi>"
 | implies_e1_expl:
-  "consistent_run (K\<^sub>1 \<not>\<Up> n # \<Gamma>) \<Longrightarrow>
+  "consistent_run \<Gamma>' \<Longrightarrow>
    \<Gamma>' = K\<^sub>1 \<not>\<Up> n # \<Gamma> \<Longrightarrow>
    \<Gamma>, n \<turnstile> (K\<^sub>1 implies K\<^sub>2) # \<psi> \<triangleright> \<phi>
    \<hookrightarrow> \<Gamma>', n \<turnstile> \<psi> \<triangleright> \<phi>"
 | implies_e2_expl:
-  "consistent_run (K\<^sub>1 \<not>\<Up> n # \<Gamma>) \<Longrightarrow>
+  "consistent_run \<Gamma>' \<Longrightarrow>
    \<Gamma>' = (K\<^sub>1 \<Up> n) # (K\<^sub>2 \<Up> n) # \<Gamma> \<Longrightarrow>
    \<Gamma>, n \<turnstile> (K\<^sub>1 implies K\<^sub>2) # \<psi> \<triangleright> \<phi>
    \<hookrightarrow> \<Gamma>', n \<turnstile> \<psi> \<triangleright> \<phi>"
@@ -78,7 +79,9 @@ lemma "([], 0        \<turnstile> [H\<^sub>1 implies H\<^sub>2] \<triangleright>
          [H\<^sub>1 \<not>\<Up> 0], 0 \<turnstile> []              \<triangleright> [])
          \<in> \<hookrightarrow>"
 apply simp
-apply (rule implies_e1_expl) apply (auto+) sorry (* OK *)
+apply (rule implies_e1_expl) apply (auto+)
+apply (rule witness_consistency, auto, ((simp add: Abs_run_inverse_rewrite mono_iff_le_Suc)+)?)
+done
 
 (* Now trying with the transitive closure to eliminate TWICE*)
 lemma "([], 0                 \<turnstile> [H\<^sub>1 implies H\<^sub>2, H\<^sub>1 implies H\<^sub>2] \<triangleright> [],
@@ -89,30 +92,43 @@ apply (rule r_into_trancl)
 apply simp
 apply (rule implies_e1_expl) apply auto? defer 1
 apply (rule implies_e1_expl) apply auto?
- sorry (* OK *)
+apply (rule witness_consistency, auto, ((simp add: Abs_run_inverse_rewrite mono_iff_le_Suc)+)?)+
+done
 
 abbreviation explicit_simulation_step
   :: "(system \<times> instant_index \<times> TESL_formula \<times> TESL_formula) rel" ("\<hookrightarrow>\<^sub>\<nabla>") where
   "\<hookrightarrow>\<^sub>\<nabla> \<equiv> { ((\<Gamma>\<^sub>1, n\<^sub>1, \<psi>, \<phi>\<^sub>1), (\<Gamma>\<^sub>2, n\<^sub>2, \<psi>, \<phi>\<^sub>2)).
                 \<psi> = []
+              \<and> (\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> \<psi> \<triangleright> \<phi>\<^sub>1, \<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> \<psi> \<triangleright> \<phi>\<^sub>2) \<in> \<hookrightarrow>\<^sup>+
               \<and> consistent_run \<Gamma>\<^sub>1
-              \<and> consistent_run \<Gamma>\<^sub>2
-              \<and> (\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> \<psi> \<triangleright> \<phi>\<^sub>1, \<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> \<psi> \<triangleright> \<phi>\<^sub>2) \<in> \<hookrightarrow>\<^sup>+}"
+              \<and> consistent_run \<Gamma>\<^sub>2}"
 
 (* Now with introduction rule then one elimination *)
 lemma "([], 0        \<turnstile> [] \<triangleright> [H\<^sub>1 sporadic \<tau>\<^sub>i\<^sub>n\<^sub>t 0, H\<^sub>1 implies H\<^sub>2],
          \<Gamma>, 1 \<turnstile> [] \<triangleright> \<Phi>)
          \<in> \<hookrightarrow>\<^sub>\<nabla>"
-apply auto prefer 3
+apply auto
 apply (rule trancl_into_trancl)
 apply (rule trancl_into_trancl)
 apply (rule r_into_trancl)
 apply simp
 
-apply (rule instant_i_expl)  apply auto? defer 1
-apply (rule sporadic_e2_expl) apply auto? defer 1
-apply (rule implies_e2_expl) apply auto? defer 1 
-
+apply (rule instant_i_expl)   apply (rule witness_consistency, auto, ((simp add: Abs_run_inverse_rewrite mono_iff_le_Suc)+)?)
+apply (rule sporadic_e2_expl) apply (rule witness_consistency, auto, ((simp add: Abs_run_inverse_rewrite mono_iff_le_Suc)+)?)
 sorry (* OK *)
+
+inductive finite_SAT
+  :: "(system \<times> instant_index \<times> TESL_formula \<times> TESL_formula) \<Rightarrow> bool" ("\<TTurnstile> _" 50) where
+  finite_SAT_i: "\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> \<psi>\<^sub>1 \<triangleright> \<phi>\<^sub>1 \<hookrightarrow> \<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> \<psi>\<^sub>2 \<triangleright> \<phi>\<^sub>2 \<Longrightarrow>
+                   \<TTurnstile> \<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> \<psi>\<^sub>2 \<triangleright> \<phi>\<^sub>2 \<Longrightarrow>
+                   \<TTurnstile> \<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> \<psi>\<^sub>1 \<triangleright> \<phi>\<^sub>1"
+
+lemma "\<TTurnstile> [], 0 \<turnstile> [] \<triangleright> [H\<^sub>1 implies H\<^sub>2]"
+apply (rule finite_SAT_i) apply (rule instant_i_expl)  apply (rule witness_consistency, auto, ((simp add: Abs_run_inverse_rewrite_unsafe mono_iff_le_Suc)+)?)
+apply (rule finite_SAT_i) apply (rule implies_e2_expl) apply (rule witness_consistency, auto, ((simp add: Abs_run_inverse_rewrite_unsafe mono_iff_le_Suc)+)?)
+
+apply (rule finite_SAT_i) apply (rule instant_i_expl)  apply (rule witness_consistency, auto, ((simp add: Abs_run_inverse_rewrite_unsafe mono_iff_le_Suc)+)?)
+apply (rule finite_SAT_i) apply (rule implies_e2_expl) apply (rule witness_consistency, auto, ((simp add: Abs_run_inverse_rewrite_unsafe mono_iff_le_Suc)+)?)
+sorry
 
 end
