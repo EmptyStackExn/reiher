@@ -13,6 +13,7 @@ type_synonym instant_index = "nat"
 datatype tag_const =
     Unit                              ("\<tau>\<^sub>u\<^sub>n\<^sub>i\<^sub>t")
   | Integer   "int"                   ("\<tau>\<^sub>i\<^sub>n\<^sub>t")
+  | LeastTag                          ("\<tau>\<^sub>l\<^sub>e\<^sub>a\<^sub>s\<^sub>t")
 (* Variables *)
 datatype tag_var =
     Schematic "clock * instant_index" ("\<tau>\<^sub>v\<^sub>a\<^sub>r")
@@ -48,6 +49,8 @@ type_synonym TESL_formula = "TESL_atomic list"
 *)
 type_synonym TESL_ARS_conf = "system * instant_index * TESL_formula * TESL_formula"
 
+declare[[show_sorts]]
+
 (* Instanciating tag_const to give some kind of semi-ring structure *)
 instantiation tag_const :: plus
 begin
@@ -68,8 +71,9 @@ end
 instantiation tag_const :: order
 begin
   inductive less_eq_tag_const :: "tag_const \<Rightarrow> tag_const \<Rightarrow> bool" where
-    Int_less_eq[simp]:  "n \<le> m \<Longrightarrow> (Integer n) \<le> (Integer m)"
-  | Unit_less_eq[simp]: "Unit \<le> Unit"
+    Int_less_eq[simp]:      "n \<le> m \<Longrightarrow> (Integer n) \<le> (Integer m)"
+  | Unit_less_eq[simp]:     "Unit \<le> Unit"
+  | LeastTag_less_eq[simp]: "LeastTag \<le> _"
   definition less_tag: "(x::tag_const) < y \<longleftrightarrow> (x \<le> y) \<and> (x \<noteq> y)"
   instance proof
     show "\<And>x y :: tag_const. (x < y) = (x \<le> y \<and> \<not> y \<le> x)"

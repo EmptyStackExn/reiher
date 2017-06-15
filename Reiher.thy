@@ -141,14 +141,25 @@ val _ =
 
 section\<open> Main solver at a glance \<close>
 
-method solve_run_witness =
+lemma Abs_run_inverse_rewrite:
+  "\<forall>c. mono (\<lambda>n. time (\<rho> n c)) \<Longrightarrow> Rep_run (Abs_run \<rho>) = \<rho>"
+  by (simp add: Abs_run_inverse)
+
+(* WARNING: Admitting monotonicity to compute faster. Use for testing purposes only. *)
+lemma Abs_run_inverse_rewrite_unsafe:
+  "\<forall>c. Rep_run (Abs_run \<rho>) = \<rho>"
+  sorry
+
+method solve_run_witness uses Abs_run_inverse_rewrite =
   rule witness_consistency,
   auto,
+  ((simp add: Abs_run_inverse_rewrite mono_iff_le_Suc)+)?,
   (match conclusion in "False" \<Rightarrow> \<open>fail\<close> \<bar> _ \<Rightarrow> \<open>succeed\<close>)
 
-method solve_run_witness_end =
+method solve_run_witness_end uses Abs_run_inverse_rewrite =
   rule witness_consistency,
-  auto
+  auto,
+  ((simp add: Abs_run_inverse_rewrite mono_iff_le_Suc)+)?
 
 named_theorems init
 declare instant_i [init]
@@ -160,10 +171,20 @@ declare implies_e2 [elims]
 declare implies_e1 [elims]
 
 method heron_next_step =
-  rule init, auto, solve_run_witness, (rule elims, solve_run_witness)+
-
+  rule init,
+  auto,
+  solve_run_witness Abs_run_inverse_rewrite: Abs_run_inverse_rewrite,
+  (rule elims, solve_run_witness Abs_run_inverse_rewrite: Abs_run_inverse_rewrite)+
 method heron_end =
-  rule simulation_end, simp, solve_run_witness_end
+  rule simulation_end, simp, solve_run_witness_end Abs_run_inverse_rewrite: Abs_run_inverse_rewrite
+
+method heron_next_step_UNSAFE =
+  rule init,
+  auto,
+  solve_run_witness Abs_run_inverse_rewrite: Abs_run_inverse_rewrite_unsafe,
+  (rule elims, solve_run_witness Abs_run_inverse_rewrite: Abs_run_inverse_rewrite_unsafe)+
+method heron_end_UNSAFE =
+  rule simulation_end, simp, solve_run_witness_end Abs_run_inverse_rewrite: Abs_run_inverse_rewrite_unsafe
 
 (* Are Eisbach methods recursive? *)
 method heron_step for n ::nat = (heron_step \<open>Suc n\<close>)
