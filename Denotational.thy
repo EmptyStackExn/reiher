@@ -1,4 +1,4 @@
-theory DeepDenotational
+theory Denotational
 imports
     "TESL"
     "Run"

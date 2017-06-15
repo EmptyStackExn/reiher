@@ -15,10 +15,11 @@ abbreviation \<Phi>\<^sub>0 where "\<Phi>\<^sub>0 \<equiv> [
     \<H>\<^sub>1 implies \<H>\<^sub>2
 ]"
 
-lemma "[], 0 \<Turnstile> [] \<triangleright> \<Phi>\<^sub>0"
+lemma "\<TTurnstile> [], 0 \<turnstile> [] \<triangleright> \<Phi>\<^sub>0"
 apply (heron_next_step_UNSAFE) print_run
 apply (heron_next_step_UNSAFE) print_run
-by    (heron_end_UNSAFE)
+apply (heron_next_step_UNSAFE) print_run
+by (heron_end_UNSAFE)
 
 (* The above reductions admit monotonicity to compute faster.
    They may produce non-monotonic runs but can be computed in reasonable time. *)
