@@ -23,6 +23,15 @@ qed
 abbreviation Abs_run_not ("_\<^sup>\<up>" 1000) where "f\<^sup>\<up> \<equiv> Abs_run f"
 abbreviation Rep_run_not ("_\<^sup>\<down>" 1000) where "f\<^sup>\<down> \<equiv> Rep_run f"
 *)
+lemma Abs_run_inverse_rewrite:
+  "\<forall>c. mono (\<lambda>n. time (\<rho> n c)) \<Longrightarrow> Rep_run (Abs_run \<rho>) = \<rho>"
+  by (simp add: Abs_run_inverse)
+
+(* WARNING: Admitting monotonicity to compute faster. Use for testing purposes only. *)
+lemma Abs_run_inverse_rewrite_unsafe:
+  "\<forall>c. Rep_run (Abs_run \<rho>) = \<rho>"
+  sorry
+
 
 fun symbolic_run_interpretation_primitive :: "constr \<Rightarrow> run set" ("\<lbrakk> _ \<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n") where
     "\<lbrakk> K \<Up> n  \<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n = { \<rho>. hamlet ((Rep_run \<rho>) n K) = True }"
