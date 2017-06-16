@@ -77,5 +77,33 @@ fun TESL_interpretation :: "TESL_formula \<Rightarrow> run set" ("\<lbrakk>\<lbr
     "\<lbrakk>\<lbrakk> [] \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = { _. True }"
   | "\<lbrakk>\<lbrakk> \<phi> # \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<lbrakk> \<phi> \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L \<inter> \<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
 
+text \<open> Every TESL formula denotes a satisfying run \<close>
+(* Missing hypothesis that the linear system made of tag relations is consistent *)
+lemma existence:
+  shows "\<exists>\<rho>. \<rho> \<in> \<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
+  proof (induction \<Phi>)
+  case Nil
+  then show ?case by simp
+next
+  case (Cons \<phi> \<Phi>')
+  then show ?case
+    proof (induction \<phi>)
+      case (Sporadic K \<tau>)      
+      then show ?case sorry
+    next
+      case (Implies master slave)
+      then show ?case sorry
+    next
+      case (SporadicOn x1 x2 x3)
+      then show ?case sorry
+    next
+      case (TagRelation x1 x2 x3 x4)
+      then show ?case sorry
+    next
+      case (TimeDelayedBy x1 x2 x3 x4)
+      then show ?case sorry
+    qed
+qed
+
 
 end
