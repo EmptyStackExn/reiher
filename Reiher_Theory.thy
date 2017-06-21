@@ -9,14 +9,28 @@ lemma context_consistency_preservationI:
   "consistent_run (\<gamma> # \<Gamma>) \<Longrightarrow> consistent_run \<Gamma>"
 using consistent_run_def by auto
 
+(* Very restrictive *)
 inductive context_independency :: "constr \<Rightarrow> constr list \<Rightarrow> bool" ("_ \<bowtie> _") where
-  "\<gamma> \<notin> set \<Gamma> \<Longrightarrow> \<gamma> \<bowtie> \<Gamma>"
+  NotTicks_independency:
+  "K \<Up> n \<notin> set \<Gamma> \<Longrightarrow> K \<not>\<Up> n \<bowtie> \<Gamma>"
+| Ticks_independency:
+  "K \<not>\<Up> n \<notin> set \<Gamma> \<Longrightarrow> K \<Up> n \<bowtie> \<Gamma>"
+| Timestamp_independency:
+  "(\<nexists>\<tau>'. \<tau>' = \<tau> \<and> K \<Down> n @ \<tau> \<in> set \<Gamma>) \<Longrightarrow> K \<Down> n @ \<tau> \<bowtie> \<Gamma>"
+
+thm context_independency.induct
+
+(* by (insert assms, erule operational_semantics_step.cases, auto)
+*)
 
 lemma context_consistency_preservationE:
-  assumes "consistent_run \<Gamma>"
-  and     "\<gamma> \<bowtie> \<Gamma>"
+  assumes consist: "consistent_run \<Gamma>"
+  and     indepen: "\<gamma> \<bowtie> \<Gamma>"
   shows "consistent_run (\<gamma> # \<Gamma>)"
-using consistent_run_def sorry
+apply (insert consist indepen)
+apply (erule context_independency.cases)
+apply auto
+oops
 
 lemma simple_derv_implies:
   assumes clk_d: "K\<^sub>1 \<noteq> K\<^sub>2"
@@ -28,7 +42,7 @@ apply (rule instant_i)
   using consist apply (assumption)
 apply (rule finite_SAT_i)
 apply (rule implies_e2, auto)
-sorry
+oops
 
 text \<open>Every [n]-step derived symbolic run has a prefix of length [n] in the set of all denoted runs\<close>
 
@@ -70,20 +84,9 @@ term "({}::(nat rel)) ^^ (n::nat)"
 (* sledgehammer[provers="remote_e spass remote_vampire cvc4 z3"] *)
 
 lemma refinement_at_each_step:
-  assumes cons: "consistent_run \<Gamma>\<^sub>1"
-  assumes red: "\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1 \<hookrightarrow> \<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2"
+  assumes "\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1 \<hookrightarrow> \<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2"
   shows "\<lbrakk>\<lbrakk> \<Gamma>\<^sub>1 \<rbrakk>\<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n \<supseteq> \<lbrakk>\<lbrakk> \<Gamma>\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n"
-proof (induction \<Psi>\<^sub>1)
-  case Nil
-  have *: "\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> [] \<triangleright> \<Phi>\<^sub>1 \<hookrightarrow> \<Gamma>\<^sub>1, Suc n\<^sub>1 \<turnstile> \<Phi>\<^sub>1 \<triangleright> NoSporadic \<Phi>\<^sub>1"
-    apply (rule instant_i)
-    using cons by assumption
-  moreover have "\<Gamma>\<^sub>1 = \<Gamma>\<^sub>2" using Nil cons red * nitpick (* Où est l'hypothèse que \<Phi>\<^sub>1 = [] ? *) sorry
-  then show ?case by auto
-next
-  case (Cons \<phi>\<^sub>1 \<Psi>\<^sub>1)
-  then show ?case by simp
-qed
+by (insert assms, erule operational_semantics_step.cases, auto)
 
 lemma composition:
   assumes "K\<^sub>1 time-delayed by \<delta>\<tau> on K\<^sub>2 implies K\<^sub>3 \<notin> set \<Phi> \<union> set \<Phi>'"
@@ -91,20 +94,17 @@ lemma composition:
   assumes "\<TTurnstile> \<Gamma>\<^sub>2, n \<turnstile> [] \<triangleright> \<Phi>\<^sub>2"
   assumes "consistency_run (\<Gamma>\<^sub>1 @ \<Gamma>\<^sub>2)"
   shows   "\<TTurnstile> \<Gamma>\<^sub>1 @ \<Gamma>\<^sub>2, n \<turnstile> [] \<triangleright> \<Phi>\<^sub>1 @ \<Phi>\<^sub>2"
-  sorry
+oops
 
 lemma prolongation_2:
-  assumes "n' > n"
-  and "set \<Gamma>' \<supseteq> set \<Gamma>"
-  and "set \<Phi>' \<subseteq> set \<Phi>"
-  assumes "\<Gamma>, n \<turnstile> [] \<triangleright> \<Phi> \<hookrightarrow> \<Gamma>', n' \<turnstile> [] \<triangleright> \<Phi>'"
-  shows "\<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L \<inter> \<lbrakk>\<lbrakk> \<Gamma> \<rbrakk>\<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n \<supseteq> \<lbrakk>\<lbrakk> \<Phi>' \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L \<inter> \<lbrakk>\<lbrakk> \<Gamma>' \<rbrakk>\<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n"
-  sorry
+  assumes "\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> [] \<triangleright> \<Phi>\<^sub>1 \<hookrightarrow> \<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> [] \<triangleright> \<Phi>\<^sub>2"
+  shows "\<lbrakk>\<lbrakk> \<Phi>\<^sub>1 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L \<inter> \<lbrakk>\<lbrakk> \<Gamma>\<^sub>1 \<rbrakk>\<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n \<supseteq> \<lbrakk>\<lbrakk> \<Phi>\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L \<inter> \<lbrakk>\<lbrakk> \<Gamma>\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n"
+by (insert assms, erule operational_semantics_step.cases, auto)
 
 lemma prolongation_and_composition:
-  assumes "\<Gamma>, n \<turnstile> [] \<triangleright> (\<Phi>' @ \<Psi>') \<hookrightarrow> \<Gamma>', n' \<turnstile> [] \<triangleright> (\<Phi> @ \<Psi>)"
-  shows "\<lbrakk>\<lbrakk> \<Phi> @ \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L \<subseteq> \<lbrakk>\<lbrakk> \<Phi>' @ \<Psi>' \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
-  sorry
+  assumes "\<Gamma>, n \<turnstile> [] \<triangleright> (\<Phi>\<^sub>1 @ \<Phi>\<^sub>2) \<hookrightarrow> \<Gamma>', n' \<turnstile> [] \<triangleright> (\<Phi>\<^sub>1' @ \<Phi>\<^sub>2')"
+  shows "\<lbrakk>\<lbrakk> \<Phi>\<^sub>1 @ \<Phi>\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L \<supseteq> \<lbrakk>\<lbrakk> \<Phi>\<^sub>1' @ \<Phi>\<^sub>2' \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
+by (insert assms, erule operational_semantics_step.cases, auto)
 
 
 
