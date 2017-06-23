@@ -167,13 +167,13 @@ method heron_next_step =
   rule finite_SAT_i, rule init, solve_run_witness Abs_run_inverse_rewrite: Abs_run_inverse_rewrite,
  (rule finite_SAT_i, rule elims, solve_run_witness Abs_run_inverse_rewrite: Abs_run_inverse_rewrite)+
 method heron_end =
-  rule finite_SAT_ax, rule simulation_end, simp, solve_run_witness_end Abs_run_inverse_rewrite: Abs_run_inverse_rewrite
+  rule finite_SAT_ax, simp, solve_run_witness_end Abs_run_inverse_rewrite: Abs_run_inverse_rewrite
 
 method heron_next_step_UNSAFE =
   rule finite_SAT_i, rule init, solve_run_witness Abs_run_inverse_rewrite: Abs_run_inverse_rewrite_unsafe,
  (rule finite_SAT_i, rule elims, solve_run_witness Abs_run_inverse_rewrite: Abs_run_inverse_rewrite_unsafe)+
 method heron_end_UNSAFE =
-  rule finite_SAT_ax, rule simulation_end, simp, solve_run_witness_end Abs_run_inverse_rewrite: Abs_run_inverse_rewrite_unsafe
+  rule finite_SAT_ax, simp, solve_run_witness_end Abs_run_inverse_rewrite: Abs_run_inverse_rewrite_unsafe
 
 (* Are Eisbach methods recursive? *)
 method heron_step for n ::nat = (heron_step \<open>Suc n\<close>)

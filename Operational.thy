@@ -20,12 +20,7 @@ abbreviation uncurry_conf
 inductive operational_semantics_step
   :: "(system \<times> instant_index \<times> TESL_formula \<times> TESL_formula)
     \<Rightarrow> (system \<times> instant_index \<times> TESL_formula \<times> TESL_formula) \<Rightarrow> bool" ("_ \<hookrightarrow> _" 50) where
-  simulation_end:
-  "set (NoSporadic \<phi>) = set \<phi> \<Longrightarrow>
-   consistent_run \<Gamma> \<Longrightarrow>
-   \<Gamma>, n \<turnstile> \<psi> \<triangleright> \<phi>
-   \<hookrightarrow> \<Gamma>, n \<turnstile> \<psi> \<triangleright> \<phi>"
-| instant_i:
+  instant_i:
   "consistent_run \<Gamma> \<Longrightarrow>
    \<Gamma>, n \<turnstile> [] \<triangleright> \<phi>
    \<hookrightarrow> \<Gamma>, Suc n \<turnstile> \<phi> \<triangleright> NoSporadic \<phi>"
@@ -74,15 +69,15 @@ inductive operational_semantics_step
    \<hookrightarrow> \<Gamma>', n \<turnstile> \<psi> \<triangleright> (K\<^sub>3 sporadic \<lfloor>\<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>2, n) \<oplus> \<delta>\<tau>\<rfloor> on K\<^sub>2) # \<phi>"
 
 abbreviation operational_semantics_step'
-  :: "(system \<times> instant_index \<times> TESL_formula \<times> TESL_formula) rel" ("\<hookrightarrow>") where
-  "\<hookrightarrow> \<equiv> { ((\<Gamma>\<^sub>1, n\<^sub>1, \<psi>\<^sub>1, \<phi>\<^sub>1), (\<Gamma>\<^sub>2, n\<^sub>2, \<psi>\<^sub>2, \<phi>\<^sub>2)).
+  :: "(system \<times> instant_index \<times> TESL_formula \<times> TESL_formula) rel" ("\<hookrightarrow>\<^sup>\<up>") where
+  "\<hookrightarrow>\<^sup>\<up> \<equiv> { ((\<Gamma>\<^sub>1, n\<^sub>1, \<psi>\<^sub>1, \<phi>\<^sub>1), (\<Gamma>\<^sub>2, n\<^sub>2, \<psi>\<^sub>2, \<phi>\<^sub>2)).
               \<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> \<psi>\<^sub>1 \<triangleright> \<phi>\<^sub>1 \<hookrightarrow> \<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> \<psi>\<^sub>2 \<triangleright> \<phi>\<^sub>2 }"
 
 abbreviation operational_semantics_simulation_step
   :: "(system \<times> instant_index \<times> TESL_formula \<times> TESL_formula) rel" ("\<hookrightarrow>\<^sub>\<nabla>") where
   "\<hookrightarrow>\<^sub>\<nabla> \<equiv> { ((\<Gamma>\<^sub>1, n\<^sub>1, \<psi>, \<phi>\<^sub>1), (\<Gamma>\<^sub>2, n\<^sub>2, \<psi>, \<phi>\<^sub>2)).
                 \<psi> = []
-              \<and> (\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> \<psi> \<triangleright> \<phi>\<^sub>1, \<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> \<psi> \<triangleright> \<phi>\<^sub>2) \<in> \<hookrightarrow>\<^sup>+
+              \<and> (\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> \<psi> \<triangleright> \<phi>\<^sub>1, \<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> \<psi> \<triangleright> \<phi>\<^sub>2) \<in> \<hookrightarrow>\<^sup>\<up>\<^sup>+
               \<and> consistent_run \<Gamma>\<^sub>1
               \<and> consistent_run \<Gamma>\<^sub>2}"
 
@@ -104,7 +99,8 @@ sorry (* OK *)
 
 inductive finite_SAT
   :: "(system \<times> instant_index \<times> TESL_formula \<times> TESL_formula) \<Rightarrow> bool" ("\<TTurnstile> _" 50) where
-  finite_SAT_ax: "\<Gamma>, n \<turnstile> \<psi> \<triangleright> \<phi> \<hookrightarrow> \<Gamma>, n \<turnstile> \<psi> \<triangleright> \<phi> \<Longrightarrow>
+  finite_SAT_ax: "set (NoSporadic \<phi>) = set \<phi> \<Longrightarrow>
+                    consistent_run \<Gamma> \<Longrightarrow>
                    \<TTurnstile> \<Gamma>, n \<turnstile> \<psi> \<triangleright> \<phi>"
 | finite_SAT_i: "\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> \<psi>\<^sub>1 \<triangleright> \<phi>\<^sub>1 \<hookrightarrow> \<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> \<psi>\<^sub>2 \<triangleright> \<phi>\<^sub>2 \<Longrightarrow>
                    \<TTurnstile> \<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> \<psi>\<^sub>2 \<triangleright> \<phi>\<^sub>2 \<Longrightarrow>
