@@ -81,7 +81,9 @@ text \<open> Every TESL formula denotes a satisfying run \<close>
 (* Missing hypothesis that the linear system made of tag relations is consistent *)
 lemma existence:
   shows "\<exists>\<rho>. \<rho> \<in> \<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
-  proof (induction \<Phi>)
+oops
+(*
+proof (induction \<Phi>)
   case Nil
   then show ?case by simp
 next
@@ -104,6 +106,6 @@ next
       then show ?case sorry
     qed
 qed
-
+*)
 
 end
