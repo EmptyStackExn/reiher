@@ -30,7 +30,21 @@ lemma context_consistency_preservationE:
 apply (insert consist indepen)
 apply (erule context_independency.cases)
 apply auto
-oops
+proof -
+  show "\<And>K n. consistent_run \<Gamma> \<Longrightarrow>
+           \<gamma> = K \<not>\<Up> n \<Longrightarrow> K \<Up> n \<notin> set \<Gamma> \<Longrightarrow>
+           consistent_run (K \<not>\<Up> n # \<Gamma>)"
+    sorry
+  show "\<And>K n. consistent_run \<Gamma> \<Longrightarrow>
+           \<gamma> = K \<Up> n \<Longrightarrow> K \<not>\<Up> n \<notin> set \<Gamma> \<Longrightarrow>
+           consistent_run (K \<Up> n # \<Gamma>)"
+    sorry
+  show "\<And>\<tau> K n.
+       consistent_run \<Gamma> \<Longrightarrow>
+       \<gamma> = K \<Down> n @ \<tau> \<Longrightarrow>
+       K \<Down> n @ \<tau> \<notin> set \<Gamma> \<Longrightarrow> consistent_run (K \<Down> n @ \<tau> # \<Gamma>)"
+    sorry
+qed
 
 lemma simple_derv_implies:
   assumes clk_d: "K\<^sub>1 \<noteq> K\<^sub>2"
@@ -96,16 +110,39 @@ lemma composition:
   shows   "\<TTurnstile> \<Gamma>\<^sub>1 @ \<Gamma>\<^sub>2, n \<turnstile> [] \<triangleright> \<Phi>\<^sub>1 @ \<Phi>\<^sub>2"
 oops
 
-lemma prolongation_2:
+lemma run_preservation:
+  assumes "\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> [] \<triangleright> \<Phi>\<^sub>1  \<hookrightarrow>  \<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> [] \<triangleright> \<Phi>\<^sub>2"
+  shows "\<lbrakk>\<lbrakk> \<Phi>\<^sub>1 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L \<inter> \<lbrakk>\<lbrakk> \<Gamma>\<^sub>1 \<rbrakk>\<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n = \<lbrakk>\<lbrakk> \<Phi>\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L \<inter> \<lbrakk>\<lbrakk> \<Gamma>\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n"
+by (insert assms, erule operational_semantics_step.cases, auto)
+
+lemma run_composition:
+  assumes "\<Gamma>, n \<turnstile> [] \<triangleright> (\<Phi>\<^sub>1 @ \<Phi>\<^sub>2)  \<hookrightarrow>  \<Gamma>', n' \<turnstile> [] \<triangleright> (\<Phi>\<^sub>1' @ \<Phi>\<^sub>2')"
+  shows "\<lbrakk>\<lbrakk> \<Phi>\<^sub>1 @ \<Phi>\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<lbrakk>\<lbrakk> \<Phi>\<^sub>1' @ \<Phi>\<^sub>2' \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
+by (insert assms, erule operational_semantics_step.cases, auto)
+
+lemma run_progress:
+  assumes "\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> [] \<triangleright> \<Phi>\<^sub>1  \<hookrightarrow>  \<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> [] \<triangleright> \<Phi>\<^sub>2"
+  shows "n\<^sub>2 = Suc n\<^sub>1"
+by (insert assms, erule operational_semantics_step.cases, auto)
+
+(* OPERATIONAL \<longrightarrow> DENOTATIONAL *)
+(* A chaque pas de simulation, les runs dérivés préfixent les runs dénotationels *)
+lemma soundness:
+  assumes "\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> [] \<triangleright> \<Phi>\<^sub>1  \<hookrightarrow>  \<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> [] \<triangleright> \<Phi>\<^sub>2"
+  shows "\<forall>\<rho>\<^sub>o\<^sub>p \<in> \<lbrakk>\<lbrakk> \<Gamma>\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n.
+          \<exists>\<rho>\<^sub>d\<^sub>e\<^sub>n \<in> \<lbrakk>\<lbrakk> \<Phi>\<^sub>1 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L.
+          \<forall>n > 0. n \<le> n\<^sub>2
+            \<longrightarrow> (Rep_run \<rho>\<^sub>o\<^sub>p) n = (Rep_run \<rho>\<^sub>d\<^sub>e\<^sub>n) n"
+by (insert assms, erule operational_semantics_step.cases, auto)
+
+(* DENOTATIONAL \<longrightarrow> OPERATIONAL *)
+(* A chaque pas de simulation, un run dénoté préfixe un run dérivé opérationallement *)
+lemma completeness:
   assumes "\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> [] \<triangleright> \<Phi>\<^sub>1 \<hookrightarrow> \<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> [] \<triangleright> \<Phi>\<^sub>2"
-  shows "\<lbrakk>\<lbrakk> \<Phi>\<^sub>1 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L \<inter> \<lbrakk>\<lbrakk> \<Gamma>\<^sub>1 \<rbrakk>\<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n \<supseteq> \<lbrakk>\<lbrakk> \<Phi>\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L \<inter> \<lbrakk>\<lbrakk> \<Gamma>\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n"
+  shows "\<forall>\<rho>\<^sub>d\<^sub>e\<^sub>n \<in> \<lbrakk>\<lbrakk> \<Phi>\<^sub>1 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L \<inter> \<lbrakk>\<lbrakk> \<Gamma>\<^sub>1 \<rbrakk>\<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n.
+          \<exists>\<rho>\<^sub>o\<^sub>p \<in> \<lbrakk>\<lbrakk> \<Gamma>\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n.
+          \<forall>n > 0. n \<le> n\<^sub>2
+            \<longrightarrow> (Rep_run \<rho>\<^sub>o\<^sub>p) n = (Rep_run \<rho>\<^sub>d\<^sub>e\<^sub>n) n"
 by (insert assms, erule operational_semantics_step.cases, auto)
-
-lemma prolongation_and_composition:
-  assumes "\<Gamma>, n \<turnstile> [] \<triangleright> (\<Phi>\<^sub>1 @ \<Phi>\<^sub>2) \<hookrightarrow> \<Gamma>', n' \<turnstile> [] \<triangleright> (\<Phi>\<^sub>1' @ \<Phi>\<^sub>2')"
-  shows "\<lbrakk>\<lbrakk> \<Phi>\<^sub>1 @ \<Phi>\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L \<supseteq> \<lbrakk>\<lbrakk> \<Phi>\<^sub>1' @ \<Phi>\<^sub>2' \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
-by (insert assms, erule operational_semantics_step.cases, auto)
-
-
 
 end
