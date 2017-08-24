@@ -1,4 +1,4 @@
-theory Reiher
+theory Hygge
 imports
   "Operational"
   "$ISABELLE_HOME/src/HOL/Eisbach/Eisbach_Tools" 
@@ -134,7 +134,7 @@ fun print_run_from_goal (isar_goal: thm) = let
 end
 
 val _ =
-  Outer_Syntax.command @{command_keyword print_run} "print Reiher run in the current Isar goal"
+  Outer_Syntax.command @{command_keyword print_run} "print Hygge run in the current Isar goal"
       let val printer : (Toplevel.state -> unit) =
         fn tl_state => let val {context = ctxt, goal = thm} = Proof.simple_goal (Toplevel.proof_of tl_state)
                        in print_run_from_goal thm end

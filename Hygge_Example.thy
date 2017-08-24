@@ -1,6 +1,6 @@
-theory Reiher_Example
+theory Hygge_Example
 imports
-  "Reiher"
+  "Hygge"
 
 begin
 (* Running on a small example:
