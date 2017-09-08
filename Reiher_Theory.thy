@@ -111,38 +111,41 @@ lemma composition:
 oops
 
 lemma run_preservation:
-  assumes "\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> [] \<triangleright> \<Phi>\<^sub>1  \<hookrightarrow>  \<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> [] \<triangleright> \<Phi>\<^sub>2"
+  assumes "\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1  \<hookrightarrow>  \<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2"
   shows "\<lbrakk>\<lbrakk> \<Phi>\<^sub>1 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L \<inter> \<lbrakk>\<lbrakk> \<Gamma>\<^sub>1 \<rbrakk>\<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n = \<lbrakk>\<lbrakk> \<Phi>\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L \<inter> \<lbrakk>\<lbrakk> \<Gamma>\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n"
-by (insert assms, erule operational_semantics_step.cases, auto)
+apply (insert assms, erule operational_semantics_step.cases, auto)
+sorry
 
 lemma run_composition:
-  assumes "\<Gamma>, n \<turnstile> [] \<triangleright> (\<Phi>\<^sub>1 @ \<Phi>\<^sub>2)  \<hookrightarrow>  \<Gamma>', n' \<turnstile> [] \<triangleright> (\<Phi>\<^sub>1' @ \<Phi>\<^sub>2')"
+  assumes "\<Gamma>, n \<turnstile> \<Psi> \<triangleright> (\<Phi>\<^sub>1 @ \<Phi>\<^sub>2)  \<hookrightarrow>  \<Gamma>', n' \<turnstile> \<Psi>' \<triangleright> (\<Phi>\<^sub>1' @ \<Phi>\<^sub>2')"
   shows "\<lbrakk>\<lbrakk> \<Phi>\<^sub>1 @ \<Phi>\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<lbrakk>\<lbrakk> \<Phi>\<^sub>1' @ \<Phi>\<^sub>2' \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
-by (insert assms, erule operational_semantics_step.cases, auto)
+apply (insert assms, erule operational_semantics_step.cases, auto)
+sorry
 
 lemma run_progress:
-  assumes "\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> [] \<triangleright> \<Phi>\<^sub>1  \<hookrightarrow>  \<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> [] \<triangleright> \<Phi>\<^sub>2"
+  assumes "(\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> [] \<triangleright> \<Phi>\<^sub>1, \<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> [] \<triangleright> \<Phi>\<^sub>2) \<in> \<hookrightarrow>\<^sub>\<nabla>"
   shows "n\<^sub>2 = Suc n\<^sub>1"
-by (insert assms, erule operational_semantics_step.cases, auto)
+sorry
+
 
 (* OPERATIONAL \<longrightarrow> DENOTATIONAL *)
-(* A chaque pas de simulation, les runs dérivés préfixent les runs dénotationels *)
+(* A chaque pas de simulation, les runs dérivés préfixent des runs dénotationels *)
 lemma soundness:
-  assumes "\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> [] \<triangleright> \<Phi>\<^sub>1  \<hookrightarrow>  \<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> [] \<triangleright> \<Phi>\<^sub>2"
+  assumes "(\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> [] \<triangleright> \<Phi>\<^sub>1, \<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> [] \<triangleright> \<Phi>\<^sub>2) \<in> \<hookrightarrow>\<^sub>\<nabla>"
   shows "\<forall>\<rho>\<^sub>o\<^sub>p \<in> \<lbrakk>\<lbrakk> \<Gamma>\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n.
           \<exists>\<rho>\<^sub>d\<^sub>e\<^sub>n \<in> \<lbrakk>\<lbrakk> \<Phi>\<^sub>1 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L.
           \<forall>n > 0. n \<le> n\<^sub>2
             \<longrightarrow> (Rep_run \<rho>\<^sub>o\<^sub>p) n = (Rep_run \<rho>\<^sub>d\<^sub>e\<^sub>n) n"
-by (insert assms, erule operational_semantics_step.cases, auto)
+sorry
 
 (* DENOTATIONAL \<longrightarrow> OPERATIONAL *)
 (* A chaque pas de simulation, un run dénoté préfixe un run dérivé opérationallement *)
 lemma completeness:
-  assumes "\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> [] \<triangleright> \<Phi>\<^sub>1 \<hookrightarrow> \<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> [] \<triangleright> \<Phi>\<^sub>2"
+  assumes "(\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> [] \<triangleright> \<Phi>\<^sub>1, \<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> [] \<triangleright> \<Phi>\<^sub>2) \<in> \<hookrightarrow>\<^sub>\<nabla>"
   shows "\<forall>\<rho>\<^sub>d\<^sub>e\<^sub>n \<in> \<lbrakk>\<lbrakk> \<Phi>\<^sub>1 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L \<inter> \<lbrakk>\<lbrakk> \<Gamma>\<^sub>1 \<rbrakk>\<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n.
           \<exists>\<rho>\<^sub>o\<^sub>p \<in> \<lbrakk>\<lbrakk> \<Gamma>\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n.
           \<forall>n > 0. n \<le> n\<^sub>2
             \<longrightarrow> (Rep_run \<rho>\<^sub>o\<^sub>p) n = (Rep_run \<rho>\<^sub>d\<^sub>e\<^sub>n) n"
-by (insert assms, erule operational_semantics_step.cases, auto)
+sorry
 
 end

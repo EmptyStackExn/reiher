@@ -39,9 +39,9 @@ inductive operational_semantics_step
    \<hookrightarrow> \<Gamma>, n \<turnstile> \<psi> \<triangleright> (K\<^sub>1 sporadic \<tau> on K\<^sub>2) # \<phi>"
 | sporadic_on_e2:
   "consistent_run \<Gamma>' \<Longrightarrow>
-   \<Gamma>' = (K\<^sub>2 \<Up> n) # (K\<^sub>1 \<Down> n @ \<tau>) # \<Gamma> \<Longrightarrow>
+   \<Gamma>' = (K\<^sub>1 \<Up> n) # (K\<^sub>2 \<Down> n @ \<tau>) # \<Gamma> \<Longrightarrow>
    \<Gamma>, n \<turnstile> (K\<^sub>1 sporadic \<tau> on K\<^sub>2) # \<psi> \<triangleright> \<phi>
-   \<hookrightarrow> \<Gamma>, n \<turnstile> \<psi> \<triangleright> \<phi>"
+   \<hookrightarrow> \<Gamma>', n \<turnstile> \<psi> \<triangleright> \<phi>"
 | tagrel_e:
   "consistent_run \<Gamma>' \<Longrightarrow>
    \<Gamma>' = (\<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>1, n) \<doteq> \<alpha> * \<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>2, n) + \<beta>) # \<Gamma> \<Longrightarrow>
