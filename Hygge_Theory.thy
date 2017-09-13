@@ -167,7 +167,7 @@ abbreviation inclusion_prefix :: "run set \<Rightarrow> nat \<Rightarrow> run se
 lemma
   assumes "R\<^sub>1 \<subseteq>\<^sup>p\<^sup>r\<^sup>e\<^sup>f\<^sup>i\<^sup>x\<^bsub>k\<^esub> R\<^sub>2"
   shows "R\<^sub>1 \<inter> R \<subseteq>\<^sup>p\<^sup>r\<^sup>e\<^sup>f\<^sup>i\<^sup>x\<^bsub>k\<^esub> R\<^sub>2 \<inter> R"
-nitpick
+sorry
 
 lemma run_progress:
   assumes "\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1  \<hookrightarrow>  \<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2"
@@ -244,17 +244,13 @@ proof (insert assms, erule operational_semantics_step.cases)
         assume R: "\<rho> \<in> \<lbrakk>\<lbrakk> [K\<^sub>1 \<Up> n, K\<^sub>2 \<Down> n @ \<tau>] \<rbrakk>\<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n"
         have "hamlet ((Rep_run \<rho>) n K\<^sub>1) = True" using R by auto
         moreover have "\<tau> = \<lfloor>\<tau>'\<rfloor> \<Longrightarrow> time ((Rep_run \<rho>) n K\<^sub>2) = \<tau>'" using R by auto
-        moreover have "\<exists>n::nat. hamlet ((Rep_run \<rho>) n K\<^sub>1) = True \<and> time ((Rep_run \<rho>) n K\<^sub>2) = \<tau>'" try
-        ultimately show "\<rho> \<in> \<lbrakk> K\<^sub>1 sporadic \<tau> on K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L" sledgehammer sorry
+        moreover have "\<exists>n::nat. hamlet ((Rep_run \<rho>) n K\<^sub>1) = True \<and> time ((Rep_run \<rho>) n K\<^sub>2) = \<tau>'" sorry
+        ultimately show "\<rho> \<in> \<lbrakk> K\<^sub>1 sporadic \<tau> on K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"  sorry
       qed
     show "\<forall>\<rho>\<^sub>1\<in>\<lbrakk>\<lbrakk> \<Gamma>\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n \<inter> \<lbrakk>\<lbrakk> \<Psi>\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L \<inter> \<lbrakk>\<lbrakk> \<Phi>\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L.
           \<exists>\<rho>\<^sub>2\<in>\<lbrakk>\<lbrakk> \<Gamma>\<^sub>1 \<rbrakk>\<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n \<inter> \<lbrakk>\<lbrakk> \<Psi>\<^sub>1 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L \<inter> \<lbrakk>\<lbrakk> \<Phi>\<^sub>1 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L.
              \<forall>n>0. n \<le> n\<^sub>2 \<longrightarrow> Rep_run \<rho>\<^sub>1 n\<^sub>2 = Rep_run \<rho>\<^sub>2 n\<^sub>2" sorry
 qed
-
-apply (insert assms, erule operational_semantics_step.cases, auto)
-oops
-
 
 lemma run_composition:
   assumes "\<Gamma>, n \<turnstile> \<Psi>\<^sub>1 \<triangleright> (\<Phi>\<^sub>1 @ \<Phi>\<^sub>2)  \<hookrightarrow>  \<Gamma>', n' \<turnstile> \<Psi>\<^sub>2 \<triangleright> (\<Phi>\<^sub>1' @ \<Phi>\<^sub>2')"
