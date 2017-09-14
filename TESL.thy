@@ -43,6 +43,12 @@ datatype TESL_atomic =
 
 type_synonym TESL_formula = "TESL_atomic list"
 
+abbreviation NoSporadic :: "TESL_formula \<Rightarrow> TESL_formula" where 
+  "NoSporadic f \<equiv> (List.filter (\<lambda>f\<^sub>a\<^sub>t\<^sub>o\<^sub>m. case f\<^sub>a\<^sub>t\<^sub>o\<^sub>m of
+      _ sporadic _  \<Rightarrow> False
+    | _ sporadic _ on _ \<Rightarrow> False
+    | _ \<Rightarrow> True) f)"
+
 (* The abstract machine
    Follows the intuition: past [\<Gamma>], current index [n], present [\<psi>], future [\<phi>]
    Beware: This type is slightly different from which originally implemented in Heron

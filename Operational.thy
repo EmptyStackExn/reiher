@@ -6,12 +6,6 @@ imports
 begin
 text{* Operational steps *}
 
-abbreviation NoSporadic :: "TESL_formula \<Rightarrow> TESL_formula" where 
-  "NoSporadic f \<equiv> (List.filter (\<lambda>f\<^sub>a\<^sub>t\<^sub>o\<^sub>m. case f\<^sub>a\<^sub>t\<^sub>o\<^sub>m of
-      _ sporadic _  \<Rightarrow> False
-    | _ sporadic _ on _ \<Rightarrow> False
-    | _ \<Rightarrow> True) f)"
-
 abbreviation uncurry_conf
   :: "system \<Rightarrow> instant_index \<Rightarrow> TESL_formula \<Rightarrow> TESL_formula
    \<Rightarrow> (system \<times> instant_index \<times> TESL_formula \<times> TESL_formula)" ("_, _ \<turnstile> _ \<triangleright> _" 50) where
@@ -74,8 +68,8 @@ abbreviation operational_semantics_step'
               \<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> \<psi>\<^sub>1 \<triangleright> \<phi>\<^sub>1 \<hookrightarrow> \<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> \<psi>\<^sub>2 \<triangleright> \<phi>\<^sub>2 }"
 
 abbreviation operational_semantics_simulation_step
-  :: "(system \<times> instant_index \<times> TESL_formula \<times> TESL_formula) rel" ("\<hookrightarrow>\<^sub>\<nabla>") where
-  "\<hookrightarrow>\<^sub>\<nabla> \<equiv> { ((\<Gamma>\<^sub>1, n\<^sub>1, \<psi>, \<phi>\<^sub>1), (\<Gamma>\<^sub>2, n\<^sub>2, \<psi>, \<phi>\<^sub>2)).
+  :: "(system \<times> instant_index \<times> TESL_formula \<times> TESL_formula) rel" ("\<hookrightarrow>\<^sup>\<nabla>") where
+  "\<hookrightarrow>\<^sup>\<nabla> \<equiv> { ((\<Gamma>\<^sub>1, n\<^sub>1, \<psi>, \<phi>\<^sub>1), (\<Gamma>\<^sub>2, n\<^sub>2, \<psi>, \<phi>\<^sub>2)).
                 \<psi> = []
               \<and> (\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> \<psi> \<triangleright> \<phi>\<^sub>1, \<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> \<psi> \<triangleright> \<phi>\<^sub>2) \<in> \<hookrightarrow>\<^sup>\<up>\<^sup>+
               \<and> consistent_run \<Gamma>\<^sub>1
@@ -85,7 +79,7 @@ abbreviation operational_semantics_simulation_step
 (* Note that \<hookrightarrow>\<^sub>\<nabla> is unfolded as necessary as it is to eliminate \<psi>-formulae *)
 lemma "([], 0        \<turnstile> [] \<triangleright> [H\<^sub>1 sporadic \<tau>\<^sub>i\<^sub>n\<^sub>t 0, H\<^sub>1 implies H\<^sub>2],
          \<Gamma>, 1 \<turnstile> [] \<triangleright> \<Phi>)
-         \<in> \<hookrightarrow>\<^sub>\<nabla>"
+         \<in> \<hookrightarrow>\<^sup>\<nabla>"
 apply auto
 apply (rule trancl_into_trancl)
 apply (rule trancl_into_trancl)

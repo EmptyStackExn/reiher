@@ -5,47 +5,6 @@ imports
 
 begin
 
-lemma context_consistency_preservationI:
-  "consistent_run (\<gamma> # \<Gamma>) \<Longrightarrow> consistent_run \<Gamma>"
-using consistent_run_def by auto
-
-(* Very restrictive *)
-inductive context_independency :: "constr \<Rightarrow> constr list \<Rightarrow> bool" ("_ \<bowtie> _") where
-  NotTicks_independency:
-  "K \<Up> n \<notin> set \<Gamma> \<Longrightarrow> K \<not>\<Up> n \<bowtie> \<Gamma>"
-| Ticks_independency:
-  "K \<not>\<Up> n \<notin> set \<Gamma> \<Longrightarrow> K \<Up> n \<bowtie> \<Gamma>"
-| Timestamp_independency:
-  "(\<nexists>\<tau>'. \<tau>' = \<tau> \<and> K \<Down> n @ \<tau> \<in> set \<Gamma>) \<Longrightarrow> K \<Down> n @ \<tau> \<bowtie> \<Gamma>"
-
-thm context_independency.induct
-
-(* by (insert assms, erule operational_semantics_step.cases, auto)
-*)
-
-lemma context_consistency_preservationE:
-  assumes consist: "consistent_run \<Gamma>"
-  and     indepen: "\<gamma> \<bowtie> \<Gamma>"
-  shows "consistent_run (\<gamma> # \<Gamma>)"
-apply (insert consist indepen)
-apply (erule context_independency.cases)
-apply auto
-proof -
-  show "\<And>K n. consistent_run \<Gamma> \<Longrightarrow>
-           \<gamma> = K \<not>\<Up> n \<Longrightarrow> K \<Up> n \<notin> set \<Gamma> \<Longrightarrow>
-           consistent_run (K \<not>\<Up> n # \<Gamma>)"
-    sorry
-  show "\<And>K n. consistent_run \<Gamma> \<Longrightarrow>
-           \<gamma> = K \<Up> n \<Longrightarrow> K \<not>\<Up> n \<notin> set \<Gamma> \<Longrightarrow>
-           consistent_run (K \<Up> n # \<Gamma>)"
-    sorry
-  show "\<And>\<tau> K n.
-       consistent_run \<Gamma> \<Longrightarrow>
-       \<gamma> = K \<Down> n @ \<tau> \<Longrightarrow>
-       K \<Down> n @ \<tau> \<notin> set \<Gamma> \<Longrightarrow> consistent_run (K \<Down> n @ \<tau> # \<Gamma>)"
-    sorry
-qed
-
 lemma simple_derv_implies:
   assumes clk_d: "K\<^sub>1 \<noteq> K\<^sub>2"
   and     consist: "consistent_run \<Gamma>"
@@ -97,6 +56,7 @@ term "({}::(nat rel)) ^^ (n::nat)"
 
 (* sledgehammer[provers="remote_e spass remote_vampire cvc4 z3"] *)
 
+text \<open>Each reduction step produces a more refined run\<close>
 lemma refinement_at_each_step:
   assumes "\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1 \<hookrightarrow> \<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2"
   shows "\<lbrakk>\<lbrakk> \<Gamma>\<^sub>1 \<rbrakk>\<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n \<supseteq> \<lbrakk>\<lbrakk> \<Gamma>\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n"
@@ -109,49 +69,6 @@ lemma composition:
   assumes "consistency_run (\<Gamma>\<^sub>1 @ \<Gamma>\<^sub>2)"
   shows   "\<TTurnstile> \<Gamma>\<^sub>1 @ \<Gamma>\<^sub>2, n \<turnstile> [] \<triangleright> \<Phi>\<^sub>1 @ \<Phi>\<^sub>2"
 oops
-
-lemma "set (NoSporadic \<Phi>) \<subseteq> set \<Phi>"
-by auto
-
-lemma mono_TESL_interpr:
-  assumes "set \<Phi>\<^sub>1 \<subseteq> set \<Phi>\<^sub>2"
-  shows "\<lbrakk>\<lbrakk> \<Phi>\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L \<subseteq> \<lbrakk>\<lbrakk> \<Phi>\<^sub>1 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
-proof (induction \<Phi>\<^sub>1)
-  case Nil
-  then show ?case by simp
-next
-  case (Cons a \<Phi>\<^sub>1)
-  then show ?case sorry
-qed
-
-lemma idempot_TESL_interpr:
-  shows "\<lbrakk>\<lbrakk> \<Phi> @ \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
-proof (induction \<Phi>)
-  case Nil
-  then show ?case by simp
-next
-  case (Cons \<phi> \<Phi>')
-  then show ?case sorry
-qed
-
-(*
-fun symbolic_run_interpretation :: "constr list \<Rightarrow> run set" ("\<lbrakk>\<lbrakk> _ \<rbrakk>\<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n") where
-    "\<lbrakk>\<lbrakk> [] \<rbrakk>\<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n = { _. True }"
-  | "\<lbrakk>\<lbrakk> \<gamma> # \<Gamma> \<rbrakk>\<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n = \<lbrakk> \<gamma> \<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n \<inter> \<lbrakk>\<lbrakk> \<Gamma> \<rbrakk>\<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n"
-*)
-lemma mono_symrun_interpr:
-  assumes "set \<Gamma>\<^sub>1 \<subseteq> set \<Gamma>\<^sub>2"
-  shows "\<lbrakk>\<lbrakk> \<Gamma>\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n \<subseteq> \<lbrakk>\<lbrakk> \<Gamma>\<^sub>1 \<rbrakk>\<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n"
-sorry
-
-lemma minus_sporadic_stable [simp]: "\<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L \<subseteq> \<lbrakk>\<lbrakk> NoSporadic \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
-by (meson filter_is_subset mono_TESL_interpr)
-
-lemma minus_sporadic_idempt [simp]: "\<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L \<inter> \<lbrakk>\<lbrakk> NoSporadic \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
-by (meson Int_absorb2 filter_is_subset mono_TESL_interpr)
-
-lemma tesl_intersect_id [simp]: "\<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L \<inter> \<lbrakk>\<lbrakk> [] \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
-by simp
 
 (* Prefix notation with fixed prefix length *)
 abbreviation run_prefix :: "run \<Rightarrow> nat \<Rightarrow> run \<Rightarrow> bool" ("_ \<sqsubseteq>\<^sup>p\<^sup>r\<^sup>e\<^sup>f\<^sup>i\<^sup>x\<^bsub>_\<^esub> _") where
@@ -169,12 +86,17 @@ lemma
   shows "R\<^sub>1 \<inter> R \<subseteq>\<^sup>p\<^sup>r\<^sup>e\<^sup>f\<^sup>i\<^sup>x\<^bsub>k\<^esub> R\<^sub>2 \<inter> R"
 sorry
 
-lemma run_progress:
+lemma run_index_progress:
   assumes "\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1  \<hookrightarrow>  \<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2"
   shows "n\<^sub>2 = Suc n\<^sub>1 \<or> n\<^sub>2 = n\<^sub>1"
 by (insert assms, erule operational_semantics_step.cases, auto)
 
-lemma run_preservation:
+lemma run_index_progress_simlstep:
+  assumes siml_step: "(\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1, \<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2) \<in> \<hookrightarrow>\<^sup>\<nabla>"
+  shows "n\<^sub>2 = Suc n\<^sub>1"
+sorry
+
+lemma run_preservation_bounded:
   assumes "\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1  \<hookrightarrow>  \<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2"
   and "\<lbrakk>\<lbrakk> \<Gamma>\<^sub>1 \<rbrakk>\<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n \<subseteq>\<^sup>p\<^sup>r\<^sup>e\<^sup>f\<^sup>i\<^sup>x\<^bsub>k-1\<^esub> \<lbrakk>\<lbrakk> \<Psi>\<^sub>1 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L \<inter> \<lbrakk>\<lbrakk> \<Phi>\<^sub>1 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
   shows "\<lbrakk>\<lbrakk> \<Gamma>\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n \<inter> \<lbrakk>\<lbrakk> \<Psi>\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L \<inter> \<lbrakk>\<lbrakk> \<Phi>\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L \<subseteq>\<^sup>p\<^sup>r\<^sup>e\<^sup>f\<^sup>i\<^sup>x\<^bsub>n\<^sub>2\<^esub> \<lbrakk>\<lbrakk> \<Gamma>\<^sub>1 \<rbrakk>\<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n \<inter> \<lbrakk>\<lbrakk> \<Psi>\<^sub>1 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L \<inter> \<lbrakk>\<lbrakk> \<Phi>\<^sub>1 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
@@ -255,22 +177,27 @@ qed
 lemma run_composition:
   assumes "\<Gamma>, n \<turnstile> \<Psi>\<^sub>1 \<triangleright> (\<Phi>\<^sub>1 @ \<Phi>\<^sub>2)  \<hookrightarrow>  \<Gamma>', n' \<turnstile> \<Psi>\<^sub>2 \<triangleright> (\<Phi>\<^sub>1' @ \<Phi>\<^sub>2')"
   shows "\<lbrakk>\<lbrakk> \<Phi>\<^sub>1 @ \<Phi>\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<lbrakk>\<lbrakk> \<Phi>\<^sub>1' @ \<Phi>\<^sub>2' \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
-by (insert assms, erule operational_semantics_step.cases, auto)
+apply (insert assms, erule operational_semantics_step.cases, auto)
+apply (metis (no_types, lifting) NoSporadic_stable filter_append set_mp)
+(* nitpick *)
+sorry
 
 (* OPERATIONAL \<longrightarrow> DENOTATIONAL *)
 (* A chaque pas de simulation, les runs dérivés préfixent les runs dénotationels *)
-lemma soundness:
-  assumes "\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> [] \<triangleright> \<Phi>\<^sub>1  \<hookrightarrow>  \<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> [] \<triangleright> \<Phi>\<^sub>2"
+theorem soundness:
+  assumes "\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1  \<hookrightarrow>  \<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2"
   shows "\<forall>\<rho>\<^sub>o\<^sub>p \<in> \<lbrakk>\<lbrakk> \<Gamma>\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n. \<exists>\<rho>\<^sub>d\<^sub>e\<^sub>n \<in> \<lbrakk>\<lbrakk> \<Phi>\<^sub>1 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L.
           \<rho>\<^sub>o\<^sub>p \<sqsubseteq>\<^sup>p\<^sup>r\<^sup>e\<^sup>f\<^sup>i\<^sup>x\<^bsub>n\<^sub>2\<^esub> \<rho>\<^sub>d\<^sub>e\<^sub>n"
-by (insert assms, erule operational_semantics_step.cases, auto)
+oops
+(* by (insert assms, erule operational_semantics_step.cases, auto) *)
 
 (* DENOTATIONAL \<longrightarrow> OPERATIONAL *)
 (* A chaque pas de simulation, un run dénoté préfixe un run dérivé opérationallement *)
-lemma completeness:
-  assumes "\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> [] \<triangleright> \<Phi>\<^sub>1 \<hookrightarrow> \<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> [] \<triangleright> \<Phi>\<^sub>2"
+theorem completeness:
+  assumes "\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1 \<hookrightarrow> \<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2"
   shows "\<forall>\<rho>\<^sub>d\<^sub>e\<^sub>n \<in> \<lbrakk>\<lbrakk> \<Phi>\<^sub>1 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L \<inter> \<lbrakk>\<lbrakk> \<Gamma>\<^sub>1 \<rbrakk>\<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n. \<exists>\<rho>\<^sub>o\<^sub>p \<in> \<lbrakk>\<lbrakk> \<Gamma>\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n.
           \<rho>\<^sub>d\<^sub>e\<^sub>n \<sqsubseteq>\<^sup>p\<^sup>r\<^sup>e\<^sup>f\<^sup>i\<^sup>x\<^bsub>n\<^sub>2\<^esub> \<rho>\<^sub>o\<^sub>p"
-by (insert assms, erule operational_semantics_step.cases, auto)
+oops
+(* by (insert assms, erule operational_semantics_step.cases, auto) *)
 
 end
