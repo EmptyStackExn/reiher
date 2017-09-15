@@ -62,9 +62,10 @@ begin
 instance sorry
 end
 
+(* CONJECTURE: Not sure it is true *)
 theorem TESL_interp_bnd_fixpoint:
   shows "\<lbrakk> \<phi> \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = fst (gfp (\<lambda>(R, n). (R \<inter> \<lbrakk> \<phi> @\<le> n \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L, n + 1)))"
-sorry
+  oops
 
 (*
 fun TESL_interpretation_primitive_bounded_rec
@@ -75,17 +76,34 @@ fun TESL_interpretation_primitive_bounded_rec
         { \<rho> \<in> \<lbrakk> master implies slave @\<le> n \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L.(hamlet ((Rep_run \<rho>) n master) \<longrightarrow> hamlet ((Rep_run \<rho>) n slave)) }"
 *)
 
-
 fun TESL_interpretation :: "TESL_formula \<Rightarrow> run set" ("\<lbrakk>\<lbrakk> _ \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L") where
     "\<lbrakk>\<lbrakk> [] \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = { _. True }"
   | "\<lbrakk>\<lbrakk> \<phi> # \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<lbrakk> \<phi> \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L \<inter> \<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
+
+(**) section \<open>Fixpoint lemma\<close> (**)
+
+theorem TESL_interp_fixpoint:
+  "\<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<Inter> ((\<lambda>\<phi>. \<lbrakk> \<phi> \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L) ` set \<Phi>)"
+  proof (induct \<Phi>)
+    case Nil
+    then show ?case by simp
+  next
+    case (Cons a \<Phi>)
+    then show ?case by auto
+  qed
 
 (**) section \<open>Expansion law\<close> (**)
 text \<open>Similar to the expansion laws of lattices\<close>
 
 theorem TESL_interp_expansion:
   shows "\<lbrakk>\<lbrakk> \<Phi>\<^sub>1 @ \<Phi>\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<lbrakk>\<lbrakk> \<Phi>\<^sub>1 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L \<inter> \<lbrakk>\<lbrakk> \<Phi>\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
-sorry
+  proof (induct \<Phi>\<^sub>1)
+    case Nil
+    then show ?case by simp
+  next
+    case (Cons a \<Phi>\<^sub>1)
+    then show ?case by auto
+  qed
 
 (**) section \<open>Equational laws for TESL formulae denotationally interpreted\<close> (**)
 (***) subsection \<open>General laws\<close> (***)
@@ -117,130 +135,71 @@ lemma TESL_interp_right_idem:
 lemmas TESL_interp_aci = TESL_interp_commute TESL_interp_assoc TESL_interp_left_commute TESL_interp_left_idem
 
 (* Identity element *)
-lemma tesl_intersect_id_left [simp]: "\<lbrakk>\<lbrakk> [] @ \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
-by simp
+lemma TESL_interp_neutral1:
+  shows "\<lbrakk>\<lbrakk> [] @ \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
+  by simp
 
-lemma tesl_intersect_id_right [simp]: "\<lbrakk>\<lbrakk> \<Phi> @ [] \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
-by simp
+lemma TESL_interp_neutral2:
+  shows "\<lbrakk>\<lbrakk> \<Phi> @ [] \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
+  by simp
 
-find_theorems "_ \<inter> _ = _"
 section \<open>Decreasing interpretation of TESL formulae\<close>
 
 lemma TESL_sem_decreases_head:
   "\<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L \<supseteq> \<lbrakk>\<lbrakk> \<phi> # \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
-by simp
+  by simp
 
 lemma TESL_sem_decreases_tail:
   "\<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L \<supseteq> \<lbrakk>\<lbrakk> \<Phi> @ [\<phi>] \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
   by (simp add: TESL_interp_expansion)
 
+lemma TESL_interp_formula_stuttering:
+  assumes bel: "\<phi> \<in> set \<Phi>"
+  shows "\<lbrakk>\<lbrakk> \<phi> # \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
+  by (metis Int_subset_iff TESL_interp_expansion TESL_interpretation.simps(2) bel in_set_conv_decomp_first subset_antisym subset_refl)
 
-(** Draft attempts of Burkhart *)
-(*
-lemma extension_monotone_generqalized1:
-  shows "\<lbrakk>\<lbrakk> \<Phi>' @ \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L \<subseteq> \<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
-proof(induct "\<Phi>'")
+lemma TESL_interp_decreases:
+  shows "\<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L \<supseteq> \<lbrakk>\<lbrakk> \<phi> # \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
+  by (rule TESL_sem_decreases_head)
+
+lemma TESL_interp_remdups_absorb:
+  shows "\<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<lbrakk>\<lbrakk> remdups \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
+  proof (induct \<Phi>)
     case Nil
     then show ?case by simp
-next
-    case (Cons a \<Phi>')
-    then show ?case by auto
-qed
+  next
+    case (Cons a \<Phi>)
+    then show ?case
+      using TESL_interp_formula_stuttering by auto
+  qed
 
-lemma extension_distr:
-  shows "\<lbrakk>\<lbrakk> \<Phi> @ \<Phi>' \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =  \<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L \<inter> \<lbrakk>\<lbrakk> \<Phi>' \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
-proof(induct "\<Phi>")
-  case Nil
-  then show ?case by simp
-next
-  case (Cons a \<Phi>)
-  then show ?case by auto
-qed
-
-lemma set_append_mono: "set \<Phi> \<subseteq> set \<Phi>' \<Longrightarrow> \<exists> \<Phi>'' . set \<Phi>' =  set(\<Phi>'' @ \<Phi>)" 
-sorry
-
-lemma elim_remove1 : "x \<in> set S \<Longrightarrow> \<exists> T T'. remove1 x S = T @ T' \<and> S = T @ [x] @ T' "
-sorry
-
-
-find_theorems "_ \<in> _" "remove1"
-lemma "set \<Phi> =  set \<Phi>' \<Longrightarrow> set (remove1 n \<Phi>) =  set (remove1 n \<Phi>')"
-sorry
-
-lemma XXX: "\<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<lbrakk>\<lbrakk> remdups \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
-sorry
-
-lemma  "length \<Phi> \<le> n \<Longrightarrow> length \<Phi>' \<le> n \<Longrightarrow> set \<Phi> =  set \<Phi>'\<Longrightarrow> \<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =  \<lbrakk>\<lbrakk> \<Phi>' \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L" 
-proof(induct n arbitrary: \<Phi> \<Phi>') print_cases
-  case 0
-  then show ?case by simp
-next
-  case (Suc n)
-     have * : "\<And>n \<Phi> . length \<Phi> = Suc n \<Longrightarrow> \<exists> n. n \<in> set \<Phi>"
-              using length_Suc_conv by fastforce
-     have **: "length \<Phi> = 0 \<Longrightarrow> \<Phi> = []"
-              by simp
-  show ?case 
-     apply(insert Suc.hyps Suc.prems)
-     proof(cases "length \<Phi> \<le> length \<Phi>'")
-       case True
-       then show ?thesis
-            proof(cases "length \<Phi>' = Suc n")
-              case True
-              then show ?thesis
-                 apply(insert *[OF `length \<Phi>' = Suc n`], elim exE, simp)
-                 proof - 
-                    fix m
-                    assume 1: "m \<in> set \<Phi>'" and 2: " length \<Phi>' = Suc n"
-                    have *** : "m \<in> set \<Phi>"  by (simp add: Suc.prems(3) \<open>m \<in> set \<Phi>'\<close>)
-                    show "\<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<lbrakk>\<lbrakk> \<Phi>' \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"                       
-                      apply(insert 1, drule elim_remove1, insert ***, drule elim_remove1, clarsimp)
-                      apply(simp add: extension_distr)
-find_theorems (140)"_ \<inter> _ = _ " name:"Set"
-                      apply(subst Set.Int_assoc[symmetric])
-                      apply(subst Set.Int_commute)
-                      apply(subst Set.Int_assoc[symmetric])
-                      apply(subst (3) Set.Int_commute)
-                      apply(subst Set.Int_assoc)
-                      apply(subst Set.Int_assoc)
-                      apply(subst extension_distr[symmetric])
-                      apply(subst extension_distr[symmetric])
-                      apply(subst Suc.hyps)
-                      prefer 4 apply(rule refl)
-                      using Suc.prems(1) apply auto[1]
-                      using True apply auto[1]
-                      apply(insert Suc.prems)
-(* sledgehammer *)
- sorry
-            next
-              case False
-              then show ?thesis sorry
-            qed
- sorry
-     next
-       case False
-       then show ?thesis sorry
-     qed 
-sledgehammer
- sorry
-qed
-
-lemma  "set \<Phi> =  set \<Phi>' \<Longrightarrow> \<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =  \<lbrakk>\<lbrakk> \<Phi>' \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L" 
-find_theorems (450) "set _ = set _"
-sorry
-
-lemma **:
-  assumes "set \<Phi> \<subseteq> set \<Phi>'"
-  shows "\<lbrakk>\<lbrakk> \<Phi>' \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L \<subseteq> \<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
-apply(insert assms[THEN set_append_mono], clarsimp)
-sorry
-*)
+lemma TESL_interp_set_lifting:
+  assumes "set \<Phi> = set \<Phi>'"
+  shows "\<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<lbrakk>\<lbrakk> \<Phi>' \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
+  proof -     
+    have "set (remdups \<Phi>) = set (remdups \<Phi>')"
+      by (simp add: assms)
+    moreover have fxpnt\<Phi>: "\<Inter> ((\<lambda>\<phi>. \<lbrakk> \<phi> \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L) ` set \<Phi>) = \<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
+      by (simp add: TESL_interp_fixpoint)
+    moreover have fxpnt\<Phi>': "\<Inter> ((\<lambda>\<phi>. \<lbrakk> \<phi> \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L) ` set \<Phi>') = \<lbrakk>\<lbrakk> \<Phi>' \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
+      by (simp add: TESL_interp_fixpoint)
+    moreover have "\<Inter> ((\<lambda>\<phi>. \<lbrakk> \<phi> \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L) ` set \<Phi>) = \<Inter> ((\<lambda>\<phi>. \<lbrakk> \<phi> \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L) ` set \<Phi>')"
+      by (simp add: assms)
+    ultimately show ?thesis using TESL_interp_remdups_absorb by auto
+  qed
 
 theorem TESL_interp_decreases_setinc:
   assumes incl: "set \<Phi> \<subseteq> set \<Phi>'"
   shows "\<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L \<supseteq> \<lbrakk>\<lbrakk> \<Phi>' \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
-sorry
+  proof -
+    obtain \<Phi>\<^sub>r where decompose: "set (\<Phi> @ \<Phi>\<^sub>r) = set \<Phi>'" using incl by auto
+    have "set (\<Phi> @ \<Phi>\<^sub>r) = set \<Phi>'" using incl decompose by blast
+    moreover have "(set \<Phi>) \<union> (set \<Phi>\<^sub>r) = set \<Phi>'" using incl decompose by auto
+    moreover have "\<lbrakk>\<lbrakk> \<Phi>' \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<lbrakk>\<lbrakk> \<Phi> @ \<Phi>\<^sub>r \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L" using TESL_interp_set_lifting decompose by blast
+    moreover have "\<lbrakk>\<lbrakk> \<Phi> @ \<Phi>\<^sub>r \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L \<inter> \<lbrakk>\<lbrakk> \<Phi>\<^sub>r \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L" by (simp add: TESL_interp_expansion)
+    moreover have "\<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L \<supseteq> \<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L \<inter> \<lbrakk>\<lbrakk> \<Phi>\<^sub>r \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L" by simp
+    ultimately show ?thesis by simp
+  qed
 
 lemma TESL_interp_decreases_add_head:
   assumes incl: "set \<Phi> \<subseteq> set \<Phi>'"
@@ -274,7 +233,7 @@ lemma NoSporadic_idem [simp]:
 
 lemma NoSporadic_setinc:
   shows "set (NoSporadic \<Phi>) \<subseteq> set \<Phi>"
-by auto
+  by auto
 
 (**) section \<open>Run existence for TESL arithmetic-consistent formulae\<close> (**)
 fun tagrel_consistent :: "TESL_formula \<Rightarrow> bool" where
