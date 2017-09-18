@@ -10,8 +10,8 @@ begin
 abbreviation \<H>\<^sub>1 where "\<H>\<^sub>1 \<equiv> \<lceil>''H1''\<rceil>"
 abbreviation \<H>\<^sub>2 where "\<H>\<^sub>2 \<equiv> \<lceil>''H2''\<rceil>"
 abbreviation \<Phi>\<^sub>0 where "\<Phi>\<^sub>0 \<equiv> [
-    \<H>\<^sub>1 sporadic \<tau>\<^sub>i\<^sub>n\<^sub>t 1,
-    \<H>\<^sub>1 sporadic \<tau>\<^sub>i\<^sub>n\<^sub>t 2,
+    \<H>\<^sub>1 sporadic \<tau>\<^sub>r\<^sub>a\<^sub>t 1,
+    \<H>\<^sub>1 sporadic \<tau>\<^sub>r\<^sub>a\<^sub>t 2,
     \<H>\<^sub>1 implies \<H>\<^sub>2
 ]"
 

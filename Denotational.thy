@@ -28,6 +28,73 @@ fun TESL_interpretation_primitive
         }"
 
 (* Denotational interpretation of TESL bounded by index *)
+fun TESL_interpretation_primitive_at_index
+    :: "TESL_atomic \<Rightarrow> nat \<Rightarrow> run set" ("\<lbrakk> _ @ _ \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L") where
+    "\<lbrakk> K sporadic \<tau> @ n \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
+        { \<rho>. hamlet ((Rep_run \<rho>) n K) = True \<and> time ((Rep_run \<rho>) n K) = \<tau> }"
+  | "\<lbrakk> K\<^sub>1 sporadic \<lfloor>\<tau>\<rfloor> on K\<^sub>2 @ n \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
+        { \<rho>. hamlet ((Rep_run \<rho>) n K\<^sub>1) = True \<and> time ((Rep_run \<rho>) n K\<^sub>2) = \<tau> }"
+  | "\<lbrakk> K\<^sub>1 sporadic \<lfloor>\<tau>\<^sub>v\<^sub>a\<^sub>r(K, n') \<oplus> \<tau>\<rfloor> on K\<^sub>2 @ n \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
+        { \<rho>. hamlet ((Rep_run \<rho>) n K\<^sub>1) = True
+                         \<and> time ((Rep_run \<rho>) n K\<^sub>2) = time ((Rep_run \<rho>) n' K) + \<tau> }"
+  | "\<lbrakk> tag-relation K\<^sub>1 = \<alpha> * K\<^sub>2 + \<beta> @ n \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
+        { \<rho>. time ((Rep_run \<rho>) n K\<^sub>1) = \<alpha> * time ((Rep_run \<rho>) n K\<^sub>2) + \<beta> }"
+  | "\<lbrakk> master implies slave @ n \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
+        { \<rho>. hamlet ((Rep_run \<rho>) n master) \<longrightarrow> hamlet ((Rep_run \<rho>) n slave) }"
+  | "\<lbrakk> master time-delayed by \<delta>\<tau> on measuring implies slave @ n \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
+        { \<rho>. hamlet ((Rep_run \<rho>) n master) \<longrightarrow>
+                 (let measured_time = time ((Rep_run \<rho>) n measuring) in
+                  \<exists>m > n. hamlet ((Rep_run \<rho>) n master)
+                          \<and> time ((Rep_run \<rho>) m measuring) = measured_time + \<delta>\<tau>
+                 )
+        }"
+
+theorem predicate_Inter_unfold:
+  "{ \<rho>. \<forall>n. P \<rho> n} = \<Inter> {Y. \<exists>n. Y = { \<rho>. P \<rho> n }}"
+  by (simp add: Collect_all_eq full_SetCompr_eq)
+
+theorem predicate_Union_unfold:
+  "{ \<rho>. \<exists>n. P \<rho> n} = \<Union> {Y. \<exists>n. Y = { \<rho>. P \<rho> n }}"
+  by auto
+
+lemma TESL_interp_unfold_at_index_sporadic:
+  shows "\<lbrakk> K sporadic \<tau> \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<Union> {Y. \<exists>n::nat. Y = \<lbrakk> K sporadic \<tau> @ n \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L}"
+  by auto
+
+lemma TESL_interp_unfold_at_index_sporadicon:
+  shows "\<lbrakk> K\<^sub>1 sporadic \<lfloor>\<tau>\<rfloor> on K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<Union> {Y. \<exists>n::nat. Y = \<lbrakk> K\<^sub>1 sporadic \<lfloor>\<tau>\<rfloor> on K\<^sub>2 @ n \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L}"
+  by auto
+
+lemma TESL_interp_unfold_at_index_sporadicon_add:
+  shows "\<lbrakk> K\<^sub>1 sporadic \<lfloor>\<tau>\<^sub>v\<^sub>a\<^sub>r(K, n') \<oplus> \<tau>\<rfloor> on K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<Union> {Y. \<exists>n::nat. Y = \<lbrakk> K\<^sub>1 sporadic \<lfloor>\<tau>\<^sub>v\<^sub>a\<^sub>r(K, n') \<oplus> \<tau>\<rfloor> on K\<^sub>2 @ n \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L}"
+  by auto
+
+lemma TESL_interp_unfold_at_index_tagrel:
+  shows "\<lbrakk> tag-relation K\<^sub>1 = \<alpha> * K\<^sub>2 + \<beta> \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<Inter> {Y. \<exists>n::nat. Y = \<lbrakk> tag-relation K\<^sub>1 = \<alpha> * K\<^sub>2 + \<beta> @ n \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L}"
+  by auto
+
+lemma TESL_interp_unfold_at_index_implies:
+  shows "\<lbrakk> master implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<Inter> {Y. \<exists>n::nat. Y = \<lbrakk> master implies slave @ n \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L}"
+  by auto
+
+lemma TESL_interp_at_index_implies_cases:
+  shows "\<lbrakk> master implies slave @ n \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
+    \<lbrakk> master \<not>\<Up> n \<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n
+    \<union> \<lbrakk> master \<Up> n \<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n \<inter> \<lbrakk> slave \<Up> n \<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n"
+  by auto
+
+lemma TESL_interp_unfold_at_index_timedelayed:
+  shows "\<lbrakk> master time-delayed by \<delta>\<tau> on measuring implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L
+    = \<Inter> {Y. \<exists>n::nat. Y = \<lbrakk> master time-delayed by \<delta>\<tau> on measuring implies slave @ n \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L}"
+  by auto
+
+lemma TESL_interp_at_index_timedelayed_cases:
+  shows "\<lbrakk> master time-delayed by \<delta>\<tau> on measuring implies slave @ n \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
+    \<lbrakk> master \<not>\<Up> n \<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n
+    \<union> \<lbrakk> master \<Up> n \<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n \<inter> \<lbrakk> measuring sporadic \<lfloor>\<tau>\<^sub>v\<^sub>a\<^sub>r(master, n) \<oplus> \<delta>\<tau>\<rfloor> on slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L" nitpick
+sorry
+
+(* Denotational interpretation of TESL bounded by index *)
 fun TESL_interpretation_primitive_bounded
     :: "TESL_atomic \<Rightarrow> nat \<Rightarrow> run set" ("\<lbrakk> _ @\<le> _ \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L") where
     "\<lbrakk> K sporadic \<tau> @\<le> b \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
@@ -234,6 +301,17 @@ lemma NoSporadic_idem [simp]:
 lemma NoSporadic_setinc:
   shows "set (NoSporadic \<Phi>) \<subseteq> set \<Phi>"
   by auto
+
+(**) section \<open>Equivalence between sporadic variants\<close> (**)
+
+lemma SporadicOn_sugar:
+  shows "\<lbrakk> K\<^sub>1 sporadic \<lfloor>\<tau>\<rfloor> on K\<^sub>1 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<lbrakk> K\<^sub>1 sporadic \<tau> \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
+  by auto
+
+lemma SporadicOn_sugar':
+  shows "\<lbrakk>\<lbrakk> (K\<^sub>1 sporadic \<lfloor>\<tau>\<rfloor> on K\<^sub>1) # \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<lbrakk>\<lbrakk> (K\<^sub>1 sporadic \<tau>) # \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
+  by auto
+
 
 (**) section \<open>Run existence for TESL arithmetic-consistent formulae\<close> (**)
 fun tagrel_consistent :: "TESL_formula \<Rightarrow> bool" where
