@@ -22,7 +22,7 @@ fun TESL_interpretation_primitive
   | "\<lbrakk> master time-delayed by \<delta>\<tau> on measuring implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
         { \<rho>. \<forall>n. hamlet ((Rep_run \<rho>) n master) \<longrightarrow>
                  (let measured_time = time ((Rep_run \<rho>) n measuring) in
-                  \<exists>m \<ge> n. hamlet ((Rep_run \<rho>) n master)
+                  \<exists>m \<ge> n. hamlet ((Rep_run \<rho>) m slave)
                           \<and> time ((Rep_run \<rho>) m measuring) = measured_time + \<delta>\<tau>
                  )
         }"
@@ -31,12 +31,12 @@ fun TESL_interpretation_primitive
 fun TESL_interpretation_primitive_at_index
     :: "TESL_atomic \<Rightarrow> nat \<Rightarrow> run set" ("\<lbrakk> _ @ _ \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L") where
     "\<lbrakk> K sporadic \<tau> @ n \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
-        { \<rho>. hamlet ((Rep_run \<rho>) n K) = True \<and> time ((Rep_run \<rho>) n K) = \<tau> }"
+        { \<rho>. \<exists>m\<ge>n. hamlet ((Rep_run \<rho>) m K) = True \<and> time ((Rep_run \<rho>) m K) = \<tau> }"
   | "\<lbrakk> K\<^sub>1 sporadic \<lfloor>\<tau>\<rfloor> on K\<^sub>2 @ n \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
-        { \<rho>. hamlet ((Rep_run \<rho>) n K\<^sub>1) = True \<and> time ((Rep_run \<rho>) n K\<^sub>2) = \<tau> }"
+        { \<rho>. \<exists>m\<ge>n. hamlet ((Rep_run \<rho>) m K\<^sub>1) = True \<and> time ((Rep_run \<rho>) m K\<^sub>2) = \<tau> }"
   | "\<lbrakk> K\<^sub>1 sporadic \<lfloor>\<tau>\<^sub>v\<^sub>a\<^sub>r(K, n') \<oplus> \<tau>\<rfloor> on K\<^sub>2 @ n \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
-        { \<rho>. hamlet ((Rep_run \<rho>) n K\<^sub>1) = True
-                         \<and> time ((Rep_run \<rho>) n K\<^sub>2) = time ((Rep_run \<rho>) n' K) + \<tau> }"
+        { \<rho>. \<exists>m\<ge>n. hamlet ((Rep_run \<rho>) m K\<^sub>1) = True
+                         \<and> time ((Rep_run \<rho>) m K\<^sub>2) = time ((Rep_run \<rho>) n' K) + \<tau> }"
   | "\<lbrakk> tag-relation K\<^sub>1 = \<alpha> * K\<^sub>2 + \<beta> @ n \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
         { \<rho>. time ((Rep_run \<rho>) n K\<^sub>1) = \<alpha> * time ((Rep_run \<rho>) n K\<^sub>2) + \<beta> }"
   | "\<lbrakk> master implies slave @ n \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
@@ -44,7 +44,7 @@ fun TESL_interpretation_primitive_at_index
   | "\<lbrakk> master time-delayed by \<delta>\<tau> on measuring implies slave @ n \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
         { \<rho>. hamlet ((Rep_run \<rho>) n master) \<longrightarrow>
                  (let measured_time = time ((Rep_run \<rho>) n measuring) in
-                  \<exists>m \<ge> n. hamlet ((Rep_run \<rho>) n master)
+                  \<exists>m \<ge> n. hamlet ((Rep_run \<rho>) m slave)
                           \<and> time ((Rep_run \<rho>) m measuring) = measured_time + \<delta>\<tau>
                  )
         }"
@@ -77,22 +77,69 @@ lemma TESL_interp_unfold_at_index_implies:
   shows "\<lbrakk> master implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<Inter> {Y. \<exists>n::nat. Y = \<lbrakk> master implies slave @ n \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L}"
   by auto
 
+lemma TESL_interp_unfold_at_index_timedelayed:
+  shows "\<lbrakk> master time-delayed by \<delta>\<tau> on measuring implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L
+    = \<Inter> {Y. \<exists>n::nat. Y = \<lbrakk> master time-delayed by \<delta>\<tau> on measuring implies slave @ n \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L}"
+  by auto
+
+lemma forall_nat_expansion:
+  "(\<forall>n\<^sub>1 \<ge> (n\<^sub>0::nat). P n\<^sub>1) \<equiv> P n\<^sub>0 \<and> (\<forall>n\<^sub>1 \<ge> Suc n\<^sub>0. P n\<^sub>1)"
+  by (smt Suc_leD dual_order.antisym not_less_eq_eq)
+
+lemma exists_nat_expansion:
+  "(\<exists>n\<^sub>1 \<ge> (n\<^sub>0::nat). P n\<^sub>1) \<equiv> P n\<^sub>0 \<or> (\<exists>n\<^sub>1 \<ge> Suc n\<^sub>0. P n\<^sub>1)"
+  by (smt Suc_leD dual_order.antisym not_less_eq_eq)
+
+lemma TESL_interp_at_index_sporadic_cases:
+  shows "\<lbrakk> K sporadic \<tau> @ n \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
+    \<lbrakk> K \<Up> n \<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n \<inter> \<lbrakk> K \<Down> n @ \<lfloor> \<tau> \<rfloor> \<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n
+    \<union> \<lbrakk> K sporadic \<tau> @ Suc n \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
+  proof -
+    have "{ \<rho>. \<exists>m\<ge>n. hamlet ((Rep_run \<rho>) m K) = True \<and> time ((Rep_run \<rho>) m K) = \<tau> }
+        = { \<rho>. hamlet ((Rep_run \<rho>) n K) = True \<and> time ((Rep_run \<rho>) n K) = \<tau>
+               \<or> (\<exists>m\<ge>Suc n. hamlet ((Rep_run \<rho>) m K) = True \<and> time ((Rep_run \<rho>) m K) = \<tau>) }"
+      using exists_nat_expansion
+      using [[smt_solver = cvc4]]
+      by (smt Collect_cong Suc_leD dual_order.antisym not_less_eq_eq)
+    moreover have "{ \<rho>. hamlet ((Rep_run \<rho>) n K) = True \<and> time ((Rep_run \<rho>) n K) = \<tau>
+                        \<or> (\<exists>m\<ge>Suc n. hamlet ((Rep_run \<rho>) m K) = True \<and> time ((Rep_run \<rho>) m K) = \<tau>) }
+                 = \<lbrakk> K \<Up> n \<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n \<inter> \<lbrakk> K \<Down> n @ \<lfloor> \<tau> \<rfloor> \<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n \<union> \<lbrakk> K sporadic \<tau> @ Suc n \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
+      proof -
+        have "\<lbrakk> K \<Up> n \<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n = { \<rho>. hamlet ((Rep_run \<rho>) n K) = True}"
+          by simp
+        moreover have "\<lbrakk> K \<Down> n @ \<lfloor> \<tau> \<rfloor> \<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n = { \<rho>. time ((Rep_run \<rho>) n K) = \<tau> }"
+          by simp
+        moreover have "\<lbrakk> K sporadic \<tau> @ Suc n \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L
+                       = { \<rho>. \<exists>m\<ge>Suc n. hamlet ((Rep_run \<rho>) m K) = True \<and> time ((Rep_run \<rho>) m K) = \<tau> }"
+          by simp
+        ultimately show ?thesis by auto
+      qed
+    ultimately show ?thesis by auto
+  qed
+
+lemma TESL_interp_at_index_sporadicon_cases:
+  shows "\<lbrakk> K\<^sub>1 sporadic \<lfloor>\<tau>\<rfloor> on K\<^sub>2 @ n \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
+    \<lbrakk> K\<^sub>1 \<Up> n \<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n \<inter> \<lbrakk> K\<^sub>2 \<Down> n @ \<lfloor> \<tau> \<rfloor> \<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n
+    \<union> \<lbrakk> K\<^sub>1 sporadic \<lfloor>\<tau>\<rfloor> on K\<^sub>2 @ Suc n \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
+  sorry
+
+lemma TESL_interp_at_index_sporadicon_add_cases:
+  shows "\<lbrakk> K\<^sub>1 sporadic \<lfloor>\<tau>\<^sub>v\<^sub>a\<^sub>r(K, n') \<oplus> \<tau>\<rfloor> on K\<^sub>2 @ n \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
+    \<lbrakk> K\<^sub>1 \<Up> n \<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n \<inter> \<lbrakk> K\<^sub>2 \<Down> n @ \<lfloor>\<tau>\<^sub>v\<^sub>a\<^sub>r(K, n') \<oplus> \<tau>\<rfloor> \<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n
+    \<union> \<lbrakk> K\<^sub>1 sporadic \<lfloor>\<tau>\<^sub>v\<^sub>a\<^sub>r(K, n') \<oplus> \<tau>\<rfloor> on K\<^sub>2 @ Suc n \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
+  sorry
+
 lemma TESL_interp_at_index_implies_cases:
   shows "\<lbrakk> master implies slave @ n \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
     \<lbrakk> master \<not>\<Up> n \<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n
     \<union> \<lbrakk> master \<Up> n \<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n \<inter> \<lbrakk> slave \<Up> n \<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n"
   by auto
 
-lemma TESL_interp_unfold_at_index_timedelayed:
-  shows "\<lbrakk> master time-delayed by \<delta>\<tau> on measuring implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L
-    = \<Inter> {Y. \<exists>n::nat. Y = \<lbrakk> master time-delayed by \<delta>\<tau> on measuring implies slave @ n \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L}"
-  by auto
-
 lemma TESL_interp_at_index_timedelayed_cases:
   shows "\<lbrakk> master time-delayed by \<delta>\<tau> on measuring implies slave @ n \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
     \<lbrakk> master \<not>\<Up> n \<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n
-    \<union> \<lbrakk> master \<Up> n \<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n \<inter> \<lbrakk> slave sporadic \<lfloor>\<tau>\<^sub>v\<^sub>a\<^sub>r(measuring, n) \<oplus> \<delta>\<tau>\<rfloor> on measuring \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L" nitpick
-sorry
+    \<union> \<lbrakk> master \<Up> n \<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n \<inter> \<lbrakk> slave sporadic \<lfloor>\<tau>\<^sub>v\<^sub>a\<^sub>r(measuring, n) \<oplus> \<delta>\<tau>\<rfloor> on measuring @ n \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
+  by auto (* Simple proof, but cannot be found with sledgehammer... *)
 
 (* Denotational interpretation of TESL bounded by index *)
 fun TESL_interpretation_primitive_bounded
@@ -147,6 +194,7 @@ fun TESL_interpretation :: "TESL_formula \<Rightarrow> run set" ("\<lbrakk>\<lbr
     "\<lbrakk>\<lbrakk> [] \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = { _. True }"
   | "\<lbrakk>\<lbrakk> \<phi> # \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<lbrakk> \<phi> \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L \<inter> \<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
 
+
 (**) section \<open>Fixpoint lemma\<close> (**)
 
 theorem TESL_interp_fixpoint:
@@ -158,6 +206,7 @@ theorem TESL_interp_fixpoint:
     case (Cons a \<Phi>)
     then show ?case by auto
   qed
+
 
 (**) section \<open>Expansion law\<close> (**)
 text \<open>Similar to the expansion laws of lattices\<close>
@@ -171,6 +220,7 @@ theorem TESL_interp_expansion:
     case (Cons a \<Phi>\<^sub>1)
     then show ?case by auto
   qed
+
 
 (**) section \<open>Equational laws for TESL formulae denotationally interpreted\<close> (**)
 (***) subsection \<open>General laws\<close> (***)
@@ -288,6 +338,7 @@ lemma TESL_interp_absorb2:
   shows "\<lbrakk>\<lbrakk> \<Phi>\<^sub>1 @ \<Phi>\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<lbrakk>\<lbrakk> \<Phi>\<^sub>1 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
   using TESL_interp_absorb1 TESL_interp_commute incl by blast
 
+
 (***) subsection \<open>Case of filtering out sporadic atoms\<close> (***)
 
 lemma NoSporadic_stable [simp]:
@@ -302,14 +353,15 @@ lemma NoSporadic_setinc:
   shows "set (NoSporadic \<Phi>) \<subseteq> set \<Phi>"
   by auto
 
+
 (**) section \<open>Equivalence between sporadic variants\<close> (**)
 
 lemma SporadicOn_sugar:
-  shows "\<lbrakk> K\<^sub>1 sporadic \<lfloor>\<tau>\<rfloor> on K\<^sub>1 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<lbrakk> K\<^sub>1 sporadic \<tau> \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
+  shows "\<lbrakk> K sporadic \<lfloor>\<tau>\<rfloor> on K \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<lbrakk> K sporadic \<tau> \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
   by auto
 
 lemma SporadicOn_sugar':
-  shows "\<lbrakk>\<lbrakk> (K\<^sub>1 sporadic \<lfloor>\<tau>\<rfloor> on K\<^sub>1) # \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<lbrakk>\<lbrakk> (K\<^sub>1 sporadic \<tau>) # \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
+  shows "\<lbrakk>\<lbrakk> (K sporadic \<lfloor>\<tau>\<rfloor> on K) # \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<lbrakk>\<lbrakk> (K sporadic \<tau>) # \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
   by auto
 
 
