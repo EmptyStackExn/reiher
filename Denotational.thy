@@ -22,7 +22,7 @@ fun TESL_interpretation_primitive
   | "\<lbrakk> master time-delayed by \<delta>\<tau> on measuring implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
         { \<rho>. \<forall>n. hamlet ((Rep_run \<rho>) n master) \<longrightarrow>
                  (let measured_time = time ((Rep_run \<rho>) n measuring) in
-                  \<exists>m > n. hamlet ((Rep_run \<rho>) n master)
+                  \<exists>m \<ge> n. hamlet ((Rep_run \<rho>) n master)
                           \<and> time ((Rep_run \<rho>) m measuring) = measured_time + \<delta>\<tau>
                  )
         }"
@@ -44,7 +44,7 @@ fun TESL_interpretation_primitive_at_index
   | "\<lbrakk> master time-delayed by \<delta>\<tau> on measuring implies slave @ n \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
         { \<rho>. hamlet ((Rep_run \<rho>) n master) \<longrightarrow>
                  (let measured_time = time ((Rep_run \<rho>) n measuring) in
-                  \<exists>m > n. hamlet ((Rep_run \<rho>) n master)
+                  \<exists>m \<ge> n. hamlet ((Rep_run \<rho>) n master)
                           \<and> time ((Rep_run \<rho>) m measuring) = measured_time + \<delta>\<tau>
                  )
         }"
@@ -91,7 +91,7 @@ lemma TESL_interp_unfold_at_index_timedelayed:
 lemma TESL_interp_at_index_timedelayed_cases:
   shows "\<lbrakk> master time-delayed by \<delta>\<tau> on measuring implies slave @ n \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
     \<lbrakk> master \<not>\<Up> n \<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n
-    \<union> \<lbrakk> master \<Up> n \<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n \<inter> \<lbrakk> measuring sporadic \<lfloor>\<tau>\<^sub>v\<^sub>a\<^sub>r(master, n) \<oplus> \<delta>\<tau>\<rfloor> on slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L" nitpick
+    \<union> \<lbrakk> master \<Up> n \<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n \<inter> \<lbrakk> slave sporadic \<lfloor>\<tau>\<^sub>v\<^sub>a\<^sub>r(measuring, n) \<oplus> \<delta>\<tau>\<rfloor> on measuring \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L" nitpick
 sorry
 
 (* Denotational interpretation of TESL bounded by index *)

@@ -60,7 +60,7 @@ inductive operational_semantics_step
   "consistent_run \<Gamma>' \<Longrightarrow>
    \<Gamma>' = (K\<^sub>1 \<Up> n) # \<Gamma> \<Longrightarrow>
    \<Gamma>, n \<turnstile> (K\<^sub>1 time-delayed by \<delta>\<tau> on K\<^sub>2 implies K\<^sub>3) # \<psi> \<triangleright> \<phi>
-   \<hookrightarrow> \<Gamma>', n \<turnstile> \<psi> \<triangleright> (K\<^sub>3 sporadic \<lfloor>\<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>2, n) \<oplus> \<delta>\<tau>\<rfloor> on K\<^sub>2) # \<phi>"
+   \<hookrightarrow> \<Gamma>', n \<turnstile> (K\<^sub>3 sporadic \<lfloor>\<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>2, n) \<oplus> \<delta>\<tau>\<rfloor> on K\<^sub>2) # \<psi> \<triangleright> \<phi>"
 
 abbreviation operational_semantics_step'
   :: "(system \<times> instant_index \<times> TESL_formula \<times> TESL_formula) rel" ("\<hookrightarrow>\<^sup>\<up>") where
