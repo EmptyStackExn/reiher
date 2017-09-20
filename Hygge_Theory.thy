@@ -16,43 +16,6 @@ lemma simple_derv_implies:
   apply (rule implies_e2, auto)
   oops
 
-text \<open>Every [n]-step derived symbolic run has a prefix of length [n] in the set of all denoted runs\<close>
-
-(* Trying for one step *)
-lemma
-(*assumes derivability: "[(K\<^sub>1 \<Up> Suc 0), (K\<^sub>2 \<Up> Suc 0)], Suc 0 \<Turnstile> [] \<triangleright> [K\<^sub>1 implies K\<^sub>2]"
-  assumes existence: "\<rho> \<in> \<lbrakk>\<lbrakk> \<Gamma> \<rbrakk>\<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n" *)
-  shows "\<lbrakk>\<lbrakk> [(K\<^sub>1 \<Up> Suc 0), (K\<^sub>2 \<Up> Suc 0)] \<rbrakk>\<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n \<subseteq> \<lbrakk> K\<^sub>1 implies K\<^sub>2 @\<le> Suc 0 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
-  proof
-    fix \<rho>
-    assume *: "\<rho> \<in> \<lbrakk>\<lbrakk> [K\<^sub>1 \<Up> Suc 0, K\<^sub>2 \<Up> Suc 0] \<rbrakk>\<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n"
-    have "hamlet ((Rep_run \<rho>) (Suc 0) K\<^sub>1) = True \<and> hamlet ((Rep_run \<rho>) (Suc 0) K\<^sub>2) = True"
-      using * by simp
-    moreover have "hamlet ((Rep_run \<rho>) (Suc 0) K\<^sub>1) \<longrightarrow> hamlet ((Rep_run \<rho>) (Suc 0) K\<^sub>2)"
-      by (simp add: calculation)
-    moreover have "\<forall>n<Suc 0. hamlet ((Rep_run \<rho>) (Suc 0) K\<^sub>1) \<longrightarrow> hamlet ((Rep_run \<rho>) (Suc 0) K\<^sub>2)"
-      using calculation(2) by blast
-    then show "\<rho> \<in> \<lbrakk> K\<^sub>1 implies K\<^sub>2 @\<le> Suc 0 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L" by auto
-  qed
-
-lemma
-  shows "\<lbrakk>\<lbrakk> [(K\<^sub>1 \<Up> Suc 0), (K\<^sub>2 \<Up> Suc 0), (K\<^sub>1 \<Up> Suc (Suc 0)), (K\<^sub>2 \<Up> Suc (Suc 0))] \<rbrakk>\<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n
-          \<subseteq> \<lbrakk> K\<^sub>1 implies K\<^sub>2 @\<le> Suc (Suc 0) \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
-  proof
-    fix \<rho>
-    assume *: "\<rho> \<in> \<lbrakk>\<lbrakk> [(K\<^sub>1 \<Up> Suc 0), (K\<^sub>2 \<Up> Suc 0), (K\<^sub>1 \<Up> Suc (Suc 0)), (K\<^sub>2 \<Up> Suc (Suc 0))] \<rbrakk>\<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n"
-    have "hamlet ((Rep_run \<rho>) (Suc 0) K\<^sub>1) = True \<and> hamlet ((Rep_run \<rho>) (Suc 0) K\<^sub>2) = True"
-      using * by simp
-    moreover have "hamlet ((Rep_run \<rho>) (Suc (Suc 0)) K\<^sub>1) = True \<and> hamlet ((Rep_run \<rho>) (Suc (Suc 0)) K\<^sub>2) = True"
-      using * by simp
-    ultimately have "\<forall>n<Suc (Suc 0). hamlet ((Rep_run \<rho>) (Suc 0) K\<^sub>1) \<longrightarrow> hamlet ((Rep_run \<rho>) (Suc 0) K\<^sub>2)"
-      by simp
-    then show "\<rho> \<in> \<lbrakk> K\<^sub>1 implies K\<^sub>2 @\<le> Suc (Suc 0) \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
-      using less_2_cases numerals(2) by auto
-  qed
-
-term "({}::(nat rel)) ^^ (n::nat)"
-
 text \<open>Each reduction step produces a more refined run\<close>
 lemma refinement_at_each_step:
   assumes "\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1 \<hookrightarrow> \<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2"

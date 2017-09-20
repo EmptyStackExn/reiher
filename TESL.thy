@@ -41,6 +41,11 @@ datatype TESL_atomic =
 
 type_synonym TESL_formula = "TESL_atomic list"
 
+fun positive_atom :: "TESL_atomic \<Rightarrow> bool" where
+    "positive_atom (_ sporadic _)      = True"
+  | "positive_atom (_ sporadic _ on _) = True"
+  | "positive_atom _                   = False"
+
 abbreviation NoSporadic :: "TESL_formula \<Rightarrow> TESL_formula" where 
   "NoSporadic f \<equiv> (List.filter (\<lambda>f\<^sub>a\<^sub>t\<^sub>o\<^sub>m. case f\<^sub>a\<^sub>t\<^sub>o\<^sub>m of
       _ sporadic _  \<Rightarrow> False
