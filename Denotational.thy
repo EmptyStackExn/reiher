@@ -10,13 +10,15 @@ begin
 (* Denotational interpretation of TESL *)
 fun TESL_interpretation_primitive
     :: "TESL_atomic \<Rightarrow> run set" ("\<lbrakk> _ \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L") where
-    "\<lbrakk> K sporadic \<tau> \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
+    "\<lbrakk> \<top>\<^sub>T\<^sub>E\<^sub>S\<^sub>L \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
+        { _. True }"
+  | "\<lbrakk> K sporadic \<tau> \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
         { \<rho>. \<exists>n::nat. hamlet ((Rep_run \<rho>) n K) = True \<and> time ((Rep_run \<rho>) n K) = \<tau> }"
   | "\<lbrakk> K\<^sub>1 sporadic \<lfloor>\<tau>\<rfloor> on K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
         { \<rho>. \<exists>n::nat. hamlet ((Rep_run \<rho>) n K\<^sub>1) = True \<and> time ((Rep_run \<rho>) n K\<^sub>2) = \<tau> }"
-  | "\<lbrakk> K\<^sub>1 sporadic \<lfloor>\<tau>\<^sub>v\<^sub>a\<^sub>r(K, n) \<oplus> \<tau>\<rfloor> on K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
-        { \<rho>. \<exists>n'::nat. hamlet ((Rep_run \<rho>) n' K\<^sub>1) = True
-                       \<and> time ((Rep_run \<rho>) n' K\<^sub>2) = time ((Rep_run \<rho>) n K) + \<tau> }"
+  | "\<lbrakk> K\<^sub>1 sporadic \<lfloor>\<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>i, n\<^sub>i) \<oplus> \<delta>\<tau>\<rfloor> on K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
+        { \<rho>. \<exists>n::nat. hamlet ((Rep_run \<rho>) n K\<^sub>1) = True
+                       \<and> time ((Rep_run \<rho>) n K\<^sub>2) = time ((Rep_run \<rho>) n\<^sub>i K\<^sub>i) + \<delta>\<tau> }"
   | "\<lbrakk> tag-relation K\<^sub>1 = \<alpha> * K\<^sub>2 + \<beta> \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
         { \<rho>. \<forall>n::nat. time ((Rep_run \<rho>) n K\<^sub>1) = \<alpha> * time ((Rep_run \<rho>) n K\<^sub>2) + \<beta> }"
   | "\<lbrakk> master implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
@@ -179,7 +181,7 @@ lemma TESL_interp_absorb2:
   using TESL_interp_absorb1 TESL_interp_commute incl by blast
 
 
-(***) subsection \<open>Case of filtering out sporadic atoms\<close> (***)
+(***) subsection \<open>Some special cases\<close> (***)
 
 lemma NoSporadic_stable [simp]:
   shows "\<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L \<subseteq> \<lbrakk>\<lbrakk> NoSporadic \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
@@ -193,9 +195,6 @@ lemma NoSporadic_setinc:
   shows "set (NoSporadic \<Phi>) \<subseteq> set \<Phi>"
   by auto
 
-
-(**) section \<open>Equivalence between sporadic variants\<close> (**)
-
 lemma SporadicOn_sugar_atom:
   shows "\<lbrakk> K sporadic \<lfloor>\<tau>\<rfloor> on K \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<lbrakk> K sporadic \<tau> \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
   by auto
@@ -204,18 +203,24 @@ lemma SporadicOn_sugar:
   shows "\<lbrakk>\<lbrakk> (K sporadic \<lfloor>\<tau>\<rfloor> on K) # \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<lbrakk>\<lbrakk> (K sporadic \<tau>) # \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
   by auto
 
+lemma TrueTESL_idem:
+  "\<lbrakk>\<lbrakk> \<top>\<^sub>T\<^sub>E\<^sub>S\<^sub>L # \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
+  by auto
+
 (**) section \<open>Denotational interpretation for atoms bounded by index\<close> (**)
 
 (* Denotational interpretation of TESL bounded by index *)
 fun TESL_interpretation_primitive_at_index
     :: "TESL_atomic \<Rightarrow> nat \<Rightarrow> run set" ("\<lbrakk> _ \<nabla> _ \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L") where
-    "\<lbrakk> K sporadic \<tau> \<nabla> n \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
+    "\<lbrakk> \<top>\<^sub>T\<^sub>E\<^sub>S\<^sub>L \<nabla> n \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
+        { _. True }"
+  | "\<lbrakk> K sporadic \<tau> \<nabla> n \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
         { \<rho>. \<exists>m\<ge>n. hamlet ((Rep_run \<rho>) m K) = True \<and> time ((Rep_run \<rho>) m K) = \<tau> }"
   | "\<lbrakk> K\<^sub>1 sporadic \<lfloor>\<tau>\<rfloor> on K\<^sub>2 \<nabla> n \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
         { \<rho>. \<exists>m\<ge>n. hamlet ((Rep_run \<rho>) m K\<^sub>1) = True \<and> time ((Rep_run \<rho>) m K\<^sub>2) = \<tau> }"
-  | "\<lbrakk> K\<^sub>1 sporadic \<lfloor>\<tau>\<^sub>v\<^sub>a\<^sub>r(K, n') \<oplus> \<tau>\<rfloor> on K\<^sub>2 \<nabla> n \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
+  | "\<lbrakk> K\<^sub>1 sporadic \<lfloor>\<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>i, n\<^sub>i) \<oplus> \<delta>\<tau>\<rfloor> on K\<^sub>2 \<nabla> n \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
         { \<rho>. \<exists>m\<ge>n. hamlet ((Rep_run \<rho>) m K\<^sub>1) = True
-                         \<and> time ((Rep_run \<rho>) m K\<^sub>2) = time ((Rep_run \<rho>) n' K) + \<tau> }"
+                         \<and> time ((Rep_run \<rho>) m K\<^sub>2) = time ((Rep_run \<rho>) n\<^sub>i K\<^sub>i) + \<delta>\<tau> }"
   | "\<lbrakk> tag-relation K\<^sub>1 = \<alpha> * K\<^sub>2 + \<beta> \<nabla> n \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
         { \<rho>. \<forall>m\<ge>n. time ((Rep_run \<rho>) m K\<^sub>1) = \<alpha> * time ((Rep_run \<rho>) m K\<^sub>2) + \<beta> }"
   | "\<lbrakk> master implies slave \<nabla> n \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
@@ -234,6 +239,10 @@ theorem predicate_Inter_unfold:
 
 theorem predicate_Union_unfold:
   "{ \<rho>. \<exists>n. P \<rho> n} = \<Union> {Y. \<exists>n. Y = { \<rho>. P \<rho> n }}"
+  by auto
+
+lemma TESL_interp_unfold_at_index_true:
+  shows "\<lbrakk> \<top>\<^sub>T\<^sub>E\<^sub>S\<^sub>L \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<Inter> {Y. \<exists>n::nat. Y = \<lbrakk> \<top>\<^sub>T\<^sub>E\<^sub>S\<^sub>L \<nabla> n \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L}"
   by auto
 
 lemma TESL_interp_unfold_at_index_sporadic:
@@ -280,7 +289,7 @@ theorem TESL_interp_unfold_at_index_positive_atoms:
 theorem TESL_interp_unfold_at_index_negative_atoms:
   assumes "\<not> positive_atom \<phi>"
   shows "\<lbrakk> \<phi> \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<Inter> {Y. \<exists>n::nat. Y = \<lbrakk> \<phi> \<nabla> n \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L}"
-  by (smt Collect_cong TESL_interp_unfold_at_index_implies TESL_interp_unfold_at_index_tagrel TESL_interp_unfold_at_index_timedelayed assms positive_atom.elims(3))
+  by (smt Collect_cong TESL_interp_unfold_at_index_true TESL_interp_unfold_at_index_implies TESL_interp_unfold_at_index_tagrel TESL_interp_unfold_at_index_timedelayed assms positive_atom.elims(3))
 
 lemma forall_nat_expansion:
   "(\<forall>n\<^sub>1 \<ge> (n\<^sub>0::nat). P n\<^sub>1) \<equiv> P n\<^sub>0 \<and> (\<forall>n\<^sub>1 \<ge> Suc n\<^sub>0. P n\<^sub>1)"
@@ -341,7 +350,7 @@ lemma TESL_interp_at_index_tagrel_cases:
   proof -
     have "{ \<rho>. \<forall>m\<ge>n. time ((Rep_run \<rho>) m K\<^sub>1) = \<alpha> * time ((Rep_run \<rho>) m K\<^sub>2) + \<beta> }
          = { \<rho>. time ((Rep_run \<rho>) n K\<^sub>1) = \<alpha> * time ((Rep_run \<rho>) n K\<^sub>2) + \<beta> }
-         \<inter> { \<rho>. \<forall>m\<ge>Suc n. time ((Rep_run \<rho>) m K\<^sub>1) = \<alpha> * time ((Rep_run \<rho>) m K\<^sub>2) + \<beta> }" sledgehammer
+         \<inter> { \<rho>. \<forall>m\<ge>Suc n. time ((Rep_run \<rho>) m K\<^sub>1) = \<alpha> * time ((Rep_run \<rho>) m K\<^sub>2) + \<beta> }"
       by (smt Collect_cong Collect_conj_eq Suc_leD eq_refl le_antisym not_less_eq_eq)
   then show ?thesis by auto
   qed
@@ -390,15 +399,52 @@ lemma TESL_interpretation_at_index_fixpoint:
     then show ?case by auto
   qed
 
-(**) section \<open>Run existence for TESL arithmetic-consistent formulae\<close> (**)
-fun tagrel_consistent :: "TESL_formula \<Rightarrow> bool" where
-  "tagrel_consistent \<Phi> = undefined"
+lemma TESL_interpretation_at_index_zero:
+  "\<lbrakk> \<phi> \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<lbrakk> \<phi> \<nabla> 0 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
+  proof (induct \<phi>)
+    case TrueTESL
+    then show ?case by simp
+  next
+    case (Sporadic x1 x2)
+    then show ?case by simp
+  next
+    case (SporadicOn K\<^sub>1 \<tau> K\<^sub>2)
+    then show ?case
+      proof (induct \<tau>)
+        case (Const x)
+        then show ?case by simp
+      next
+        case (AddDelay tag x2)
+        then show ?case
+          proof (induct tag)
+            case (Schematic xa)
+            then show ?case
+              proof (induct xa)
+                case (Pair a b)
+                then show ?case by auto
+              qed
+          qed
+      qed
+  next
+    case (TagRelation x1 x2 x3 x4)
+    then show ?case by simp
+  next
+    case (Implies x1 x2)
+    then show ?case by simp
+  next
+    case (TimeDelayedBy x1 x2 x3 x4)
+    then show ?case by simp
+  qed
 
-lemma existence:
-  (* Assumption that the linear system made of tag relations is consistent *)
-  assumes "tagrel_consistent \<Phi>"
-  shows "\<exists>\<rho>. \<rho> \<in> \<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
-oops
-(* proof (induction \<Phi>) *)
+lemma TESL_interpretation_at_index_zero':
+  "\<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<lbrakk>\<lbrakk> \<Phi> \<nabla> 0 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
+  proof (induct \<Phi>)
+    case Nil
+    then show ?case by simp
+  next
+    case (Cons a \<Phi>)
+    then show ?case
+      by (simp add: TESL_interpretation_at_index_zero)
+  qed
 
 end

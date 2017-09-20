@@ -22,10 +22,11 @@ datatype tag_expr =
 
 (* Primitives for symbolic runs *)
 datatype constr =
-    Timestamp "clock" "instant_index" "tag_expr"          ("_ \<Down> _ @ _")
-  | Ticks     "clock" "instant_index"                     ("_ \<Up> _")
-  | NotTicks  "clock" "instant_index"                     ("_ \<not>\<Up> _")
-  | Affine    "tag_var" "tag_const" "tag_var" "tag_const" ("_ \<doteq> _ * _ + _")
+    TrueSymrun                                                ("\<top>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n")
+  | Timestamp "clock"   "instant_index" "tag_expr"            ("_ \<Down> _ @ _")
+  | Ticks     "clock"   "instant_index"                       ("_ \<Up> _")
+  | NotTicks  "clock"   "instant_index"                       ("_ \<not>\<Up> _")
+  | Affine    "tag_var" "tag_const"     "tag_var" "tag_const" ("_ \<doteq> _ * _ + _")
 
 type_synonym system = "constr list"
 
@@ -33,8 +34,9 @@ text{* Define as follows the syntax of TESL *}
 
 (* TESL language *)
 datatype TESL_atomic =
-    Sporadic       "clock" "tag_const"                     (infixr "sporadic" 55)
-  | SporadicOn     "clock" "tag_expr" "clock"              ("_ sporadic _ on _" 55)
+    TrueTESL                                               ("\<top>\<^sub>T\<^sub>E\<^sub>S\<^sub>L")
+  | Sporadic       "clock" "tag_const"                     (infixr "sporadic" 55)
+  | SporadicOn     "clock" "tag_expr"  "clock"             ("_ sporadic _ on _" 55)
   | TagRelation    "clock" "tag_const" "clock" "tag_const" ("tag-relation _ = _ * _ + _" 55)
   | Implies        "clock" "clock"                         (infixr "implies" 55)
   | TimeDelayedBy  "clock" "tag_const" "clock" "clock"     ("_ time-delayed by _ on _ implies _" 55)

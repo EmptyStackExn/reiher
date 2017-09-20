@@ -151,6 +151,17 @@ lemma run_composition:
   (* nitpick *)
   sorry
 
+(**) section \<open>Run existence for TESL arithmetic-consistent formulae\<close> (**)
+fun tagrel_consistent :: "TESL_formula \<Rightarrow> bool" where
+  "tagrel_consistent \<Phi> = undefined"
+
+lemma existence:
+  (* Assumption that the linear system made of tag relations is consistent *)
+  assumes "tagrel_consistent \<Phi>"
+  shows "\<exists>\<rho>. \<rho> \<in> \<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
+oops
+(* proof (induction \<Phi>) *)
+
 (* OPERATIONAL \<longrightarrow> DENOTATIONAL *)
 (* A chaque pas de simulation, les runs dérivés préfixent les runs dénotationels *)
 theorem soundness:
