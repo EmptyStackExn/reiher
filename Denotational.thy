@@ -37,6 +37,9 @@ fun TESL_interpretation :: "TESL_formula \<Rightarrow> run set" ("\<lbrakk>\<lbr
     "\<lbrakk>\<lbrakk> [] \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = { _. True }"
   | "\<lbrakk>\<lbrakk> \<phi> # \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<lbrakk> \<phi> \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L \<inter> \<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
 
+lemma TESL_interpretation_cons_morph:
+  "\<lbrakk> \<phi> \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L \<inter> \<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<lbrakk>\<lbrakk> \<phi> # \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
+  by auto
 
 (***) subsection \<open>Fixpoint lemma\<close> (***)
 
@@ -315,7 +318,7 @@ lemma TESL_interp_at_index_sporadic_cases:
     ultimately show ?thesis by auto
   qed
 
-lemma TESL_interp_at_index_sporadicon_cases:
+lemma TESL_interp_at_index_sporadicon_cst_cases:
   shows "\<lbrakk> K\<^sub>1 sporadic \<lfloor>\<tau>\<rfloor> on K\<^sub>2 \<nabla> n \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
     \<lbrakk> K\<^sub>1 \<Up> n \<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n \<inter> \<lbrakk> K\<^sub>2 \<Down> n @ \<lfloor> \<tau> \<rfloor> \<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n
     \<union> \<lbrakk> K\<^sub>1 sporadic \<lfloor>\<tau>\<rfloor> on K\<^sub>2 \<nabla> Suc n \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
@@ -341,6 +344,26 @@ lemma TESL_interp_at_index_sporadicon_add_cases:
                \<or> (\<exists>m\<ge>Suc n. hamlet ((Rep_run \<rho>) m K\<^sub>1) = True \<and> time ((Rep_run \<rho>) m K\<^sub>2) = time ((Rep_run \<rho>) n' K) + \<tau>) }"
       using Suc_leD not_less_eq_eq by fastforce
     then show ?thesis by auto
+  qed
+
+lemma TESL_interp_at_index_sporadicon_cases:
+  shows "\<lbrakk> K\<^sub>1 sporadic \<tau> on K\<^sub>2 \<nabla> n \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
+    \<lbrakk> K\<^sub>1 \<Up> n \<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n \<inter> \<lbrakk> K\<^sub>2 \<Down> n @ \<tau> \<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n
+    \<union> \<lbrakk> K\<^sub>1 sporadic \<tau> on K\<^sub>2 \<nabla> Suc n \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
+  proof (induct \<tau>)
+    case (Const x)
+    then show ?case using TESL_interp_at_index_sporadicon_cst_cases by blast
+  next
+    case (AddDelay tagv x2)
+    then show ?case
+      proof (induct tagv)
+        case (Schematic xa)
+        then show ?case
+          proof (induct xa)
+            case (Pair a b)
+            then show ?case using TESL_interp_at_index_sporadicon_add_cases by blast
+          qed
+      qed
   qed
 
 lemma TESL_interp_at_index_tagrel_cases:
@@ -446,5 +469,9 @@ lemma TESL_interpretation_at_index_zero':
     then show ?case
       by (simp add: TESL_interpretation_at_index_zero)
   qed
+
+lemma TESL_interpretation_at_index_cons_morph:
+  "\<lbrakk> \<phi> \<nabla> n \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L \<inter> \<lbrakk>\<lbrakk> \<Phi> \<nabla> n \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<lbrakk>\<lbrakk> \<phi> # \<Phi> \<nabla> n \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
+  by auto
 
 end
