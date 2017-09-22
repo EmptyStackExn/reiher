@@ -12,8 +12,8 @@ begin
   - Decidability
 *)
 
-fun HeronConf_interpretation :: "(system \<times> instant_index \<times> TESL_formula \<times> TESL_formula) \<Rightarrow> run set" ("\<lbrakk> _ \<rbrakk>\<^sub>H\<^sub>e\<^sub>r\<^sub>o\<^sub>n") where
-  "\<lbrakk> \<Gamma>, n \<turnstile> \<Psi> \<triangleright> \<Phi> \<rbrakk>\<^sub>H\<^sub>e\<^sub>r\<^sub>o\<^sub>n = \<lbrakk>\<lbrakk> \<Gamma> \<rbrakk>\<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n \<inter> \<lbrakk>\<lbrakk> \<Psi> \<nabla> n \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L \<inter> \<lbrakk>\<lbrakk> \<Phi> \<nabla> Suc n \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
+fun HeronConf_interpretation :: "(system \<times> instant_index \<times> TESL_formula \<times> TESL_formula) \<Rightarrow> run set" ("\<lbrakk> _ \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f") where
+  "\<lbrakk> \<Gamma>, n \<turnstile> \<Psi> \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f = \<lbrakk>\<lbrakk> \<Gamma> \<rbrakk>\<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n \<inter> \<lbrakk>\<lbrakk> \<Psi> \<nabla> n \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L \<inter> \<lbrakk>\<lbrakk> \<Phi> \<nabla> Suc n \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
 
 (**) section \<open>Soundness\<close> (**)
 
@@ -165,14 +165,14 @@ theorem reduction_refinement:
 
 theorem reduction_refinement':
   assumes "\<S>\<^sub>1 \<hookrightarrow> \<S>\<^sub>2"
-  shows "\<lbrakk> \<S>\<^sub>1 \<rbrakk>\<^sub>H\<^sub>e\<^sub>r\<^sub>o\<^sub>n \<supseteq> \<lbrakk> \<S>\<^sub>2 \<rbrakk>\<^sub>H\<^sub>e\<^sub>r\<^sub>o\<^sub>n"
+  shows "\<lbrakk> \<S>\<^sub>1 \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f \<supseteq> \<lbrakk> \<S>\<^sub>2 \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f"
   by (metis reduction_refinement HeronConf_interpretation.elims assms)
 
 (* TODO: Need to show the same property for an arbitrary number of reduction steps*)
 (* Playing with [rel] type *)
 theorem reduction_refinement'':
   assumes "(\<S>\<^sub>1, \<S>\<^sub>2) \<in> \<hookrightarrow>\<^sup>\<up>"
-  shows "\<lbrakk> \<S>\<^sub>1 \<rbrakk>\<^sub>H\<^sub>e\<^sub>r\<^sub>o\<^sub>n \<supseteq> \<lbrakk> \<S>\<^sub>2 \<rbrakk>\<^sub>H\<^sub>e\<^sub>r\<^sub>o\<^sub>n"
+  shows "\<lbrakk> \<S>\<^sub>1 \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f \<supseteq> \<lbrakk> \<S>\<^sub>2 \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f"
   proof -
     have "\<S>\<^sub>1 \<hookrightarrow> \<S>\<^sub>2" using assms by auto
     then show ?thesis using reduction_refinement' by auto
@@ -180,7 +180,7 @@ theorem reduction_refinement'':
 
 theorem reduction_refinement_2:
   assumes "(\<S>\<^sub>1, \<S>\<^sub>2) \<in> \<hookrightarrow>\<^sup>\<up> ^^ 2"
-  shows "\<lbrakk> \<S>\<^sub>1 \<rbrakk>\<^sub>H\<^sub>e\<^sub>r\<^sub>o\<^sub>n \<supseteq> \<lbrakk> \<S>\<^sub>2 \<rbrakk>\<^sub>H\<^sub>e\<^sub>r\<^sub>o\<^sub>n"
+  shows "\<lbrakk> \<S>\<^sub>1 \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f \<supseteq> \<lbrakk> \<S>\<^sub>2 \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f"
   proof -
     obtain \<S>' where "(\<S>\<^sub>1, \<S>') \<in> \<hookrightarrow>\<^sup>\<up> \<and> (\<S>', \<S>\<^sub>2) \<in> \<hookrightarrow>\<^sup>\<up>" sorry
     have "\<S>\<^sub>1 \<hookrightarrow> \<S>\<^sub>2" using assms sorry
@@ -189,7 +189,7 @@ theorem reduction_refinement_2:
 
 theorem reduction_refinement_general:
   assumes "(\<S>\<^sub>1, \<S>\<^sub>2) \<in> (\<hookrightarrow>\<^sup>\<up> ^^ n)"
-  shows "\<lbrakk> \<S>\<^sub>1 \<rbrakk>\<^sub>H\<^sub>e\<^sub>r\<^sub>o\<^sub>n \<supseteq> \<lbrakk> \<S>\<^sub>2 \<rbrakk>\<^sub>H\<^sub>e\<^sub>r\<^sub>o\<^sub>n"
+  shows "\<lbrakk> \<S>\<^sub>1 \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f \<supseteq> \<lbrakk> \<S>\<^sub>2 \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f"
   proof (induct n)
     case 0
     then have *: "(\<S>\<^sub>1, \<S>\<^sub>2) \<in> (\<hookrightarrow>\<^sup>\<up> ^^ 0) \<Longrightarrow> \<S>\<^sub>1 = \<S>\<^sub>2"
@@ -204,12 +204,12 @@ theorem reduction_refinement_general:
 
 theorem
   assumes "(\<S>\<^sub>1, \<S>\<^sub>2) \<in> \<hookrightarrow>\<^sup>\<up>\<^sup>*"
-  shows "\<lbrakk> \<S>\<^sub>1 \<rbrakk>\<^sub>H\<^sub>e\<^sub>r\<^sub>o\<^sub>n \<supseteq> \<lbrakk> \<S>\<^sub>2 \<rbrakk>\<^sub>H\<^sub>e\<^sub>r\<^sub>o\<^sub>n"
+  shows "\<lbrakk> \<S>\<^sub>1 \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f \<supseteq> \<lbrakk> \<S>\<^sub>2 \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f"
   apply (insert assms)
   proof -
-    have "\<S>\<^sub>1 = \<S>\<^sub>2 \<Longrightarrow> (\<S>\<^sub>1, \<S>\<^sub>2) \<in> \<hookrightarrow>\<^sup>\<up>\<^sup>* \<Longrightarrow> \<lbrakk> \<S>\<^sub>2 \<rbrakk>\<^sub>H\<^sub>e\<^sub>r\<^sub>o\<^sub>n \<subseteq> \<lbrakk> \<S>\<^sub>1 \<rbrakk>\<^sub>H\<^sub>e\<^sub>r\<^sub>o\<^sub>n "
+    have "\<S>\<^sub>1 = \<S>\<^sub>2 \<Longrightarrow> (\<S>\<^sub>1, \<S>\<^sub>2) \<in> \<hookrightarrow>\<^sup>\<up>\<^sup>* \<Longrightarrow> \<lbrakk> \<S>\<^sub>2 \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f \<subseteq> \<lbrakk> \<S>\<^sub>1 \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f "
       by auto
-    moreover have "\<S>\<^sub>1 \<noteq> \<S>\<^sub>2 \<Longrightarrow> (\<S>\<^sub>1, \<S>\<^sub>2) \<in> \<hookrightarrow>\<^sup>\<up>\<^sup>* \<Longrightarrow> \<lbrakk> \<S>\<^sub>2 \<rbrakk>\<^sub>H\<^sub>e\<^sub>r\<^sub>o\<^sub>n \<subseteq> \<lbrakk> \<S>\<^sub>1 \<rbrakk>\<^sub>H\<^sub>e\<^sub>r\<^sub>o\<^sub>n"
+    moreover have "\<S>\<^sub>1 \<noteq> \<S>\<^sub>2 \<Longrightarrow> (\<S>\<^sub>1, \<S>\<^sub>2) \<in> \<hookrightarrow>\<^sup>\<up>\<^sup>* \<Longrightarrow> \<lbrakk> \<S>\<^sub>2 \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f \<subseteq> \<lbrakk> \<S>\<^sub>1 \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f"
       (* apply (frule rtrancl_into_rtrancl) *)
       proof -
         have "undefined" sorry
@@ -220,14 +220,34 @@ theorem
 
 (* To start solving specification [\<Psi>], we start at configuration [], 0 \<turnstile> \<Psi> \<triangleright> [] *)
 lemma solve_start:
-  shows "\<lbrakk>\<lbrakk> \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<lbrakk> [], 0 \<turnstile> \<Psi> \<triangleright> [] \<rbrakk>\<^sub>H\<^sub>e\<^sub>r\<^sub>o\<^sub>n"
+  shows "\<lbrakk>\<lbrakk> \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<lbrakk> [], 0 \<turnstile> \<Psi> \<triangleright> [] \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f"
   proof -
     have "\<lbrakk>\<lbrakk> \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<lbrakk>\<lbrakk> \<Psi> \<nabla> 0 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
     by (simp add: TESL_interpretation_at_index_zero')
-    moreover have "\<lbrakk> [], 0 \<turnstile> \<Psi> \<triangleright> [] \<rbrakk>\<^sub>H\<^sub>e\<^sub>r\<^sub>o\<^sub>n = \<lbrakk>\<lbrakk> [] \<rbrakk>\<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n \<inter> \<lbrakk>\<lbrakk> \<Psi> \<nabla> 0 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L \<inter> \<lbrakk>\<lbrakk> [] \<nabla> Suc 0 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
+    moreover have "\<lbrakk> [], 0 \<turnstile> \<Psi> \<triangleright> [] \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f = \<lbrakk>\<lbrakk> [] \<rbrakk>\<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n \<inter> \<lbrakk>\<lbrakk> \<Psi> \<nabla> 0 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L \<inter> \<lbrakk>\<lbrakk> [] \<nabla> Suc 0 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
     by simp
     ultimately show ?thesis by auto
   qed
+
+(**) section \<open>Completeness\<close> (**)
+
+abbreviation next_solve
+  :: "(system \<times> instant_index \<times> TESL_formula \<times> TESL_formula)
+     \<Rightarrow> (system \<times> instant_index \<times> TESL_formula \<times> TESL_formula) set" ("\<SS>\<^sub>n\<^sub>e\<^sub>x\<^sub>t _") where
+  "\<SS>\<^sub>n\<^sub>e\<^sub>x\<^sub>t \<S> \<equiv> { \<S>'. \<S> \<hookrightarrow> \<S>' }"
+
+lemma
+  shows "\<lbrakk> [], 0 \<turnstile> [] \<triangleright> [] \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f = (\<Union>X\<in>\<SS>\<^sub>n\<^sub>e\<^sub>x\<^sub>t ([], 0 \<turnstile> [] \<triangleright> []). \<lbrakk> X \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f)"
+  proof -
+    have "\<lbrakk> [], 0 \<turnstile> [] \<triangleright> [] \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f = \<lbrakk>\<lbrakk> [] \<rbrakk>\<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n \<inter> \<lbrakk>\<lbrakk> [] \<nabla> 0 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L \<inter> \<lbrakk>\<lbrakk> [] \<nabla> Suc 0 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L" by simp
+    moreover have "\<SS>\<^sub>n\<^sub>e\<^sub>x\<^sub>t ([], 0 \<turnstile> [] \<triangleright> []) = { ([], 1 \<turnstile> [] \<triangleright> []) }"
+      sorry
+    ultimately show ?thesis by auto
+  qed
+
+theorem completeness:
+  shows "\<lbrakk> \<Gamma>, n \<turnstile> \<Psi> \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f = (\<Union>X\<in>\<SS>\<^sub>n\<^sub>e\<^sub>x\<^sub>t (\<Gamma>, n \<turnstile> \<Psi> \<triangleright> \<Phi>). \<lbrakk> X \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f)"
+  sorry
 
 (**) section \<open>Termination of instantataneous formulae elimination\<close> (**)
 (* Idea: A bounded monotonic sequence is convergent *)
@@ -262,7 +282,7 @@ lemma run_composition:
   (* nitpick *)
   sorry
 
-lemma composition:
+lemma sat_composition:
   assumes "K\<^sub>1 time-delayed by \<delta>\<tau> on K\<^sub>2 implies K\<^sub>3 \<notin> set \<Phi> \<union> set \<Phi>'"
   assumes "\<TTurnstile> \<Gamma>\<^sub>1, n \<turnstile> [] \<triangleright> \<Phi>\<^sub>1"
   assumes "\<TTurnstile> \<Gamma>\<^sub>2, n \<turnstile> [] \<triangleright> \<Phi>\<^sub>2"
