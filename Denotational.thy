@@ -8,11 +8,9 @@ begin
 (**) section \<open>Denotational interpretation for atomic TESL formulae\<close> (**)
 
 (* Denotational interpretation of TESL *)
-fun TESL_interpretation_primitive
+fun TESL_interpretation_atomic
     :: "TESL_atomic \<Rightarrow> run set" ("\<lbrakk> _ \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L") where
-    "\<lbrakk> \<top>\<^sub>T\<^sub>E\<^sub>S\<^sub>L \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
-        { _. True }"
-  | "\<lbrakk> K sporadic \<tau> \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
+    "\<lbrakk> K sporadic \<tau> \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
         { \<rho>. \<exists>n::nat. hamlet ((Rep_run \<rho>) n K) = True \<and> time ((Rep_run \<rho>) n K) = \<tau> }"
   | "\<lbrakk> K\<^sub>1 sporadic \<lfloor>\<tau>\<rfloor> on K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
         { \<rho>. \<exists>n::nat. hamlet ((Rep_run \<rho>) n K\<^sub>1) = True \<and> time ((Rep_run \<rho>) n K\<^sub>2) = \<tau> }"
@@ -206,18 +204,12 @@ lemma SporadicOn_sugar:
   shows "\<lbrakk>\<lbrakk> (K sporadic \<lfloor>\<tau>\<rfloor> on K) # \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<lbrakk>\<lbrakk> (K sporadic \<tau>) # \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
   by auto
 
-lemma TrueTESL_idem:
-  "\<lbrakk>\<lbrakk> \<top>\<^sub>T\<^sub>E\<^sub>S\<^sub>L # \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
-  by auto
-
 (**) section \<open>Denotational interpretation for atoms bounded by index\<close> (**)
 
 (* Denotational interpretation of TESL bounded by index *)
 fun TESL_interpretation_primitive_at_index
     :: "TESL_atomic \<Rightarrow> nat \<Rightarrow> run set" ("\<lbrakk> _ \<nabla> _ \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L") where
-    "\<lbrakk> \<top>\<^sub>T\<^sub>E\<^sub>S\<^sub>L \<nabla> n \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
-        { _. True }"
-  | "\<lbrakk> K sporadic \<tau> \<nabla> n \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
+    "\<lbrakk> K sporadic \<tau> \<nabla> n \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
         { \<rho>. \<exists>m\<ge>n. hamlet ((Rep_run \<rho>) m K) = True \<and> time ((Rep_run \<rho>) m K) = \<tau> }"
   | "\<lbrakk> K\<^sub>1 sporadic \<lfloor>\<tau>\<rfloor> on K\<^sub>2 \<nabla> n \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
         { \<rho>. \<exists>m\<ge>n. hamlet ((Rep_run \<rho>) m K\<^sub>1) = True \<and> time ((Rep_run \<rho>) m K\<^sub>2) = \<tau> }"
@@ -242,10 +234,6 @@ theorem predicate_Inter_unfold:
 
 theorem predicate_Union_unfold:
   "{ \<rho>. \<exists>n. P \<rho> n} = \<Union> {Y. \<exists>n. Y = { \<rho>. P \<rho> n }}"
-  by auto
-
-lemma TESL_interp_unfold_at_index_true:
-  shows "\<lbrakk> \<top>\<^sub>T\<^sub>E\<^sub>S\<^sub>L \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<Inter> {Y. \<exists>n::nat. Y = \<lbrakk> \<top>\<^sub>T\<^sub>E\<^sub>S\<^sub>L \<nabla> n \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L}"
   by auto
 
 lemma TESL_interp_unfold_at_index_sporadic:
@@ -292,7 +280,7 @@ theorem TESL_interp_unfold_at_index_positive_atoms:
 theorem TESL_interp_unfold_at_index_negative_atoms:
   assumes "\<not> positive_atom \<phi>"
   shows "\<lbrakk> \<phi> \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<Inter> {Y. \<exists>n::nat. Y = \<lbrakk> \<phi> \<nabla> n \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L}"
-  by (smt Collect_cong TESL_interp_unfold_at_index_true TESL_interp_unfold_at_index_implies TESL_interp_unfold_at_index_tagrel TESL_interp_unfold_at_index_timedelayed assms positive_atom.elims(3))
+  by (smt Collect_cong TESL_interp_unfold_at_index_implies TESL_interp_unfold_at_index_tagrel TESL_interp_unfold_at_index_timedelayed assms positive_atom.elims(3))
 
 lemma forall_nat_expansion:
   "(\<forall>n\<^sub>1 \<ge> (n\<^sub>0::nat). P n\<^sub>1) \<equiv> P n\<^sub>0 \<and> (\<forall>n\<^sub>1 \<ge> Suc n\<^sub>0. P n\<^sub>1)"
@@ -425,9 +413,6 @@ lemma TESL_interpretation_at_index_fixpoint:
 lemma TESL_interpretation_at_index_zero:
   "\<lbrakk> \<phi> \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<lbrakk> \<phi> \<nabla> 0 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
   proof (induct \<phi>)
-    case TrueTESL
-    then show ?case by simp
-  next
     case (Sporadic x1 x2)
     then show ?case by simp
   next

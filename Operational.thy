@@ -21,39 +21,39 @@ inductive operational_semantics_step
 | sporadic_e1:
   "consistent_run \<Gamma> \<Longrightarrow>
    \<Gamma>, n \<turnstile> (K sporadic \<tau>) # \<Psi> \<triangleright> \<Phi>
-     \<hookrightarrow>  \<top>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n # \<top>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n # \<Gamma>, n \<turnstile> \<top>\<^sub>T\<^sub>E\<^sub>S\<^sub>L # \<Psi> \<triangleright> (K sporadic \<tau>) # \<Phi>"
+     \<hookrightarrow>  \<Gamma>, n \<turnstile> \<Psi> \<triangleright> (K sporadic \<tau>) # \<Phi>"
 | sporadic_e2:
   "consistent_run ((K \<Up> n) # (K \<Down> n @ \<lfloor>\<tau>\<rfloor>) # \<Gamma>) \<Longrightarrow>
    \<Gamma>, n \<turnstile> (K sporadic \<tau>) # \<Psi> \<triangleright> \<Phi>
-     \<hookrightarrow>  K \<Up> n # K \<Down> n @ \<lfloor>\<tau>\<rfloor> # \<Gamma>, n \<turnstile> \<top>\<^sub>T\<^sub>E\<^sub>S\<^sub>L # \<Psi> \<triangleright> \<top>\<^sub>T\<^sub>E\<^sub>S\<^sub>L # \<Phi>"
+     \<hookrightarrow>  K \<Up> n # K \<Down> n @ \<lfloor>\<tau>\<rfloor> # \<Gamma>, n \<turnstile> \<Psi> \<triangleright> \<Phi>"
 | sporadic_on_e1:
   "consistent_run \<Gamma> \<Longrightarrow>
    \<Gamma>, n \<turnstile> (K\<^sub>1 sporadic \<tau> on K\<^sub>2) # \<Psi> \<triangleright> \<Phi>
-     \<hookrightarrow>  \<top>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n # \<top>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n # \<Gamma>, n \<turnstile> \<top>\<^sub>T\<^sub>E\<^sub>S\<^sub>L # \<Psi> \<triangleright> (K\<^sub>1 sporadic \<tau> on K\<^sub>2) # \<Phi>"
+     \<hookrightarrow>  \<Gamma>, n \<turnstile> \<Psi> \<triangleright> (K\<^sub>1 sporadic \<tau> on K\<^sub>2) # \<Phi>"
 | sporadic_on_e2:
   "consistent_run ((K\<^sub>1 \<Up> n) # (K\<^sub>2 \<Down> n @ \<tau>) # \<Gamma>) \<Longrightarrow>
    \<Gamma>, n \<turnstile> (K\<^sub>1 sporadic \<tau> on K\<^sub>2) # \<Psi> \<triangleright> \<Phi>
-     \<hookrightarrow>  K\<^sub>1 \<Up> n # K\<^sub>2 \<Down> n @ \<tau> # \<Gamma>, n \<turnstile> \<top>\<^sub>T\<^sub>E\<^sub>S\<^sub>L # \<Psi> \<triangleright> \<top>\<^sub>T\<^sub>E\<^sub>S\<^sub>L # \<Phi>"
+     \<hookrightarrow>  K\<^sub>1 \<Up> n # K\<^sub>2 \<Down> n @ \<tau> # \<Gamma>, n \<turnstile> \<Psi> \<triangleright> \<Phi>"
 | tagrel_e:
   "consistent_run ((\<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>1, n) \<doteq> \<alpha> * \<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>2, n) + \<beta>) # \<Gamma>) \<Longrightarrow>
    \<Gamma>, n \<turnstile> (tag-relation K\<^sub>1 = \<alpha> * K\<^sub>2 + \<beta>) # \<Psi> \<triangleright> \<Phi>
-     \<hookrightarrow>  \<top>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n # (\<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>1, n) \<doteq> \<alpha> * \<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>2, n) + \<beta>) # \<Gamma>, n \<turnstile> \<top>\<^sub>T\<^sub>E\<^sub>S\<^sub>L # \<Psi> \<triangleright> (tag-relation K\<^sub>1 = \<alpha> * K\<^sub>2 + \<beta>) # \<Phi>"
+     \<hookrightarrow>  (\<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>1, n) \<doteq> \<alpha> * \<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>2, n) + \<beta>) # \<Gamma>, n \<turnstile> \<Psi> \<triangleright> (tag-relation K\<^sub>1 = \<alpha> * K\<^sub>2 + \<beta>) # \<Phi>"
 | implies_e1:
   "consistent_run (K\<^sub>1 \<not>\<Up> n # \<Gamma>) \<Longrightarrow>
    \<Gamma>, n \<turnstile> (K\<^sub>1 implies K\<^sub>2) # \<Psi> \<triangleright> \<Phi>
-     \<hookrightarrow>  \<top>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n # K\<^sub>1 \<not>\<Up> n # \<Gamma>, n \<turnstile> \<top>\<^sub>T\<^sub>E\<^sub>S\<^sub>L # \<Psi> \<triangleright> (K\<^sub>1 implies K\<^sub>2) # \<Phi>"
+     \<hookrightarrow>  K\<^sub>1 \<not>\<Up> n # \<Gamma>, n \<turnstile> \<Psi> \<triangleright> (K\<^sub>1 implies K\<^sub>2) # \<Phi>"
 | implies_e2:
   "consistent_run ((K\<^sub>1 \<Up> n) # (K\<^sub>2 \<Up> n) # \<Gamma>) \<Longrightarrow>
    \<Gamma>, n \<turnstile> (K\<^sub>1 implies K\<^sub>2) # \<Psi> \<triangleright> \<Phi>
-     \<hookrightarrow>  K\<^sub>1 \<Up> n # K\<^sub>2 \<Up> n # \<Gamma>, n \<turnstile> \<top>\<^sub>T\<^sub>E\<^sub>S\<^sub>L # \<Psi> \<triangleright> (K\<^sub>1 implies K\<^sub>2) # \<Phi>"
+     \<hookrightarrow>  K\<^sub>1 \<Up> n # K\<^sub>2 \<Up> n # \<Gamma>, n \<turnstile> \<Psi> \<triangleright> (K\<^sub>1 implies K\<^sub>2) # \<Phi>"
 | timedelayed_e1:
   "consistent_run (K\<^sub>1 \<not>\<Up> n # \<Gamma>) \<Longrightarrow>
    \<Gamma>, n \<turnstile> (K\<^sub>1 time-delayed by \<delta>\<tau> on K\<^sub>2 implies K\<^sub>3) # \<Psi> \<triangleright> \<Phi>
-     \<hookrightarrow>  \<top>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n # K\<^sub>1 \<not>\<Up> n # \<Gamma>, n \<turnstile> \<top>\<^sub>T\<^sub>E\<^sub>S\<^sub>L # \<Psi> \<triangleright> (K\<^sub>1 time-delayed by \<delta>\<tau> on K\<^sub>2 implies K\<^sub>3) # \<Phi>"
+     \<hookrightarrow>  K\<^sub>1 \<not>\<Up> n # \<Gamma>, n \<turnstile> \<Psi> \<triangleright> (K\<^sub>1 time-delayed by \<delta>\<tau> on K\<^sub>2 implies K\<^sub>3) # \<Phi>"
 | timedelayed_e2:
   "consistent_run (K\<^sub>1 \<Up> n # \<Gamma>) \<Longrightarrow>
    \<Gamma>, n \<turnstile> (K\<^sub>1 time-delayed by \<delta>\<tau> on K\<^sub>2 implies K\<^sub>3) # \<Psi> \<triangleright> \<Phi>
-     \<hookrightarrow>  \<top>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n # K\<^sub>1 \<Up> n # \<Gamma>, n \<turnstile> (K\<^sub>3 sporadic \<lfloor>\<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>2, n) \<oplus> \<delta>\<tau>\<rfloor> on K\<^sub>2) # \<Psi> \<triangleright> (K\<^sub>1 time-delayed by \<delta>\<tau> on K\<^sub>2 implies K\<^sub>3) # \<Phi>"
+     \<hookrightarrow>  K\<^sub>1 \<Up> n # \<Gamma>, n \<turnstile> (K\<^sub>3 sporadic \<lfloor>\<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>2, n) \<oplus> \<delta>\<tau>\<rfloor> on K\<^sub>2) # \<Psi> \<triangleright> (K\<^sub>1 time-delayed by \<delta>\<tau> on K\<^sub>2 implies K\<^sub>3) # \<Phi>"
 
 abbreviation operational_semantics_step'
   :: "(system \<times> instant_index \<times> TESL_formula \<times> TESL_formula) rel" ("\<hookrightarrow>\<^sup>\<up>") where
