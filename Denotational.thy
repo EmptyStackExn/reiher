@@ -55,7 +55,7 @@ theorem TESL_interp_fixpoint:
 (***) subsection \<open>Expansion law\<close> (***)
 text \<open>Similar to the expansion laws of lattices\<close>
 
-theorem TESL_interp_expansion:
+theorem TESL_interp_composition:
   shows "\<lbrakk>\<lbrakk> \<Phi>\<^sub>1 @ \<Phi>\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<lbrakk>\<lbrakk> \<Phi>\<^sub>1 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L \<inter> \<lbrakk>\<lbrakk> \<Phi>\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
   proof (induct \<Phi>\<^sub>1)
     case Nil
@@ -74,23 +74,23 @@ lemma TESL_interp_assoc:
 
 lemma TESL_interp_commute:
   shows "\<lbrakk>\<lbrakk> \<Phi>\<^sub>1 @ \<Phi>\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<lbrakk>\<lbrakk> \<Phi>\<^sub>2 @ \<Phi>\<^sub>1 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
-  by (simp add: TESL_interp_expansion inf_sup_aci(1))
+  by (simp add: TESL_interp_composition inf_sup_aci(1))
 
 lemma TESL_interp_left_commute:
   shows "\<lbrakk>\<lbrakk> \<Phi>\<^sub>1 @ (\<Phi>\<^sub>2 @ \<Phi>\<^sub>3) \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<lbrakk>\<lbrakk> \<Phi>\<^sub>2 @ (\<Phi>\<^sub>1 @ \<Phi>\<^sub>3) \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
-  using TESL_interp_expansion by auto
+  using TESL_interp_composition by auto
 
 lemma TESL_interp_idem:
   shows "\<lbrakk>\<lbrakk> \<Phi> @ \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
-  using TESL_interp_expansion by auto
+  using TESL_interp_composition by auto
 
 lemma TESL_interp_left_idem:
   shows "\<lbrakk>\<lbrakk> \<Phi>\<^sub>1 @ (\<Phi>\<^sub>1 @ \<Phi>\<^sub>2) \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<lbrakk>\<lbrakk> \<Phi>\<^sub>1 @ \<Phi>\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
-  using TESL_interp_expansion by auto
+  using TESL_interp_composition by auto
 
 lemma TESL_interp_right_idem:
   shows "\<lbrakk>\<lbrakk> (\<Phi>\<^sub>1 @ \<Phi>\<^sub>2) @ \<Phi>\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<lbrakk>\<lbrakk> \<Phi>\<^sub>1 @ \<Phi>\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
-  using TESL_interp_expansion by auto
+  using TESL_interp_composition by auto
 
 lemmas TESL_interp_aci = TESL_interp_commute TESL_interp_assoc TESL_interp_left_commute TESL_interp_left_idem
 
@@ -111,12 +111,12 @@ lemma TESL_sem_decreases_head:
 
 lemma TESL_sem_decreases_tail:
   "\<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L \<supseteq> \<lbrakk>\<lbrakk> \<Phi> @ [\<phi>] \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
-  by (simp add: TESL_interp_expansion)
+  by (simp add: TESL_interp_composition)
 
 lemma TESL_interp_formula_stuttering:
   assumes bel: "\<phi> \<in> set \<Phi>"
   shows "\<lbrakk>\<lbrakk> \<phi> # \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
-  by (metis Int_subset_iff TESL_interp_expansion TESL_interpretation.simps(2) bel in_set_conv_decomp_first subset_antisym subset_refl)
+  by (metis Int_subset_iff TESL_interp_composition TESL_interpretation.simps(2) bel in_set_conv_decomp_first subset_antisym subset_refl)
 
 lemma TESL_interp_decreases:
   shows "\<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L \<supseteq> \<lbrakk>\<lbrakk> \<phi> # \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
@@ -156,7 +156,7 @@ theorem TESL_interp_decreases_setinc:
     have "set (\<Phi> @ \<Phi>\<^sub>r) = set \<Phi>'" using incl decompose by blast
     moreover have "(set \<Phi>) \<union> (set \<Phi>\<^sub>r) = set \<Phi>'" using incl decompose by auto
     moreover have "\<lbrakk>\<lbrakk> \<Phi>' \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<lbrakk>\<lbrakk> \<Phi> @ \<Phi>\<^sub>r \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L" using TESL_interp_set_lifting decompose by blast
-    moreover have "\<lbrakk>\<lbrakk> \<Phi> @ \<Phi>\<^sub>r \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L \<inter> \<lbrakk>\<lbrakk> \<Phi>\<^sub>r \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L" by (simp add: TESL_interp_expansion)
+    moreover have "\<lbrakk>\<lbrakk> \<Phi> @ \<Phi>\<^sub>r \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L \<inter> \<lbrakk>\<lbrakk> \<Phi>\<^sub>r \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L" by (simp add: TESL_interp_composition)
     moreover have "\<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L \<supseteq> \<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L \<inter> \<lbrakk>\<lbrakk> \<Phi>\<^sub>r \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L" by simp
     ultimately show ?thesis by simp
   qed
@@ -174,7 +174,7 @@ lemma TESL_interp_decreases_add_tail:
 lemma TESL_interp_absorb1:
   assumes incl: "set \<Phi>\<^sub>1 \<subseteq> set \<Phi>\<^sub>2"
   shows "\<lbrakk>\<lbrakk> \<Phi>\<^sub>1 @ \<Phi>\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<lbrakk>\<lbrakk> \<Phi>\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
-  by (simp add: Int_absorb1 TESL_interp_decreases_setinc TESL_interp_expansion incl)
+  by (simp add: Int_absorb1 TESL_interp_decreases_setinc TESL_interp_composition incl)
 
 lemma TESL_interp_absorb2:
   assumes incl: "set \<Phi>\<^sub>2 \<subseteq> set \<Phi>\<^sub>1"
@@ -458,5 +458,15 @@ lemma TESL_interpretation_at_index_zero':
 lemma TESL_interpretation_at_index_cons_morph:
   "\<lbrakk> \<phi> \<nabla> n \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L \<inter> \<lbrakk>\<lbrakk> \<Phi> \<nabla> n \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<lbrakk>\<lbrakk> \<phi> # \<Phi> \<nabla> n \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
   by auto
+
+theorem TESL_interp_at_index_composition:
+  shows "\<lbrakk>\<lbrakk> \<Phi>\<^sub>1 @ \<Phi>\<^sub>2 \<nabla> n \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<lbrakk>\<lbrakk> \<Phi>\<^sub>1 \<nabla> n \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L \<inter> \<lbrakk>\<lbrakk> \<Phi>\<^sub>2 \<nabla> n \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
+  proof (induct \<Phi>\<^sub>1)
+    case Nil
+    then show ?case by simp
+  next
+    case (Cons a \<Phi>\<^sub>1)
+    then show ?case by auto
+  qed
 
 end

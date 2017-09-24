@@ -12,14 +12,26 @@ begin
   - Decidability
 *)
 
-fun HeronConf_interpretation :: "(system \<times> instant_index \<times> TESL_formula \<times> TESL_formula) \<Rightarrow> run set" ("\<lbrakk> _ \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f") where
+fun HeronConf_interpretation :: "config \<Rightarrow> run set" ("\<lbrakk> _ \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f") where
   "\<lbrakk> \<Gamma>, n \<turnstile> \<Psi> \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f = \<lbrakk>\<lbrakk> \<Gamma> \<rbrakk>\<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n \<inter> \<lbrakk>\<lbrakk> \<Psi> \<nabla> n \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L \<inter> \<lbrakk>\<lbrakk> \<Phi> \<nabla> Suc n \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
+
+(* To start solving specification [\<Psi>], we start at configuration [], 0 \<turnstile> \<Psi> \<triangleright> [] *)
+lemma solve_start:
+  shows "\<lbrakk>\<lbrakk> \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<lbrakk> [], 0 \<turnstile> \<Psi> \<triangleright> [] \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f"
+  proof -
+    have "\<lbrakk>\<lbrakk> \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<lbrakk>\<lbrakk> \<Psi> \<nabla> 0 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
+    by (simp add: TESL_interpretation_at_index_zero')
+    moreover have "\<lbrakk> [], 0 \<turnstile> \<Psi> \<triangleright> [] \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f = \<lbrakk>\<lbrakk> [] \<rbrakk>\<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n \<inter> \<lbrakk>\<lbrakk> \<Psi> \<nabla> 0 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L \<inter> \<lbrakk>\<lbrakk> [] \<nabla> Suc 0 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
+    by simp
+    ultimately show ?thesis by auto
+  qed
 
 (**) section \<open>Soundness\<close> (**)
 
 theorem reduction_refinement:
   assumes "\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1  \<hookrightarrow>  \<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2"
-  shows "\<lbrakk>\<lbrakk> \<Gamma>\<^sub>1 \<rbrakk>\<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n \<inter> \<lbrakk>\<lbrakk> \<Psi>\<^sub>1 \<nabla> n\<^sub>1 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L \<inter> \<lbrakk>\<lbrakk> \<Phi>\<^sub>1 \<nabla> Suc n\<^sub>1 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L  \<supseteq>  \<lbrakk>\<lbrakk> \<Gamma>\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n \<inter> \<lbrakk>\<lbrakk> \<Psi>\<^sub>2 \<nabla> n\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L \<inter> \<lbrakk>\<lbrakk> \<Phi>\<^sub>2 \<nabla> Suc n\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
+  shows "\<lbrakk>\<lbrakk> \<Gamma>\<^sub>1 \<rbrakk>\<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n \<inter> \<lbrakk>\<lbrakk> \<Psi>\<^sub>1 \<nabla> n\<^sub>1 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L \<inter> \<lbrakk>\<lbrakk> \<Phi>\<^sub>1 \<nabla> Suc n\<^sub>1 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L
+         \<supseteq>  \<lbrakk>\<lbrakk> \<Gamma>\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n \<inter> \<lbrakk>\<lbrakk> \<Psi>\<^sub>2 \<nabla> n\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L \<inter> \<lbrakk>\<lbrakk> \<Phi>\<^sub>2 \<nabla> Suc n\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
   proof (insert assms, erule operational_semantics_step.cases)
   show "\<And>\<Gamma> n \<Phi>.
        (\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1) = (\<Gamma>, n \<turnstile> [] \<triangleright> \<Phi>) \<Longrightarrow>
@@ -168,9 +180,7 @@ theorem reduction_refinement':
   shows "\<lbrakk> \<S>\<^sub>1 \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f \<supseteq> \<lbrakk> \<S>\<^sub>2 \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f"
   by (metis reduction_refinement HeronConf_interpretation.elims assms)
 
-(* TODO: Need to show the same property for an arbitrary number of reduction steps*)
-(* Playing with [rel] type *)
-theorem reduction_refinement'':
+theorem reduction_refinement_rellift:
   assumes "(\<S>\<^sub>1, \<S>\<^sub>2) \<in> \<hookrightarrow>\<^sup>\<up>"
   shows "\<lbrakk> \<S>\<^sub>1 \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f \<supseteq> \<lbrakk> \<S>\<^sub>2 \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f"
   proof -
@@ -178,88 +188,72 @@ theorem reduction_refinement'':
     then show ?thesis using reduction_refinement' by auto
   qed
 
-theorem reduction_refinement_2:
-  assumes "(\<S>\<^sub>1, \<S>\<^sub>2) \<in> \<hookrightarrow>\<^sup>\<up> ^^ 2"
-  shows "\<lbrakk> \<S>\<^sub>1 \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f \<supseteq> \<lbrakk> \<S>\<^sub>2 \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f"
-  proof -
-    obtain \<S>' where "(\<S>\<^sub>1, \<S>') \<in> \<hookrightarrow>\<^sup>\<up> \<and> (\<S>', \<S>\<^sub>2) \<in> \<hookrightarrow>\<^sup>\<up>" sorry
-    have "\<S>\<^sub>1 \<hookrightarrow> \<S>\<^sub>2" using assms sorry
-    then show ?thesis using reduction_refinement' sorry
-  qed
-
 theorem reduction_refinement_general:
-  assumes "(\<S>\<^sub>1, \<S>\<^sub>2) \<in> (\<hookrightarrow>\<^sup>\<up> ^^ n)"
+  assumes "(\<S>\<^sub>1, \<S>\<^sub>2) \<in> \<hookrightarrow>\<^sup>\<up> ^^ n"
   shows "\<lbrakk> \<S>\<^sub>1 \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f \<supseteq> \<lbrakk> \<S>\<^sub>2 \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f"
-  proof (induct n)
+  proof (insert assms, induct n)
     case 0
     then have *: "(\<S>\<^sub>1, \<S>\<^sub>2) \<in> (\<hookrightarrow>\<^sup>\<up> ^^ 0) \<Longrightarrow> \<S>\<^sub>1 = \<S>\<^sub>2"
       by auto
     moreover have "\<S>\<^sub>1 = \<S>\<^sub>2" using *
-      sorry
+      using "0.prems" by linarith
     ultimately show ?case by auto
   next
     case (Suc n)
-    then show ?case sorry
-  qed
-
-theorem
-  assumes "(\<S>\<^sub>1, \<S>\<^sub>2) \<in> \<hookrightarrow>\<^sup>\<up>\<^sup>*"
-  shows "\<lbrakk> \<S>\<^sub>1 \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f \<supseteq> \<lbrakk> \<S>\<^sub>2 \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f"
-  apply (insert assms)
-  proof -
-    have "\<S>\<^sub>1 = \<S>\<^sub>2 \<Longrightarrow> (\<S>\<^sub>1, \<S>\<^sub>2) \<in> \<hookrightarrow>\<^sup>\<up>\<^sup>* \<Longrightarrow> \<lbrakk> \<S>\<^sub>2 \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f \<subseteq> \<lbrakk> \<S>\<^sub>1 \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f "
-      by auto
-    moreover have "\<S>\<^sub>1 \<noteq> \<S>\<^sub>2 \<Longrightarrow> (\<S>\<^sub>1, \<S>\<^sub>2) \<in> \<hookrightarrow>\<^sup>\<up>\<^sup>* \<Longrightarrow> \<lbrakk> \<S>\<^sub>2 \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f \<subseteq> \<lbrakk> \<S>\<^sub>1 \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f"
-      (* apply (frule rtrancl_into_rtrancl) *)
+    then show ?case
       proof -
-        have "undefined" sorry
-        show ?thesis sorry
+      fix n :: nat
+      assume hi: "(\<S>\<^sub>1, \<S>\<^sub>2) \<in> \<hookrightarrow>\<^sup>\<up> ^^ n \<Longrightarrow> \<lbrakk> \<S>\<^sub>1 \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f \<supseteq> \<lbrakk> \<S>\<^sub>2 \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f"
+      assume ff: "(\<S>\<^sub>1, \<S>\<^sub>2) \<in> \<hookrightarrow>\<^sup>\<up> ^^ Suc n"
+      obtain \<S>\<^sub>n where f1: "(\<S>\<^sub>1, \<S>\<^sub>n) \<in> \<hookrightarrow>\<^sup>\<up> \<and> (\<S>\<^sub>n, \<S>\<^sub>2) \<in> \<hookrightarrow>\<^sup>\<up>"
+        sorry
+      then have "\<lbrakk> \<S>\<^sub>1 \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f \<supseteq> \<lbrakk> \<S>\<^sub>n \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f"
+        using hi by (simp add: reduction_refinement_rellift)
+      also have "\<lbrakk> \<S>\<^sub>n \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f \<supseteq> \<lbrakk> \<S>\<^sub>2 \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f"
+        using hi f1 reduction_refinement_rellift by auto
+      ultimately show "\<lbrakk> \<S>\<^sub>1 \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f \<supseteq> \<lbrakk> \<S>\<^sub>2 \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f"
+        by auto
       qed
-    ultimately show ?thesis using assms by blast
-  qed
-
-(* To start solving specification [\<Psi>], we start at configuration [], 0 \<turnstile> \<Psi> \<triangleright> [] *)
-lemma solve_start:
-  shows "\<lbrakk>\<lbrakk> \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<lbrakk> [], 0 \<turnstile> \<Psi> \<triangleright> [] \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f"
-  proof -
-    have "\<lbrakk>\<lbrakk> \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<lbrakk>\<lbrakk> \<Psi> \<nabla> 0 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
-    by (simp add: TESL_interpretation_at_index_zero')
-    moreover have "\<lbrakk> [], 0 \<turnstile> \<Psi> \<triangleright> [] \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f = \<lbrakk>\<lbrakk> [] \<rbrakk>\<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n \<inter> \<lbrakk>\<lbrakk> \<Psi> \<nabla> 0 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L \<inter> \<lbrakk>\<lbrakk> [] \<nabla> Suc 0 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
-    by simp
-    ultimately show ?thesis by auto
   qed
 
 (**) section \<open>Completeness\<close> (**)
 
-abbreviation next_solve
-  :: "(system \<times> instant_index \<times> TESL_formula \<times> TESL_formula)
-     \<Rightarrow> (system \<times> instant_index \<times> TESL_formula \<times> TESL_formula) set" ("\<SS>\<^sub>n\<^sub>e\<^sub>x\<^sub>t _") where
-  "\<SS>\<^sub>n\<^sub>e\<^sub>x\<^sub>t \<S> \<equiv> { \<S>'. \<S> \<hookrightarrow> \<S>' }"
+abbreviation next_solve :: "config \<Rightarrow> config set" ("\<F>\<^sub>n\<^sub>e\<^sub>x\<^sub>t _") where
+  "\<F>\<^sub>n\<^sub>e\<^sub>x\<^sub>t \<S> \<equiv> { \<S>'. \<S> \<hookrightarrow> \<S>' }"
 
-lemma
-  shows "\<lbrakk> [], 0 \<turnstile> [] \<triangleright> [] \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f = (\<Union>X\<in>\<SS>\<^sub>n\<^sub>e\<^sub>x\<^sub>t ([], 0 \<turnstile> [] \<triangleright> []). \<lbrakk> X \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f)"
-  proof -
-    have "\<lbrakk> [], 0 \<turnstile> [] \<triangleright> [] \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f = \<lbrakk>\<lbrakk> [] \<rbrakk>\<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n \<inter> \<lbrakk>\<lbrakk> [] \<nabla> 0 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L \<inter> \<lbrakk>\<lbrakk> [] \<nabla> Suc 0 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L" by simp
-    moreover have "\<SS>\<^sub>n\<^sub>e\<^sub>x\<^sub>t ([], 0 \<turnstile> [] \<triangleright> []) = { ([], 1 \<turnstile> [] \<triangleright> []) }"
-      sorry
-    ultimately show ?thesis by auto
-  qed
-
+find_theorems name: "operational_semantics_step"
 theorem completeness:
-  shows "\<lbrakk> \<Gamma>, n \<turnstile> \<Psi> \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f = (\<Union>X\<in>\<SS>\<^sub>n\<^sub>e\<^sub>x\<^sub>t (\<Gamma>, n \<turnstile> \<Psi> \<triangleright> \<Phi>). \<lbrakk> X \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f)"
+  shows "\<lbrakk> \<Gamma>, n \<turnstile> \<Psi> \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f = (\<Union>X\<in>\<F>\<^sub>n\<^sub>e\<^sub>x\<^sub>t (\<Gamma>, n \<turnstile> \<Psi> \<triangleright> \<Phi>). \<lbrakk> X \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f)"
+(*
+  apply (rule Operational.operational_semantics_step.cases)
+  apply (auto)
+  proof -
+  show "([], Suc n, \<Psi>, \<Phi>) \<hookrightarrow> (\<tau>\<^sub>v\<^sub>a\<^sub>r (K\<^sub>1, n\<^sub>1) \<doteq> \<alpha> * \<tau> + \<beta> # \<gamma> # \<Gamma>, 0, \<Psi>, \<Phi>)"
+    sorry
+  qed
+*)
   sorry
+  (* proof (rule operational_semantics_step.induct) *)
 
-(**) section \<open>Termination of instantataneous formulae elimination\<close> (**)
+
+(**) section \<open>Termination of instantaneous formulae elimination\<close> (**)
 (* Idea: A bounded monotonic sequence is convergent *)
-fun count_interpretation :: "TESL_formula \<Rightarrow> nat" ("\<lbrakk>\<lbrakk> _ \<rbrakk>\<rbrakk>\<^sub>c\<^sub>n\<^sub>t") where
-    "\<lbrakk>\<lbrakk> [] \<rbrakk>\<rbrakk>\<^sub>c\<^sub>n\<^sub>t = (0::nat)"
-  | "\<lbrakk>\<lbrakk> \<phi> # \<Phi> \<rbrakk>\<rbrakk>\<^sub>c\<^sub>n\<^sub>t = (case \<phi> of
-                        _ sporadic _ on _ \<Rightarrow> 1 + \<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>c\<^sub>n\<^sub>t
-                      | _                 \<Rightarrow> 2 + \<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>c\<^sub>n\<^sub>t)"
-lemma present_strictly_decreasing:
+primrec measure_interpretation :: "TESL_formula \<Rightarrow> nat" ("\<lbrakk>\<lbrakk> _ \<rbrakk>\<rbrakk>\<^sub>m\<^sub>e\<^sub>a\<^sub>s") where
+    "\<lbrakk>\<lbrakk> [] \<rbrakk>\<rbrakk>\<^sub>m\<^sub>e\<^sub>a\<^sub>s = (0::nat)"
+  | "\<lbrakk>\<lbrakk> \<phi> # \<Phi> \<rbrakk>\<rbrakk>\<^sub>m\<^sub>e\<^sub>a\<^sub>s = (case \<phi> of
+                        _ sporadic _ on _ \<Rightarrow> 1 + \<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>m\<^sub>e\<^sub>a\<^sub>s
+                      | _                 \<Rightarrow> 2 + \<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>m\<^sub>e\<^sub>a\<^sub>s)"
+
+lemma elimation_rules_strictly_decreasing:
   assumes "\<Gamma>\<^sub>1, n \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1  \<hookrightarrow>  \<Gamma>\<^sub>2, n \<turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2"
-  shows "\<lbrakk>\<lbrakk> \<Psi>\<^sub>1 \<rbrakk>\<rbrakk>\<^sub>c\<^sub>n\<^sub>t > \<lbrakk>\<lbrakk> \<Psi>\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>c\<^sub>n\<^sub>t"
+  shows "\<lbrakk>\<lbrakk> \<Psi>\<^sub>1 \<rbrakk>\<rbrakk>\<^sub>m\<^sub>e\<^sub>a\<^sub>s > \<lbrakk>\<lbrakk> \<Psi>\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>m\<^sub>e\<^sub>a\<^sub>s"
   by (insert assms, erule operational_semantics_step.cases, auto)
+
+theorem instant_computation_termination:
+  shows "wf \<hookrightarrow>\<^sub>e"
+  apply (rule wf_bounded_measure)
+(*apply (rule_tac ?ub="\<lambda>x. x" ?f="\<lambda>x. \<lbrakk>\<lbrakk> x \<rbrakk>\<rbrakk>\<^sub>m\<^sub>e\<^sub>a\<^sub>s" in wf_bounded_measure) *)
+  sorry
 
 lemma run_index_progress:
   assumes "\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1  \<hookrightarrow>  \<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2"
@@ -267,20 +261,21 @@ lemma run_index_progress:
   by (insert assms, erule operational_semantics_step.cases, auto)
 
 lemma run_index_progress_simlstep:
-  assumes "(\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1, \<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2) \<in> \<hookrightarrow>\<^sup>\<nabla>"
+  assumes "(\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1, \<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2) \<in> \<hookrightarrow>\<^sub>\<nabla>"
   shows "n\<^sub>2 = Suc n\<^sub>1"
   apply (insert assms)
   apply auto
   sorry
 
+(**) section \<open>Semidecidability\<close> (**)
+
+
 (**) section \<open>Composition\<close> (**)
 
-lemma run_composition:
-  assumes "\<Gamma>, n \<turnstile> \<Psi>\<^sub>1 \<triangleright> (\<Phi>\<^sub>1 @ \<Phi>\<^sub>2)  \<hookrightarrow>  \<Gamma>', n' \<turnstile> \<Psi>\<^sub>2 \<triangleright> (\<Phi>\<^sub>1' @ \<Phi>\<^sub>2')"
-  shows "\<lbrakk>\<lbrakk> \<Phi>\<^sub>1 @ \<Phi>\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<lbrakk>\<lbrakk> \<Phi>\<^sub>1' @ \<Phi>\<^sub>2' \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
-  apply (insert assms, erule operational_semantics_step.cases, auto)
-  (* nitpick *)
-  sorry
+lemma composition:
+  shows "\<lbrakk> \<Gamma>\<^sub>1, n \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1 \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f \<inter> \<lbrakk> \<Gamma>\<^sub>2, n \<turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2 \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f
+         = \<lbrakk> \<Gamma>\<^sub>1 @ \<Gamma>\<^sub>2, n \<turnstile> \<Psi>\<^sub>1 @ \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>1 @ \<Phi>\<^sub>2 \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f"
+  using TESL_interp_at_index_composition symrun_interp_expansion by auto
 
 lemma sat_composition:
   assumes "K\<^sub>1 time-delayed by \<delta>\<tau> on K\<^sub>2 implies K\<^sub>3 \<notin> set \<Phi> \<union> set \<Phi>'"
@@ -290,7 +285,7 @@ lemma sat_composition:
   shows   "\<TTurnstile> \<Gamma>\<^sub>1 @ \<Gamma>\<^sub>2, n \<turnstile> [] \<triangleright> \<Phi>\<^sub>1 @ \<Phi>\<^sub>2"
   oops
 
-(**) section \<open>Decidability\<close> (**)
+(**) section \<open>Existence\<close> (**)
 fun tagrel_consistent :: "TESL_formula \<Rightarrow> bool" where
   "tagrel_consistent \<Phi> = undefined"
 

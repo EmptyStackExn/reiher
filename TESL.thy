@@ -56,7 +56,7 @@ abbreviation NoSporadic :: "TESL_formula \<Rightarrow> TESL_formula" where
    Follows the intuition: past [\<Gamma>], current index [n], present [\<psi>], future [\<phi>]
    Beware: This type is slightly different from which originally implemented in Heron
 *)
-type_synonym TESL_ARS_conf = "system * instant_index * TESL_formula * TESL_formula"
+type_synonym config = "system * instant_index * TESL_formula * TESL_formula"
 
 (*declare[[show_sorts]]*)
 
