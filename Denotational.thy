@@ -35,13 +35,13 @@ fun TESL_interpretation :: "TESL_formula \<Rightarrow> run set" ("\<lbrakk>\<lbr
     "\<lbrakk>\<lbrakk> [] \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = { _. True }"
   | "\<lbrakk>\<lbrakk> \<phi> # \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<lbrakk> \<phi> \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L \<inter> \<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
 
-lemma TESL_interpretation_cons_morph:
+lemma TESL_interpretation_homo:
   "\<lbrakk> \<phi> \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L \<inter> \<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<lbrakk>\<lbrakk> \<phi> # \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
   by auto
 
 (***) subsection \<open>Fixpoint lemma\<close> (***)
 
-theorem TESL_interp_fixpoint:
+theorem TESL_interpretation_image:
   "\<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<Inter> ((\<lambda>\<phi>. \<lbrakk> \<phi> \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L) ` set \<Phi>)"
   proof (induct \<Phi>)
     case Nil
@@ -51,11 +51,12 @@ theorem TESL_interp_fixpoint:
     then show ?case by auto
   qed
 
-
+lemmas TESL_interpretation_cons_morph = TESL_interpretation_homo (*legacy *)
+lemmas TESL_interp_fixpoint = TESL_interpretation_image (*legacy *)
 (***) subsection \<open>Expansion law\<close> (***)
 text \<open>Similar to the expansion laws of lattices\<close>
 
-theorem TESL_interp_composition:
+theorem TESL_interp_composition: (* modifier le nom homo_append *)
   shows "\<lbrakk>\<lbrakk> \<Phi>\<^sub>1 @ \<Phi>\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<lbrakk>\<lbrakk> \<Phi>\<^sub>1 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L \<inter> \<lbrakk>\<lbrakk> \<Phi>\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
   proof (induct \<Phi>\<^sub>1)
     case Nil
