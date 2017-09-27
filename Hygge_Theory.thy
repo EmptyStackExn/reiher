@@ -403,6 +403,10 @@ theorem completeness:
       qed
   qed
 
+theorem completeness':
+  shows "\<lbrakk> \<C> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f \<subseteq> (\<Union>X\<in>\<F>\<^sub>n\<^sub>e\<^sub>x\<^sub>t \<C>. \<lbrakk> X \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f)"
+  by (metis HeronConf_interpretation.cases completeness)
+
 (**) section \<open>Termination of instantaneous formulae elimination\<close> (**)
 (* Idea: A bounded monotonic sequence is convergent *)
 primrec measure_interpretation :: "TESL_formula \<Rightarrow> nat" ("\<lbrakk>\<lbrakk> _ \<rbrakk>\<rbrakk>\<^sub>m\<^sub>e\<^sub>a\<^sub>s") where
