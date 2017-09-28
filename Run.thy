@@ -9,12 +9,9 @@ section \<open> Defining runs \<close>
 abbreviation hamlet where "hamlet \<equiv> fst"
 abbreviation time where "time \<equiv> snd"
 
-(*
 type_synonym instant = "clock \<Rightarrow> (bool \<times> tag_const)"
-type_synonym run = "nat \<Rightarrow> instant"
-*)
 typedef (overloaded) run =
-  "{ \<rho>::nat \<Rightarrow> clock \<Rightarrow> (bool \<times> tag_const). \<forall>c. mono (\<lambda>n. time (\<rho> n c)) }"
+  "{ \<rho>::nat \<Rightarrow> instant. \<forall>c. mono (\<lambda>n. time (\<rho> n c)) }"
 proof
   show "(\<lambda>_ _. (undefined, \<tau>\<^sub>r\<^sub>a\<^sub>t 0)) \<in> {\<rho>::nat \<Rightarrow> clock \<Rightarrow> bool \<times> tag_const. \<forall>c::clock. mono (\<lambda>n::nat. time (\<rho> n c))}"
   using mono_def by auto
@@ -27,10 +24,10 @@ lemma Abs_run_inverse_rewrite:
   "\<forall>c. mono (\<lambda>n. time (\<rho> n c)) \<Longrightarrow> Rep_run (Abs_run \<rho>) = \<rho>"
   by (simp add: Abs_run_inverse)
 
-(* WARNING: Admitting monotonicity to compute faster. Use for testing purposes only. *)
+(* WARNING: Admitting monotonicity to compute faster. Use for debugging purposes only. *)
 lemma Abs_run_inverse_rewrite_unsafe:
   "Rep_run (Abs_run \<rho>) = \<rho>"
-  sorry
+  oops (* Use [sorry] when testing *)
 
 
 fun symbolic_run_interpretation_primitive :: "constr \<Rightarrow> run set" ("\<lbrakk> _ \<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n") where
