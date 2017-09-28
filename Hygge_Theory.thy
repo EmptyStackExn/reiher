@@ -6,7 +6,8 @@ begin
 
 section \<open>Initial configuration\<close>
 
-lemma solve_start:
+text \<open>Solving a specification [\<Psi>] means to start at initial configuration [], 0 \<turnstile> \<Psi> \<triangleright> []\<close>
+theorem solve_start:
   shows "\<lbrakk>\<lbrakk> \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<lbrakk> [], 0 \<turnstile> \<Psi> \<triangleright> [] \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
   proof -
     have "\<lbrakk>\<lbrakk> \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<lbrakk>\<lbrakk> \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> 0\<^esup>"
@@ -18,7 +19,7 @@ lemma solve_start:
 
 section \<open>Soundness\<close>
 
-theorem soundness:
+lemma reduction_step_sound:
   assumes "\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1  \<hookrightarrow>  \<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2"
   shows "\<lbrakk>\<lbrakk> \<Gamma>\<^sub>1 \<rbrakk>\<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n \<inter> \<lbrakk>\<lbrakk> \<Psi>\<^sub>1 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^sub>1\<^esup> \<inter> \<lbrakk>\<lbrakk> \<Phi>\<^sub>1 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^sub>1\<^esup>
           \<supseteq>  \<lbrakk>\<lbrakk> \<Gamma>\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n \<inter> \<lbrakk>\<lbrakk> \<Psi>\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^sub>2\<^esup> \<inter> \<lbrakk>\<lbrakk> \<Phi>\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^sub>2\<^esup>"
@@ -118,12 +119,12 @@ theorem soundness:
     qed
   qed
 
-theorem soundness':
+lemma reduction_step_sound':
   assumes "\<S>\<^sub>1 \<hookrightarrow> \<S>\<^sub>2"
   shows "\<lbrakk> \<S>\<^sub>1 \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g \<supseteq> \<lbrakk> \<S>\<^sub>2 \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
-  by (metis soundness HeronConf_interpretation.elims assms)
+  by (metis reduction_step_sound HeronConf_interpretation.elims assms)
 
-theorem soundness_generalized:
+lemma reduction_step_sound_generalized:
   assumes "\<S>\<^sub>1 \<hookrightarrow>\<^bsup>n\<^esup> \<S>\<^sub>2"
   shows "\<lbrakk> \<S>\<^sub>1 \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g \<supseteq> \<lbrakk> \<S>\<^sub>2 \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
   proof (insert assms, induct n arbitrary: \<S>\<^sub>2)
@@ -145,15 +146,23 @@ theorem soundness_generalized:
       then have "\<lbrakk> \<S>\<^sub>1 \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g \<supseteq> \<lbrakk> \<S>\<^sub>n \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
         using hi by (metis (no_types, lifting) ff relpowp_Suc_E someI_ex)
       also have "\<lbrakk> \<S>\<^sub>n \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g \<supseteq> \<lbrakk> \<S>\<^sub>2 \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
-        by (simp add: red_decomp soundness')
+        by (simp add: red_decomp reduction_step_sound')
       ultimately show "\<lbrakk> \<S>\<^sub>1 \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g \<supseteq> \<lbrakk> \<S>\<^sub>2 \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
         by auto
       qed
   qed
 
+text \<open>From initial configuration, any reduction step number [n] providing a
+      configuration [\<S>] will denote runs from initial specification [\<Psi>].\<close>
+theorem soundness:
+  assumes "[], 0 \<turnstile> \<Psi> \<triangleright> [] \<hookrightarrow>\<^bsup>n\<^esup> \<S>"
+  shows "\<lbrakk>\<lbrakk> \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L \<supseteq> \<lbrakk> \<S> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
+  using assms reduction_step_sound_generalized solve_start
+  by blast
+
 section \<open>Completeness\<close>
 
-theorem completeness:
+lemma coverage_complete:
   shows "\<lbrakk> \<Gamma>, n \<turnstile> \<Psi> \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g \<subseteq> (\<Union>X\<in>\<F>\<^sub>n\<^sub>e\<^sub>x\<^sub>t (\<Gamma>, n \<turnstile> \<Psi> \<triangleright> \<Phi>). \<lbrakk> X \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g)"
   proof (induct \<Psi>)
     case Nil
@@ -191,63 +200,35 @@ theorem completeness:
       qed
   qed
 
-theorem completeness':
+lemma coverage_complete':
   shows "\<lbrakk> \<S> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g \<subseteq> (\<Union>X\<in>\<F>\<^sub>n\<^sub>e\<^sub>x\<^sub>t \<S>. \<lbrakk> X \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g)"
-  by (metis HeronConf_interpretation.cases completeness)
+  by (metis HeronConf_interpretation.cases coverage_complete)
 
-(*
-theorem completeness'':
-  assumes "\<rho> \<in> \<lbrakk> \<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1 \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
-  shows "\<exists>\<Gamma>\<^sub>2 n\<^sub>2 \<Psi>\<^sub>2 \<Phi>\<^sub>2. \<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1 \<hookrightarrow> \<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2
-           \<and> \<rho> \<in> \<lbrakk> \<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2 \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
-  proof (insert assms, induct \<Psi>\<^sub>1)
-    case Nil
-    have "\<rho> \<in> \<lbrakk> \<Gamma>\<^sub>1, Suc n\<^sub>1 \<turnstile> \<Phi>\<^sub>1 \<triangleright> [] \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
-      using assms HeronConf_interp_at_index_instant_cases by auto
-    moreover have "\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> [] \<triangleright> \<Phi>\<^sub>1 \<hookrightarrow> \<Gamma>\<^sub>1, Suc n\<^sub>1 \<turnstile> \<Phi>\<^sub>1 \<triangleright> []"
-      using intro_part operational_semantics_intro.instant_i by auto
-    ultimately show ?case by blast
-  next
-    case (Cons \<psi>\<^sub>1 \<Psi>\<^sub>1)
-    then show ?case
-      proof (induct \<psi>\<^sub>1)
-        case (Sporadic x1 x2)
-        then show ?case
-          using HeronConf_interp_at_index_sporadic_cases
-          by (metis UnE elims_part sporadic_e1 sporadic_e2)
-      next
-        case (SporadicOn x1 x2 x3)
-        then show ?case
-          using HeronConf_interp_at_index_sporadicon_cases
-          by (metis UnE elims_part sporadic_on_e1 sporadic_on_e2)
-      next
-        case (TagRelation x1 x2 x3 x4)
-        then show ?case
-          using HeronConf_interp_at_index_tagrel_cases
-          by (metis elims_part tagrel_e)
-      next
-        case (Implies x1 x2)
-        then show ?case
-          using HeronConf_interp_at_index_implies_cases
-          by (metis UnE elims_part implies_e1 implies_e2)
-      next
-        case (TimeDelayedBy x1 x2 x3 x4)
-        then show ?case
-          using HeronConf_interp_at_index_timedelayed_cases
-          by (metis UnE elims_part timedelayed_e1 timedelayed_e2)
-      qed
-  qed
-*)
-
-theorem completeness''':
+lemma branch_existence:
   assumes "\<rho> \<in> \<lbrakk> \<S>\<^sub>1 \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
   shows "\<exists>\<S>\<^sub>2. \<S>\<^sub>1 \<hookrightarrow> \<S>\<^sub>2 \<and> \<rho> \<in> \<lbrakk> \<S>\<^sub>2 \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
-  by (metis (mono_tags, lifting) UN_iff assms completeness' mem_Collect_eq set_rev_mp)
+  by (metis (mono_tags, lifting) UN_iff assms coverage_complete' mem_Collect_eq set_rev_mp)
 
-theorem completeness'''':
-  assumes "\<rho> \<in> \<lbrakk> [], 0 \<turnstile> \<Psi> \<triangleright> [] \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
-  shows "\<exists>\<S>. [], 0 \<turnstile> \<Psi> \<triangleright> [] \<hookrightarrow>\<^bsup>n\<^esup> \<S> \<and> \<rho> \<in> \<lbrakk> \<S> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
-  sorry
+lemma branch_existence':
+  assumes "\<rho> \<in> \<lbrakk> \<S>\<^sub>1 \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
+  shows "\<exists>\<S>\<^sub>2. \<S>\<^sub>1 \<hookrightarrow>\<^bsup>n\<^esup> \<S>\<^sub>2 \<and> \<rho> \<in> \<lbrakk> \<S>\<^sub>2 \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
+  proof (induct n)
+    case 0
+    then show ?case
+      by (simp add: assms)
+  next
+    case (Suc n)
+    then show ?case
+      by (meson branch_existence relpowp_Suc_I)
+  qed
+
+text \<open>Any run from initial specification [\<Psi>] has a corresponding configuration
+      [\<S>] at any reduction step number [n] starting from initial configuration.\<close>
+theorem completeness:
+  assumes "\<rho> \<in> \<lbrakk>\<lbrakk> \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
+  shows "\<exists>\<S>. [], 0 \<turnstile> \<Psi> \<triangleright> []  \<hookrightarrow>\<^bsup>n\<^esup>  \<S>
+         \<and> \<rho> \<in> \<lbrakk> \<S> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
+  using assms branch_existence' solve_start by blast
 
 section \<open>Termination of instant computation\<close>
 
@@ -277,8 +258,9 @@ lemma elimation_rules_strictly_decreasing_meas':
   using elimation_rules_strictly_decreasing_meas
   by (metis assms in_measure measure_interpretation_config.elims)
 
+text \<open>The relation made up of elimination rules is well-founded.\<close>
 theorem instant_computation_termination:
-  shows "wfP (\<lambda>\<S>\<^sub>1 \<S>\<^sub>2. \<S>\<^sub>1 \<hookrightarrow>\<^sub>e\<^sup>\<leftarrow> \<S>\<^sub>2)"
+  shows "wfP (\<lambda>\<S>\<^sub>1 \<S>\<^sub>2. \<S>\<^sub>1  \<hookrightarrow>\<^sub>e\<^sup>\<leftarrow>  \<S>\<^sub>2)"
   proof (simp add: wfP_def)
     show "wf {(\<S>\<^sub>1, \<S>\<^sub>2). \<S>\<^sub>1 \<hookrightarrow>\<^sub>e\<^sup>\<leftarrow> \<S>\<^sub>2}"
     apply (rule wf_subset)
@@ -294,23 +276,7 @@ theorem instant_computation_termination:
 
 section \<open>Progress\<close>
 
-lemma run_index_increase:
-  assumes "\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1  \<hookrightarrow>  \<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2"
-  shows "n\<^sub>2 = Suc n\<^sub>1 \<or> n\<^sub>2 = n\<^sub>1"
-  apply (insert assms, erule operational_semantics_step.cases)
-  proof -
-  show "\<And>\<Gamma>\<^sub>1' n\<^sub>1' \<Psi>\<^sub>1' \<Phi>\<^sub>1' \<Gamma>\<^sub>2' n\<^sub>2' \<Psi>\<^sub>2' \<Phi>\<^sub>2'.
-       \<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1 = \<Gamma>\<^sub>1', n\<^sub>1' \<turnstile> \<Psi>\<^sub>1' \<triangleright> \<Phi>\<^sub>1' \<Longrightarrow>
-       \<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2 = \<Gamma>\<^sub>2', n\<^sub>2' \<turnstile> \<Psi>\<^sub>2' \<triangleright> \<Phi>\<^sub>2' \<Longrightarrow>
-       \<Gamma>\<^sub>1', n\<^sub>1' \<turnstile> \<Psi>\<^sub>1' \<triangleright> \<Phi>\<^sub>1' \<hookrightarrow>\<^sub>i \<Gamma>\<^sub>2', n\<^sub>2' \<turnstile> \<Psi>\<^sub>2' \<triangleright> \<Phi>\<^sub>2' \<Longrightarrow> n\<^sub>2 = Suc n\<^sub>1 \<or> n\<^sub>2 = n\<^sub>1"
-    by (simp add: operational_semantics_intro.simps)
-  show "\<And>\<Gamma>\<^sub>1' n\<^sub>1' \<Psi>\<^sub>1' \<Phi>\<^sub>1' \<Gamma>\<^sub>2' n\<^sub>2' \<Psi>\<^sub>2' \<Phi>\<^sub>2'.
-       \<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1 = \<Gamma>\<^sub>1', n\<^sub>1' \<turnstile> \<Psi>\<^sub>1' \<triangleright> \<Phi>\<^sub>1' \<Longrightarrow>
-       \<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2 = \<Gamma>\<^sub>2', n\<^sub>2' \<turnstile> \<Psi>\<^sub>2' \<triangleright> \<Phi>\<^sub>2' \<Longrightarrow>
-       \<Gamma>\<^sub>1', n\<^sub>1' \<turnstile> \<Psi>\<^sub>1' \<triangleright> \<Phi>\<^sub>1' \<hookrightarrow>\<^sub>e \<Gamma>\<^sub>2', n\<^sub>2' \<turnstile> \<Psi>\<^sub>2' \<triangleright> \<Phi>\<^sub>2' \<Longrightarrow> n\<^sub>2 = Suc n\<^sub>1 \<or> n\<^sub>2 = n\<^sub>1"
-    using operational_semantics_elim.simps by auto
-  qed
-
+text \<open>Any configuration has a successor.\<close>
 lemma progress:
   shows "\<exists>\<Gamma>\<^sub>2 n\<^sub>2 \<Psi>\<^sub>2 \<Phi>\<^sub>2. \<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1  \<hookrightarrow>  \<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2"
   proof (induct \<Psi>\<^sub>1)
@@ -343,22 +309,12 @@ lemma progress:
       qed
   qed
 
-(* Elementaire, simple par définition de \<rightarrow>\<^sub>\<nabla> *)
-lemma run_index_progress_simlstep:
-  assumes "\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1  \<hookrightarrow>\<^sub>\<nabla>  \<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2"
-  shows "n\<^sub>2 = Suc n\<^sub>1"
-  using assms
-  by (simp add: operational_semantics_simlstep.simps)
-
 (**) section \<open>Composition\<close> (**)
 
 lemma composition:
   shows "\<lbrakk> \<Gamma>\<^sub>1, n \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1 \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g \<inter> \<lbrakk> \<Gamma>\<^sub>2, n \<turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2 \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
          = \<lbrakk> \<Gamma>\<^sub>1 @ \<Gamma>\<^sub>2, n \<turnstile> \<Psi>\<^sub>1 @ \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>1 @ \<Phi>\<^sub>2 \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
   using TESL_interp_at_index_composition symrun_interp_expansion by auto
-
-(**) section \<open>Semidecidability\<close> (**)
-(* The set of runs hence becomes recursively countable due to the previous observations. *)
 
 (**) section \<open>Existence\<close> (**)
 lemma existence:

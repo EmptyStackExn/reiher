@@ -107,24 +107,7 @@ lemma context_consistency_preservationE:
   assumes consist: "consistent_run \<Gamma>"
   and     indepen: "\<gamma> \<bowtie> \<Gamma>"
   shows "consistent_run (\<gamma> # \<Gamma>)"
-apply (insert consist indepen)
-apply (erule context_independency.cases)
-apply auto
-proof -
-  show "\<And>K n. consistent_run \<Gamma> \<Longrightarrow>
-           \<gamma> = K \<not>\<Up> n \<Longrightarrow> K \<Up> n \<notin> set \<Gamma> \<Longrightarrow>
-           consistent_run (K \<not>\<Up> n # \<Gamma>)"
-    sorry
-  show "\<And>K n. consistent_run \<Gamma> \<Longrightarrow>
-           \<gamma> = K \<Up> n \<Longrightarrow> K \<not>\<Up> n \<notin> set \<Gamma> \<Longrightarrow>
-           consistent_run (K \<Up> n # \<Gamma>)"
-    sorry
-  show "\<And>\<tau> K n.
-       consistent_run \<Gamma> \<Longrightarrow>
-       \<gamma> = K \<Down> n @ \<tau> \<Longrightarrow>
-       K \<Down> n @ \<tau> \<notin> set \<Gamma> \<Longrightarrow> consistent_run (K \<Down> n @ \<tau> # \<Gamma>)"
-    sorry
-qed
+  oops
 
 (**) section \<open>Fixpoint lemma\<close> (**)
 
