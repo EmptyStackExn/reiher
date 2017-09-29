@@ -309,6 +309,59 @@ lemma progress:
       qed
   qed
 
+(* TODO *)
+theorem progress_completeness''':
+  shows "\<exists>\<Gamma>\<^sub>k n \<Psi>\<^sub>k \<Phi>\<^sub>k. \<Gamma>\<^sub>0, k\<^sub>0 \<turnstile> \<Psi>\<^sub>0 \<triangleright> \<Phi>\<^sub>0  \<hookrightarrow>\<^bsup>n\<^esup>  \<Gamma>\<^sub>k, k \<turnstile> \<Psi>\<^sub>k \<triangleright> \<Phi>\<^sub>k"
+  using progress
+  proof (induct k)
+    case 0
+    then show ?case sorry
+  next
+    case (Suc k)
+    then show ?case sorry
+  qed
+
+(* Use Fnext operator but how... *)
+lemma reduction_step_complete:
+  assumes "\<S>\<^sub>1 \<hookrightarrow> \<S>\<^sub>2"
+  shows "\<lbrakk> \<S>\<^sub>1 \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g \<subseteq> \<lbrakk> \<S>\<^sub>2 \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
+  sorry
+
+(* Erreur etrange *)
+lemma reduction_step_complete_generalized:
+  assumes "\<S>\<^sub>1 \<hookrightarrow>\<^bsup>n\<^esup> \<S>\<^sub>2"
+  shows "\<lbrakk> \<S>\<^sub>1 \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g \<subseteq> \<lbrakk> \<S>\<^sub>2 \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
+  proof (induct n arbitrary: \<S>\<^sub>2)
+    case 0
+    then have *: "\<S>\<^sub>1 \<hookrightarrow>\<^bsup>0\<^esup> \<S>\<^sub>2 \<Longrightarrow> \<S>\<^sub>1 = \<S>\<^sub>2"
+      by auto
+    moreover have "\<S>\<^sub>1 = \<S>\<^sub>2" using * assms sorry
+    ultimately show ?case by blast
+  next
+    case (Suc n)
+    then show ?case sorry
+  qed
+
+theorem progress_completeness'':
+  shows "\<exists>\<Gamma>\<^sub>k n \<Psi>\<^sub>k \<Phi>\<^sub>k. \<Gamma>\<^sub>0, k\<^sub>0 \<turnstile> \<Psi>\<^sub>0 \<triangleright> \<Phi>\<^sub>0  \<hookrightarrow>\<^bsup>n\<^esup>  \<Gamma>\<^sub>k, k \<turnstile> \<Psi>\<^sub>k \<triangleright> \<Phi>\<^sub>k
+         \<and> \<lbrakk> \<Gamma>\<^sub>0, k\<^sub>0 \<turnstile> \<Psi>\<^sub>0 \<triangleright> \<Phi>\<^sub>0 \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g \<subseteq> \<lbrakk> \<Gamma>\<^sub>k, k \<turnstile> \<Psi>\<^sub>k \<triangleright> \<Phi>\<^sub>k \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
+  by (meson progress_completeness''' reduction_step_complete_generalized)
+
+theorem progress_completeness':
+  shows "\<exists>\<Gamma>\<^sub>k n \<Psi>\<^sub>k \<Phi>\<^sub>k. [], 0 \<turnstile> \<Psi> \<triangleright> []  \<hookrightarrow>\<^bsup>n\<^esup>  \<Gamma>\<^sub>k, k \<turnstile> \<Psi>\<^sub>k \<triangleright> \<Phi>\<^sub>k
+         \<and> \<lbrakk>\<lbrakk> \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L \<subseteq> \<lbrakk> \<Gamma>\<^sub>k, k \<turnstile> \<Psi>\<^sub>k \<triangleright> \<Phi>\<^sub>k \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
+  using progress_completeness'' solve_start by presburger
+
+theorem progress_completeness:
+  assumes "\<rho> \<in> \<lbrakk>\<lbrakk> \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
+  shows "\<exists>\<Gamma>\<^sub>k n \<Psi>\<^sub>k \<Phi>\<^sub>k. [], 0 \<turnstile> \<Psi> \<triangleright> []  \<hookrightarrow>\<^bsup>n\<^esup>  \<Gamma>\<^sub>k, k \<turnstile> \<Psi>\<^sub>k \<triangleright> \<Phi>\<^sub>k
+         \<and> \<rho> \<in> \<lbrakk> \<Gamma>\<^sub>k, k \<turnstile> \<Psi>\<^sub>k \<triangleright> \<Phi>\<^sub>k \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
+  using progress_completeness'
+  by (metis (full_types) assms reduction_step_sound_generalized solve_start subset_antisym)
+
+lemma "\<rho> \<in> \<lbrakk>\<lbrakk> [] \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
+  by simp
+
 (**) section \<open>Composition\<close> (**)
 
 lemma composition:
