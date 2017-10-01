@@ -86,6 +86,7 @@ inductive operational_semantics_simlstep :: "config \<Rightarrow> config \<Right
 abbreviation Fnext_solve :: "config \<Rightarrow> config set" ("\<F>\<^sub>n\<^sub>e\<^sub>x\<^sub>t _") where
   "\<F>\<^sub>n\<^sub>e\<^sub>x\<^sub>t \<S> \<equiv> { \<S>'. \<S> \<hookrightarrow> \<S>' }"
 
+(* Is \<F>\<^sub>n\<^sub>e\<^sub>x\<^sub>t complete enough to have equality ? *)
 lemma Fnext_solve_instant:
   shows "\<F>\<^sub>n\<^sub>e\<^sub>x\<^sub>t (\<Gamma>, n \<turnstile> [] \<triangleright> \<Phi>)
           \<supseteq> { \<Gamma>, Suc n \<turnstile> \<Phi> \<triangleright> [] }"
@@ -119,6 +120,17 @@ lemma Fnext_solve_timedelayed:
           \<supseteq> { K\<^sub>1 \<not>\<Up> n # \<Gamma>, n \<turnstile> \<Psi> \<triangleright> (K\<^sub>1 time-delayed by \<delta>\<tau> on K\<^sub>2 implies K\<^sub>3) # \<Phi>,
               K\<^sub>1 \<Up> n # \<Gamma>, n \<turnstile> (K\<^sub>3 sporadic \<lfloor>\<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>2, n) \<oplus> \<delta>\<tau>\<rfloor> on K\<^sub>2) # \<Psi> \<triangleright> (K\<^sub>1 time-delayed by \<delta>\<tau> on K\<^sub>2 implies K\<^sub>3) # \<Phi> }"
   by (simp add: operational_semantics_step.simps operational_semantics_elim.timedelayed_e1 operational_semantics_elim.timedelayed_e2)
+
+lemma empty_spec_reductions:
+  shows "[], 0 \<turnstile> [] \<triangleright> [] \<hookrightarrow>\<^bsup>k\<^esup> [], k \<turnstile> [] \<triangleright> []"
+  proof (induct k)
+    case 0
+    then show ?case by simp
+  next
+    case (Suc k)
+    then show ?case
+      using instant_i intro_part by auto
+  qed
 
 inductive finite_SAT :: "config \<Rightarrow> bool" ("\<TTurnstile> _" 50) where
   finite_SAT_ax: "set (NoSporadic \<Phi>) = set \<Phi> \<Longrightarrow>
