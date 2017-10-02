@@ -75,6 +75,12 @@ abbreviation operational_semantics_step_relpowp :: "config \<Rightarrow> nat \<R
 definition operational_semantics_elim_inv :: "config \<Rightarrow> config \<Rightarrow> bool" ("_ \<hookrightarrow>\<^sub>e\<^sup>\<leftarrow> _" 70) where
   "\<C>\<^sub>1 \<hookrightarrow>\<^sub>e\<^sup>\<leftarrow> \<C>\<^sub>2 \<equiv> \<C>\<^sub>2 \<hookrightarrow>\<^sub>e \<C>\<^sub>1"
 
+lemma operational_semantics_trans_generalized:
+  assumes "\<C>\<^sub>1 \<hookrightarrow>\<^bsup>n\<^esup> \<C>\<^sub>2"
+  assumes "\<C>\<^sub>2 \<hookrightarrow>\<^bsup>m\<^esup> \<C>\<^sub>3"
+  shows "\<C>\<^sub>1 \<hookrightarrow>\<^bsup>n + m\<^esup> \<C>\<^sub>3"
+  by (metis (no_types, hide_lams) assms(1) assms(2) relcompp.relcompI relpowp_add)
+
 (* TODO *)
 inductive operational_semantics_simlstep :: "config \<Rightarrow> config \<Rightarrow> bool" ("_ \<hookrightarrow>\<^sub>\<nabla> _" 70) where
   "(\<Gamma>\<^sub>1, n \<turnstile> [] \<triangleright> \<Phi>\<^sub>1) \<hookrightarrow>\<^sup>+\<^sup>+ (\<Gamma>, n + 1 \<turnstile> [] \<triangleright> \<Phi>\<^sub>2) \<Longrightarrow>
@@ -91,6 +97,14 @@ lemma Fnext_solve_instant:
   shows "\<F>\<^sub>n\<^sub>e\<^sub>x\<^sub>t (\<Gamma>, n \<turnstile> [] \<triangleright> \<Phi>)
           \<supseteq> { \<Gamma>, Suc n \<turnstile> \<Phi> \<triangleright> [] }"
   by (simp add: operational_semantics_step.simps operational_semantics_intro.instant_i)
+
+lemma Fnext_compose : "(\<F>\<^sub>n\<^sub>e\<^sub>x\<^sub>t \<S>) = { \<S>'. \<S> \<hookrightarrow>\<^sub>i \<S>' } \<union> { \<S>'. \<S> \<hookrightarrow>\<^sub>e \<S>' }"
+  oops
+
+(*
+lemma Fnext_empty : "{ \<S>'. \<exists> \<Gamma>' \<Phi>'.  \<Gamma>, n \<turnstile> [] \<triangleright> \<Phi> \<hookrightarrow>\<^sub>e \<Gamma>', Suc n \<turnstile> [] \<triangleright> \<Phi>' \<and> \<Gamma>', Suc n \<turnstile> [] \<triangleright> \<Phi>' = S'} = {}"    
+  sorry
+*)
 
 lemma Fnext_solve_sporadic:
   shows "\<F>\<^sub>n\<^sub>e\<^sub>x\<^sub>t (\<Gamma>, n \<turnstile> (K sporadic \<tau>) # \<Psi> \<triangleright> \<Phi>)

@@ -232,7 +232,6 @@ theorem completeness:
 
 section \<open>Termination of instant computation\<close>
 
-(* Idea: A bounded monotonic sequence is convergent *)
 primrec measure_interpretation :: "TESL_formula \<Rightarrow> nat" ("\<mu>") where
     "\<mu> [] = (0::nat)"
   | "\<mu> (\<phi> # \<Phi>) = (case \<phi> of
@@ -276,210 +275,20 @@ theorem instant_computation_termination:
 
 section \<open>Progress\<close>
 
-text \<open>Any configuration has a successor.\<close>
-lemma reduction_progress:
-  shows "\<exists>\<Gamma>\<^sub>2 n\<^sub>2 \<Psi>\<^sub>2 \<Phi>\<^sub>2. \<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1  \<hookrightarrow>  \<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2"
-  proof (induct \<Psi>\<^sub>1)
-    case Nil
-    then show ?case
-      using intro_part operational_semantics_intro.instant_i by blast
-  next
-    case (Cons \<psi>\<^sub>1 \<Psi>\<^sub>1)
-    then show ?case
-      proof (induct \<psi>\<^sub>1)
-        case (Sporadic x1 x2)
-        then show ?case
-          using elims_part operational_semantics_elim.sporadic_e1 by blast
-      next
-        case (SporadicOn x1 x2 x3)
-        then show ?case
-          using elims_part operational_semantics_elim.sporadic_on_e1 by blast
-      next
-        case (TagRelation x1 x2 x3 x4)
-        then show ?case
-          using elims_part operational_semantics_elim.tagrel_e by blast
-      next
-        case (Implies x1 x2)
-        then show ?case
-          using elims_part operational_semantics_elim.implies_e1 by blast
-      next
-        case (TimeDelayedBy x1 x2 x3 x4)
-  then show ?case
-    using elims_part operational_semantics_elim.timedelayed_e1 by blast
-      qed
-  qed
-
-lemma reduction_progress_generalized:
-  shows "\<exists>\<Gamma>\<^sub>2 n\<^sub>2 \<Psi>\<^sub>2 \<Phi>\<^sub>2. \<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1  \<hookrightarrow>\<^bsup>n\<^esup>  \<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2"
-  proof (induct n)
-    case 0
-    then show ?case by auto
-  next
-    case (Suc n)
-    then show ?case
-    using reduction_progress by fastforce
-  qed
-
-lemma instant_progress_successor:
-  shows "\<exists>\<Gamma>\<^sub>2 n \<Psi>\<^sub>2 \<Phi>\<^sub>2. \<Gamma>\<^sub>1, k\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1  \<hookrightarrow>\<^bsup>n\<^esup>  \<Gamma>\<^sub>2, Suc k\<^sub>1 \<turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2"
-  proof (induct \<Psi>\<^sub>1 arbitrary: \<Gamma>\<^sub>1 \<Phi>\<^sub>1)
-    case Nil
-    then show ?case
-      by (meson instant_i intro_part relpowp_0_I relpowp_Suc_I2)
-  next
-    case (Cons \<psi>\<^sub>1 \<Psi>\<^sub>1)
-    then show ?case
-      proof (induct \<psi>\<^sub>1)
-        case (Sporadic x1 x2)
-        then show ?case
-          proof -
-          have "\<Gamma>\<^sub>1, k\<^sub>1 \<turnstile> (x1 sporadic x2) # \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1 \<hookrightarrow>\<^bsup>1\<^esup> \<Gamma>\<^sub>1, k\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> (x1 sporadic x2) # \<Phi>\<^sub>1"
-            using elims_part sporadic_e1 by auto
-          moreover have "\<exists>\<Gamma>\<^sub>2 n \<Psi>\<^sub>2 \<Phi>\<^sub>2. \<Gamma>\<^sub>1, k\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> (x1 sporadic x2) # \<Phi>\<^sub>1 \<hookrightarrow>\<^bsup>n\<^esup> \<Gamma>\<^sub>2, Suc k\<^sub>1 \<turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2"
-            by (simp add: Sporadic.prems)
-          ultimately show ?thesis
-            by (metis (no_types, hide_lams) relpowp_1 relpowp_Suc_I2)
-          qed
-      next
-        case (SporadicOn x1 x2 x3)
-        then show ?case
-          proof -
-          have "\<Gamma>\<^sub>1, k\<^sub>1 \<turnstile> (x1 sporadic x2 on x3) # \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1 \<hookrightarrow>\<^bsup>1\<^esup> \<Gamma>\<^sub>1, k\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> (x1 sporadic x2 on x3) # \<Phi>\<^sub>1"
-            using elims_part sporadic_on_e1 by auto
-          moreover have "\<exists>\<Gamma>\<^sub>2 k \<Psi>\<^sub>2 \<Phi>\<^sub>2. \<Gamma>\<^sub>1, k\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> (x1 sporadic x2 on x3) # \<Phi>\<^sub>1 \<hookrightarrow>\<^bsup>k\<^esup> \<Gamma>\<^sub>2, Suc k\<^sub>1 \<turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2"
-            by (simp add: SporadicOn.prems)
-          ultimately show ?thesis
-            by (metis (no_types, hide_lams) relpowp_1 relpowp_Suc_I2)
-          qed
-      next
-        case (TagRelation x1 x2 x3 x4)
-        then show ?case
-          proof -
-          have "\<Gamma>\<^sub>1, k\<^sub>1 \<turnstile> (tag-relation x1 = x2 * x3 + x4) # \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1
-                \<hookrightarrow>\<^bsup>1\<^esup> (\<tau>\<^sub>v\<^sub>a\<^sub>r(x1, k\<^sub>1) \<doteq> x2 * \<tau>\<^sub>v\<^sub>a\<^sub>r(x3, k\<^sub>1) + x4) # \<Gamma>\<^sub>1, k\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> (tag-relation x1 = x2 * x3 + x4) # \<Phi>\<^sub>1"
-            using elims_part tagrel_e by auto
-          moreover have "\<exists>\<Gamma>\<^sub>2 k \<Psi>\<^sub>2 \<Phi>\<^sub>2.
-                (\<tau>\<^sub>v\<^sub>a\<^sub>r(x1, k\<^sub>1) \<doteq> x2 * \<tau>\<^sub>v\<^sub>a\<^sub>r(x3, k\<^sub>1) + x4) # \<Gamma>\<^sub>1, k\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> (tag-relation x1 = x2 * x3 + x4) # \<Phi>\<^sub>1
-                \<hookrightarrow>\<^bsup>k\<^esup> \<Gamma>\<^sub>2, Suc k\<^sub>1 \<turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2"
-            by (simp add: TagRelation.prems)
-          ultimately show ?thesis
-            by (metis (no_types, hide_lams) relpowp_1 relpowp_Suc_I2)
-          qed
-       next
-        case (Implies x1 x2)
-        then show ?case
-          proof -
-          have "\<Gamma>\<^sub>1, k\<^sub>1 \<turnstile> (x1 implies x2) # \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1 \<hookrightarrow>\<^bsup>1\<^esup> x1 \<not>\<Up> k\<^sub>1 # \<Gamma>\<^sub>1, k\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> (x1 implies x2) # \<Phi>\<^sub>1"
-            using elims_part implies_e1 by auto
-          moreover have "\<exists>\<Gamma>\<^sub>2 k \<Psi>\<^sub>2 \<Phi>\<^sub>2. x1 \<not>\<Up> k\<^sub>1 # \<Gamma>\<^sub>1, k\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> (x1 implies x2) # \<Phi>\<^sub>1 \<hookrightarrow>\<^bsup>k\<^esup> \<Gamma>\<^sub>2, Suc k\<^sub>1 \<turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2"
-            by (simp add: Implies.prems)
-          ultimately show ?thesis
-            by (metis (no_types, hide_lams) relpowp_1 relpowp_Suc_I2)
-          qed
-      next
-        case (TimeDelayedBy x1 x2 x3 x4)
-        then show ?case
-          proof -
-          have "\<Gamma>\<^sub>1, k\<^sub>1 \<turnstile> (x1 time-delayed by x2 on x3 implies x4) # \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1
-                \<hookrightarrow>\<^bsup>1\<^esup> x1 \<not>\<Up> k\<^sub>1 # \<Gamma>\<^sub>1, k\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> (x1 time-delayed by x2 on x3 implies x4) # \<Phi>\<^sub>1"
-            using elims_part timedelayed_e1 by auto
-          moreover have "\<exists>\<Gamma>\<^sub>2 k \<Psi>\<^sub>2 \<Phi>\<^sub>2.
-            x1 \<not>\<Up> k\<^sub>1 # \<Gamma>\<^sub>1, k\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> (x1 time-delayed by x2 on x3 implies x4) # \<Phi>\<^sub>1 \<hookrightarrow>\<^bsup>k\<^esup> \<Gamma>\<^sub>2, Suc k\<^sub>1 \<turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2"
-            by (simp add: TimeDelayedBy.prems)
-          ultimately show ?thesis
-            by (metis (no_types, hide_lams) relpowp_1 relpowp_Suc_I2)
-          qed
-      qed
-  qed
-
-lemma instant_progress:
-  assumes "k\<^sub>1 < k\<^sub>2"
-  shows "\<exists>\<Gamma>\<^sub>2 n \<Psi>\<^sub>2 \<Phi>\<^sub>2. \<Gamma>\<^sub>1, k\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1  \<hookrightarrow>\<^bsup>n\<^esup>  \<Gamma>\<^sub>2, k\<^sub>2 \<turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2"
-  sorry
-(*
-  proof (induct k\<^sub>2 arbitrary: k\<^sub>1)
-    (* No n\<^sub>1 can exist... Right? *)
-    case 0
-    then show ?case sorry
-  next
-    (* Base case: I would like to start induction from n\<^sub>1 *)
-    case (Suc n\<^sub>1)
-    have "\<exists>\<Gamma>\<^sub>2 n \<Psi>\<^sub>2 \<Phi>\<^sub>2.
-       \<Gamma>\<^sub>1, k\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1 \<hookrightarrow>\<^bsup>n\<^esup> \<Gamma>\<^sub>2, Suc k\<^sub>1 \<turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2"
-      using instant_progress_successor by auto
-    then show ?case sorry
-  next
-    (* Inductive step *)
-    case (Suc n\<^sub>2)
-    then show ?case sorry
-  qed
-  oops
-*)
-
 text \<open>Any run from initial specification [\<Psi>] has a corresponding configuration
       indexed at [k]-th instant starting from initial configuration.\<close>
-theorem reachable_progress:
+theorem progress:
   assumes "\<rho> \<in> \<lbrakk>\<lbrakk> \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
-  shows "\<exists>\<Gamma>\<^sub>k n \<Psi>\<^sub>k \<Phi>\<^sub>k. [], 0 \<turnstile> \<Psi> \<triangleright> []  \<hookrightarrow>\<^bsup>n\<^esup>  \<Gamma>\<^sub>k, k \<turnstile> \<Psi>\<^sub>k \<triangleright> \<Phi>\<^sub>k
-         \<and> \<rho> \<in> \<lbrakk> \<Gamma>\<^sub>k, k \<turnstile> \<Psi>\<^sub>k \<triangleright> \<Phi>\<^sub>k \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
-  proof (induct k)
-    case 0
-    then show ?case
-      using assms relpowp_0_I solve_start by fastforce
-  next
-    case (Suc k)
-    then show ?case
-      proof (induct \<Psi>)
-        case Nil
-        then show ?case
-          proof -
-          have "[], 0 \<turnstile> [] \<triangleright> [] \<hookrightarrow>\<^bsup>Suc k\<^esup> [], Suc k \<turnstile> [] \<triangleright> []"
-            using empty_spec_reductions by blast
-          moreover have "\<lbrakk>\<lbrakk> [] \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<lbrakk> [], Suc k \<turnstile> [] \<triangleright> [] \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
-            proof -
-              have "\<lbrakk> [], Suc k \<turnstile> [] \<triangleright> [] \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g = \<lbrakk>\<lbrakk> [] \<rbrakk>\<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n \<inter> \<lbrakk>\<lbrakk> [] \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc k\<^esup> \<inter> \<lbrakk>\<lbrakk> [] \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc (Suc k)\<^esup>"
-              by simp
-              then show ?thesis by auto
-            qed
-          moreover have "\<rho> \<in> \<lbrakk> [], Suc k \<turnstile> [] \<triangleright> [] \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
-            using assms by simp
-          ultimately show ?thesis by blast
-          qed
-      next
-        case (Cons \<psi> \<Psi>)
-        then show ?case
-          proof (induct \<psi>)
-            case (Sporadic K \<tau>)
-            then show ?case sorry
-          next
-            case (SporadicOn K\<^sub>1 \<tau> K\<^sub>2)
-            then show ?case sorry
-          next
-            case (TagRelation K\<^sub>1 \<alpha> K\<^sub>2 \<beta>)
-            then show ?case sorry
-          next
-            case (Implies K\<^sub>1 K\<^sub>22)
-            then show ?case sorry
-          next
-            case (TimeDelayedBy K\<^sub>1 \<delta>\<tau> K\<^sub>2 K\<^sub>3)
-            then show ?case sorry
-          qed
-      qed
-  qed
+  shows   "\<exists>\<Gamma>\<^sub>k n \<Psi>\<^sub>k \<Phi>\<^sub>k. [], 0 \<turnstile> \<Psi> \<triangleright> []  \<hookrightarrow>\<^bsup>n\<^esup>  \<Gamma>\<^sub>k, k \<turnstile> \<Psi>\<^sub>k \<triangleright> \<Phi>\<^sub>k
+                         \<and> \<rho> \<in> \<lbrakk> \<Gamma>\<^sub>k, k \<turnstile> \<Psi>\<^sub>k \<triangleright> \<Phi>\<^sub>k \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
+  using HeronConf_interp_at_index_next_instant_run_presv_generalized
+  by (metis assms neq0_conv relpowp_0_I solve_start)
 
-(**) section \<open>Composition\<close> (**)
+section \<open>Composition\<close>
 
 lemma composition:
   shows "\<lbrakk> \<Gamma>\<^sub>1, n \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1 \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g \<inter> \<lbrakk> \<Gamma>\<^sub>2, n \<turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2 \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
          = \<lbrakk> \<Gamma>\<^sub>1 @ \<Gamma>\<^sub>2, n \<turnstile> \<Psi>\<^sub>1 @ \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>1 @ \<Phi>\<^sub>2 \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
   using TESL_interp_at_index_composition symrun_interp_expansion by auto
-
-(**) section \<open>Existence\<close> (**)
-lemma existence:
-  (* Assumption that the linear system made of tag relations is consistent *)
-  assumes "tagrel_consistent \<Phi>"
-  shows "\<exists>\<rho>. \<rho> \<in> \<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
-  oops
-  (* proof (induction \<Phi>) *)
 
 end
