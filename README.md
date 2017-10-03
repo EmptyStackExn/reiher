@@ -5,5 +5,5 @@ Hygge
 
 Getting started
 -------------------
- - [Browse theories online](https://heron-solver.github.io/hygge)
+ - [Browse theories online](https://heron-solver.github.io/hygge/)
  - [Download archive](https://github.com/heron-solver/hygge/archive/master.zip) and open `Hygge_Theory.thy` with [Isabelle2016-1](http://isabelle.in.tum.de/installation.html)
