@@ -407,7 +407,7 @@ lemma HeronConf_interp_at_index_successor_run_presv:
   assumes "\<rho> \<in> \<lbrakk> \<Gamma>, k \<turnstile> \<Psi> \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
   shows   "\<exists>\<Gamma>\<^sub>n k\<^sub>n \<Psi>\<^sub>n \<Phi>\<^sub>n. \<Gamma>, k \<turnstile> \<Psi> \<triangleright> \<Phi>  \<hookrightarrow>  \<Gamma>\<^sub>n, k\<^sub>n \<turnstile> \<Psi>\<^sub>n \<triangleright> \<Phi>\<^sub>n
                          \<and> \<rho> \<in> \<lbrakk> \<Gamma>\<^sub>n, k\<^sub>n \<turnstile> \<Psi>\<^sub>n \<triangleright> \<Phi>\<^sub>n \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
-  proof (induct \<Psi>)
+  proof (insert assms, induct \<Psi>)
     case Nil
     then show ?case
       proof -
@@ -425,7 +425,7 @@ lemma HeronConf_interp_at_index_successor_run_presv:
       then show ?case
         proof -
           have f0: "\<rho> \<in> \<lbrakk> \<Gamma>, k \<turnstile> (K sporadic \<tau>) # \<Psi> \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
-            using assms sorry
+            using Sporadic.prems(2) by blast
           then have f1: "\<rho> \<in> \<lbrakk> \<Gamma>, k \<turnstile> \<Psi> \<triangleright> (K sporadic \<tau>) # \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g \<union> \<lbrakk> K \<Up> k # K \<Down> k @ \<lfloor>\<tau>\<rfloor> # \<Gamma>, k \<turnstile> \<Psi> \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
             using HeronConf_interp_at_index_sporadic_cases by blast
           then have f2: "(\<Gamma>, k \<turnstile> (K sporadic \<tau>) # \<Psi> \<triangleright> \<Phi>) \<hookrightarrow> (\<Gamma>, k \<turnstile> \<Psi> \<triangleright> (K sporadic \<tau>) # \<Phi>)
@@ -439,7 +439,7 @@ lemma HeronConf_interp_at_index_successor_run_presv:
       then show ?case
         proof -
           have "\<rho> \<in> \<lbrakk> \<Gamma>, k \<turnstile> (K\<^sub>1 sporadic \<tau> on K\<^sub>2) # \<Psi> \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
-            using assms sorry
+            using SporadicOn.prems(2) by blast
           then have p1: "\<rho> \<in> \<lbrakk> \<Gamma>, k \<turnstile> \<Psi> \<triangleright> (K\<^sub>1 sporadic \<tau> on K\<^sub>2) # \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g \<union> \<lbrakk> K\<^sub>1 \<Up> k # K\<^sub>2 \<Down> k @ \<tau> # \<Gamma>, k \<turnstile> \<Psi> \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
             using HeronConf_interp_at_index_sporadicon_cases by blast
           then have p2: "(\<Gamma>, k \<turnstile> (K\<^sub>1 sporadic \<tau> on K\<^sub>2) # \<Psi> \<triangleright> \<Phi>) \<hookrightarrow> (\<Gamma>, k \<turnstile> \<Psi> \<triangleright> (K\<^sub>1 sporadic \<tau> on K\<^sub>2) # \<Phi>)
@@ -453,7 +453,7 @@ lemma HeronConf_interp_at_index_successor_run_presv:
       then show ?case
         proof -
           have p0: "\<rho> \<in> \<lbrakk> \<Gamma>, k \<turnstile> (tag-relation K\<^sub>1 = \<alpha> * K\<^sub>2 + \<beta>) # \<Psi> \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
-            using assms sorry
+            using TagRelation.prems(2) by blast
           then have p1: "\<rho> \<in> \<lbrakk> \<Gamma>, k \<turnstile> \<Psi> \<triangleright> (tag-relation K\<^sub>1 = \<alpha> * K\<^sub>2 + \<beta>) # \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
             using HeronConf_interp_at_index_tagrel_cases by auto
           then have p2: "\<Gamma>, k \<turnstile> (tag-relation K\<^sub>1 = \<alpha> * K\<^sub>2 + \<beta>) # \<Psi> \<triangleright> \<Phi> \<hookrightarrow> (\<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>1, k) \<doteq> \<alpha> * \<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>2, k) + \<beta>) # \<Gamma>, k \<turnstile> \<Psi> \<triangleright> (tag-relation K\<^sub>1 = \<alpha> * K\<^sub>2 + \<beta>) # \<Phi>"
@@ -466,7 +466,7 @@ lemma HeronConf_interp_at_index_successor_run_presv:
       then show ?case
         proof -
           have p0: "\<rho> \<in> \<lbrakk> \<Gamma>, k \<turnstile> (K\<^sub>1 implies K\<^sub>2) # \<Psi> \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
-            using assms sorry
+            using Implies.prems(2) by blast
           then have p1: "\<rho> \<in> \<lbrakk> K\<^sub>1 \<not>\<Up> k # \<Gamma>, k \<turnstile> \<Psi> \<triangleright> (K\<^sub>1 implies K\<^sub>2) # \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g \<union> \<lbrakk> K\<^sub>1 \<Up> k # K\<^sub>2 \<Up> k # \<Gamma>, k \<turnstile> \<Psi> \<triangleright> (K\<^sub>1 implies K\<^sub>2) # \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
             using HeronConf_interp_at_index_implies_cases by simp
           then have p2: "(\<Gamma>, k \<turnstile> (K\<^sub>1 implies K\<^sub>2) # \<Psi> \<triangleright> \<Phi>) \<hookrightarrow> ((K\<^sub>1 \<not>\<Up> k) # \<Gamma>, k \<turnstile> \<Psi> \<triangleright> (K\<^sub>1 implies K\<^sub>2) # \<Phi>)
@@ -480,7 +480,7 @@ lemma HeronConf_interp_at_index_successor_run_presv:
       then show ?case
         proof -
           have p0: "\<rho> \<in> \<lbrakk> \<Gamma>, k \<turnstile> (K\<^sub>1 time-delayed by \<delta>\<tau> on K\<^sub>2 implies K\<^sub>3) # \<Psi> \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
-            using assms sorry
+            using TimeDelayedBy.prems(2) by blast
           then have p1: "\<rho> \<in> \<lbrakk> K\<^sub>1 \<not>\<Up> k # \<Gamma>, k \<turnstile> \<Psi> \<triangleright> (K\<^sub>1 time-delayed by \<delta>\<tau> on K\<^sub>2 implies K\<^sub>3) # \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
                                 \<union> \<lbrakk> K\<^sub>1 \<Up> k # \<Gamma>, k \<turnstile> (K\<^sub>3 sporadic \<lfloor>\<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>2, k) \<oplus> \<delta>\<tau>\<rfloor> on K\<^sub>2) # \<Psi> \<triangleright> (K\<^sub>1 time-delayed by \<delta>\<tau> on K\<^sub>2 implies K\<^sub>3) # \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
             using HeronConf_interp_at_index_implies_cases by simp

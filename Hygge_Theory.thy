@@ -279,8 +279,8 @@ text \<open>Any run from initial specification [\<Psi>] has a corresponding conf
       indexed at [k]-th instant starting from initial configuration.\<close>
 theorem progress:
   assumes "\<rho> \<in> \<lbrakk>\<lbrakk> \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
-  shows   "\<exists>\<Gamma>\<^sub>k n \<Psi>\<^sub>k \<Phi>\<^sub>k. [], 0 \<turnstile> \<Psi> \<triangleright> []  \<hookrightarrow>\<^bsup>n\<^esup>  \<Gamma>\<^sub>k, k \<turnstile> \<Psi>\<^sub>k \<triangleright> \<Phi>\<^sub>k
-                         \<and> \<rho> \<in> \<lbrakk> \<Gamma>\<^sub>k, k \<turnstile> \<Psi>\<^sub>k \<triangleright> \<Phi>\<^sub>k \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
+  shows   "\<exists>\<Gamma>\<^sub>n n \<Psi>\<^sub>n \<Phi>\<^sub>n. [], 0 \<turnstile> \<Psi> \<triangleright> []  \<hookrightarrow>\<^bsup>n\<^esup>  \<Gamma>\<^sub>n, k \<turnstile> \<Psi>\<^sub>n \<triangleright> \<Phi>\<^sub>n
+                         \<and> \<rho> \<in> \<lbrakk> \<Gamma>\<^sub>n, k \<turnstile> \<Psi>\<^sub>n \<triangleright> \<Phi>\<^sub>n \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
   using HeronConf_interp_at_index_next_instant_run_presv_generalized
   by (metis assms neq0_conv relpowp_0_I solve_start)
 
