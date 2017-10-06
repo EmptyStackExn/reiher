@@ -230,7 +230,7 @@ theorem completeness:
          \<and> \<rho> \<in> \<lbrakk> \<S> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
   using assms branch_existence' solve_start by blast
 
-section \<open>Termination of instant computation\<close>
+section \<open>Termination\<close>
 
 primrec measure_interpretation :: "TESL_formula \<Rightarrow> nat" ("\<mu>") where
     "\<mu> [] = (0::nat)"
@@ -275,20 +275,213 @@ theorem instant_computation_termination:
 
 section \<open>Progress\<close>
 
+lemma instant_index_increase:
+  assumes "\<rho> \<in> \<lbrakk> \<Gamma>, k \<turnstile> \<Psi> \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
+  shows   "\<exists>\<Gamma>\<^sub>n \<Psi>\<^sub>n \<Phi>\<^sub>n n. \<Gamma>, k \<turnstile> \<Psi> \<triangleright> \<Phi>  \<hookrightarrow>\<^bsup>n\<^esup>  \<Gamma>\<^sub>n, Suc k \<turnstile> \<Psi>\<^sub>n \<triangleright> \<Phi>\<^sub>n
+                         \<and> \<rho> \<in> \<lbrakk> \<Gamma>\<^sub>n, Suc k \<turnstile> \<Psi>\<^sub>n \<triangleright> \<Phi>\<^sub>n \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
+  proof (insert assms, induct \<Psi> arbitrary: \<Gamma> \<Phi>)
+    case (Nil \<Gamma> \<Phi>)
+    then show ?case
+      proof -
+        have "\<Gamma>, k \<turnstile> [] \<triangleright> \<Phi> \<hookrightarrow>\<^bsup>1\<^esup> \<Gamma>, Suc k \<turnstile> \<Phi> \<triangleright> []"
+          using instant_i intro_part by auto
+        moreover have "\<lbrakk> \<Gamma>, k \<turnstile> [] \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g = \<lbrakk> \<Gamma>, Suc k \<turnstile> \<Phi> \<triangleright> [] \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
+          by auto
+        moreover have "\<rho> \<in> \<lbrakk> \<Gamma>, Suc k \<turnstile> \<Phi> \<triangleright> [] \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
+          using assms Nil.prems calculation(2) by blast
+        ultimately show ?thesis by blast
+      qed
+  next
+    case (Cons \<psi> \<Psi>)
+  then show ?case
+    proof (induct \<psi>)
+      case (Sporadic K \<tau>)
+      have branches: "\<lbrakk> \<Gamma>, k \<turnstile> (K sporadic \<tau>) # \<Psi> \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g = \<lbrakk> \<Gamma>, k \<turnstile> \<Psi> \<triangleright> (K sporadic \<tau>) # \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
+                                                           \<union> \<lbrakk> K \<Up> k # K \<Down> k @ \<lfloor>\<tau>\<rfloor> # \<Gamma>, k \<turnstile> \<Psi> \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
+            using HeronConf_interp_at_index_sporadic_cases by simp
+      have br1: "\<rho> \<in> \<lbrakk> \<Gamma>, k \<turnstile> \<Psi> \<triangleright> (K sporadic \<tau>) # \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g \<Longrightarrow> \<exists>\<Gamma>\<^sub>n \<Psi>\<^sub>n \<Phi>\<^sub>n n.
+       \<Gamma>, k \<turnstile> (K sporadic \<tau>) # \<Psi> \<triangleright> \<Phi> \<hookrightarrow>\<^bsup>n\<^esup> \<Gamma>\<^sub>n, Suc k \<turnstile> \<Psi>\<^sub>n \<triangleright> \<Phi>\<^sub>n \<and>
+       \<rho> \<in> \<lbrakk> \<Gamma>\<^sub>n, Suc k \<turnstile> \<Psi>\<^sub>n \<triangleright> \<Phi>\<^sub>n \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
+        proof -
+          assume h1: "\<rho> \<in> \<lbrakk> \<Gamma>, k \<turnstile> \<Psi> \<triangleright> (K sporadic \<tau>) # \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
+          have "\<exists>\<Gamma>\<^sub>n \<Psi>\<^sub>n \<Phi>\<^sub>n n. \<Gamma>, k \<turnstile> \<Psi> \<triangleright> (K sporadic \<tau>) # \<Phi> \<hookrightarrow>\<^bsup>n\<^esup> \<Gamma>\<^sub>n, Suc k \<turnstile> \<Psi>\<^sub>n \<triangleright> \<Phi>\<^sub>n \<and> \<rho> \<in> \<lbrakk> \<Gamma>\<^sub>n, Suc k \<turnstile> \<Psi>\<^sub>n \<triangleright> \<Phi>\<^sub>n \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
+            using h1 Sporadic.prems by simp
+          then show ?thesis
+            by (meson elims_part relpowp_Suc_I2 sporadic_e1)
+        qed
+      moreover have br2: "\<rho> \<in> \<lbrakk> (K \<Up> k) # (K \<Down> k @ \<lfloor>\<tau>\<rfloor>) # \<Gamma>, k \<turnstile> \<Psi> \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g \<Longrightarrow> \<exists>\<Gamma>\<^sub>n \<Psi>\<^sub>n \<Phi>\<^sub>n n.
+       \<Gamma>, k \<turnstile> (K sporadic \<tau>) # \<Psi> \<triangleright> \<Phi> \<hookrightarrow>\<^bsup>n\<^esup> \<Gamma>\<^sub>n, Suc k \<turnstile> \<Psi>\<^sub>n \<triangleright> \<Phi>\<^sub>n \<and>
+       \<rho> \<in> \<lbrakk> \<Gamma>\<^sub>n, Suc k \<turnstile> \<Psi>\<^sub>n \<triangleright> \<Phi>\<^sub>n \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
+        proof -
+          assume h2: "\<rho> \<in> \<lbrakk> (K \<Up> k) # (K \<Down> k @ \<lfloor>\<tau>\<rfloor>) # \<Gamma>, k \<turnstile> \<Psi> \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
+          have "\<exists>\<Gamma>\<^sub>n \<Psi>\<^sub>n \<Phi>\<^sub>n n. (K \<Up> k) # (K \<Down> k @ \<lfloor>\<tau>\<rfloor>) # \<Gamma>, k \<turnstile> \<Psi> \<triangleright> \<Phi> \<hookrightarrow>\<^bsup>n\<^esup> \<Gamma>\<^sub>n, Suc k \<turnstile> \<Psi>\<^sub>n \<triangleright> \<Phi>\<^sub>n \<and> \<rho> \<in> \<lbrakk> \<Gamma>\<^sub>n, Suc k \<turnstile> \<Psi>\<^sub>n \<triangleright> \<Phi>\<^sub>n \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
+            using h2 Sporadic.prems by simp
+          then show ?thesis
+            by (meson elims_part relpowp_Suc_I2 sporadic_e2)
+        qed
+      ultimately show ?case
+        by (metis Sporadic.prems(2) UnE branches)
+    next
+      case (SporadicOn K\<^sub>1 \<tau> K\<^sub>2)
+      have branches: "\<lbrakk> \<Gamma>, k \<turnstile> (K\<^sub>1 sporadic \<tau> on K\<^sub>2) # \<Psi> \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g = \<lbrakk> \<Gamma>, k \<turnstile> \<Psi> \<triangleright> (K\<^sub>1 sporadic \<tau> on K\<^sub>2) # \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
+                                                                         \<union> \<lbrakk> K\<^sub>1 \<Up> k # K\<^sub>2 \<Down> k @ \<tau> # \<Gamma>, k \<turnstile> \<Psi> \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
+            using HeronConf_interp_at_index_sporadicon_cases by simp
+      have br1: "\<rho> \<in> \<lbrakk> \<Gamma>, k \<turnstile> \<Psi> \<triangleright> (K\<^sub>1 sporadic \<tau> on K\<^sub>2) # \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g \<Longrightarrow> \<exists>\<Gamma>\<^sub>n \<Psi>\<^sub>n \<Phi>\<^sub>n n.
+       \<Gamma>, k \<turnstile> (K\<^sub>1 sporadic \<tau> on K\<^sub>2) # \<Psi> \<triangleright> \<Phi> \<hookrightarrow>\<^bsup>n\<^esup> \<Gamma>\<^sub>n, Suc k \<turnstile> \<Psi>\<^sub>n \<triangleright> \<Phi>\<^sub>n \<and>
+       \<rho> \<in> \<lbrakk> \<Gamma>\<^sub>n, Suc k \<turnstile> \<Psi>\<^sub>n \<triangleright> \<Phi>\<^sub>n \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
+        proof -
+          assume h1: "\<rho> \<in> \<lbrakk> \<Gamma>, k \<turnstile> \<Psi> \<triangleright> (K\<^sub>1 sporadic \<tau> on K\<^sub>2) # \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
+          then have "\<exists>\<Gamma>\<^sub>n \<Psi>\<^sub>n \<Phi>\<^sub>n n. (\<Gamma>, k \<turnstile> \<Psi> \<triangleright> (K\<^sub>1 sporadic \<tau> on K\<^sub>2) # \<Phi>) \<hookrightarrow>\<^bsup>n\<^esup> \<Gamma>\<^sub>n, Suc k \<turnstile> \<Psi>\<^sub>n \<triangleright> \<Phi>\<^sub>n \<and> \<rho> \<in> \<lbrakk> \<Gamma>\<^sub>n, Suc k \<turnstile> \<Psi>\<^sub>n \<triangleright> \<Phi>\<^sub>n \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
+            using h1 SporadicOn.prems by simp
+          then show ?thesis
+            by (meson elims_part relpowp_Suc_I2 sporadic_on_e1)
+        qed
+      moreover have br2: "\<rho> \<in> \<lbrakk> K\<^sub>1 \<Up> k # K\<^sub>2 \<Down> k @ \<tau> # \<Gamma>, k \<turnstile> \<Psi> \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g \<Longrightarrow> \<exists>\<Gamma>\<^sub>n \<Psi>\<^sub>n \<Phi>\<^sub>n n.
+       (\<Gamma>, k \<turnstile> (K\<^sub>1 sporadic \<tau> on K\<^sub>2) # \<Psi> \<triangleright> \<Phi>) \<hookrightarrow>\<^bsup>n\<^esup> (\<Gamma>\<^sub>n, Suc k \<turnstile> \<Psi>\<^sub>n \<triangleright> \<Phi>\<^sub>n) \<and>
+       \<rho> \<in> \<lbrakk> \<Gamma>\<^sub>n, Suc k \<turnstile> \<Psi>\<^sub>n \<triangleright> \<Phi>\<^sub>n \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
+        proof -
+          assume h2: "\<rho> \<in> \<lbrakk> K\<^sub>1 \<Up> k # K\<^sub>2 \<Down> k @ \<tau> # \<Gamma>, k \<turnstile> \<Psi> \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
+          then have "\<exists>\<Gamma>\<^sub>n \<Psi>\<^sub>n \<Phi>\<^sub>n n. ((K\<^sub>1 \<Up> k) # (K\<^sub>2 \<Down> k @ \<tau>) # \<Gamma>, k \<turnstile> \<Psi> \<triangleright> \<Phi>) \<hookrightarrow>\<^bsup>n\<^esup> \<Gamma>\<^sub>n, Suc k \<turnstile> \<Psi>\<^sub>n \<triangleright> \<Phi>\<^sub>n \<and> \<rho> \<in> \<lbrakk> \<Gamma>\<^sub>n, Suc k \<turnstile> \<Psi>\<^sub>n \<triangleright> \<Phi>\<^sub>n \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
+            using h2 SporadicOn.prems by simp
+          then show ?thesis
+            by (meson elims_part relpowp_Suc_I2 sporadic_on_e2)
+        qed
+      ultimately show ?case
+        by (metis SporadicOn.prems(2) UnE branches)
+    next
+      case (TagRelation K\<^sub>1 \<alpha> K\<^sub>2 \<beta>)
+      have branches: "\<lbrakk> \<Gamma>, k \<turnstile> (tag-relation K\<^sub>1 = \<alpha> * K\<^sub>2 + \<beta>) # \<Psi> \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
+          = \<lbrakk> (\<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>1, k) \<doteq> \<alpha> * \<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>2, k) + \<beta>) # \<Gamma>, k \<turnstile> \<Psi> \<triangleright> (tag-relation K\<^sub>1 = \<alpha> * K\<^sub>2 + \<beta>) # \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
+        using HeronConf_interp_at_index_tagrel_cases by simp
+      then show ?case
+        proof -
+          have "\<exists>\<Gamma>\<^sub>n \<Psi>\<^sub>n \<Phi>\<^sub>n n. ((\<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>1, k) \<doteq> \<alpha> * \<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>2, k) + \<beta>) # \<Gamma>, k \<turnstile> \<Psi> \<triangleright> (tag-relation K\<^sub>1 = \<alpha> * K\<^sub>2 + \<beta>) # \<Phi>)
+              \<hookrightarrow>\<^bsup>n\<^esup> \<Gamma>\<^sub>n, Suc k \<turnstile> \<Psi>\<^sub>n \<triangleright> \<Phi>\<^sub>n \<and> \<rho> \<in> \<lbrakk> \<Gamma>\<^sub>n, Suc k \<turnstile> \<Psi>\<^sub>n \<triangleright> \<Phi>\<^sub>n \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
+            using TagRelation.prems by simp
+          then show ?thesis
+            by (meson elims_part relpowp_Suc_I2 tagrel_e)
+        qed
+    next
+      case (Implies K\<^sub>1 K\<^sub>2)
+      have branches: "\<lbrakk> \<Gamma>, k \<turnstile> (K\<^sub>1 implies K\<^sub>2) # \<Psi> \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
+          = \<lbrakk> K\<^sub>1 \<not>\<Up> k # \<Gamma>, k \<turnstile> \<Psi> \<triangleright> (K\<^sub>1 implies K\<^sub>2) # \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
+          \<union> \<lbrakk> K\<^sub>1 \<Up> k # K\<^sub>2 \<Up> k # \<Gamma>, k \<turnstile> \<Psi> \<triangleright> (K\<^sub>1 implies K\<^sub>2) # \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
+        using HeronConf_interp_at_index_implies_cases by simp
+      have br1: "\<rho> \<in> \<lbrakk> K\<^sub>1 \<not>\<Up> k # \<Gamma>, k \<turnstile> \<Psi> \<triangleright> (K\<^sub>1 implies K\<^sub>2) # \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g \<Longrightarrow> \<exists>\<Gamma>\<^sub>n \<Psi>\<^sub>n \<Phi>\<^sub>n n.
+       \<Gamma>, k \<turnstile> (K\<^sub>1 implies K\<^sub>2) # \<Psi> \<triangleright> \<Phi> \<hookrightarrow>\<^bsup>n\<^esup> \<Gamma>\<^sub>n, Suc k \<turnstile> \<Psi>\<^sub>n \<triangleright> \<Phi>\<^sub>n \<and>
+       \<rho> \<in> \<lbrakk> \<Gamma>\<^sub>n, Suc k \<turnstile> \<Psi>\<^sub>n \<triangleright> \<Phi>\<^sub>n \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
+        proof -
+          assume h1: "\<rho> \<in> \<lbrakk> K\<^sub>1 \<not>\<Up> k # \<Gamma>, k \<turnstile> \<Psi> \<triangleright> (K\<^sub>1 implies K\<^sub>2) # \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
+          then have "\<exists>\<Gamma>\<^sub>n \<Psi>\<^sub>n \<Phi>\<^sub>n n. (K\<^sub>1 \<not>\<Up> k # \<Gamma>, k \<turnstile> \<Psi> \<triangleright> (K\<^sub>1 implies K\<^sub>2) # \<Phi>) \<hookrightarrow>\<^bsup>n\<^esup> \<Gamma>\<^sub>n, Suc k \<turnstile> \<Psi>\<^sub>n \<triangleright> \<Phi>\<^sub>n \<and> \<rho> \<in> \<lbrakk> \<Gamma>\<^sub>n, Suc k \<turnstile> \<Psi>\<^sub>n \<triangleright> \<Phi>\<^sub>n \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
+            using h1 Implies.prems by simp
+          then show ?thesis
+            by (meson elims_part relpowp_Suc_I2 implies_e1)
+        qed
+      moreover have br2: "\<rho> \<in> \<lbrakk> (K\<^sub>1 \<Up> k) # (K\<^sub>2 \<Up> k) # \<Gamma>, k \<turnstile> \<Psi> \<triangleright> (K\<^sub>1 implies K\<^sub>2) # \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g \<Longrightarrow> \<exists>\<Gamma>\<^sub>n \<Psi>\<^sub>n \<Phi>\<^sub>n n.
+       \<Gamma>, k \<turnstile> (K\<^sub>1 implies K\<^sub>2) # \<Psi> \<triangleright> \<Phi> \<hookrightarrow>\<^bsup>n\<^esup> \<Gamma>\<^sub>n, Suc k \<turnstile> \<Psi>\<^sub>n \<triangleright> \<Phi>\<^sub>n \<and>
+       \<rho> \<in> \<lbrakk> \<Gamma>\<^sub>n, Suc k \<turnstile> \<Psi>\<^sub>n \<triangleright> \<Phi>\<^sub>n \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
+        proof -
+          assume h2: "\<rho> \<in> \<lbrakk> (K\<^sub>1 \<Up> k) # (K\<^sub>2 \<Up> k) # \<Gamma>, k \<turnstile> \<Psi> \<triangleright> (K\<^sub>1 implies K\<^sub>2) # \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
+          then have "\<exists>\<Gamma>\<^sub>n \<Psi>\<^sub>n \<Phi>\<^sub>n n. ((K\<^sub>1 \<Up> k) # (K\<^sub>2 \<Up> k) # \<Gamma>, k \<turnstile> \<Psi> \<triangleright> (K\<^sub>1 implies K\<^sub>2) # \<Phi>) \<hookrightarrow>\<^bsup>n\<^esup> \<Gamma>\<^sub>n, Suc k \<turnstile> \<Psi>\<^sub>n \<triangleright> \<Phi>\<^sub>n \<and> \<rho> \<in> \<lbrakk> \<Gamma>\<^sub>n, Suc k \<turnstile> \<Psi>\<^sub>n \<triangleright> \<Phi>\<^sub>n \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
+            using h2 Implies.prems by simp
+          then show ?thesis
+            by (meson elims_part relpowp_Suc_I2 implies_e2)
+        qed
+      ultimately show ?case
+        using Implies.prems(2) by fastforce
+    next
+      case (TimeDelayedBy K\<^sub>1 \<delta>\<tau> K\<^sub>2 K\<^sub>3)
+      have branches: "\<lbrakk> \<Gamma>, k \<turnstile> (K\<^sub>1 time-delayed by \<delta>\<tau> on K\<^sub>2 implies K\<^sub>3) # \<Psi> \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
+          = \<lbrakk> K\<^sub>1 \<not>\<Up> k # \<Gamma>, k \<turnstile> \<Psi> \<triangleright> (K\<^sub>1 time-delayed by \<delta>\<tau> on K\<^sub>2 implies K\<^sub>3) # \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
+          \<union> \<lbrakk> K\<^sub>1 \<Up> k # \<Gamma>, k \<turnstile> (K\<^sub>3 sporadic \<lfloor>\<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>2, k) \<oplus> \<delta>\<tau>\<rfloor> on K\<^sub>2) # \<Psi> \<triangleright> (K\<^sub>1 time-delayed by \<delta>\<tau> on K\<^sub>2 implies K\<^sub>3) # \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
+        using HeronConf_interp_at_index_timedelayed_cases by simp
+      have more_branches: "\<lbrakk> K\<^sub>1 \<Up> k # \<Gamma>, k \<turnstile> (K\<^sub>3 sporadic \<lfloor>\<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>2, k) \<oplus> \<delta>\<tau>\<rfloor> on K\<^sub>2) # \<Psi> \<triangleright> (K\<^sub>1 time-delayed by \<delta>\<tau> on K\<^sub>2 implies K\<^sub>3) # \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
+                  = \<lbrakk> K\<^sub>1 \<Up> k # \<Gamma>, k \<turnstile> \<Psi> \<triangleright> (K\<^sub>3 sporadic \<lfloor>\<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>2, k) \<oplus> \<delta>\<tau>\<rfloor> on K\<^sub>2) # (K\<^sub>1 time-delayed by \<delta>\<tau> on K\<^sub>2 implies K\<^sub>3) # \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
+                  \<union> \<lbrakk> (K\<^sub>3 \<Up> k) # (K\<^sub>2 \<Down> k @ \<lfloor>\<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>2, k) \<oplus> \<delta>\<tau>\<rfloor>) # (K\<^sub>1 \<Up> k) # \<Gamma>, k \<turnstile> \<Psi> \<triangleright> (K\<^sub>1 time-delayed by \<delta>\<tau> on K\<^sub>2 implies K\<^sub>3) # \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
+            using HeronConf_interp_at_index_sporadicon_cases by blast
+      have br1: "\<rho> \<in> \<lbrakk> K\<^sub>1 \<not>\<Up> k # \<Gamma>, k \<turnstile> \<Psi> \<triangleright> (K\<^sub>1 time-delayed by \<delta>\<tau> on K\<^sub>2 implies K\<^sub>3) # \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g \<Longrightarrow> \<exists>\<Gamma>\<^sub>n \<Psi>\<^sub>n \<Phi>\<^sub>n n.
+       \<Gamma>, k \<turnstile> (K\<^sub>1 time-delayed by \<delta>\<tau> on K\<^sub>2 implies K\<^sub>3) # \<Psi> \<triangleright> \<Phi> \<hookrightarrow>\<^bsup>n\<^esup> \<Gamma>\<^sub>n, Suc k \<turnstile> \<Psi>\<^sub>n \<triangleright> \<Phi>\<^sub>n \<and>
+       \<rho> \<in> \<lbrakk> \<Gamma>\<^sub>n, Suc k \<turnstile> \<Psi>\<^sub>n \<triangleright> \<Phi>\<^sub>n \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
+        proof -
+          assume h1: "\<rho> \<in> \<lbrakk> K\<^sub>1 \<not>\<Up> k # \<Gamma>, k \<turnstile> \<Psi> \<triangleright> (K\<^sub>1 time-delayed by \<delta>\<tau> on K\<^sub>2 implies K\<^sub>3) # \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
+          then have "\<exists>\<Gamma>\<^sub>n \<Psi>\<^sub>n \<Phi>\<^sub>n n. (K\<^sub>1 \<not>\<Up> k # \<Gamma>, k \<turnstile> \<Psi> \<triangleright> (K\<^sub>1 time-delayed by \<delta>\<tau> on K\<^sub>2 implies K\<^sub>3) # \<Phi>) \<hookrightarrow>\<^bsup>n\<^esup> \<Gamma>\<^sub>n, Suc k \<turnstile> \<Psi>\<^sub>n \<triangleright> \<Phi>\<^sub>n \<and> \<rho> \<in> \<lbrakk> \<Gamma>\<^sub>n, Suc k \<turnstile> \<Psi>\<^sub>n \<triangleright> \<Phi>\<^sub>n \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
+            using h1 TimeDelayedBy.prems by simp
+          then show ?thesis
+            by (meson elims_part relpowp_Suc_I2 timedelayed_e1)
+        qed
+      moreover have br2: "\<rho> \<in> \<lbrakk> K\<^sub>1 \<Up> k # \<Gamma>, k \<turnstile> \<Psi> \<triangleright> (K\<^sub>3 sporadic \<lfloor>\<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>2, k) \<oplus> \<delta>\<tau>\<rfloor> on K\<^sub>2) # (K\<^sub>1 time-delayed by \<delta>\<tau> on K\<^sub>2 implies K\<^sub>3) # \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g \<Longrightarrow> \<exists>\<Gamma>\<^sub>n \<Psi>\<^sub>n \<Phi>\<^sub>n n.
+       \<Gamma>, k \<turnstile> (K\<^sub>1 time-delayed by \<delta>\<tau> on K\<^sub>2 implies K\<^sub>3) # \<Psi> \<triangleright> \<Phi> \<hookrightarrow>\<^bsup>n\<^esup> \<Gamma>\<^sub>n, Suc k \<turnstile> \<Psi>\<^sub>n \<triangleright> \<Phi>\<^sub>n \<and>
+       \<rho> \<in> \<lbrakk> \<Gamma>\<^sub>n, Suc k \<turnstile> \<Psi>\<^sub>n \<triangleright> \<Phi>\<^sub>n \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
+        proof -
+          assume h2: "\<rho> \<in> \<lbrakk> K\<^sub>1 \<Up> k # \<Gamma>, k \<turnstile> \<Psi> \<triangleright> (K\<^sub>3 sporadic \<lfloor>\<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>2, k) \<oplus> \<delta>\<tau>\<rfloor> on K\<^sub>2) # (K\<^sub>1 time-delayed by \<delta>\<tau> on K\<^sub>2 implies K\<^sub>3) # \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
+          then have "\<exists>\<Gamma>\<^sub>n \<Psi>\<^sub>n \<Phi>\<^sub>n n. (K\<^sub>1 \<Up> k # \<Gamma>, k \<turnstile> \<Psi> \<triangleright> (K\<^sub>3 sporadic \<lfloor>\<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>2, k) \<oplus> \<delta>\<tau>\<rfloor> on K\<^sub>2) # (K\<^sub>1 time-delayed by \<delta>\<tau> on K\<^sub>2 implies K\<^sub>3) # \<Phi>) \<hookrightarrow>\<^bsup>n\<^esup> \<Gamma>\<^sub>n, Suc k \<turnstile> \<Psi>\<^sub>n \<triangleright> \<Phi>\<^sub>n \<and> \<rho> \<in> \<lbrakk> \<Gamma>\<^sub>n, Suc k \<turnstile> \<Psi>\<^sub>n \<triangleright> \<Phi>\<^sub>n \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
+            using h2 TimeDelayedBy.prems by simp
+          then show ?thesis
+            by (meson elims_part relpowp_Suc_I2 timedelayed_e2 sporadic_on_e1)
+        qed
+      moreover have br2': "\<rho> \<in> \<lbrakk> (K\<^sub>3 \<Up> k) # (K\<^sub>2 \<Down> k @ \<lfloor>\<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>2, k) \<oplus> \<delta>\<tau>\<rfloor>) # (K\<^sub>1 \<Up> k) # \<Gamma>, k \<turnstile> \<Psi> \<triangleright> (K\<^sub>1 time-delayed by \<delta>\<tau> on K\<^sub>2 implies K\<^sub>3) # \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g \<Longrightarrow> \<exists>\<Gamma>\<^sub>n \<Psi>\<^sub>n \<Phi>\<^sub>n n.
+       \<Gamma>, k \<turnstile> (K\<^sub>1 time-delayed by \<delta>\<tau> on K\<^sub>2 implies K\<^sub>3) # \<Psi> \<triangleright> \<Phi> \<hookrightarrow>\<^bsup>n\<^esup> \<Gamma>\<^sub>n, Suc k \<turnstile> \<Psi>\<^sub>n \<triangleright> \<Phi>\<^sub>n \<and>
+       \<rho> \<in> \<lbrakk> \<Gamma>\<^sub>n, Suc k \<turnstile> \<Psi>\<^sub>n \<triangleright> \<Phi>\<^sub>n \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
+        proof -
+          assume h2: "\<rho> \<in> \<lbrakk> (K\<^sub>3 \<Up> k) # (K\<^sub>2 \<Down> k @ \<lfloor>\<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>2, k) \<oplus> \<delta>\<tau>\<rfloor>) # (K\<^sub>1 \<Up> k) # \<Gamma>, k \<turnstile> \<Psi> \<triangleright> (K\<^sub>1 time-delayed by \<delta>\<tau> on K\<^sub>2 implies K\<^sub>3) # \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
+          then have "\<exists>\<Gamma>\<^sub>n \<Psi>\<^sub>n \<Phi>\<^sub>n n. ((K\<^sub>3 \<Up> k) # (K\<^sub>2 \<Down> k @ \<lfloor>\<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>2, k) \<oplus> \<delta>\<tau>\<rfloor>) # (K\<^sub>1 \<Up> k) # \<Gamma>, k \<turnstile> \<Psi> \<triangleright> (K\<^sub>1 time-delayed by \<delta>\<tau> on K\<^sub>2 implies K\<^sub>3) # \<Phi>) \<hookrightarrow>\<^bsup>n\<^esup> \<Gamma>\<^sub>n, Suc k \<turnstile> \<Psi>\<^sub>n \<triangleright> \<Phi>\<^sub>n \<and> \<rho> \<in> \<lbrakk> \<Gamma>\<^sub>n, Suc k \<turnstile> \<Psi>\<^sub>n \<triangleright> \<Phi>\<^sub>n \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
+            using h2 TimeDelayedBy.prems by simp
+          then show ?thesis
+            by (meson elims_part relpowp_Suc_I2 timedelayed_e2 sporadic_on_e2)
+        qed
+      ultimately show ?case
+        using TimeDelayedBy.prems(2) by (metis UnE branches more_branches)
+    qed
+  qed
+
+lemma instant_index_increase_generalized:
+  assumes "k < k\<^sub>n"
+  assumes "\<rho> \<in> \<lbrakk> \<Gamma>, k \<turnstile> \<Psi> \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
+  shows   "\<exists>\<Gamma>\<^sub>n \<Psi>\<^sub>n \<Phi>\<^sub>n n. \<Gamma>, k \<turnstile> \<Psi> \<triangleright> \<Phi>  \<hookrightarrow>\<^bsup>n\<^esup>  \<Gamma>\<^sub>n, k\<^sub>n \<turnstile> \<Psi>\<^sub>n \<triangleright> \<Phi>\<^sub>n
+                         \<and> \<rho> \<in> \<lbrakk> \<Gamma>\<^sub>n, k\<^sub>n \<turnstile> \<Psi>\<^sub>n \<triangleright> \<Phi>\<^sub>n \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
+  proof -
+    obtain \<delta>n where diff: "k\<^sub>n = \<delta>n + Suc k"
+      using add.commute assms(1) less_iff_Suc_add by auto
+    show ?thesis
+      proof (subst diff, subst diff, insert assms(2), induct \<delta>n)
+        case 0
+        then show ?case
+          using instant_index_increase assms(2) by simp
+      next
+        case (Suc \<delta>n)
+        have f0: "\<rho> \<in> \<lbrakk> \<Gamma>, k \<turnstile> \<Psi> \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g \<Longrightarrow> \<exists>\<Gamma>\<^sub>n \<Psi>\<^sub>n \<Phi>\<^sub>n n.
+             \<Gamma>, k \<turnstile> \<Psi> \<triangleright> \<Phi> \<hookrightarrow>\<^bsup>n\<^esup> \<Gamma>\<^sub>n, \<delta>n + Suc k \<turnstile> \<Psi>\<^sub>n \<triangleright> \<Phi>\<^sub>n \<and>
+             \<rho> \<in> \<lbrakk> \<Gamma>\<^sub>n, \<delta>n + Suc k \<turnstile> \<Psi>\<^sub>n \<triangleright> \<Phi>\<^sub>n \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
+          using Suc.hyps by blast
+        obtain \<Gamma>\<^sub>n \<Psi>\<^sub>n \<Phi>\<^sub>n n where cont: "\<Gamma>, k \<turnstile> \<Psi> \<triangleright> \<Phi> \<hookrightarrow>\<^bsup>n\<^esup> \<Gamma>\<^sub>n, \<delta>n + Suc k \<turnstile> \<Psi>\<^sub>n \<triangleright> \<Phi>\<^sub>n \<and> \<rho> \<in> \<lbrakk> \<Gamma>\<^sub>n, \<delta>n + Suc k \<turnstile> \<Psi>\<^sub>n \<triangleright> \<Phi>\<^sub>n \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g" using f0 assms(1)
+          using Suc.prems by blast
+        then have fcontinue: "\<exists>\<Gamma>\<^sub>n' \<Psi>\<^sub>n' \<Phi>\<^sub>n' n'. \<Gamma>\<^sub>n, \<delta>n + Suc k \<turnstile> \<Psi>\<^sub>n \<triangleright> \<Phi>\<^sub>n \<hookrightarrow>\<^bsup>n'\<^esup> \<Gamma>\<^sub>n', Suc (\<delta>n + Suc k) \<turnstile> \<Psi>\<^sub>n' \<triangleright> \<Phi>\<^sub>n' \<and>
+              \<rho> \<in> \<lbrakk> \<Gamma>\<^sub>n', Suc (\<delta>n + Suc k) \<turnstile> \<Psi>\<^sub>n' \<triangleright> \<Phi>\<^sub>n' \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
+          using f0 cont instant_index_increase by blast
+        obtain \<Gamma>\<^sub>n' \<Psi>\<^sub>n' \<Phi>\<^sub>n' n' where cont2: "\<Gamma>\<^sub>n, \<delta>n + Suc k \<turnstile> \<Psi>\<^sub>n \<triangleright> \<Phi>\<^sub>n \<hookrightarrow>\<^bsup>n'\<^esup> \<Gamma>\<^sub>n', Suc (\<delta>n + Suc k) \<turnstile> \<Psi>\<^sub>n' \<triangleright> \<Phi>\<^sub>n' \<and> \<rho> \<in> \<lbrakk> \<Gamma>\<^sub>n', Suc (\<delta>n + Suc k) \<turnstile> \<Psi>\<^sub>n' \<triangleright> \<Phi>\<^sub>n' \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
+          using Suc.prems using fcontinue cont by blast
+        have trans: "\<Gamma>, k \<turnstile> \<Psi> \<triangleright> \<Phi> \<hookrightarrow>\<^bsup>n + n'\<^esup> \<Gamma>\<^sub>n', Suc (\<delta>n + Suc k) \<turnstile> \<Psi>\<^sub>n' \<triangleright> \<Phi>\<^sub>n'"
+          using operational_semantics_trans_generalized cont cont2
+          by blast
+        moreover have suc_assoc: "Suc \<delta>n + Suc k = Suc (\<delta>n + Suc k)"
+          by arith
+        ultimately show ?case 
+          proof (subst suc_assoc)
+          show "\<exists>\<Gamma>\<^sub>n \<Psi>\<^sub>n \<Phi>\<^sub>n n.
+               \<Gamma>, k \<turnstile> \<Psi> \<triangleright> \<Phi> \<hookrightarrow>\<^bsup>n\<^esup> \<Gamma>\<^sub>n, Suc (\<delta>n + Suc k) \<turnstile> \<Psi>\<^sub>n \<triangleright> \<Phi>\<^sub>n \<and>
+               \<rho> \<in> \<lbrakk> \<Gamma>\<^sub>n, Suc \<delta>n + Suc k \<turnstile> \<Psi>\<^sub>n \<triangleright> \<Phi>\<^sub>n \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
+            using cont2 local.trans by auto
+          qed
+    qed
+  qed
+
 text \<open>Any run from initial specification [\<Psi>] has a corresponding configuration
       indexed at [k]-th instant starting from initial configuration.\<close>
 theorem progress:
   assumes "\<rho> \<in> \<lbrakk>\<lbrakk> \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
-  shows   "\<exists>\<Gamma>\<^sub>n n \<Psi>\<^sub>n \<Phi>\<^sub>n. [], 0 \<turnstile> \<Psi> \<triangleright> []  \<hookrightarrow>\<^bsup>n\<^esup>  \<Gamma>\<^sub>n, k \<turnstile> \<Psi>\<^sub>n \<triangleright> \<Phi>\<^sub>n
-                         \<and> \<rho> \<in> \<lbrakk> \<Gamma>\<^sub>n, k \<turnstile> \<Psi>\<^sub>n \<triangleright> \<Phi>\<^sub>n \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
-  using HeronConf_interp_at_index_next_instant_run_presv_generalized
+  shows   "\<exists>k \<Gamma>\<^sub>k \<Psi>\<^sub>k \<Phi>\<^sub>k. [], 0 \<turnstile> \<Psi> \<triangleright> []  \<hookrightarrow>\<^bsup>k\<^esup>  \<Gamma>\<^sub>k, n \<turnstile> \<Psi>\<^sub>k \<triangleright> \<Phi>\<^sub>k
+                         \<and> \<rho> \<in> \<lbrakk> \<Gamma>\<^sub>k, n \<turnstile> \<Psi>\<^sub>k \<triangleright> \<Phi>\<^sub>k \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
+  using instant_index_increase_generalized
   by (metis assms neq0_conv relpowp_0_I solve_start)
-
-section \<open>Composition\<close>
-
-lemma composition:
-  shows "\<lbrakk> \<Gamma>\<^sub>1, n \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1 \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g \<inter> \<lbrakk> \<Gamma>\<^sub>2, n \<turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2 \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
-         = \<lbrakk> \<Gamma>\<^sub>1 @ \<Gamma>\<^sub>2, n \<turnstile> \<Psi>\<^sub>1 @ \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>1 @ \<Phi>\<^sub>2 \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
-  using TESL_interp_at_index_composition symrun_interp_expansion by auto
 
 end
