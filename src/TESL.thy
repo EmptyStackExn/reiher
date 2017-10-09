@@ -26,6 +26,7 @@ datatype constr =
   | Ticks     "clock"   "instant_index"                       ("_ \<Up> _")
   | NotTicks  "clock"   "instant_index"                       ("_ \<not>\<Up> _")
   | Affine    "tag_var" "tag_const"     "tag_var" "tag_const" ("_ \<doteq> _ * _ + _")
+  | ArithGen  "tag_var" "tag_var" "(tag_const \<times> tag_const) \<Rightarrow> bool" ("\<langle>_, _\<rangle> \<in> _")
 
 type_synonym system = "constr list"
 
@@ -36,6 +37,7 @@ datatype TESL_atomic =
     Sporadic       "clock" "tag_const"                     (infixr "sporadic" 55)
   | SporadicOn     "clock" "tag_expr"  "clock"             ("_ sporadic _ on _" 55)
   | TagRelation    "clock" "tag_const" "clock" "tag_const" ("tag-relation _ = _ * _ + _" 55)
+  | TagRelationGen "clock" "clock" "tag_var \<Rightarrow> tag_var" ("tag-relation \<langle>_, _\<rangle> \<in> _" 55)
   | Implies        "clock" "clock"                         (infixr "implies" 55)
   | TimeDelayedBy  "clock" "tag_const" "clock" "clock"     ("_ time-delayed by _ on _ implies _" 55)
 
