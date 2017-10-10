@@ -1,5 +1,5 @@
 theory TESL
-imports Main Rat
+imports Main Rat Real
 
 begin
 text {* We define as follows the syntax of primitives to describe symbolic runs *}
@@ -11,7 +11,7 @@ type_synonym instant_index = "nat"
 (** Tags **) 
 (* Constants *)
 datatype '\<tau> tag_const =
-    Rational   "'\<tau>"                   ("\<tau>\<^sub>r\<^sub>a\<^sub>t")
+    CConst   "'\<tau>"                   ("\<tau>\<^sub>r\<^sub>a\<^sub>t")
 (* Variables *)
 datatype '\<kappa> tag_var =
     Schematic "'\<kappa> clock * instant_index" ("\<tau>\<^sub>v\<^sub>a\<^sub>r")
@@ -43,12 +43,12 @@ datatype ('\<kappa>, '\<tau>) TESL_atomic =
 
 type_synonym ('\<kappa>, '\<tau>) TESL_formula = "('\<kappa>, '\<tau>) TESL_atomic list"
 
-fun positive_atom :: "('\<kappa>, '\<tau>) TESL_atomic \<Rightarrow> bool" where
+fun positive_atom :: "('\<kappa>, '\<tau>::{plus,minus,times,divide,inverse,order,linorder}) TESL_atomic \<Rightarrow> bool" where
     "positive_atom (_ sporadic _)      = True"
   | "positive_atom (_ sporadic _ on _) = True"
   | "positive_atom _                   = False"
 
-abbreviation NoSporadic :: "('\<kappa>, '\<tau>) TESL_formula \<Rightarrow> ('\<kappa>, '\<tau>) TESL_formula" where 
+abbreviation NoSporadic :: "('\<kappa>, '\<tau>::{plus,minus,times,divide,inverse,order,linorder}) TESL_formula \<Rightarrow> ('\<kappa>, '\<tau>) TESL_formula" where 
   "NoSporadic f \<equiv> (List.filter (\<lambda>f\<^sub>a\<^sub>t\<^sub>o\<^sub>m. case f\<^sub>a\<^sub>t\<^sub>o\<^sub>m of
       _ sporadic _  \<Rightarrow> False
     | _ sporadic _ on _ \<Rightarrow> False
@@ -63,62 +63,63 @@ type_synonym ('\<kappa>, '\<tau>) config = "('\<kappa>, '\<tau>) system * instan
 (*declare[[show_sorts]]*)
 
 (* Instanciating tag_const to give field structure *)
-instantiation tag_const :: plus
+instantiation tag_const :: (plus)plus
 begin
-  fun plus_tag_const :: "tag_const \<Rightarrow> tag_const \<Rightarrow> tag_const" where
-      Rational_plus: "(Rational n) + (Rational p) = (Rational (n + p))"
+  fun plus_tag_const :: "'a tag_const \<Rightarrow> 'a tag_const \<Rightarrow> 'a tag_const" where
+      CConst_plus: " (CConst n) + (CConst p) = (CConst (n + p))"
   instance proof qed
 end
 
-instantiation tag_const :: minus
+instantiation tag_const :: (minus)minus
 begin
-  fun minus_tag_const :: "tag_const \<Rightarrow> tag_const \<Rightarrow> tag_const" where
-      Rational_minus: "(Rational n) - (Rational p) = (Rational (n - p))"
+  fun minus_tag_const :: "'a tag_const \<Rightarrow> 'a tag_const \<Rightarrow> 'a tag_const" where
+      CConst_minus: "(CConst n) - (CConst p) = (CConst (n - p))"
   instance proof qed
 end
 
-instantiation tag_const :: times
+instantiation tag_const :: (times)times
 begin
-  fun times_tag_const :: "tag_const \<Rightarrow> tag_const \<Rightarrow> tag_const" where
-      Rational_times: "(Rational n) * (Rational p) = (Rational (n * p))"
+  fun times_tag_const :: "'a tag_const \<Rightarrow> 'a tag_const \<Rightarrow> 'a tag_const" where
+      CConst_times: "(CConst n) * (CConst p) = (CConst (n * p))"
   instance proof qed
 end
 
-instantiation tag_const :: divide
+instantiation tag_const :: (divide)divide
 begin
-  fun divide_tag_const :: "tag_const \<Rightarrow> tag_const \<Rightarrow> tag_const" where
-      Rational_divide: "divide (Rational n) (Rational p) = (Rational (divide n p))"
+  fun divide_tag_const :: "'a tag_const \<Rightarrow> 'a tag_const \<Rightarrow> 'a tag_const" where
+      CConst_divide: "divide (CConst n) (CConst p) = (CConst (divide n p))"
   instance proof qed
 end
 
-instantiation tag_const :: inverse
+instantiation tag_const :: (inverse)inverse
 begin
-  fun inverse_tag_const :: "tag_const \<Rightarrow> tag_const" where
-      Rational_inverse: "inverse (Rational n) = (Rational (inverse n))"
+  fun inverse_tag_const :: "'a tag_const \<Rightarrow> 'a tag_const" where
+      CConst_inverse: "inverse (CConst n) = (CConst (inverse n))"
   instance proof qed
 end
 
-instantiation tag_const :: order
+instantiation tag_const :: (order)order
 begin
-  inductive less_eq_tag_const :: "tag_const \<Rightarrow> tag_const \<Rightarrow> bool" where
-    Int_less_eq[simp]:      "n \<le> m \<Longrightarrow> (Rational n) \<le> (Rational m)"
-  definition less_tag: "(x::tag_const) < y \<longleftrightarrow> (x \<le> y) \<and> (x \<noteq> y)"
+  inductive less_eq_tag_const :: "'a tag_const \<Rightarrow> 'a tag_const \<Rightarrow> bool" where
+    Int_less_eq[simp]:      "n \<le> m \<Longrightarrow> (CConst n) \<le> (CConst m)"
+  definition less_tag_const :: "'a tag_const \<Rightarrow> 'a tag_const \<Rightarrow> bool" where
+    "less_tag_const x y \<longleftrightarrow> (x \<le> y) \<and> (x \<noteq> y)" (* NORMAL ? *)
   instance proof
-    show "\<And>x y :: tag_const. (x < y) = (x \<le> y \<and> \<not> y \<le> x)"
-      using less_eq_tag_const.simps less_tag by auto
-    show "\<And>x  :: tag_const. x \<le> x"
+    show "\<And>x y :: 'a tag_const. (x < y) = (x \<le> y \<and> \<not> y \<le> x)"
+      using less_eq_tag_const.simps less_tag_const_def by auto
+    show "\<And>x  :: 'a tag_const. x \<le> x"
       by (metis (full_types) Int_less_eq order_refl tag_const.exhaust)
-    show "\<And>x y z  :: tag_const. x \<le> y \<Longrightarrow> y \<le> z \<Longrightarrow> x \<le> z"
+    show "\<And>x y z  :: 'a tag_const. x \<le> y \<Longrightarrow> y \<le> z \<Longrightarrow> x \<le> z"
       using less_eq_tag_const.simps by auto
-    show "\<And>x y  :: tag_const. x \<le> y \<Longrightarrow> y \<le> x \<Longrightarrow> x = y"
+    show "\<And>x y  :: 'a tag_const. x \<le> y \<Longrightarrow> y \<le> x \<Longrightarrow> x = y"
       using less_eq_tag_const.simps by auto
   qed
 end
 
-instantiation tag_const :: linorder
+instantiation tag_const :: (linorder)linorder
 begin
   instance proof
-    show "\<And>x y. (x::tag_const) \<le> y \<or> y \<le> x"
+    show "\<And>x y. (x::'a tag_const) \<le> y \<or> y \<le> x"
       by (metis (full_types) Int_less_eq le_cases tag_const.exhaust)
   qed
 end
