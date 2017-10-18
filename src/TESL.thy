@@ -1,5 +1,5 @@
 theory TESL
-imports Main Rat
+imports Main Real
 
 begin
 text {* We define as follows the syntax of primitives to describe symbolic runs *}
@@ -11,7 +11,7 @@ type_synonym instant_index = "nat"
 (** Tags **) 
 (* Constants *)
 datatype tag_const =
-    Rational   "rat"                   ("\<tau>\<^sub>r\<^sub>a\<^sub>t")
+    Real   "real"                   ("\<tau>\<^sub>r\<^sub>a\<^sub>t")
 (* Variables *)
 datatype tag_var =
     Schematic "clock * instant_index" ("\<tau>\<^sub>v\<^sub>a\<^sub>r")
@@ -66,42 +66,42 @@ type_synonym config = "system * instant_index * TESL_formula * TESL_formula"
 instantiation tag_const :: plus
 begin
   fun plus_tag_const :: "tag_const \<Rightarrow> tag_const \<Rightarrow> tag_const" where
-      Rational_plus: "(Rational n) + (Rational p) = (Rational (n + p))"
+      Real_plus: "(Real n) + (Real p) = (Real (n + p))"
   instance proof qed
 end
 
 instantiation tag_const :: minus
 begin
   fun minus_tag_const :: "tag_const \<Rightarrow> tag_const \<Rightarrow> tag_const" where
-      Rational_minus: "(Rational n) - (Rational p) = (Rational (n - p))"
+      Real_minus: "(Real n) - (Real p) = (Real (n - p))"
   instance proof qed
 end
 
 instantiation tag_const :: times
 begin
   fun times_tag_const :: "tag_const \<Rightarrow> tag_const \<Rightarrow> tag_const" where
-      Rational_times: "(Rational n) * (Rational p) = (Rational (n * p))"
+      Real_times: "(Real n) * (Real p) = (Real (n * p))"
   instance proof qed
 end
 
 instantiation tag_const :: divide
 begin
   fun divide_tag_const :: "tag_const \<Rightarrow> tag_const \<Rightarrow> tag_const" where
-      Rational_divide: "divide (Rational n) (Rational p) = (Rational (divide n p))"
+      Real_divide: "divide (Real n) (Real p) = (Real (divide n p))"
   instance proof qed
 end
 
 instantiation tag_const :: inverse
 begin
   fun inverse_tag_const :: "tag_const \<Rightarrow> tag_const" where
-      Rational_inverse: "inverse (Rational n) = (Rational (inverse n))"
+      Real_inverse: "inverse (Real n) = (Real (inverse n))"
   instance proof qed
 end
 
 instantiation tag_const :: order
 begin
   inductive less_eq_tag_const :: "tag_const \<Rightarrow> tag_const \<Rightarrow> bool" where
-    Int_less_eq[simp]:      "n \<le> m \<Longrightarrow> (Rational n) \<le> (Rational m)"
+    Int_less_eq[simp]:      "n \<le> m \<Longrightarrow> (Real n) \<le> (Real m)"
   definition less_tag: "(x::tag_const) < y \<longleftrightarrow> (x \<le> y) \<and> (x \<noteq> y)"
   instance proof
     show "\<And>x y :: tag_const. (x < y) = (x \<le> y \<and> \<not> y \<le> x)"
