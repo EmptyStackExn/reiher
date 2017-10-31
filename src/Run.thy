@@ -9,16 +9,13 @@ section \<open> Defining runs \<close>
 abbreviation hamlet where "hamlet \<equiv> fst"
 abbreviation time where "time \<equiv> snd"
 
-type_synonym ('\<kappa>, '\<tau>) instant = "'\<kappa> clock \<Rightarrow> (bool \<times> '\<tau> tag_const)"
-typedef (overloaded) ('\<kappa>, '\<tau>) run =
-  "{ \<rho>::nat \<Rightarrow> ('\<kappa>, '\<tau>::order) instant. \<forall>c. mono (\<lambda>n. time (\<rho> n c)) }"
-  sorry
-(*
+type_synonym instant = "clock \<Rightarrow> (bool \<times> tag_const)"
+typedef (overloaded) run =
+  "{ \<rho>::nat \<Rightarrow> instant. \<forall>c. mono (\<lambda>n. time (\<rho> n c)) }"
 proof
-  show "(\<lambda>_ _. (undefined, (\<tau>\<^sub>r\<^sub>a\<^sub>t 0) :: '\<tau> tag_const)) \<in> {\<rho>::nat \<Rightarrow> '\<kappa> clock \<Rightarrow> bool \<times> '\<tau> tag_const. \<forall>c::'\<kappa> clock. mono (\<lambda>n::nat. time (\<rho> n c))}"
+  show "(\<lambda>_ _. (undefined, \<tau>\<^sub>r\<^sub>a\<^sub>t 0)) \<in> {\<rho>::nat \<Rightarrow> clock \<Rightarrow> bool \<times> tag_const. \<forall>c::clock. mono (\<lambda>n::nat. time (\<rho> n c))}"
   using mono_def by auto
 qed
-*)
 (*
 abbreviation Abs_run_not ("_\<^sup>\<up>" 1000) where "f\<^sup>\<up> \<equiv> Abs_run f"
 abbreviation Rep_run_not ("_\<^sup>\<down>" 1000) where "f\<^sup>\<down> \<equiv> Rep_run f"
@@ -33,7 +30,7 @@ lemma Abs_run_inverse_rewrite_unsafe:
   oops (* Use [sorry] when testing *)
 
 
-fun symbolic_run_interpretation_primitive :: "('\<kappa>, '\<tau>) constr \<Rightarrow> ('\<kappa>, '\<tau>) run set" ("\<lbrakk> _ \<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n") where
+fun symbolic_run_interpretation_primitive :: "constr \<Rightarrow> run set" ("\<lbrakk> _ \<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n") where
     "\<lbrakk> K \<Up> n  \<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n   = { \<rho>. hamlet ((Rep_run \<rho>) n K) = True }"
   | "\<lbrakk> K \<not>\<Up> n \<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n   = { \<rho>. hamlet ((Rep_run \<rho>) n K) = False }"
   | "\<lbrakk> K \<Down> n @ \<lfloor> \<tau> \<rfloor> \<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n = { \<rho>. time ((Rep_run \<rho>) n K) = \<tau> }"

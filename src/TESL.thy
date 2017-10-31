@@ -34,23 +34,28 @@ text{* Define as follows the syntax of TESL *}
 
 (* TESL language *)
 datatype TESL_atomic =
-    Sporadic       "clock" "tag_const"                     (infixr "sporadic" 55)
+    Not            "clock"                                ("not _" 55)
+  | SporadicAnytime "clock"                              ("_ sporadic anytime" 55)
+  | Sporadic       "clock" "tag_const"                     (infixr "sporadic" 55)
   | SporadicOn     "clock" "tag_expr"  "clock"             ("_ sporadic _ on _" 55)
   | TagRelation    "clock" "tag_const" "clock" "tag_const" ("tag-relation _ = _ * _ + _" 55)
   | TagRelationGen "clock" "clock" "(tag_const \<times> tag_const) \<Rightarrow> bool" ("tag-relation \<langle>_, _\<rangle> \<in> _" 55)
   | Implies        "clock" "clock"                         (infixr "implies" 55)
+  | Iff            "clock" "clock"                         (infixr "iff" 55)
   | TimeDelayedBy  "clock" "tag_const" "clock" "clock"     ("_ time-delayed by _ on _ implies _" 55)
 
 type_synonym TESL_formula = "TESL_atomic list"
 
 fun positive_atom :: "TESL_atomic \<Rightarrow> bool" where
-    "positive_atom (_ sporadic _)      = True"
+    "positive_atom (_ sporadic anytime)  = True"
+  | "positive_atom (_ sporadic _)      = True"
   | "positive_atom (_ sporadic _ on _) = True"
   | "positive_atom _                   = False"
 
 abbreviation NoSporadic :: "TESL_formula \<Rightarrow> TESL_formula" where 
   "NoSporadic f \<equiv> (List.filter (\<lambda>f\<^sub>a\<^sub>t\<^sub>o\<^sub>m. case f\<^sub>a\<^sub>t\<^sub>o\<^sub>m of
-      _ sporadic _  \<Rightarrow> False
+      _ sporadic anytime \<Rightarrow> False
+    | _ sporadic _  \<Rightarrow> False
     | _ sporadic _ on _ \<Rightarrow> False
     | _ \<Rightarrow> True) f)"
 
