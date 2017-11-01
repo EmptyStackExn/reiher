@@ -211,8 +211,22 @@ lemma SporadicOn_sugar:
   by auto
 
 lemma SporadicAnytime_incl:
-  shows "\<lbrakk> K sporadic \<tau> on K' \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L \<subseteq> \<lbrakk> K sporadic anytime \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
-  sorry
+  shows "\<lbrakk> K sporadic E on K' \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L \<subseteq> \<lbrakk> K sporadic anytime \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
+  proof (induct E)
+    case (Const x)
+    then show ?case by auto
+  next
+    case (AddDelay \<tau> \<delta>\<tau>)
+    then show ?case
+      proof (induct \<tau>)
+        case (Schematic xa)
+        then show ?case
+          proof (induct xa)
+            case (Pair a b)
+            then show ?case by auto
+          qed
+      qed
+  qed
 
 lemma Tagrel_affine_sugar:
   shows "\<lbrakk> tag-relation K\<^sub>1 = \<alpha> * K\<^sub>2 + \<beta> \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<lbrakk> tag-relation \<langle>K\<^sub>1, K\<^sub>2\<rangle> \<in> (\<lambda>(\<tau>\<^sub>1, \<tau>\<^sub>2). \<tau>\<^sub>1 = \<alpha> * \<tau>\<^sub>2 + \<beta>) \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"

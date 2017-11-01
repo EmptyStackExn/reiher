@@ -45,6 +45,10 @@ theorem predicate_Union_unfold:
   "{ \<rho>. \<exists>n. P \<rho> n} = \<Union> {Y. \<exists>n. Y = { \<rho>. P \<rho> n }}"
   by auto
 
+lemma TESL_interp_unfold_stepwise_not:
+  shows "\<lbrakk> not K \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<Inter> {Y. \<exists>n::nat. Y = \<lbrakk> not K \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup>}"
+  by auto
+
 lemma TESL_interp_unfold_stepwise_sporadic_anytime:
   shows "\<lbrakk> K sporadic anytime \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<Union> {Y. \<exists>n::nat. Y = \<lbrakk> K sporadic anytime \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup>}"
   by auto
@@ -73,6 +77,10 @@ lemma TESL_interp_unfold_stepwise_implies:
   shows "\<lbrakk> master implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<Inter> {Y. \<exists>n::nat. Y = \<lbrakk> master implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup>}"
   by auto
 
+lemma TESL_interp_unfold_stepwise_iff:
+  shows "\<lbrakk> master iff slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<Inter> {Y. \<exists>n::nat. Y = \<lbrakk> master iff slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup>}"
+  by auto
+
 lemma TESL_interp_unfold_stepwise_timedelayed:
   shows "\<lbrakk> master time-delayed by \<delta>\<tau> on measuring implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L
     = \<Inter> {Y. \<exists>n::nat. Y = \<lbrakk> master time-delayed by \<delta>\<tau> on measuring implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup>}"
@@ -83,22 +91,22 @@ theorem TESL_interp_unfold_stepwise_positive_atoms:
   shows "\<lbrakk> \<phi> \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<Union> {Y. \<exists>n::nat. Y = \<lbrakk> \<phi> \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup>}"
   proof -
     obtain cc :: "TESL_atomic \<Rightarrow> clock" and tt :: "TESL_atomic \<Rightarrow> tag_const" and cca :: "TESL_atomic \<Rightarrow> clock" and tta :: "TESL_atomic \<Rightarrow> tag_expr" and ccb :: "TESL_atomic \<Rightarrow> clock" where
-      f1: "\<forall>t. \<not> positive_atom t \<or> t = cc t sporadic tt t \<or> t = cca t sporadic tta t on ccb t"
-      using positive_atom.elims(2) sorry (* by moura *)
+      f1: "\<forall>t. \<not> positive_atom t \<or> t = cc t sporadic anytime \<or> t = cc t sporadic tt t \<or> t = cca t sporadic tta t on ccb t"
+      using positive_atom.elims(2) by moura
     obtain ttb :: "tag_expr \<Rightarrow> tag_const" where
       "\<And>c t ca. \<Union>{R. \<exists>n. R = \<lbrakk> c sporadic t on ca \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup>} = \<lbrakk> c sporadic t on ca \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L \<or> \<lfloor> ttb t \<rfloor> = t"
       by (metis TESL_interp_unfold_stepwise_sporadicon_add old.prod.exhaust tag_expr.exhaust tag_var.exhaust)
     then have "\<And>t. \<Union>{R. \<exists>n. R = \<lbrakk> t \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup>} = \<lbrakk> t \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L \<or> \<lfloor> ttb (tta t) \<rfloor> = tta t \<or> \<not> positive_atom t"
-      using f1 by (metis TESL_interp_unfold_stepwise_sporadic)
+      using f1 by (metis TESL_interp_unfold_stepwise_sporadic TESL_interp_unfold_stepwise_sporadic_anytime)
     then show ?thesis
-      using f1 by (metis TESL_interp_unfold_stepwise_sporadic TESL_interp_unfold_stepwise_sporadicon assms)
+      using f1
+      by (metis TESL_interp_unfold_stepwise_sporadic TESL_interp_unfold_stepwise_sporadic_anytime TESL_interp_unfold_stepwise_sporadicon assms)
   qed
 
 theorem TESL_interp_unfold_stepwise_negative_atoms:
   assumes "\<not> positive_atom \<phi>"
   shows "\<lbrakk> \<phi> \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<Inter> {Y. \<exists>n::nat. Y = \<lbrakk> \<phi> \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup>}"
-  sorry
-  (* by (smt Collect_cong TESL_interp_unfold_stepwise_implies TESL_interp_unfold_stepwise_tagrel TESL_interp_unfold_stepwise_tagrelgen TESL_interp_unfold_stepwise_timedelayed assms positive_atom.elims(3)) *)
+  by (smt Collect_cong TESL_interp_unfold_stepwise_not TESL_interp_unfold_stepwise_implies TESL_interp_unfold_stepwise_tagrel TESL_interp_unfold_stepwise_tagrelgen TESL_interp_unfold_stepwise_iff TESL_interp_unfold_stepwise_timedelayed assms positive_atom.elims(3))
 
 lemma forall_nat_expansion:
   "(\<forall>n\<^sub>1 \<ge> (n\<^sub>0::nat). P n\<^sub>1) \<equiv> P n\<^sub>0 \<and> (\<forall>n\<^sub>1 \<ge> Suc n\<^sub>0. P n\<^sub>1)"
@@ -110,11 +118,20 @@ lemma exists_nat_expansion:
 
 section \<open>Coinduction unfolding properties\<close>
 
+lemma TESL_interp_stepwise_not_coind_unfold:
+  shows "\<lbrakk> not K \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> =
+    \<lbrakk> K \<not>\<Up> n \<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n
+    \<inter> \<lbrakk> not K \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>"
+sledgehammer
+  by (smt Collect_cong Collect_conj_eq TESL_interpretation_atomic_stepwise.simps(1)
+      dual_order.antisym nat_le_linear not_less_eq_eq symbolic_run_interpretation_primitive.simps(2))
+
 lemma TESL_interp_stepwise_sporadic_anytime_coind_unfold:
   shows "\<lbrakk> K sporadic anytime \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> =
     \<lbrakk> K \<Up> n \<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n
     \<union> \<lbrakk> K sporadic anytime \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>"
-  sorry
+  by (smt Collect_cong Collect_disj_eq Suc_leD TESL_interpretation_atomic_stepwise.simps(2)
+      forall_nat_expansion le_antisym not_less_eq_eq symbolic_run_interpretation_primitive.simps(1))
 
 lemma TESL_interp_stepwise_sporadic_coind_unfold:
   shows "\<lbrakk> K sporadic \<tau> \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> =
@@ -212,6 +229,18 @@ lemma TESL_interp_stepwise_implies_coind_unfold:
     have "{ \<rho>. \<forall>m\<ge>n. hamlet ((Rep_run \<rho>) m master) \<longrightarrow> hamlet ((Rep_run \<rho>) m slave) }
           = { \<rho>. hamlet ((Rep_run \<rho>) n master) \<longrightarrow> hamlet ((Rep_run \<rho>) n slave) }
           \<inter> { \<rho>. \<forall>m\<ge>Suc n. hamlet ((Rep_run \<rho>) m master) \<longrightarrow> hamlet ((Rep_run \<rho>) m slave) }"
+      by (smt Collect_cong Collect_conj_eq Suc_leD eq_refl le_antisym not_less_eq_eq)
+    then show ?thesis by auto
+  qed
+
+lemma TESL_interp_stepwise_iff_coind_unfold:
+  shows "\<lbrakk> K\<^sub>1 iff K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> =
+    (\<lbrakk> K\<^sub>1 \<not>\<Up> n \<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n \<inter> \<lbrakk> K\<^sub>2 \<not>\<Up> n \<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n \<union> \<lbrakk> K\<^sub>1 \<Up> n \<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n \<inter> \<lbrakk> K\<^sub>2 \<Up> n \<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n)
+    \<inter> \<lbrakk> K\<^sub>1 iff K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>"
+  proof -
+    have "{ \<rho>. \<forall>m\<ge>n. hamlet ((Rep_run \<rho>) m K\<^sub>1) \<longleftrightarrow> hamlet ((Rep_run \<rho>) m K\<^sub>2) }
+          = { \<rho>. hamlet ((Rep_run \<rho>) n K\<^sub>1) \<longleftrightarrow> hamlet ((Rep_run \<rho>) n K\<^sub>2) }
+          \<inter> { \<rho>. \<forall>m\<ge>Suc n. hamlet ((Rep_run \<rho>) m K\<^sub>1) \<longleftrightarrow> hamlet ((Rep_run \<rho>) m K\<^sub>2) }"
       by (smt Collect_cong Collect_conj_eq Suc_leD eq_refl le_antisym not_less_eq_eq)
     then show ?thesis by auto
   qed
@@ -346,13 +375,35 @@ lemma HeronConf_interp_stepwise_instant_cases:
 lemma HeronConf_interp_stepwise_not_cases:
   shows "\<lbrakk> \<Gamma>, n \<turnstile> (not K) # \<Psi> \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
           = \<lbrakk> K \<not>\<Up> n # \<Gamma>, n \<turnstile> \<Psi> \<triangleright> (not K) # \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
-  sorry
+  proof -
+    have "\<lbrakk>  \<Gamma>, n \<turnstile> (not K) # \<Psi> \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g = \<lbrakk>\<lbrakk> \<Gamma> \<rbrakk>\<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n \<inter> \<lbrakk>\<lbrakk> (not K) # \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> \<inter> \<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>"
+      by simp
+    moreover have "\<lbrakk> K \<not>\<Up> n # \<Gamma>, n \<turnstile> \<Psi> \<triangleright> (not K) # \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
+                      = \<lbrakk>\<lbrakk> K \<not>\<Up> n # \<Gamma> \<rbrakk>\<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n \<inter> \<lbrakk>\<lbrakk> \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> \<inter> \<lbrakk>\<lbrakk> (not K) # \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>"
+      by simp
+    ultimately show ?thesis
+      proof -
+        have "\<lbrakk> K \<not>\<Up> n \<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n \<inter> \<lbrakk> not K \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup> \<inter> \<lbrakk>\<lbrakk> \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> = \<lbrakk>\<lbrakk> (not K) # \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup>"
+          using TESL_interp_stepwise_not_coind_unfold TESL_interpretation_stepwise_cons_morph by blast
+        then show ?thesis
+          by auto
+      qed
+  qed
 
 lemma HeronConf_interp_stepwise_sporadic_anytime_cases:
   shows "\<lbrakk> \<Gamma>, n \<turnstile> (K sporadic anytime) # \<Psi> \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
           = \<lbrakk> \<Gamma>, n \<turnstile> \<Psi> \<triangleright> (K sporadic anytime) # \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
           \<union> \<lbrakk> K \<Up> n # \<Gamma>, n \<turnstile> \<Psi> \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
-  sorry
+  proof -
+    have "\<lbrakk> \<Gamma>, n \<turnstile> (K sporadic anytime) # \<Psi> \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g = \<lbrakk>\<lbrakk> \<Gamma> \<rbrakk>\<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n \<inter> \<lbrakk>\<lbrakk> (K sporadic anytime) # \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> \<inter> \<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>"
+      by simp
+    moreover have "\<lbrakk> \<Gamma>, n \<turnstile> \<Psi> \<triangleright> (K sporadic anytime) # \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g = \<lbrakk>\<lbrakk> \<Gamma> \<rbrakk>\<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n \<inter> \<lbrakk>\<lbrakk> \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> \<inter> \<lbrakk>\<lbrakk> (K sporadic anytime) # \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>"
+      by simp
+    moreover have "\<lbrakk> K \<Up> n # \<Gamma>, n \<turnstile> \<Psi> \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g = \<lbrakk>\<lbrakk> K \<Up> n # \<Gamma> \<rbrakk>\<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n \<inter> \<lbrakk>\<lbrakk> \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> \<inter> \<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>"
+      by simp
+    ultimately show ?thesis
+      by (smt TESL_interp_stepwise_sporadic_anytime_coind_unfold TESL_interpretation_stepwise_cons_morph inf.commute inf_sup_aci(2) inf_sup_distrib2 sup_commute symbolic_run_interpretation.simps(2))
+  qed
 
 lemma HeronConf_interp_stepwise_sporadic_cases:
   shows "\<lbrakk> \<Gamma>, n \<turnstile> (K sporadic \<tau>) # \<Psi> \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
@@ -462,7 +513,8 @@ lemma HeronConf_interp_stepwise_iff_cases:
   shows "\<lbrakk> \<Gamma>, n \<turnstile> (K\<^sub>1 iff K\<^sub>2) # \<Psi> \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
           = \<lbrakk> (K\<^sub>1 \<not>\<Up> n) # (K\<^sub>2 \<not>\<Up> n) # \<Gamma>, n \<turnstile> \<Psi> \<triangleright> (K\<^sub>1 iff K\<^sub>2) # \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
           \<union> \<lbrakk> (K\<^sub>1 \<Up> n) # (K\<^sub>2 \<Up> n) # \<Gamma>, n \<turnstile> \<Psi> \<triangleright> (K\<^sub>1 iff K\<^sub>2) # \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
-  sorry
+  by (smt HeronConf_interpretation.simps Int_commute Int_left_commute TESL_interp_stepwise_iff_coind_unfold
+      TESL_interpretation_stepwise_cons_morph inf_sup_distrib2 symbolic_run_interpretation.simps(2))
 
 lemma HeronConf_interp_stepwise_timedelayed_cases:
   shows "\<lbrakk> \<Gamma>, n \<turnstile> (K\<^sub>1 time-delayed by \<delta>\<tau> on K\<^sub>2 implies K\<^sub>3) # \<Psi> \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
