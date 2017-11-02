@@ -29,6 +29,8 @@ fun TESL_interpretation_atomic
         { \<rho>. \<forall>n::nat. hamlet ((Rep_run \<rho>) n master) \<longrightarrow> hamlet ((Rep_run \<rho>) n slave) }"
   | "\<lbrakk> K\<^sub>1 iff K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
         { \<rho>. \<forall>n::nat. hamlet ((Rep_run \<rho>) n K\<^sub>1) \<longleftrightarrow> hamlet ((Rep_run \<rho>) n K\<^sub>2) }"
+  | "\<lbrakk> master anytime implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
+        { \<rho>. \<forall>n::nat. hamlet ((Rep_run \<rho>) n master) \<longrightarrow> (\<exists>m \<ge> n. hamlet ((Rep_run \<rho>) m slave)) }"
   | "\<lbrakk> master time-delayed by \<delta>\<tau> on measuring implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
         { \<rho>. \<forall>n. hamlet ((Rep_run \<rho>) n master) \<longrightarrow>
                  (let measured_time = time ((Rep_run \<rho>) n measuring) in
@@ -239,6 +241,10 @@ lemma Tagrel_affine_sugar:
 
 lemma Implies_Iff:
   shows "\<lbrakk> K\<^sub>1 iff K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<lbrakk> K\<^sub>1 implies K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L \<inter> \<lbrakk> K\<^sub>2 implies K\<^sub>1 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
+  by auto
+
+lemma ImpliesAnytime_TimeDelayedBy:
+  shows "\<lbrakk> master time-delayed by \<delta>\<tau> on measuring implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L \<subseteq> \<lbrakk> master anytime implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
   by auto
 
 end

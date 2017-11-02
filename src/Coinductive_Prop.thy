@@ -29,6 +29,8 @@ fun TESL_interpretation_atomic_stepwise
         { \<rho>. \<forall>n\<ge>i. hamlet ((Rep_run \<rho>) n master) \<longrightarrow> hamlet ((Rep_run \<rho>) n slave) }"
   | "\<lbrakk> K\<^sub>1 iff K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> i\<^esup> =
         { \<rho>. \<forall>n\<ge>i. hamlet ((Rep_run \<rho>) n K\<^sub>1) \<longleftrightarrow> hamlet ((Rep_run \<rho>) n K\<^sub>2) }"
+  | "\<lbrakk> master anytime implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> i\<^esup> =
+        { \<rho>. \<forall>n\<ge>i. hamlet ((Rep_run \<rho>) n master) \<longrightarrow> (\<exists>m \<ge> n. hamlet ((Rep_run \<rho>) m slave)) }"
   | "\<lbrakk> master time-delayed by \<delta>\<tau> on measuring implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> i\<^esup> =
         { \<rho>. \<forall>n\<ge>i. hamlet ((Rep_run \<rho>) n master) \<longrightarrow>
                  (let measured_time = time ((Rep_run \<rho>) n measuring) in
@@ -81,6 +83,11 @@ lemma TESL_interp_unfold_stepwise_iff:
   shows "\<lbrakk> master iff slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<Inter> {Y. \<exists>n::nat. Y = \<lbrakk> master iff slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup>}"
   by auto
 
+lemma TESL_interp_unfold_stepwise_implies_anytime:
+  shows "\<lbrakk> master anytime implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L
+    = \<Inter> {Y. \<exists>n::nat. Y = \<lbrakk> master anytime implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup>}"
+  by auto
+
 lemma TESL_interp_unfold_stepwise_timedelayed:
   shows "\<lbrakk> master time-delayed by \<delta>\<tau> on measuring implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L
     = \<Inter> {Y. \<exists>n::nat. Y = \<lbrakk> master time-delayed by \<delta>\<tau> on measuring implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup>}"
@@ -106,7 +113,10 @@ theorem TESL_interp_unfold_stepwise_positive_atoms:
 theorem TESL_interp_unfold_stepwise_negative_atoms:
   assumes "\<not> positive_atom \<phi>"
   shows "\<lbrakk> \<phi> \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<Inter> {Y. \<exists>n::nat. Y = \<lbrakk> \<phi> \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup>}"
-  by (smt Collect_cong TESL_interp_unfold_stepwise_not TESL_interp_unfold_stepwise_implies TESL_interp_unfold_stepwise_tagrel TESL_interp_unfold_stepwise_tagrelgen TESL_interp_unfold_stepwise_iff TESL_interp_unfold_stepwise_timedelayed assms positive_atom.elims(3))
+  by (smt Collect_cong TESL_interp_unfold_stepwise_not TESL_interp_unfold_stepwise_implies
+      TESL_interp_unfold_stepwise_tagrel TESL_interp_unfold_stepwise_tagrelgen TESL_interp_unfold_stepwise_iff
+      TESL_interp_unfold_stepwise_implies_anytime TESL_interp_unfold_stepwise_timedelayed assms
+      positive_atom.elims(3))
 
 lemma forall_nat_expansion:
   "(\<forall>n\<^sub>1 \<ge> (n\<^sub>0::nat). P n\<^sub>1) \<equiv> P n\<^sub>0 \<and> (\<forall>n\<^sub>1 \<ge> Suc n\<^sub>0. P n\<^sub>1)"
@@ -122,7 +132,6 @@ lemma TESL_interp_stepwise_not_coind_unfold:
   shows "\<lbrakk> not K \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> =
     \<lbrakk> K \<not>\<Up> n \<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n
     \<inter> \<lbrakk> not K \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>"
-sledgehammer
   by (smt Collect_cong Collect_conj_eq TESL_interpretation_atomic_stepwise.simps(1)
       dual_order.antisym nat_le_linear not_less_eq_eq symbolic_run_interpretation_primitive.simps(2))
 
@@ -245,6 +254,12 @@ lemma TESL_interp_stepwise_iff_coind_unfold:
     then show ?thesis by auto
   qed
 
+lemma TESL_interp_stepwise_implies_anytime_coind_unfold:
+  shows "\<lbrakk> master anytime implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> =
+    (\<lbrakk> master \<not>\<Up> n \<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n \<union> \<lbrakk> master \<Up> n \<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n \<inter> \<lbrakk> slave sporadic anytime \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup>)
+    \<inter> \<lbrakk> master anytime implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>"
+  sorry
+
 lemma TESL_interp_stepwise_timedelayed_coind_unfold:
   shows "\<lbrakk> master time-delayed by \<delta>\<tau> on measuring implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> =
     (\<lbrakk> master \<not>\<Up> n \<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n \<union> \<lbrakk> master \<Up> n \<rbrakk>\<^sub>s\<^sub>y\<^sub>m\<^sub>r\<^sub>u\<^sub>n \<inter> \<lbrakk> slave sporadic \<lfloor>\<tau>\<^sub>v\<^sub>a\<^sub>r(measuring, n) \<oplus> \<delta>\<tau>\<rfloor> on measuring \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup>)
@@ -317,6 +332,9 @@ lemma TESL_interpretation_stepwise_zero:
     then show ?case by simp
   next
     case (Iff x1 x2)
+    then show ?case by simp
+  next
+    case (ImpliesAnytime H1 H2)
     then show ?case by simp
   next
     case (TimeDelayedBy x1 x2 x3 x4)
@@ -515,6 +533,13 @@ lemma HeronConf_interp_stepwise_iff_cases:
           \<union> \<lbrakk> (K\<^sub>1 \<Up> n) # (K\<^sub>2 \<Up> n) # \<Gamma>, n \<turnstile> \<Psi> \<triangleright> (K\<^sub>1 iff K\<^sub>2) # \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
   by (smt HeronConf_interpretation.simps Int_commute Int_left_commute TESL_interp_stepwise_iff_coind_unfold
       TESL_interpretation_stepwise_cons_morph inf_sup_distrib2 symbolic_run_interpretation.simps(2))
+
+lemma HeronConf_interp_stepwise_implies_anytime_cases:
+  shows "\<lbrakk> \<Gamma>, n \<turnstile> (master anytime implies slave) # \<Psi> \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
+          = \<lbrakk> master \<not>\<Up> n # \<Gamma>, n \<turnstile> \<Psi> \<triangleright> (master anytime implies slave) # \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
+          \<union> \<lbrakk> master \<Up> n # \<Gamma>, n \<turnstile> (slave sporadic anytime) # \<Psi> \<triangleright> (master anytime implies slave) # \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
+  by (smt HeronConf_interpretation.simps Int_ac(3) Int_ac(4) TESL_interp_stepwise_implies_anytime_coind_unfold
+      TESL_interpretation_stepwise_cons_morph distrib(4) symbolic_run_interpretation.simps(2))
 
 lemma HeronConf_interp_stepwise_timedelayed_cases:
   shows "\<lbrakk> \<Gamma>, n \<turnstile> (K\<^sub>1 time-delayed by \<delta>\<tau> on K\<^sub>2 implies K\<^sub>3) # \<Psi> \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g

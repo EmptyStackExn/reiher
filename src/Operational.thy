@@ -63,6 +63,14 @@ inductive operational_semantics_elim :: "config \<Rightarrow> config \<Rightarro
 | iff_e2:
   "\<Gamma>, n \<turnstile> (K\<^sub>1 iff K\<^sub>2) # \<Psi> \<triangleright> \<Phi>
      \<hookrightarrow>\<^sub>e  K\<^sub>1 \<Up> n # K\<^sub>2 \<Up> n # \<Gamma>, n \<turnstile> \<Psi> \<triangleright> (K\<^sub>1 iff K\<^sub>2) # \<Phi>"
+| implies_anytime_e1:
+  "(* consistent_run (K\<^sub>1 \<not>\<Up> n # \<Gamma>) \<Longrightarrow> *)
+   \<Gamma>, n \<turnstile> (master anytime implies slave) # \<Psi> \<triangleright> \<Phi>
+     \<hookrightarrow>\<^sub>e  master \<not>\<Up> n # \<Gamma>, n \<turnstile> \<Psi> \<triangleright> (master anytime implies slave) # \<Phi>"
+| implies_anytime_e2:
+  "(* consistent_run (K\<^sub>1 \<Up> n # \<Gamma>) \<Longrightarrow> *)
+   \<Gamma>, n \<turnstile> (master anytime implies slave) # \<Psi> \<triangleright> \<Phi>
+     \<hookrightarrow>\<^sub>e  master \<Up> n # \<Gamma>, n \<turnstile> (slave sporadic anytime) # \<Psi> \<triangleright> (master anytime implies slave) # \<Phi>"
 | timedelayed_e1:
   "(* consistent_run (K\<^sub>1 \<not>\<Up> n # \<Gamma>) \<Longrightarrow> *)
    \<Gamma>, n \<turnstile> (K\<^sub>1 time-delayed by \<delta>\<tau> on K\<^sub>2 implies K\<^sub>3) # \<Psi> \<triangleright> \<Phi>
@@ -160,6 +168,12 @@ lemma Cnext_solve_iff:
           \<supseteq> { (K\<^sub>1 \<not>\<Up> n) # (K\<^sub>2 \<not>\<Up> n) # \<Gamma>, n \<turnstile> \<Psi> \<triangleright> (K\<^sub>1 iff K\<^sub>2) # \<Phi>,
               (K\<^sub>1 \<Up> n) # (K\<^sub>2 \<Up> n) # \<Gamma>, n \<turnstile> \<Psi> \<triangleright> (K\<^sub>1 iff K\<^sub>2) # \<Phi>}"
   by (simp add: operational_semantics_step.simps operational_semantics_elim.iff_e1 operational_semantics_elim.iff_e2)
+
+lemma Cnext_solve_implies_anytime:
+  shows "\<C>\<^sub>n\<^sub>e\<^sub>x\<^sub>t (\<Gamma>, n \<turnstile> (master anytime implies slave) # \<Psi> \<triangleright> \<Phi>)
+          \<supseteq> { master \<not>\<Up> n # \<Gamma>, n \<turnstile> \<Psi> \<triangleright> (master anytime implies slave) # \<Phi>,
+              master \<Up> n # \<Gamma>, n \<turnstile> (slave sporadic anytime) # \<Psi> \<triangleright> (master anytime implies slave) # \<Phi> }"
+  by (simp add: operational_semantics_step.simps operational_semantics_elim.implies_anytime_e1 operational_semantics_elim.implies_anytime_e2)
 
 lemma Cnext_solve_timedelayed:
   shows "\<C>\<^sub>n\<^sub>e\<^sub>x\<^sub>t (\<Gamma>, n \<turnstile> (K\<^sub>1 time-delayed by \<delta>\<tau> on K\<^sub>2 implies K\<^sub>3) # \<Psi> \<triangleright> \<Phi>)

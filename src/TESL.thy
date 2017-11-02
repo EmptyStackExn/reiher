@@ -42,6 +42,7 @@ datatype TESL_atomic =
   | TagRelationGen "clock" "clock" "(tag_const \<times> tag_const) \<Rightarrow> bool" ("tag-relation \<langle>_, _\<rangle> \<in> _" 55)
   | Implies        "clock" "clock"                         (infixr "implies" 55)
   | Iff            "clock" "clock"                         (infixr "iff" 55)
+  | ImpliesAnytime "clock" "clock"                         (infixr "anytime implies" 55)
   | TimeDelayedBy  "clock" "tag_const" "clock" "clock"     ("_ time-delayed by _ on _ implies _" 55)
 
 type_synonym TESL_formula = "TESL_atomic list"
