@@ -40,6 +40,26 @@ fun TESL_interpretation_atomic_stepwise
                           \<and> time ((Rep_run \<rho>) m measuring) = measured_time + \<delta>\<tau>
                  )
         }"
+  (* TODO *)
+  | "\<lbrakk> master sustained from begin to end implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> i\<^esup> =
+        { \<rho>. \<forall>n\<ge>i. hamlet ((Rep_run \<rho>) n begin) \<longrightarrow>
+                   (\<exists>p>n. (\<forall>k. (n<k \<and> k\<le>p \<and> (hamlet ((Rep_run \<rho>) k master))) \<longrightarrow> hamlet ((Rep_run \<rho>) k slave))
+                                    \<and> hamlet ((Rep_run \<rho>) p end)
+                          \<and> \<not> hamlet ((Rep_run \<rho>) p end))
+                   
+        }"
+  | "\<lbrakk> master sustained until end reset on begin implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> i\<^esup> =
+        { \<rho>. (\<exists>p>i. (\<forall>i<k\<le>p. (hamlet ((Rep_run \<rho>) k master) \<longrightarrow> hamlet ((Rep_run \<rho>) k slave))
+                                    \<and> hamlet ((Rep_run \<rho>) p end))
+                          \<and> \<not> hamlet ((Rep_run \<rho>) p end))
+             \<and> (\<forall>n\<ge>Suc i. hamlet ((Rep_run \<rho>) n begin) \<longrightarrow>
+                   (\<exists>p>n. (\<forall>k. n<k \<and> k\<le>p \<and> (hamlet ((Rep_run \<rho>) k master) \<longrightarrow> hamlet ((Rep_run \<rho>) k slave))
+                                    \<and> hamlet ((Rep_run \<rho>) p end))
+                          \<and> \<not> hamlet ((Rep_run \<rho>) p end)
+               )
+             )
+        }"
+
 
 theorem predicate_Inter_unfold:
   "{ \<rho>. \<forall>n. P \<rho> n} = \<Inter> {Y. \<exists>n. Y = { \<rho>. P \<rho> n }}"

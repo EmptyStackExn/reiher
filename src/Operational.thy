@@ -87,6 +87,24 @@ inductive operational_semantics_elim :: "config \<Rightarrow> config \<Rightarro
   "(* consistent_run (K\<^sub>1 \<Up> n # \<Gamma>) \<Longrightarrow> *)
    \<Gamma>, n \<turnstile> (K\<^sub>1 time-delayed by \<delta>\<tau> on K\<^sub>2 implies K\<^sub>3) # \<Psi> \<triangleright> \<Phi>
      \<hookrightarrow>\<^sub>e  K\<^sub>1 \<Up> n # \<Gamma>, n \<turnstile> (K\<^sub>3 sporadic \<lfloor>\<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>2, n) \<oplus> \<delta>\<tau>\<rfloor> on K\<^sub>2) # \<Psi> \<triangleright> (K\<^sub>1 time-delayed by \<delta>\<tau> on K\<^sub>2 implies K\<^sub>3) # \<Phi>"
+| sustained_from_e1:
+  "\<Gamma>, n \<turnstile> (master sustained from begin to end implies slave) # \<Psi> \<triangleright> \<Phi>
+     \<hookrightarrow>\<^sub>e  master \<not>\<Up> n # \<Gamma>, n \<turnstile> \<Psi> \<triangleright> (master sustained from begin to end implies slave) # \<Phi>"
+| sustained_from_e2:
+  "\<Gamma>, n \<turnstile> (master sustained from begin to end implies slave) # \<Psi> \<triangleright> \<Phi>
+     \<hookrightarrow>\<^sub>e  master \<Up> n # \<Gamma>,  n \<turnstile> \<Psi> \<triangleright> (master sustained until begin reset on end implies slave) # \<Phi>"
+| sustained_until_e1a:
+  "\<Gamma>, n \<turnstile> (master sustained until end reset on begin implies slave) # \<Psi> \<triangleright> \<Phi>
+     \<hookrightarrow>\<^sub>e  (end \<not>\<Up> n) # (master \<not>\<Up> n) # \<Gamma>,              n \<turnstile> \<Psi> \<triangleright> (master sustained until begin reset on end implies slave) # \<Phi>"
+| sustained_until_e1b:
+  "\<Gamma>, n \<turnstile> (master sustained until end reset on begin implies slave) # \<Psi> \<triangleright> \<Phi>
+     \<hookrightarrow>\<^sub>e  (end \<not>\<Up> n) # (master \<Up> n) # (slave \<Up> n) # \<Gamma>, n \<turnstile> \<Psi> \<triangleright> (master sustained until begin reset on end implies slave) # \<Phi>"
+| sustained_until_e2a:
+  "\<Gamma>, n \<turnstile> (master sustained until end reset on begin implies slave) # \<Psi> \<triangleright> \<Phi>
+     \<hookrightarrow>\<^sub>e  (end \<Up> n) # (master \<not>\<Up> n) # \<Gamma>,              n \<turnstile> \<Psi> \<triangleright> (master sustained from begin to end implies slave) # \<Phi>"
+| sustained_until_e2b:
+  "\<Gamma>, n \<turnstile> (master sustained until end reset on begin implies slave) # \<Psi> \<triangleright> \<Phi>
+     \<hookrightarrow>\<^sub>e  (end \<Up> n) # (master \<Up> n) # (slave \<Up> n) # \<Gamma>, n \<turnstile> \<Psi> \<triangleright> (master sustained from begin to end implies slave) # \<Phi>"
 
 inductive operational_semantics_step :: "config \<Rightarrow> config \<Rightarrow> bool" ("_ \<hookrightarrow> _" 70) where
     intro_part: "\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1  \<hookrightarrow>\<^sub>i  \<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2
@@ -194,6 +212,22 @@ lemma Cnext_solve_timedelayed:
           \<supseteq> { K\<^sub>1 \<not>\<Up> n # \<Gamma>, n \<turnstile> \<Psi> \<triangleright> (K\<^sub>1 time-delayed by \<delta>\<tau> on K\<^sub>2 implies K\<^sub>3) # \<Phi>,
               K\<^sub>1 \<Up> n # \<Gamma>, n \<turnstile> (K\<^sub>3 sporadic \<lfloor>\<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>2, n) \<oplus> \<delta>\<tau>\<rfloor> on K\<^sub>2) # \<Psi> \<triangleright> (K\<^sub>1 time-delayed by \<delta>\<tau> on K\<^sub>2 implies K\<^sub>3) # \<Phi> }"
   by (simp add: operational_semantics_step.simps operational_semantics_elim.timedelayed_e1 operational_semantics_elim.timedelayed_e2)
+
+lemma Cnext_solve_sustained_from:
+  shows "\<C>\<^sub>n\<^sub>e\<^sub>x\<^sub>t (\<Gamma>, n \<turnstile> (master sustained from begin to end implies slave) # \<Psi> \<triangleright> \<Phi>)
+          \<supseteq> { (end \<not>\<Up> n) # (master \<not>\<Up> n) # \<Gamma>,              n \<turnstile> \<Psi> \<triangleright> (master sustained until begin reset on end implies slave) # \<Phi>,
+              (end \<not>\<Up> n) # (master \<Up> n) # (slave \<Up> n) # \<Gamma>, n \<turnstile> \<Psi> \<triangleright> (master sustained until begin reset on end implies slave) # \<Phi>,
+              (end \<Up> n) # (master \<not>\<Up> n) # \<Gamma>,              n \<turnstile> \<Psi> \<triangleright> (master sustained from begin to end implies slave) # \<Phi>,
+              (end \<Up> n) # (master \<Up> n) # (slave \<Up> n) # \<Gamma>, n \<turnstile> \<Psi> \<triangleright> (master sustained from begin to end implies slave) # \<Phi> }"
+  sorry
+
+lemma Cnext_solve_sustained_until:
+  shows "\<C>\<^sub>n\<^sub>e\<^sub>x\<^sub>t (\<Gamma>, n \<turnstile> (master sustained until end reset on begin implies slave) # \<Psi> \<triangleright> \<Phi>)
+          \<supseteq> { (end \<not>\<Up> n) # (master \<not>\<Up> n) # \<Gamma>, n \<turnstile> \<Psi> \<triangleright> (master sustained until begin reset on end implies slave) # \<Phi>,
+              (end \<not>\<Up> n) # (master \<Up> n) # (slave \<Up> n) # \<Gamma>, n \<turnstile> \<Psi> \<triangleright> (master sustained until begin reset on end implies slave) # \<Phi>,
+              (end \<Up> n) # (master \<not>\<Up> n) # \<Gamma>, n \<turnstile> \<Psi> \<triangleright> (master sustained from begin to end implies slave) # \<Phi>,
+              (end \<Up> n) # (master \<Up> n) # (slave \<Up> n) # \<Gamma>, n \<turnstile> \<Psi> \<triangleright> (master sustained from begin to end implies slave) # \<Phi> }"
+  sorry
 
 lemma empty_spec_reductions:
   shows "[], 0 \<turnstile> [] \<triangleright> [] \<hookrightarrow>\<^bsup>k\<^esup> [], k \<turnstile> [] \<triangleright> []"

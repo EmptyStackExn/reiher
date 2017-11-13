@@ -45,6 +45,8 @@ datatype TESL_atomic =
   | Iff            "clock" "clock"                         (infixr "iff" 55)
   | ImpliesAnytime "clock" "clock"                         (infixr "anytime implies" 55)
   | TimeDelayedBy  "clock" "tag_const" "clock" "clock"     ("_ time-delayed by _ on _ implies _" 55)
+  | SustainedFrom  "clock" "clock" "clock" "clock"     ("_ sustained from _ to _ implies _" 55)
+  | SustainedUntil "clock" "clock" "clock" "clock"     ("_ sustained until _ reset on _ implies _" 55)
 
 type_synonym TESL_formula = "TESL_atomic list"
 

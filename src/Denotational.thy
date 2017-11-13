@@ -40,6 +40,10 @@ fun TESL_interpretation_atomic
                           \<and> time ((Rep_run \<rho>) m measuring) = measured_time + \<delta>\<tau>
                  )
         }"
+  | "\<lbrakk> master sustained from begin to end implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
+        { \<rho>. undefined }"
+  | "\<lbrakk> master sustained until end reset on begin implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
+        { \<rho>. undefined }"
 
 section \<open>Denotational interpretation for TESL formulae\<close>
 
