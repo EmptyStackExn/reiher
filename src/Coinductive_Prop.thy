@@ -40,26 +40,18 @@ fun TESL_interpretation_atomic_stepwise
                           \<and> time ((Rep_run \<rho>) m measuring) = measured_time + \<delta>\<tau>
                  )
         }"
-  (* TODO *)
   | "\<lbrakk> master sustained from begin to end implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> i\<^esup> =
-        { \<rho>. \<forall>n\<ge>i. hamlet ((Rep_run \<rho>) n begin) \<longrightarrow>
-                   (\<exists>p>n. (\<forall>k. (n<k \<and> k\<le>p \<and> (hamlet ((Rep_run \<rho>) k master))) \<longrightarrow> hamlet ((Rep_run \<rho>) k slave))
-                                    \<and> hamlet ((Rep_run \<rho>) p end)
-                          \<and> \<not> hamlet ((Rep_run \<rho>) p end))
-                   
-        }"
+        { \<rho>. \<forall>n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n \<ge> i. hamlet ((Rep_run \<rho>) n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n begin) \<longrightarrow>
+                         (\<exists>n\<^sub>e\<^sub>n\<^sub>d > n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n. \<not> hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end)
+                                         \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n < n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p \<le> n\<^sub>e\<^sub>n\<^sub>d \<and> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p master)) \<longrightarrow> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p slave))
+                         )}"
   | "\<lbrakk> master sustained until end reset on begin implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> i\<^esup> =
-        { \<rho>. (\<exists>p>i. (\<forall>i<k\<le>p. (hamlet ((Rep_run \<rho>) k master) \<longrightarrow> hamlet ((Rep_run \<rho>) k slave))
-                                    \<and> hamlet ((Rep_run \<rho>) p end))
-                          \<and> \<not> hamlet ((Rep_run \<rho>) p end))
-             \<and> (\<forall>n\<ge>Suc i. hamlet ((Rep_run \<rho>) n begin) \<longrightarrow>
-                   (\<exists>p>n. (\<forall>k. n<k \<and> k\<le>p \<and> (hamlet ((Rep_run \<rho>) k master) \<longrightarrow> hamlet ((Rep_run \<rho>) k slave))
-                                    \<and> hamlet ((Rep_run \<rho>) p end))
-                          \<and> \<not> hamlet ((Rep_run \<rho>) p end)
-               )
-             )
-        }"
-
+     { \<rho>. \<exists>n\<^sub>e\<^sub>n\<^sub>d \<ge> i. hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end)
+                     \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (i \<le> n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p \<le> n\<^sub>e\<^sub>n\<^sub>d \<and> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p master)) \<longrightarrow> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p slave)) }
+     \<inter> { \<rho>. \<forall>n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n \<ge> i. hamlet ((Rep_run \<rho>) n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n begin) \<longrightarrow>
+                         (\<exists>n\<^sub>e\<^sub>n\<^sub>d > n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n. \<not> hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end)
+                                         \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n < n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p \<le> n\<^sub>e\<^sub>n\<^sub>d \<and> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p master)) \<longrightarrow> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p slave))
+                         )}"
 
 theorem predicate_Inter_unfold:
   "{ \<rho>. \<forall>n. P \<rho> n} = \<Inter> {Y. \<exists>n. Y = { \<rho>. P \<rho> n }}"
@@ -321,6 +313,38 @@ lemma TESL_interp_stepwise_timedelayed_coind_unfold:
       by (smt Collect_cong Collect_conj_eq Suc_leD eq_refl le_antisym not_less_eq_eq)
     then show ?thesis by auto
   qed
+
+lemma sustained_until_restarts_with_sustained_from:
+  shows "\<lbrakk> master sustained until end reset on begin implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> i\<^esup>
+        = { \<rho>. \<exists>n\<^sub>e\<^sub>n\<^sub>d \<ge> i. hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end)
+                     \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (i \<le> n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p \<le> n\<^sub>e\<^sub>n\<^sub>d \<and> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p master)) \<longrightarrow> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p slave)) }
+        \<inter> \<lbrakk> master sustained from begin to end implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> i\<^esup>"
+  by auto
+
+(* HERE *)
+lemma TESL_interp_stepwise_sustained_from_coind_unfold:
+  shows "\<lbrakk> master sustained from begin to end implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> i\<^esup> =
+    \<lbrakk> begin \<not>\<Up> i \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk> master sustained from begin to end implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc i\<^esup>
+    \<union> \<lbrakk> begin \<Up> i \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk> master sustained until begin reset on end implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc i\<^esup>"
+  proof -
+    have "{ \<rho>. \<forall>n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n \<ge> i. hamlet ((Rep_run \<rho>) n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n begin) \<longrightarrow>
+                         (\<exists>n\<^sub>e\<^sub>n\<^sub>d > n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n. \<not> hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end)
+                                         \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n < n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p \<le> n\<^sub>e\<^sub>n\<^sub>d \<and> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p master)) \<longrightarrow> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p slave))
+                         )}
+           = { \<rho>. hamlet ((Rep_run \<rho>) i begin) \<longrightarrow>
+                         (\<exists>n\<^sub>e\<^sub>n\<^sub>d > i. \<not> hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end)
+                                         \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (i < n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p \<le> n\<^sub>e\<^sub>n\<^sub>d \<and> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p master)) \<longrightarrow> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p slave))
+                         )}
+           \<inter> { \<rho>. \<forall>n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n \<ge> Suc i. hamlet ((Rep_run \<rho>) n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n begin) \<longrightarrow>
+                         (\<exists>n\<^sub>e\<^sub>n\<^sub>d > n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n. \<not> hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end)
+                                         \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n < n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p \<le> n\<^sub>e\<^sub>n\<^sub>d \<and> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p master)) \<longrightarrow> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p slave))
+                         )}"
+      using forall_nat_expansion
+      sorry
+    then show ?thesis
+      sorry
+  qed
+
 
 fun TESL_interpretation_stepwise :: "TESL_formula \<Rightarrow> nat \<Rightarrow> run set" ("\<lbrakk>\<lbrakk> _ \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> _\<^esup>") where
     "\<lbrakk>\<lbrakk> [] \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> = { _. True }"
