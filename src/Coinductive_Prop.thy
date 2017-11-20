@@ -48,6 +48,7 @@ fun TESL_interpretation_atomic_stepwise
                          )}"
   | "\<lbrakk> master sustained until end reset on begin implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> i\<^esup> =
      { \<rho>. \<exists>n\<^sub>e\<^sub>n\<^sub>d \<ge> i. hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end)
+                     \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (i \<le> n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p < n\<^sub>e\<^sub>n\<^sub>d) \<longrightarrow> \<not> hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end))
                      \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (i \<le> n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p \<le> n\<^sub>e\<^sub>n\<^sub>d \<and> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p master)) \<longrightarrow> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p slave)) }
      \<inter> { \<rho>. \<forall>n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n \<ge> i. hamlet ((Rep_run \<rho>) n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n begin) \<longrightarrow>
                          (\<exists>n\<^sub>e\<^sub>n\<^sub>d > n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n. hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end)
@@ -319,51 +320,16 @@ lemma TESL_interp_stepwise_timedelayed_coind_unfold:
 lemma sustained_until_restarts_with_sustained_from:
   shows "\<lbrakk> master sustained until end reset on begin implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> i\<^esup>
         = { \<rho>. \<exists>n\<^sub>e\<^sub>n\<^sub>d \<ge> i. hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end)
+                     \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (i \<le> n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p < n\<^sub>e\<^sub>n\<^sub>d) \<longrightarrow> \<not> hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end))
                      \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (i \<le> n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p \<le> n\<^sub>e\<^sub>n\<^sub>d \<and> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p master)) \<longrightarrow> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p slave)) }
         \<inter> \<lbrakk> master sustained from begin to end implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> i\<^esup>"
   by auto
 
-(* HERE *)
 lemma TESL_interp_stepwise_sustained_from_coind_unfold:
   shows "\<lbrakk> master sustained from begin to end implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> i\<^esup> =
     \<lbrakk> begin \<not>\<Up> i \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk> master sustained from begin to end implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc i\<^esup>
-    \<union> \<lbrakk> begin \<Up> i \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk> master sustained until begin reset on end implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc i\<^esup>"
+    \<union> \<lbrakk> begin \<Up> i \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk> master sustained until end reset on begin implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc i\<^esup>"
   proof -
-    have "{ \<rho>. \<forall>n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n \<ge> i. hamlet ((Rep_run \<rho>) n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n begin) \<longrightarrow>
-                         (\<exists>n\<^sub>e\<^sub>n\<^sub>d > n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n. hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end)
-                                         \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n < n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p < n\<^sub>e\<^sub>n\<^sub>d) \<longrightarrow> \<not> hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end))
-                                         \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n < n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p \<le> n\<^sub>e\<^sub>n\<^sub>d \<and> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p master)) \<longrightarrow> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p slave))
-                         )}
-          = { \<rho>. hamlet ((Rep_run \<rho>) i begin) \<longrightarrow>
-                         (\<exists>n\<^sub>e\<^sub>n\<^sub>d > i. hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end)
-                                         \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (i < n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p < n\<^sub>e\<^sub>n\<^sub>d) \<longrightarrow> \<not> hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end))
-                                         \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (i < n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p \<le> n\<^sub>e\<^sub>n\<^sub>d \<and> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p master)) \<longrightarrow> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p slave))
-                         )}
-          \<inter> { \<rho>. \<forall>n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n \<ge> i. hamlet ((Rep_run \<rho>) n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n begin) \<longrightarrow>
-                         (\<exists>n\<^sub>e\<^sub>n\<^sub>d > n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n. hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end)
-                                         \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n < n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p < n\<^sub>e\<^sub>n\<^sub>d) \<longrightarrow> \<not> hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end))
-                                         \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n < n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p \<le> n\<^sub>e\<^sub>n\<^sub>d \<and> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p master)) \<longrightarrow> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p slave))
-                         )}"
-      proof -
-        have "{ \<rho>. \<forall>n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n \<ge> i. hamlet ((Rep_run \<rho>) n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n begin) \<longrightarrow>
-                         (\<exists>n\<^sub>e\<^sub>n\<^sub>d > n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n. hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end)
-                                         \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n < n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p < n\<^sub>e\<^sub>n\<^sub>d) \<longrightarrow> \<not> hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end))
-                                         \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n < n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p \<le> n\<^sub>e\<^sub>n\<^sub>d \<and> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p master)) \<longrightarrow> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p slave))
-                         )}
-          = { \<rho>. hamlet ((Rep_run \<rho>) i begin) \<longrightarrow>
-                         (\<exists>n\<^sub>e\<^sub>n\<^sub>d > i. hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end)
-                                         \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (i < n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p < n\<^sub>e\<^sub>n\<^sub>d) \<longrightarrow> \<not> hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end))
-                                         \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (i < n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p \<le> n\<^sub>e\<^sub>n\<^sub>d \<and> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p master)) \<longrightarrow> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p slave))
-                         )
-                 \<and> (\<forall>n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n \<ge> Suc i. hamlet ((Rep_run \<rho>) n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n begin) \<longrightarrow>
-                         (\<exists>n\<^sub>e\<^sub>n\<^sub>d > n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n. hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end)
-                                         \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n < n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p < n\<^sub>e\<^sub>n\<^sub>d) \<longrightarrow> \<not> hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end))
-                                         \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n < n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p \<le> n\<^sub>e\<^sub>n\<^sub>d \<and> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p master)) \<longrightarrow> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p slave))
-                         ))}"
-          using forall_nat_expansion
-          sorry
-        then show ?thesis by auto
-        qed
     have "{ \<rho>. \<forall>n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n \<ge> i. hamlet ((Rep_run \<rho>) n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n begin) \<longrightarrow>
                          (\<exists>n\<^sub>e\<^sub>n\<^sub>d > n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n. hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end)
                                          \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n < n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p < n\<^sub>e\<^sub>n\<^sub>d) \<longrightarrow> \<not> hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end))
@@ -374,9 +340,282 @@ lemma TESL_interp_stepwise_sustained_from_coind_unfold:
                                          \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n < n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p < n\<^sub>e\<^sub>n\<^sub>d) \<longrightarrow> \<not> hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end))
                                          \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n < n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p \<le> n\<^sub>e\<^sub>n\<^sub>d \<and> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p master)) \<longrightarrow> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p slave))
                          )}
-            \<union> { \<rho>. hamlet ((Rep_run \<rho>) i begin) } \<inter> undefined"
+            \<union> { \<rho>. hamlet ((Rep_run \<rho>) i begin) }
+              \<inter> { \<rho>. (\<exists>n\<^sub>e\<^sub>n\<^sub>d > i. hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end)
+                                         \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (i < n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p < n\<^sub>e\<^sub>n\<^sub>d) \<longrightarrow> \<not> hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end))
+                                         \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (i < n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p \<le> n\<^sub>e\<^sub>n\<^sub>d \<and> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p master)) \<longrightarrow> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p slave))
+                         )}
+              \<inter> { \<rho>. \<forall>n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n \<ge> Suc i. hamlet ((Rep_run \<rho>) n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n begin) \<longrightarrow>
+                         (\<exists>n\<^sub>e\<^sub>n\<^sub>d > n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n. hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end)
+                                         \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n < n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p < n\<^sub>e\<^sub>n\<^sub>d) \<longrightarrow> \<not> hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end))
+                                         \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n < n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p \<le> n\<^sub>e\<^sub>n\<^sub>d \<and> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p master)) \<longrightarrow> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p slave))
+                         )}"
       proof -
+        have "{ \<rho>. \<forall>n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n \<ge> i. hamlet ((Rep_run \<rho>) n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n begin) \<longrightarrow>
+                             (\<exists>n\<^sub>e\<^sub>n\<^sub>d > n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n. hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end)
+                                             \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n < n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p < n\<^sub>e\<^sub>n\<^sub>d) \<longrightarrow> \<not> hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end))
+                                             \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n < n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p \<le> n\<^sub>e\<^sub>n\<^sub>d \<and> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p master)) \<longrightarrow> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p slave))
+                             )}
+              = { \<rho>. hamlet ((Rep_run \<rho>) i begin) \<longrightarrow>
+                             (\<exists>n\<^sub>e\<^sub>n\<^sub>d > i. hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end)
+                                             \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (i < n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p < n\<^sub>e\<^sub>n\<^sub>d) \<longrightarrow> \<not> hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end))
+                                             \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (i < n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p \<le> n\<^sub>e\<^sub>n\<^sub>d \<and> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p master)) \<longrightarrow> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p slave))
+                             )}
+              \<inter> { \<rho>. \<forall>n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n \<ge> Suc i. hamlet ((Rep_run \<rho>) n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n begin) \<longrightarrow>
+                             (\<exists>n\<^sub>e\<^sub>n\<^sub>d > n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n. hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end)
+                                             \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n < n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p < n\<^sub>e\<^sub>n\<^sub>d) \<longrightarrow> \<not> hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end))
+                                             \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n < n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p \<le> n\<^sub>e\<^sub>n\<^sub>d \<and> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p master)) \<longrightarrow> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p slave))
+                             )}"
+          proof -
+            have "{ \<rho>. \<forall>n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n \<ge> i. hamlet ((Rep_run \<rho>) n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n begin) \<longrightarrow>
+                             (\<exists>n\<^sub>e\<^sub>n\<^sub>d > n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n. hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end)
+                                             \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n < n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p < n\<^sub>e\<^sub>n\<^sub>d) \<longrightarrow> \<not> hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end))
+                                             \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n < n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p \<le> n\<^sub>e\<^sub>n\<^sub>d \<and> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p master)) \<longrightarrow> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p slave))
+                             )}
+              = { \<rho>. (hamlet ((Rep_run \<rho>) i begin) \<longrightarrow>
+                             (\<exists>n\<^sub>e\<^sub>n\<^sub>d > i. hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end)
+                                             \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (i < n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p < n\<^sub>e\<^sub>n\<^sub>d) \<longrightarrow> \<not> hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end))
+                                             \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (i < n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p \<le> n\<^sub>e\<^sub>n\<^sub>d \<and> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p master)) \<longrightarrow> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p slave))
+                             ))
+                     \<and> (\<forall>n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n \<ge> Suc i. hamlet ((Rep_run \<rho>) n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n begin) \<longrightarrow>
+                             (\<exists>n\<^sub>e\<^sub>n\<^sub>d > n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n. hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end)
+                                             \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n < n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p < n\<^sub>e\<^sub>n\<^sub>d) \<longrightarrow> \<not> hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end))
+                                             \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n < n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p \<le> n\<^sub>e\<^sub>n\<^sub>d \<and> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p master)) \<longrightarrow> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p slave))
+                             ))}"
+              using forall_nat_expansion
+              using [[smt_solver = cvc4]]
+              by (smt Collect_cong le_less_Suc_eq not_le)
+            then show ?thesis by auto
+          qed
+        moreover have "{ \<rho>. hamlet ((Rep_run \<rho>) i begin) \<longrightarrow>
+                             (\<exists>n\<^sub>e\<^sub>n\<^sub>d > i. hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end)
+                                             \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (i < n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p < n\<^sub>e\<^sub>n\<^sub>d) \<longrightarrow> \<not> hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end))
+                                             \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (i < n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p \<le> n\<^sub>e\<^sub>n\<^sub>d \<and> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p master)) \<longrightarrow> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p slave))
+                             )}
+               = { \<rho>. \<not> hamlet ((Rep_run \<rho>) i begin) }
+               \<union> { \<rho>. hamlet ((Rep_run \<rho>) i begin) }
+                             \<inter> { \<rho>. (\<exists>n\<^sub>e\<^sub>n\<^sub>d > i. hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end)
+                                             \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (i < n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p < n\<^sub>e\<^sub>n\<^sub>d) \<longrightarrow> \<not> hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end))
+                                             \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (i < n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p \<le> n\<^sub>e\<^sub>n\<^sub>d \<and> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p master)) \<longrightarrow> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p slave))
+                             )}"
+          proof -
+            have "{ \<rho>. hamlet ((Rep_run \<rho>) i begin) \<longrightarrow>
+                             (\<exists>n\<^sub>e\<^sub>n\<^sub>d > i. hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end)
+                                             \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (i < n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p < n\<^sub>e\<^sub>n\<^sub>d) \<longrightarrow> \<not> hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end))
+                                             \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (i < n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p \<le> n\<^sub>e\<^sub>n\<^sub>d \<and> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p master)) \<longrightarrow> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p slave))
+                             )}
+               = { \<rho>. (\<not> hamlet ((Rep_run \<rho>) i begin))
+                      \<or> (hamlet ((Rep_run \<rho>) i begin) \<and>
+                             (\<exists>n\<^sub>e\<^sub>n\<^sub>d > i. hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end)
+                                             \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (i < n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p < n\<^sub>e\<^sub>n\<^sub>d) \<longrightarrow> \<not> hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end))
+                                             \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (i < n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p \<le> n\<^sub>e\<^sub>n\<^sub>d \<and> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p master)) \<longrightarrow> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p slave))
+                             ))}"
+            by auto
+            then show ?thesis by auto
+          qed
 
+        ultimately show ?thesis by auto
+      qed
+    moreover have "\<lbrakk> master sustained until end reset on begin implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc i\<^esup>
+                     = { \<rho>. (\<exists>n\<^sub>e\<^sub>n\<^sub>d > i. hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end)
+                                         \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (i < n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p < n\<^sub>e\<^sub>n\<^sub>d) \<longrightarrow> \<not> hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end))
+                                         \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (i < n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p \<le> n\<^sub>e\<^sub>n\<^sub>d \<and> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p master)) \<longrightarrow> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p slave))
+                         )}
+              \<inter> { \<rho>. \<forall>n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n \<ge> Suc i. hamlet ((Rep_run \<rho>) n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n begin) \<longrightarrow>
+                         (\<exists>n\<^sub>e\<^sub>n\<^sub>d > n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n. hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end)
+                                         \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n < n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p < n\<^sub>e\<^sub>n\<^sub>d) \<longrightarrow> \<not> hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end))
+                                         \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n < n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p \<le> n\<^sub>e\<^sub>n\<^sub>d \<and> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p master)) \<longrightarrow> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p slave))
+                         )}"
+      proof -
+        have cause_part: "
+                  { \<rho>. \<exists>n\<^sub>e\<^sub>n\<^sub>d > i. hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end)
+                     \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (i < n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p < n\<^sub>e\<^sub>n\<^sub>d) \<longrightarrow> \<not> hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end))
+                     \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (i < n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p \<le> n\<^sub>e\<^sub>n\<^sub>d \<and> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p master)) \<longrightarrow> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p slave)) }
+                = { \<rho>. \<exists>n\<^sub>e\<^sub>n\<^sub>d \<ge> Suc i. hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end)
+                     \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (Suc i \<le> n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p < n\<^sub>e\<^sub>n\<^sub>d) \<longrightarrow> \<not> hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end))
+                     \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (Suc i \<le> n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p \<le> n\<^sub>e\<^sub>n\<^sub>d \<and> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p master)) \<longrightarrow> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p slave)) }"
+          proof
+            show "{ \<rho>. \<exists>n\<^sub>e\<^sub>n\<^sub>d > i. hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end)
+                     \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (i < n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p < n\<^sub>e\<^sub>n\<^sub>d) \<longrightarrow> \<not> hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end))
+                     \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (i < n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p \<le> n\<^sub>e\<^sub>n\<^sub>d \<and> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p master)) \<longrightarrow> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p slave)) }
+                \<subseteq> { \<rho>. \<exists>n\<^sub>e\<^sub>n\<^sub>d \<ge> Suc i. hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end)
+                     \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (Suc i \<le> n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p < n\<^sub>e\<^sub>n\<^sub>d) \<longrightarrow> \<not> hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end))
+                     \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (Suc i \<le> n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p \<le> n\<^sub>e\<^sub>n\<^sub>d \<and> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p master)) \<longrightarrow> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p slave)) }"
+              proof
+              fix \<rho>
+              assume "\<rho> \<in> { \<rho>. \<exists>n\<^sub>e\<^sub>n\<^sub>d > i. hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end)
+                     \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (i < n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p < n\<^sub>e\<^sub>n\<^sub>d) \<longrightarrow> \<not> hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end))
+                     \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (i < n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p \<le> n\<^sub>e\<^sub>n\<^sub>d \<and> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p master)) \<longrightarrow> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p slave)) }"
+              then obtain n\<^sub>e\<^sub>n\<^sub>d where fact_n_end: "n\<^sub>e\<^sub>n\<^sub>d > i \<and> hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end)
+                     \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (i < n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p < n\<^sub>e\<^sub>n\<^sub>d) \<longrightarrow> \<not> hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end))
+                     \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (i < n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p \<le> n\<^sub>e\<^sub>n\<^sub>d \<and> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p master)) \<longrightarrow> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p slave))" by auto
+              then have "n\<^sub>e\<^sub>n\<^sub>d \<ge> Suc i \<and> hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end)"
+                by (simp add: Suc_le_eq) 
+              moreover  have "(\<forall>n\<^sub>i\<^sub>m\<^sub>p. (Suc i \<le> n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p < n\<^sub>e\<^sub>n\<^sub>d) \<longrightarrow> \<not> hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end))"
+                using fact_n_end le_less_trans by blast
+              moreover have "(\<forall>n\<^sub>i\<^sub>m\<^sub>p. (Suc i \<le> n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p \<le> n\<^sub>e\<^sub>n\<^sub>d \<and> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p master)) \<longrightarrow> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p slave))"
+                by (simp add: fact_n_end)
+              ultimately show "\<rho> \<in> { \<rho>. \<exists>n\<^sub>e\<^sub>n\<^sub>d \<ge> Suc i. hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end)
+                     \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (Suc i \<le> n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p < n\<^sub>e\<^sub>n\<^sub>d) \<longrightarrow> \<not> hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end))
+                     \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (Suc i \<le> n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p \<le> n\<^sub>e\<^sub>n\<^sub>d \<and> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p master)) \<longrightarrow> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p slave)) }"
+                by blast
+            qed
+            show "{ \<rho>. \<exists>n\<^sub>e\<^sub>n\<^sub>d > i. hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end)
+                     \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (i < n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p < n\<^sub>e\<^sub>n\<^sub>d) \<longrightarrow> \<not> hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end))
+                     \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (i < n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p \<le> n\<^sub>e\<^sub>n\<^sub>d \<and> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p master)) \<longrightarrow> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p slave)) }
+                \<supseteq> { \<rho>. \<exists>n\<^sub>e\<^sub>n\<^sub>d \<ge> Suc i. hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end)
+                     \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (Suc i \<le> n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p < n\<^sub>e\<^sub>n\<^sub>d) \<longrightarrow> \<not> hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end))
+                     \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (Suc i \<le> n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p \<le> n\<^sub>e\<^sub>n\<^sub>d \<and> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p master)) \<longrightarrow> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p slave)) }"
+              proof
+              fix \<rho>
+              assume "\<rho> \<in> { \<rho>. \<exists>n\<^sub>e\<^sub>n\<^sub>d \<ge> Suc i. hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end)
+                       \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (Suc i \<le> n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p < n\<^sub>e\<^sub>n\<^sub>d) \<longrightarrow> \<not> hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end))
+                       \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (Suc i \<le> n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p \<le> n\<^sub>e\<^sub>n\<^sub>d \<and> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p master)) \<longrightarrow> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p slave)) }"
+              then obtain n\<^sub>e\<^sub>n\<^sub>d where fact_n_end: "n\<^sub>e\<^sub>n\<^sub>d \<ge> Suc i \<and> hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end)
+                       \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (Suc i \<le> n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p < n\<^sub>e\<^sub>n\<^sub>d) \<longrightarrow> \<not> hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end))
+                       \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (Suc i \<le> n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p \<le> n\<^sub>e\<^sub>n\<^sub>d \<and> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p master)) \<longrightarrow> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p slave))"
+                by auto
+              then have "n\<^sub>e\<^sub>n\<^sub>d > i \<and> hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end)" using fact_n_end by auto
+              moreover have "(\<forall>n\<^sub>i\<^sub>m\<^sub>p. (i < n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p < n\<^sub>e\<^sub>n\<^sub>d) \<longrightarrow> \<not> hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end))"
+                using Suc_leI fact_n_end by blast
+              moreover have "(\<forall>n\<^sub>i\<^sub>m\<^sub>p. (i < n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p \<le> n\<^sub>e\<^sub>n\<^sub>d \<and> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p master)) \<longrightarrow> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p slave))"
+                by (simp add: fact_n_end)
+              ultimately show "\<rho> \<in> { \<rho>. \<exists>n\<^sub>e\<^sub>n\<^sub>d > i. hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end)
+                       \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (i < n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p < n\<^sub>e\<^sub>n\<^sub>d) \<longrightarrow> \<not> hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end))
+                       \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (i < n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p \<le> n\<^sub>e\<^sub>n\<^sub>d \<and> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p master)) \<longrightarrow> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p slave)) }"
+                by auto
+            qed
+          qed
+        then show ?thesis
+          by simp
+      qed
+    ultimately show ?thesis
+      by (simp add: inf_assoc)
+  qed
+
+lemma TESL_interp_stepwise_sustained_until_coind_unfold:
+  shows "\<lbrakk> master sustained until end reset on begin implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> i\<^esup> =
+    \<lbrakk> end \<not>\<Up> i \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> (\<lbrakk> master \<not>\<Up> i \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<union> \<lbrakk> master \<Up> i \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk> slave \<Up> i \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m)
+                    \<inter> \<lbrakk> master sustained until begin reset on end implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc i\<^esup>
+    \<inter> \<lbrakk> end \<Up> i \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> (\<lbrakk> master \<not>\<Up> i \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<union> \<lbrakk> master \<Up> i \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk> slave \<Up> i \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m)
+                     \<inter> \<lbrakk> master sustained from begin to end implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc i\<^esup>"
+  proof -
+    (* On commute \<exists> par \<union> du sous-terme gauche (STG) de \<lbrakk> master sustained until end reset on begin implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> i\<^esup> *)
+    have left_sust_until_unfold: "{ \<rho>. \<exists>n\<^sub>e\<^sub>n\<^sub>d \<ge> i. hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end)
+                     \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (i \<le> n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p < n\<^sub>e\<^sub>n\<^sub>d) \<longrightarrow> \<not> hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end))
+                     \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (i \<le> n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p \<le> n\<^sub>e\<^sub>n\<^sub>d \<and> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p master)) \<longrightarrow> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p slave)) }
+           = { \<rho>. hamlet ((Rep_run \<rho>) i end)
+                     \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (i \<le> n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p < i) \<longrightarrow> \<not> hamlet ((Rep_run \<rho>) i end))
+                     \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (i \<le> n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p \<le> i \<and> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p master)) \<longrightarrow> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p slave)) }
+           \<union> { \<rho>. \<exists>n\<^sub>e\<^sub>n\<^sub>d \<ge> Suc i. hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end)
+                     \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (i \<le> n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p < n\<^sub>e\<^sub>n\<^sub>d) \<longrightarrow> \<not> hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end))
+                     \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (i \<le> n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p \<le> n\<^sub>e\<^sub>n\<^sub>d \<and> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p master)) \<longrightarrow> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p slave)) }"
+      using exists_nat_expansion [[ smt_solver = cvc4 ]]
+      by (smt Collect_cong Collect_disj_eq Suc_le_lessD le_eq_less_or_eq)
+    (* On commute \<forall> par \<inter> du sous-terme droit (STD) de \<lbrakk> master sustained until end reset on begin implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> i\<^esup> *)
+    moreover have right_sust_until_unfold: "{ \<rho>. \<forall>n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n \<ge> i. hamlet ((Rep_run \<rho>) n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n begin) \<longrightarrow>
+                         (\<exists>n\<^sub>e\<^sub>n\<^sub>d > n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n. hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end)
+                                         \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n < n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p < n\<^sub>e\<^sub>n\<^sub>d) \<longrightarrow> \<not> hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end))
+                                         \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n < n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p \<le> n\<^sub>e\<^sub>n\<^sub>d \<and> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p master)) \<longrightarrow> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p slave)) )}
+                     = { \<rho>. hamlet ((Rep_run \<rho>) i begin) \<longrightarrow>
+                         (\<exists>n\<^sub>e\<^sub>n\<^sub>d > i. hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end)
+                                         \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (i < n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p < n\<^sub>e\<^sub>n\<^sub>d) \<longrightarrow> \<not> hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end))
+                                         \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (i < n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p \<le> n\<^sub>e\<^sub>n\<^sub>d \<and> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p master)) \<longrightarrow> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p slave)) )}
+                     \<inter> { \<rho>. \<forall>n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n \<ge> Suc i. hamlet ((Rep_run \<rho>) n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n begin) \<longrightarrow>
+                         (\<exists>n\<^sub>e\<^sub>n\<^sub>d > n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n. hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end)
+                                         \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n < n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p < n\<^sub>e\<^sub>n\<^sub>d) \<longrightarrow> \<not> hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end))
+                                         \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n < n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p \<le> n\<^sub>e\<^sub>n\<^sub>d \<and> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p master)) \<longrightarrow> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p slave))  )}"
+      proof -
+        have "{ \<rho>. \<forall>n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n \<ge> i. hamlet ((Rep_run \<rho>) n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n begin) \<longrightarrow>
+                         (\<exists>n\<^sub>e\<^sub>n\<^sub>d > n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n. hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end)
+                                         \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n < n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p < n\<^sub>e\<^sub>n\<^sub>d) \<longrightarrow> \<not> hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end))
+                                         \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n < n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p \<le> n\<^sub>e\<^sub>n\<^sub>d \<and> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p master)) \<longrightarrow> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p slave)) )}
+                = { \<rho>. (hamlet ((Rep_run \<rho>) i begin) \<longrightarrow>
+                         (\<exists>n\<^sub>e\<^sub>n\<^sub>d > i. hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end)
+                                         \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (i < n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p < n\<^sub>e\<^sub>n\<^sub>d) \<longrightarrow> \<not> hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end))
+                                         \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (i < n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p \<le> n\<^sub>e\<^sub>n\<^sub>d \<and> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p master)) \<longrightarrow> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p slave))))
+                       \<and> (\<forall>n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n \<ge> Suc i. hamlet ((Rep_run \<rho>) n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n begin) \<longrightarrow>
+                         (\<exists>n\<^sub>e\<^sub>n\<^sub>d > n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n. hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end)
+                                         \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n < n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p < n\<^sub>e\<^sub>n\<^sub>d) \<longrightarrow> \<not> hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end))
+                                         \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n < n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p \<le> n\<^sub>e\<^sub>n\<^sub>d \<and> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p master)) \<longrightarrow> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p slave)))) }"
+          using [[ smt_solver = cvc4 ]]
+          by (smt Collect_cong Suc_le_lessD Suc_lessI le_eq_less_or_eq)
+        then show ?thesis by auto
+      qed
+    (* On développe \<inter> par rapport à \<union> dans \<lbrakk> master sustained until end reset on begin implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> i\<^esup> *) 
+    ultimately have "\<lbrakk> master sustained until end reset on begin implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> i\<^esup>
+                        = { \<rho>. hamlet ((Rep_run \<rho>) i end)
+                               \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (i \<le> n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p < i) \<longrightarrow> \<not> hamlet ((Rep_run \<rho>) i end))
+                               \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (i \<le> n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p \<le> i \<and> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p master)) \<longrightarrow> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p slave)) }
+                          \<inter> { \<rho>. hamlet ((Rep_run \<rho>) i begin) \<longrightarrow>
+                                 (\<exists>n\<^sub>e\<^sub>n\<^sub>d > i. hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end)
+                                             \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (i < n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p < n\<^sub>e\<^sub>n\<^sub>d) \<longrightarrow> \<not> hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end))
+                                             \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (i < n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p \<le> n\<^sub>e\<^sub>n\<^sub>d \<and> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p master)) \<longrightarrow> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p slave))) }
+                          \<inter> { \<rho>. \<forall>n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n \<ge> Suc i. hamlet ((Rep_run \<rho>) n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n begin) \<longrightarrow>
+                                                  (\<exists>n\<^sub>e\<^sub>n\<^sub>d > n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n. hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end)
+                                                                  \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n < n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p < n\<^sub>e\<^sub>n\<^sub>d) \<longrightarrow> \<not> hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end))
+                                                                  \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n < n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p \<le> n\<^sub>e\<^sub>n\<^sub>d \<and> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p master)) \<longrightarrow> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p slave))) }
+                        \<union> { \<rho>. hamlet ((Rep_run \<rho>) i begin) \<longrightarrow>
+                                 (\<exists>n\<^sub>e\<^sub>n\<^sub>d > i. hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end)
+                                             \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (i < n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p < n\<^sub>e\<^sub>n\<^sub>d) \<longrightarrow> \<not> hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end))
+                                             \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (i < n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p \<le> n\<^sub>e\<^sub>n\<^sub>d \<and> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p master)) \<longrightarrow> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p slave))) }
+                          \<inter> { \<rho>. \<exists>n\<^sub>e\<^sub>n\<^sub>d \<ge> Suc i. hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end)
+                                                 \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (i \<le> n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p < n\<^sub>e\<^sub>n\<^sub>d) \<longrightarrow> \<not> hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end))
+                                                 \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (i \<le> n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p \<le> n\<^sub>e\<^sub>n\<^sub>d \<and> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p master)) \<longrightarrow> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p slave)) }
+                          \<inter> { \<rho>. \<forall>n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n \<ge> Suc i. hamlet ((Rep_run \<rho>) n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n begin) \<longrightarrow>
+                                                 (\<exists>n\<^sub>e\<^sub>n\<^sub>d > n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n. hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end)
+                                                                 \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n < n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p < n\<^sub>e\<^sub>n\<^sub>d) \<longrightarrow> \<not> hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end))
+                                                                 \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n < n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p \<le> n\<^sub>e\<^sub>n\<^sub>d \<and> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p master)) \<longrightarrow> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p slave))) }"
+      using left_sust_until_unfold right_sust_until_unfold by auto
+    (* On remplace par les définitions de sémantiques *)
+    then have "\<lbrakk> master sustained until end reset on begin implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> i\<^esup>
+                        = { \<rho>. hamlet ((Rep_run \<rho>) i end)
+                               \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (i \<le> n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p < i) \<longrightarrow> \<not> hamlet ((Rep_run \<rho>) i end))
+                               \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (i \<le> n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p \<le> i \<and> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p master)) \<longrightarrow> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p slave)) }
+                          \<inter> { \<rho>. hamlet ((Rep_run \<rho>) i begin) \<longrightarrow>
+                                 (\<exists>n\<^sub>e\<^sub>n\<^sub>d > i. hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end)
+                                             \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (i < n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p < n\<^sub>e\<^sub>n\<^sub>d) \<longrightarrow> \<not> hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end))
+                                             \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (i < n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p \<le> n\<^sub>e\<^sub>n\<^sub>d \<and> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p master)) \<longrightarrow> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p slave))) }
+                          \<inter> \<lbrakk> master sustained from begin to end implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc i\<^esup>
+                        \<union> { \<rho>. hamlet ((Rep_run \<rho>) i begin) \<longrightarrow>
+                                 (\<exists>n\<^sub>e\<^sub>n\<^sub>d > i. hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end)
+                                             \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (i < n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p < n\<^sub>e\<^sub>n\<^sub>d) \<longrightarrow> \<not> hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end))
+                                             \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (i < n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p \<le> n\<^sub>e\<^sub>n\<^sub>d \<and> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p master)) \<longrightarrow> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p slave))) }
+                          \<inter> { \<rho>. \<exists>n\<^sub>e\<^sub>n\<^sub>d \<ge> Suc i. hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end)
+                                                 \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (i \<le> n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p < n\<^sub>e\<^sub>n\<^sub>d) \<longrightarrow> \<not> hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end))
+                                                 \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (i \<le> n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p \<le> n\<^sub>e\<^sub>n\<^sub>d \<and> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p master)) \<longrightarrow> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p slave)) }
+                          \<inter> { \<rho>. \<forall>n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n \<ge> Suc i. hamlet ((Rep_run \<rho>) n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n begin) \<longrightarrow>
+                                                 (\<exists>n\<^sub>e\<^sub>n\<^sub>d > n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n. hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end)
+                                                                 \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n < n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p < n\<^sub>e\<^sub>n\<^sub>d) \<longrightarrow> \<not> hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end))
+                                                                 \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n < n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p \<le> n\<^sub>e\<^sub>n\<^sub>d \<and> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p master)) \<longrightarrow> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p slave))) }"
+      (* HERE *)
+      proof -
+        have subst1: "\<lbrakk> master sustained from begin to end implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc i\<^esup>
+                         = { \<rho>. \<forall>n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n \<ge> Suc i. hamlet ((Rep_run \<rho>) n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n begin) \<longrightarrow>
+                                                  (\<exists>n\<^sub>e\<^sub>n\<^sub>d > n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n. hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end)
+                                                                  \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n < n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p < n\<^sub>e\<^sub>n\<^sub>d) \<longrightarrow> \<not> hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end))
+                                                                  \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n < n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p \<le> n\<^sub>e\<^sub>n\<^sub>d \<and> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p master)) \<longrightarrow> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p slave))) }"
+          by simp
+        then show ?thesis
+          using \<open>\<lbrakk> master sustained until end reset on begin implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> i\<^esup> = {\<rho>. hamlet (Rep_run \<rho> i end) \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. i \<le> n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p < i \<longrightarrow> \<not> hamlet (Rep_run \<rho> i end)) \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. i \<le> n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p \<le> i \<and> hamlet (Rep_run \<rho> n\<^sub>i\<^sub>m\<^sub>p master) \<longrightarrow> hamlet (Rep_run \<rho> n\<^sub>i\<^sub>m\<^sub>p slave))} \<inter> {\<rho>. hamlet (Rep_run \<rho> i begin) \<longrightarrow> (\<exists>n\<^sub>e\<^sub>n\<^sub>d>i. hamlet (Rep_run \<rho> n\<^sub>e\<^sub>n\<^sub>d end) \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. i < n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p < n\<^sub>e\<^sub>n\<^sub>d \<longrightarrow> \<not> hamlet (Rep_run \<rho> n\<^sub>e\<^sub>n\<^sub>d end)) \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. i < n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p \<le> n\<^sub>e\<^sub>n\<^sub>d \<and> hamlet (Rep_run \<rho> n\<^sub>i\<^sub>m\<^sub>p master) \<longrightarrow> hamlet (Rep_run \<rho> n\<^sub>i\<^sub>m\<^sub>p slave)))} \<inter> {\<rho>. \<forall>n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n\<ge>Suc i. hamlet (Rep_run \<rho> n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n begin) \<longrightarrow> (\<exists>n\<^sub>e\<^sub>n\<^sub>d>n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n. hamlet (Rep_run \<rho> n\<^sub>e\<^sub>n\<^sub>d end) \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n < n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p < n\<^sub>e\<^sub>n\<^sub>d \<longrightarrow> \<not> hamlet (Rep_run \<rho> n\<^sub>e\<^sub>n\<^sub>d end)) \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n < n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p \<le> n\<^sub>e\<^sub>n\<^sub>d \<and> hamlet (Rep_run \<rho> n\<^sub>i\<^sub>m\<^sub>p master) \<longrightarrow> hamlet (Rep_run \<rho> n\<^sub>i\<^sub>m\<^sub>p slave)))} \<union> {\<rho>. hamlet (Rep_run \<rho> i begin) \<longrightarrow> (\<exists>n\<^sub>e\<^sub>n\<^sub>d>i. hamlet (Rep_run \<rho> n\<^sub>e\<^sub>n\<^sub>d end) \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. i < n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p < n\<^sub>e\<^sub>n\<^sub>d \<longrightarrow> \<not> hamlet (Rep_run \<rho> n\<^sub>e\<^sub>n\<^sub>d end)) \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. i < n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p \<le> n\<^sub>e\<^sub>n\<^sub>d \<and> hamlet (Rep_run \<rho> n\<^sub>i\<^sub>m\<^sub>p master) \<longrightarrow> hamlet (Rep_run \<rho> n\<^sub>i\<^sub>m\<^sub>p slave)))} \<inter> {\<rho>. \<exists>n\<^sub>e\<^sub>n\<^sub>d\<ge>Suc i. hamlet (Rep_run \<rho> n\<^sub>e\<^sub>n\<^sub>d end) \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. i \<le> n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p < n\<^sub>e\<^sub>n\<^sub>d \<longrightarrow> \<not> hamlet (Rep_run \<rho> n\<^sub>e\<^sub>n\<^sub>d end)) \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. i \<le> n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p \<le> n\<^sub>e\<^sub>n\<^sub>d \<and> hamlet (Rep_run \<rho> n\<^sub>i\<^sub>m\<^sub>p master) \<longrightarrow> hamlet (Rep_run \<rho> n\<^sub>i\<^sub>m\<^sub>p slave))} \<inter> {\<rho>. \<forall>n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n\<ge>Suc i. hamlet (Rep_run \<rho> n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n begin) \<longrightarrow> (\<exists>n\<^sub>e\<^sub>n\<^sub>d>n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n. hamlet (Rep_run \<rho> n\<^sub>e\<^sub>n\<^sub>d end) \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n < n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p < n\<^sub>e\<^sub>n\<^sub>d \<longrightarrow> \<not> hamlet (Rep_run \<rho> n\<^sub>e\<^sub>n\<^sub>d end)) \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. n\<^sub>b\<^sub>e\<^sub>g\<^sub>i\<^sub>n < n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p \<le> n\<^sub>e\<^sub>n\<^sub>d \<and> hamlet (Rep_run \<rho> n\<^sub>i\<^sub>m\<^sub>p master) \<longrightarrow> hamlet (Rep_run \<rho> n\<^sub>i\<^sub>m\<^sub>p slave)))}\<close> by auto
+      qed
+    have "\<lbrakk> master sustained until end reset on begin implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> i\<^esup>
+           = { \<rho>. \<exists>n\<^sub>e\<^sub>n\<^sub>d \<ge> i. hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end)
+                     \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (i \<le> n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p < n\<^sub>e\<^sub>n\<^sub>d) \<longrightarrow> \<not> hamlet ((Rep_run \<rho>) n\<^sub>e\<^sub>n\<^sub>d end))
+                     \<and> (\<forall>n\<^sub>i\<^sub>m\<^sub>p. (i \<le> n\<^sub>i\<^sub>m\<^sub>p \<and> n\<^sub>i\<^sub>m\<^sub>p \<le> n\<^sub>e\<^sub>n\<^sub>d \<and> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p master)) \<longrightarrow> hamlet ((Rep_run \<rho>) n\<^sub>i\<^sub>m\<^sub>p slave)) }
+           \<inter> \<lbrakk> master sustained from begin to end implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> i\<^esup>"
+      sorry
+    then show ?thesis
+      sorry
+  qed
+
+lemma TESL_interp_stepwise_sustained_until_coind_unfold':
+  shows "\<lbrakk> master sustained until end reset on begin implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> i\<^esup> =
+    \<lbrakk> end \<not>\<Up> i \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk> master \<not>\<Up> i \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk> master sustained until begin reset on end implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc i\<^esup>
+    \<union> \<lbrakk> end \<not>\<Up> i \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk> master \<Up> i \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk> slave \<Up> i \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk> master sustained until begin reset on end implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc i\<^esup>
+    \<union> \<lbrakk> end \<Up> i \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk> master \<not>\<Up> i \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk> master sustained from begin to end implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc i\<^esup>
+    \<union> \<lbrakk> end \<Up> i \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk> master \<Up> i \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk> slave \<Up> i \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk> master sustained from begin to end implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc i\<^esup>"
+  sorry
 
 fun TESL_interpretation_stepwise :: "TESL_formula \<Rightarrow> nat \<Rightarrow> run set" ("\<lbrakk>\<lbrakk> _ \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> _\<^esup>") where
     "\<lbrakk>\<lbrakk> [] \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> = { _. True }"
