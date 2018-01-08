@@ -9,11 +9,14 @@ section \<open> Defining runs \<close>
 abbreviation hamlet where "hamlet \<equiv> fst"
 abbreviation time where "time \<equiv> snd"
 
-type_synonym instant = "clock \<Rightarrow> (bool \<times> tag_const)"
-typedef (overloaded) run =
-  "{ \<rho>::nat \<Rightarrow> instant. \<forall>c. mono (\<lambda>n. time (\<rho> n c)) }"
+
+print_classes
+
+type_synonym '\<tau> instant = "clock \<Rightarrow> (bool \<times> '\<tau> tag_const)"
+typedef (overloaded) '\<tau>::linordered_field run =
+  "{ \<rho>::nat \<Rightarrow> '\<tau> instant. \<forall>c. mono (\<lambda>n. time (\<rho> n c)) }"
 proof
-  show "(\<lambda>_ _. (undefined, \<tau>\<^sub>r\<^sub>a\<^sub>t 0)) \<in> {\<rho>::nat \<Rightarrow> clock \<Rightarrow> bool \<times> tag_const. \<forall>c::clock. mono (\<lambda>n::nat. time (\<rho> n c))}"
+  show "(\<lambda>_ _. (undefined, \<tau>\<^sub>r\<^sub>a\<^sub>t 0)) \<in> {\<rho>::nat \<Rightarrow> clock \<Rightarrow> bool \<times> '\<tau> tag_const. \<forall>c::clock. mono (\<lambda>n::nat. time (\<rho> n c))}"
   using mono_def by auto
 qed
 (*
@@ -30,7 +33,7 @@ lemma Abs_run_inverse_rewrite_unsafe:
   oops (* Use [sorry] when testing *)
 
 
-fun symbolic_run_interpretation_primitive :: "constr \<Rightarrow> run set" ("\<lbrakk> _ \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m") where
+fun symbolic_run_interpretation_primitive :: "('\<tau>::linordered_field) constr \<Rightarrow> '\<tau> run set" ("\<lbrakk> _ \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m") where
     "\<lbrakk> K \<Up> n  \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m   = { \<rho>. hamlet ((Rep_run \<rho>) n K) = True }"
   | "\<lbrakk> K \<not>\<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m   = { \<rho>. hamlet ((Rep_run \<rho>) n K) = False }"
   | "\<lbrakk> K \<Down> n @ \<lfloor> \<tau> \<rfloor> \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m = { \<rho>. time ((Rep_run \<rho>) n K) = \<tau> }"
@@ -38,7 +41,7 @@ fun symbolic_run_interpretation_primitive :: "constr \<Rightarrow> run set" ("\<
   | "\<lbrakk> \<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>1, n\<^sub>1) \<doteq> \<alpha> * \<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>2, n\<^sub>2) + \<beta> \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m = { \<rho>. time ((Rep_run \<rho>) n\<^sub>1 K\<^sub>1) = \<alpha> * time ((Rep_run \<rho>) n\<^sub>2 K\<^sub>2) + \<beta> }"
   | "\<lbrakk> \<langle>\<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>1, n\<^sub>1), \<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>2, n\<^sub>2)\<rangle> \<epsilon> R \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m = { \<rho>. R (time ((Rep_run \<rho>) n\<^sub>1 K\<^sub>1), time ((Rep_run \<rho>) n\<^sub>2 K\<^sub>2)) }"
 
-fun symbolic_run_interpretation :: "constr list \<Rightarrow> run set" ("\<lbrakk>\<lbrakk> _ \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m") where
+fun symbolic_run_interpretation :: "('\<tau>::linordered_field) constr list \<Rightarrow> ('\<tau>::linordered_field) run set" ("\<lbrakk>\<lbrakk> _ \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m") where
     "\<lbrakk>\<lbrakk> [] \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m = { _. True }"
   | "\<lbrakk>\<lbrakk> \<gamma> # \<Gamma> \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m = \<lbrakk> \<gamma> \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk>\<lbrakk> \<Gamma> \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m"
 
@@ -46,22 +49,22 @@ lemma symbolic_run_interp_cons_morph:
   "\<lbrakk> \<gamma> \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk>\<lbrakk> \<Gamma> \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m = \<lbrakk>\<lbrakk> \<gamma> # \<Gamma> \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m"
   by auto
 
-definition consistent_run :: "constr list \<Rightarrow> bool" where 
+definition consistent_run :: "('\<tau>::linordered_field) constr list \<Rightarrow> bool" where 
   "consistent_run \<Gamma> \<equiv> \<exists>\<rho>. \<rho> \<in> \<lbrakk>\<lbrakk> \<Gamma> \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m"
 
 (**) section \<open>Defining a method for witness construction\<close> (**)
 
 (* Initial states *)
-abbreviation initial_run :: "run" ("\<rho>\<^sub>\<odot>") where
-  "\<rho>\<^sub>\<odot> \<equiv> Abs_run ((\<lambda>_ _. (undefined, \<tau>\<^sub>r\<^sub>a\<^sub>t 0)) ::nat \<Rightarrow> clock \<Rightarrow> (bool \<times> tag_const))"
+abbreviation initial_run :: "('\<tau>::linordered_field) run" ("\<rho>\<^sub>\<odot>") where
+  "\<rho>\<^sub>\<odot> \<equiv> Abs_run ((\<lambda>_ _. (undefined, \<tau>\<^sub>r\<^sub>a\<^sub>t 0)) ::nat \<Rightarrow> clock \<Rightarrow> (bool \<times> '\<tau> tag_const))"
 
 (* To ensure monotonicity, time tag is set at a specific instant and forever after (stuttering) *)
 fun time_update
-  :: "nat \<Rightarrow> clock \<Rightarrow> tag_const \<Rightarrow> (nat \<Rightarrow> clock \<Rightarrow> (bool \<times> tag_const)) \<Rightarrow> (nat \<Rightarrow> clock \<Rightarrow> (bool \<times> tag_const))" where
+  :: "nat \<Rightarrow> clock \<Rightarrow> ('\<tau>::linordered_field) tag_const \<Rightarrow> (nat \<Rightarrow> clock \<Rightarrow> (bool \<times> '\<tau> tag_const)) \<Rightarrow> (nat \<Rightarrow> clock \<Rightarrow> (bool \<times> '\<tau> tag_const))" where
     "time_update n K \<tau> \<rho> = (\<lambda>n' K'. if K = K' \<and> n \<le> n' then (hamlet (\<rho> n K), \<tau>) else \<rho> n' K')"
 
 (* Update functionals *)
-fun run_update :: "run \<Rightarrow> constr \<Rightarrow> run" ("_ \<langle> _ \<rangle>") where
+fun run_update :: "('\<tau>::linordered_field) run \<Rightarrow> '\<tau> constr \<Rightarrow> '\<tau> run" ("_ \<langle> _ \<rangle>") where
     "\<rho> \<langle> K \<Up> n \<rangle>  = Abs_run (\<lambda>n' K'. if K = K' \<and> n = n' then (True, time ((Rep_run \<rho>) n K)) else (Rep_run \<rho>) n' K')"
   | "\<rho> \<langle> K \<not>\<Up> n \<rangle> = Abs_run (\<lambda>n' K'. if K = K' \<and> n = n' then (False, time ((Rep_run \<rho>) n K)) else (Rep_run \<rho>) n' K')"
   | "\<rho> \<langle> K \<Down> n @ \<lfloor> \<tau> \<rfloor> \<rangle> = Abs_run (time_update n K \<tau> (Rep_run \<rho>))"
@@ -75,7 +78,7 @@ fun run_update :: "run \<Rightarrow> constr \<Rightarrow> run" ("_ \<langle> _ \
            else (Rep_run \<rho>) 
      )"
 
-fun run_update' :: "constr list \<Rightarrow> run" ("\<langle>\<langle> _ \<rangle>\<rangle>") where
+fun run_update' :: "('\<tau>::linordered_field) constr list \<Rightarrow> '\<tau> run" ("\<langle>\<langle> _ \<rangle>\<rangle>") where
     "\<langle>\<langle> [] \<rangle>\<rangle>    = \<rho>\<^sub>\<odot>"
   | "\<langle>\<langle> \<gamma> # \<Gamma> \<rangle>\<rangle> = \<langle>\<langle> \<Gamma> \<rangle>\<rangle> \<langle> \<gamma> \<rangle>"
 
@@ -89,12 +92,15 @@ lemma witness_consistency':
 
 (**) section \<open>Rules and properties of consistence\<close> (**)
 
+declare [[show_sorts]]
+
 lemma context_consistency_preservationI:
-  "consistent_run (\<gamma> # \<Gamma>) \<Longrightarrow> consistent_run \<Gamma>"
-using consistent_run_def by auto
+  "consistent_run ((\<gamma> :: ('\<tau>::linordered_field) constr) # \<Gamma>) \<Longrightarrow> consistent_run \<Gamma>"
+unfolding consistent_run_def
+by auto
 
 (* This is very restrictive *)
-inductive context_independency :: "constr \<Rightarrow> constr list \<Rightarrow> bool" ("_ \<bowtie> _") where
+inductive context_independency :: "('\<tau>::linordered_field) constr \<Rightarrow> '\<tau> constr list \<Rightarrow> bool" ("_ \<bowtie> _") where
   NotTicks_independency:
   "K \<Up> n \<notin> set \<Gamma> \<Longrightarrow> K \<not>\<Up> n \<bowtie> \<Gamma>"
 | Ticks_independency:
@@ -148,7 +154,7 @@ lemma symrun_interp_commute:
 
 lemma symrun_interp_left_commute:
   shows "\<lbrakk>\<lbrakk> \<Gamma>\<^sub>1 @ (\<Gamma>\<^sub>2 @ \<Gamma>\<^sub>3) \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m = \<lbrakk>\<lbrakk> \<Gamma>\<^sub>2 @ (\<Gamma>\<^sub>1 @ \<Gamma>\<^sub>3) \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m"
-  using symrun_interp_expansion by auto
+  unfolding symrun_interp_expansion by auto
 
 lemma symrun_interp_idem:
   shows "\<lbrakk>\<lbrakk> \<Gamma> @ \<Gamma> \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m = \<lbrakk>\<lbrakk> \<Gamma> \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m"
@@ -160,7 +166,7 @@ lemma symrun_interp_left_idem:
 
 lemma symrun_interp_right_idem:
   shows "\<lbrakk>\<lbrakk> (\<Gamma>\<^sub>1 @ \<Gamma>\<^sub>2) @ \<Gamma>\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m = \<lbrakk>\<lbrakk> \<Gamma>\<^sub>1 @ \<Gamma>\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m"
-  using symrun_interp_expansion by auto
+  unfolding symrun_interp_expansion by auto
 
 lemmas symrun_interp_aci = symrun_interp_commute symrun_interp_assoc symrun_interp_left_commute symrun_interp_left_idem
 

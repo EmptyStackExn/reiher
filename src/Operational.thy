@@ -7,16 +7,16 @@ begin
 text{* Operational steps *}
 
 abbreviation uncurry_conf
-  :: "system \<Rightarrow> instant_index \<Rightarrow> TESL_formula \<Rightarrow> TESL_formula \<Rightarrow> config" ("_, _ \<turnstile> _ \<triangleright> _" 80) where
+  :: "('\<tau>::linordered_field) system \<Rightarrow> instant_index \<Rightarrow> '\<tau> TESL_formula \<Rightarrow> '\<tau> TESL_formula \<Rightarrow> '\<tau> config" ("_, _ \<turnstile> _ \<triangleright> _" 80) where
   "\<Gamma>, n \<turnstile> \<Psi> \<triangleright> \<Phi> \<equiv> (\<Gamma>, n, \<Psi>, \<Phi>)"
 
-inductive operational_semantics_intro :: "config \<Rightarrow> config \<Rightarrow> bool" ("_ \<hookrightarrow>\<^sub>i _" 70) where
+inductive operational_semantics_intro :: "('\<tau>::linordered_field) config \<Rightarrow> '\<tau> config \<Rightarrow> bool" ("_ \<hookrightarrow>\<^sub>i _" 70) where
   instant_i:
   "(* consistent_run \<Gamma> \<Longrightarrow> *)
    \<Gamma>, n \<turnstile> [] \<triangleright> \<Phi>
      \<hookrightarrow>\<^sub>i  \<Gamma>, Suc n \<turnstile> \<Phi> \<triangleright> []"
 
-inductive operational_semantics_elim :: "config \<Rightarrow> config \<Rightarrow> bool" ("_ \<hookrightarrow>\<^sub>e _" 70) where
+inductive operational_semantics_elim :: "('\<tau>::linordered_field) config \<Rightarrow> '\<tau> config \<Rightarrow> bool" ("_ \<hookrightarrow>\<^sub>e _" 70) where
   sporadic_e1:
   "(* consistent_run \<Gamma> \<Longrightarrow> *)
    \<Gamma>, n \<turnstile> (K sporadic \<tau>) # \<Psi> \<triangleright> \<Phi>
@@ -57,25 +57,25 @@ inductive operational_semantics_elim :: "config \<Rightarrow> config \<Rightarro
    \<Gamma>, n \<turnstile> (K\<^sub>1 time-delayed by \<delta>\<tau> on K\<^sub>2 implies K\<^sub>3) # \<Psi> \<triangleright> \<Phi>
      \<hookrightarrow>\<^sub>e  K\<^sub>1 \<Up> n # \<Gamma>, n \<turnstile> (K\<^sub>3 sporadic \<lfloor>\<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>2, n) \<oplus> \<delta>\<tau>\<rfloor> on K\<^sub>2) # \<Psi> \<triangleright> (K\<^sub>1 time-delayed by \<delta>\<tau> on K\<^sub>2 implies K\<^sub>3) # \<Phi>"
 
-inductive operational_semantics_step :: "config \<Rightarrow> config \<Rightarrow> bool" ("_ \<hookrightarrow> _" 70) where
+inductive operational_semantics_step :: "('\<tau>::linordered_field) config \<Rightarrow> '\<tau> config \<Rightarrow> bool" ("_ \<hookrightarrow> _" 70) where
     intro_part: "\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1  \<hookrightarrow>\<^sub>i  \<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2
    \<Longrightarrow> \<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1  \<hookrightarrow>  \<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2"
   | elims_part: "\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1  \<hookrightarrow>\<^sub>e  \<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2
    \<Longrightarrow> \<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1  \<hookrightarrow>  \<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2"
 
-abbreviation operational_semantics_step_rtranclp :: "config \<Rightarrow> config \<Rightarrow> bool" ("_ \<hookrightarrow>\<^sup>*\<^sup>* _" 70) where
+abbreviation operational_semantics_step_rtranclp :: "('\<tau>::linordered_field) config \<Rightarrow> '\<tau> config \<Rightarrow> bool" ("_ \<hookrightarrow>\<^sup>*\<^sup>* _" 70) where
   "\<C>\<^sub>1 \<hookrightarrow>\<^sup>*\<^sup>* \<C>\<^sub>2 \<equiv> operational_semantics_step\<^sup>*\<^sup>* \<C>\<^sub>1 \<C>\<^sub>2"
 
-abbreviation operational_semantics_step_tranclp :: "config \<Rightarrow> config \<Rightarrow> bool" ("_ \<hookrightarrow>\<^sup>+\<^sup>+ _" 70) where
+abbreviation operational_semantics_step_tranclp :: "('\<tau>::linordered_field) config \<Rightarrow> '\<tau> config \<Rightarrow> bool" ("_ \<hookrightarrow>\<^sup>+\<^sup>+ _" 70) where
   "\<C>\<^sub>1 \<hookrightarrow>\<^sup>+\<^sup>+ \<C>\<^sub>2 \<equiv> operational_semantics_step\<^sup>+\<^sup>+ \<C>\<^sub>1 \<C>\<^sub>2"
 
-abbreviation operational_semantics_step_reflclp :: "config \<Rightarrow> config \<Rightarrow> bool" ("_ \<hookrightarrow>\<^sup>=\<^sup>= _" 70) where
+abbreviation operational_semantics_step_reflclp :: "('\<tau>::linordered_field) config \<Rightarrow> '\<tau> config \<Rightarrow> bool" ("_ \<hookrightarrow>\<^sup>=\<^sup>= _" 70) where
   "\<C>\<^sub>1 \<hookrightarrow>\<^sup>=\<^sup>= \<C>\<^sub>2 \<equiv> operational_semantics_step\<^sup>=\<^sup>= \<C>\<^sub>1 \<C>\<^sub>2"
 
-abbreviation operational_semantics_step_relpowp :: "config \<Rightarrow> nat \<Rightarrow> config \<Rightarrow> bool" ("_ \<hookrightarrow>\<^bsup>_\<^esup> _" 70) where
+abbreviation operational_semantics_step_relpowp :: "('\<tau>::linordered_field) config \<Rightarrow> nat \<Rightarrow> '\<tau> config \<Rightarrow> bool" ("_ \<hookrightarrow>\<^bsup>_\<^esup> _" 70) where
   "\<C>\<^sub>1 \<hookrightarrow>\<^bsup>n\<^esup> \<C>\<^sub>2 \<equiv> (operational_semantics_step ^^ n) \<C>\<^sub>1 \<C>\<^sub>2"
 
-definition operational_semantics_elim_inv :: "config \<Rightarrow> config \<Rightarrow> bool" ("_ \<hookrightarrow>\<^sub>e\<^sup>\<leftarrow> _" 70) where
+definition operational_semantics_elim_inv :: "('\<tau>::linordered_field) config \<Rightarrow> '\<tau> config \<Rightarrow> bool" ("_ \<hookrightarrow>\<^sub>e\<^sup>\<leftarrow> _" 70) where
   "\<C>\<^sub>1 \<hookrightarrow>\<^sub>e\<^sup>\<leftarrow> \<C>\<^sub>2 \<equiv> \<C>\<^sub>2 \<hookrightarrow>\<^sub>e \<C>\<^sub>1"
 
 lemma operational_semantics_trans_generalized:
@@ -93,7 +93,7 @@ inductive operational_semantics_simlstep :: "config \<Rightarrow> config \<Right
    (\<Gamma>\<^sub>1, n \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1) \<hookrightarrow>\<^sub>\<nabla> (\<Gamma>, n' \<turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2)"
 *)
 
-abbreviation Cnext_solve :: "config \<Rightarrow> config set" ("\<C>\<^sub>n\<^sub>e\<^sub>x\<^sub>t _") where
+abbreviation Cnext_solve :: "('\<tau>::linordered_field) config \<Rightarrow> '\<tau> config set" ("\<C>\<^sub>n\<^sub>e\<^sub>x\<^sub>t _") where
   "\<C>\<^sub>n\<^sub>e\<^sub>x\<^sub>t \<S> \<equiv> { \<S>'. \<S> \<hookrightarrow> \<S>' }"
 
 lemma Cnext_solve_instant:
@@ -143,11 +143,11 @@ lemma empty_spec_reductions:
   next
     case (Suc k)
     then show ?case
-      using instant_i intro_part by auto
+      using instant_i operational_semantics_step.simps by fastforce 
   qed
 
 (* To decide finite-satisfiability of TESL specifications *)
-inductive finite_SAT :: "config \<Rightarrow> bool" ("\<TTurnstile> _" 50) where
+inductive finite_SAT :: "('\<tau>::linordered_field) config \<Rightarrow> bool" ("\<TTurnstile> _" 50) where
   finite_SAT_ax: "set (NoSporadic \<Phi>) = set \<Phi> \<Longrightarrow>
                     consistent_run \<Gamma> \<Longrightarrow>
                    \<TTurnstile> \<Gamma>, n \<turnstile> \<Psi> \<triangleright> \<Phi>"
