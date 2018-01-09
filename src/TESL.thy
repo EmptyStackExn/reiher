@@ -1,5 +1,5 @@
 theory TESL
-imports Main Real
+imports Main
 
 begin
 text {* We define as follows the syntax of primitives to describe symbolic runs *}
@@ -11,7 +11,7 @@ type_synonym instant_index = "nat"
 (** Tags **) 
 (* Constants *)
 datatype '\<tau> tag_const =
-    Real   '\<tau>                   ("\<tau>\<^sub>r\<^sub>a\<^sub>t")
+    TConst   '\<tau>                   ("\<tau>\<^sub>c\<^sub>s\<^sub>t")
 (* Variables *)
 datatype tag_var =
     Schematic "clock * instant_index" ("\<tau>\<^sub>v\<^sub>a\<^sub>r")
@@ -55,7 +55,7 @@ abbreviation NoSporadic :: "'\<tau> TESL_formula \<Rightarrow> '\<tau> TESL_form
     | _ \<Rightarrow> True) f)"
 
 (* The abstract machine
-   Follows the intuition: past [\<Gamma>], current index [n], present [\<psi>], future [\<phi>]
+   Follows the intuition: past [\<Gamma>], current index [n], present [\<Psi>], future [\<Phi>]
    Beware: This type is slightly different from which originally implemented in Heron
 *)
 type_synonym '\<tau> config = "'\<tau> system * instant_index * '\<tau> TESL_formula * '\<tau> TESL_formula"
@@ -66,42 +66,42 @@ type_synonym '\<tau> config = "'\<tau> system * instant_index * '\<tau> TESL_for
 instantiation tag_const :: (plus)plus
 begin
   fun plus_tag_const :: "'a tag_const \<Rightarrow> 'a tag_const \<Rightarrow> 'a tag_const" where
-      Real_plus: "(Real n) + (Real p) = (Real (n + p))"
+      TConst_plus: "(TConst n) + (TConst p) = (TConst (n + p))"
   instance proof qed
 end
 
 instantiation tag_const :: (minus)minus
 begin
   fun minus_tag_const :: "'a tag_const \<Rightarrow> 'a tag_const \<Rightarrow> 'a tag_const" where
-      Real_minus: "(Real n) - (Real p) = (Real (n - p))"
+      TConst_minus: "(TConst n) - (TConst p) = (TConst (n - p))"
   instance proof qed
 end
 
 instantiation tag_const :: (times)times
 begin
   fun times_tag_const :: "'a tag_const \<Rightarrow> 'a tag_const \<Rightarrow> 'a tag_const" where
-      Real_times: "(Real n) * (Real p) = (Real (n * p))"
+      TConst_times: "(TConst n) * (TConst p) = (TConst (n * p))"
   instance proof qed
 end
 
 instantiation tag_const :: (divide)divide
 begin
   fun divide_tag_const :: "'a tag_const \<Rightarrow> 'a tag_const \<Rightarrow> 'a tag_const" where
-      Real_divide: "divide (Real n) (Real p) = (Real (divide n p))"
+      TConst_divide: "divide (TConst n) (TConst p) = (TConst (divide n p))"
   instance proof qed
 end
 
 instantiation tag_const :: (inverse)inverse
 begin
   fun inverse_tag_const :: "'a tag_const \<Rightarrow> 'a tag_const" where
-      Real_inverse: "inverse (Real n) = (Real (inverse n))"
+      TConst_inverse: "inverse (TConst n) = (TConst (inverse n))"
   instance proof qed
 end
 
 instantiation tag_const :: (order)order
 begin
   inductive less_eq_tag_const :: "'a tag_const \<Rightarrow> 'a tag_const \<Rightarrow> bool" where
-    Int_less_eq[simp]:      "n \<le> m \<Longrightarrow> (Real n) \<le> (Real m)"
+    Int_less_eq[simp]:      "n \<le> m \<Longrightarrow> (TConst n) \<le> (TConst m)"
   definition less_tag: "(x::'a tag_const) < y \<longleftrightarrow> (x \<le> y) \<and> (x \<noteq> y)"
   instance proof
     show "\<And>x y :: 'a tag_const. (x < y) = (x \<le> y \<and> \<not> y \<le> x)"

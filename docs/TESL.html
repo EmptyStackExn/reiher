@@ -11,12 +11,12 @@
 <div class="head"><h1>Theory TESL</h1>
 
 <span class="command">theory</span> <span class="name">TESL</span><br/>
-<span class="keyword">imports</span> <a href="http://isabelle.in.tum.de/website-Isabelle2017/dist/library/HOL/HOL/Real.html"><span class="name">Real</span></a><br/>
+<span class="keyword">imports</span> <a href="http://isabelle.in.tum.de/website-Isabelle2017/dist/library/HOL/HOL/Main.html"><span class="name">Main</span></a><br/>
 
 </div>
 <div class="source">
 <pre class="source"><span class="keyword1"><span class="command">theory</span></span><span class=""> </span><span class="">TESL</span><span class="">
-</span><span class="keyword2"><span class="keyword">imports</span></span><span class=""> </span><span class="">Main</span><span class=""> </span><span class="">Real</span><span class="">
+</span><span class="keyword2"><span class="keyword">imports</span></span><span class=""> </span><span class="">Main</span><span class="">
 </span><span class="">
 </span><span class="keyword2"><span class="keyword">begin</span></span><span class="">
 </span><span class="keyword1"><span class="command">text</span></span><span class=""> </span><span class="verbatim">{* We define as follows the syntax of primitives to describe symbolic runs *}</span><span class="">
@@ -28,7 +28,7 @@
 </span><span class="comment">(** Tags **)</span><span class=""> 
 </span><span class="comment">(* Constants *)</span><span class="">
 </span><span class="keyword1"><span class="command">datatype</span></span><span class=""> </span><span class="tfree">&#39;&#964;</span><span class=""> </span><span class="">tag_const</span><span class=""> </span><span class="delimiter">=</span><span class="">
-</span><span class="">    </span><span class="">Real</span><span class="">   </span><span class="tfree">&#39;&#964;</span><span class="">                   </span><span class="delimiter">(</span><span class="string">&quot;&#964;<span class="hidden">&#8681;</span><sub>r</sub><span class="hidden">&#8681;</span><sub>a</sub><span class="hidden">&#8681;</span><sub>t</sub>&quot;</span><span class="delimiter">)</span><span class="">
+</span><span class="">    </span><span class="">TConst</span><span class="">   </span><span class="tfree">&#39;&#964;</span><span class="">                   </span><span class="delimiter">(</span><span class="string">&quot;&#964;<span class="hidden">&#8681;</span><sub>c</sub><span class="hidden">&#8681;</span><sub>s</sub><span class="hidden">&#8681;</span><sub>t</sub>&quot;</span><span class="delimiter">)</span><span class="">
 </span><span class="comment">(* Variables *)</span><span class="">
 </span><span class="keyword1"><span class="command">datatype</span></span><span class=""> </span><span class="">tag_var</span><span class=""> </span><span class="delimiter">=</span><span class="">
 </span><span class="">    </span><span class="">Schematic</span><span class=""> </span><span class="string">&quot;clock * instant_index&quot;</span><span class=""> </span><span class="delimiter">(</span><span class="string">&quot;&#964;<span class="hidden">&#8681;</span><sub>v</sub><span class="hidden">&#8681;</span><sub>a</sub><span class="hidden">&#8681;</span><sub>r</sub>&quot;</span><span class="delimiter">)</span><span class="">
@@ -72,7 +72,7 @@
     | _ &#8658; True) f)&quot;</span><span class="">
 </span><span class="">
 </span><span class="comment">(* The abstract machine
-   Follows the intuition: past [&#915;], current index [n], present [&#968;], future [&#966;]
+   Follows the intuition: past [&#915;], current index [n], present [&#936;], future [&#934;]
    Beware: This type is slightly different from which originally implemented in Heron
 *)</span><span class="">
 </span><span class="keyword1"><span class="command">type_synonym</span></span><span class=""> </span><span class="tfree">&#39;&#964;</span><span class=""> </span><span class="">config</span><span class=""> </span><span class="delimiter">=</span><span class=""> </span><span class="string">&quot;&#39;&#964; system * instant_index * &#39;&#964; TESL_formula * &#39;&#964; TESL_formula&quot;</span><span class="">
@@ -83,42 +83,42 @@
 </span><span class="keyword1"><span class="command">instantiation</span></span><span class=""> </span><span class="">tag_const</span><span class=""> </span><span class="delimiter">::</span><span class=""> </span><span class="delimiter">(</span><span class="">plus</span><span class="delimiter">)</span><span class="">plus</span><span class="">
 </span><span class="keyword2"><span class="keyword">begin</span></span><span class="">
 </span><span class="">  </span><span class="keyword1"><span class="command">fun</span></span><span class=""> </span><span class="">plus_tag_const</span><span class=""> </span><span class="delimiter">::</span><span class=""> </span><span class="string">&quot;&#39;a tag_const &#8658; &#39;a tag_const &#8658; &#39;a tag_const&quot;</span><span class=""> </span><span class="keyword2"><span class="keyword">where</span></span><span class="">
-</span><span class="">      </span><span class="">Real_plus</span><span class="delimiter">:</span><span class=""> </span><span class="string">&quot;(Real n) + (Real p) = (Real (n + p))&quot;</span><span class="">
+</span><span class="">      </span><span class="">TConst_plus</span><span class="delimiter">:</span><span class=""> </span><span class="string">&quot;(TConst n) + (TConst p) = (TConst (n + p))&quot;</span><span class="">
 </span><span class="">  </span><span class="keyword1"><span class="command">instance</span></span><span class=""> </span><span class="keyword1"><span class="command">proof</span></span><span class=""> </span><span class="keyword1"><span class="command">qed</span></span><span class="">
 </span><span class="keyword2"><span class="keyword">end</span></span><span class="">
 </span><span class="">
 </span><span class="keyword1"><span class="command">instantiation</span></span><span class=""> </span><span class="">tag_const</span><span class=""> </span><span class="delimiter">::</span><span class=""> </span><span class="delimiter">(</span><span class="">minus</span><span class="delimiter">)</span><span class="">minus</span><span class="">
 </span><span class="keyword2"><span class="keyword">begin</span></span><span class="">
 </span><span class="">  </span><span class="keyword1"><span class="command">fun</span></span><span class=""> </span><span class="">minus_tag_const</span><span class=""> </span><span class="delimiter">::</span><span class=""> </span><span class="string">&quot;&#39;a tag_const &#8658; &#39;a tag_const &#8658; &#39;a tag_const&quot;</span><span class=""> </span><span class="keyword2"><span class="keyword">where</span></span><span class="">
-</span><span class="">      </span><span class="">Real_minus</span><span class="delimiter">:</span><span class=""> </span><span class="string">&quot;(Real n) - (Real p) = (Real (n - p))&quot;</span><span class="">
+</span><span class="">      </span><span class="">TConst_minus</span><span class="delimiter">:</span><span class=""> </span><span class="string">&quot;(TConst n) - (TConst p) = (TConst (n - p))&quot;</span><span class="">
 </span><span class="">  </span><span class="keyword1"><span class="command">instance</span></span><span class=""> </span><span class="keyword1"><span class="command">proof</span></span><span class=""> </span><span class="keyword1"><span class="command">qed</span></span><span class="">
 </span><span class="keyword2"><span class="keyword">end</span></span><span class="">
 </span><span class="">
 </span><span class="keyword1"><span class="command">instantiation</span></span><span class=""> </span><span class="">tag_const</span><span class=""> </span><span class="delimiter">::</span><span class=""> </span><span class="delimiter">(</span><span class="">times</span><span class="delimiter">)</span><span class="">times</span><span class="">
 </span><span class="keyword2"><span class="keyword">begin</span></span><span class="">
 </span><span class="">  </span><span class="keyword1"><span class="command">fun</span></span><span class=""> </span><span class="">times_tag_const</span><span class=""> </span><span class="delimiter">::</span><span class=""> </span><span class="string">&quot;&#39;a tag_const &#8658; &#39;a tag_const &#8658; &#39;a tag_const&quot;</span><span class=""> </span><span class="keyword2"><span class="keyword">where</span></span><span class="">
-</span><span class="">      </span><span class="">Real_times</span><span class="delimiter">:</span><span class=""> </span><span class="string">&quot;(Real n) * (Real p) = (Real (n * p))&quot;</span><span class="">
+</span><span class="">      </span><span class="">TConst_times</span><span class="delimiter">:</span><span class=""> </span><span class="string">&quot;(TConst n) * (TConst p) = (TConst (n * p))&quot;</span><span class="">
 </span><span class="">  </span><span class="keyword1"><span class="command">instance</span></span><span class=""> </span><span class="keyword1"><span class="command">proof</span></span><span class=""> </span><span class="keyword1"><span class="command">qed</span></span><span class="">
 </span><span class="keyword2"><span class="keyword">end</span></span><span class="">
 </span><span class="">
 </span><span class="keyword1"><span class="command">instantiation</span></span><span class=""> </span><span class="">tag_const</span><span class=""> </span><span class="delimiter">::</span><span class=""> </span><span class="delimiter">(</span><span class="">divide</span><span class="delimiter">)</span><span class="">divide</span><span class="">
 </span><span class="keyword2"><span class="keyword">begin</span></span><span class="">
 </span><span class="">  </span><span class="keyword1"><span class="command">fun</span></span><span class=""> </span><span class="">divide_tag_const</span><span class=""> </span><span class="delimiter">::</span><span class=""> </span><span class="string">&quot;&#39;a tag_const &#8658; &#39;a tag_const &#8658; &#39;a tag_const&quot;</span><span class=""> </span><span class="keyword2"><span class="keyword">where</span></span><span class="">
-</span><span class="">      </span><span class="">Real_divide</span><span class="delimiter">:</span><span class=""> </span><span class="string">&quot;divide (Real n) (Real p) = (Real (divide n p))&quot;</span><span class="">
+</span><span class="">      </span><span class="">TConst_divide</span><span class="delimiter">:</span><span class=""> </span><span class="string">&quot;divide (TConst n) (TConst p) = (TConst (divide n p))&quot;</span><span class="">
 </span><span class="">  </span><span class="keyword1"><span class="command">instance</span></span><span class=""> </span><span class="keyword1"><span class="command">proof</span></span><span class=""> </span><span class="keyword1"><span class="command">qed</span></span><span class="">
 </span><span class="keyword2"><span class="keyword">end</span></span><span class="">
 </span><span class="">
 </span><span class="keyword1"><span class="command">instantiation</span></span><span class=""> </span><span class="">tag_const</span><span class=""> </span><span class="delimiter">::</span><span class=""> </span><span class="delimiter">(</span><span class="">inverse</span><span class="delimiter">)</span><span class="">inverse</span><span class="">
 </span><span class="keyword2"><span class="keyword">begin</span></span><span class="">
 </span><span class="">  </span><span class="keyword1"><span class="command">fun</span></span><span class=""> </span><span class="">inverse_tag_const</span><span class=""> </span><span class="delimiter">::</span><span class=""> </span><span class="string">&quot;&#39;a tag_const &#8658; &#39;a tag_const&quot;</span><span class=""> </span><span class="keyword2"><span class="keyword">where</span></span><span class="">
-</span><span class="">      </span><span class="">Real_inverse</span><span class="delimiter">:</span><span class=""> </span><span class="string">&quot;inverse (Real n) = (Real (inverse n))&quot;</span><span class="">
+</span><span class="">      </span><span class="">TConst_inverse</span><span class="delimiter">:</span><span class=""> </span><span class="string">&quot;inverse (TConst n) = (TConst (inverse n))&quot;</span><span class="">
 </span><span class="">  </span><span class="keyword1"><span class="command">instance</span></span><span class=""> </span><span class="keyword1"><span class="command">proof</span></span><span class=""> </span><span class="keyword1"><span class="command">qed</span></span><span class="">
 </span><span class="keyword2"><span class="keyword">end</span></span><span class="">
 </span><span class="">
 </span><span class="keyword1"><span class="command">instantiation</span></span><span class=""> </span><span class="">tag_const</span><span class=""> </span><span class="delimiter">::</span><span class=""> </span><span class="delimiter">(</span><span class="">order</span><span class="delimiter">)</span><span class="">order</span><span class="">
 </span><span class="keyword2"><span class="keyword">begin</span></span><span class="">
 </span><span class="">  </span><span class="keyword1"><span class="command">inductive</span></span><span class=""> </span><span class="">less_eq_tag_const</span><span class=""> </span><span class="delimiter">::</span><span class=""> </span><span class="string">&quot;&#39;a tag_const &#8658; &#39;a tag_const &#8658; bool&quot;</span><span class=""> </span><span class="keyword2"><span class="keyword">where</span></span><span class="">
-</span><span class="">    </span><span class="">Int_less_eq</span><span class="delimiter">[</span><span class="">simp</span><span class="delimiter">]</span><span class="delimiter">:</span><span class="">      </span><span class="string">&quot;n &#8804; m &#10233; (Real n) &#8804; (Real m)&quot;</span><span class="">
+</span><span class="">    </span><span class="">Int_less_eq</span><span class="delimiter">[</span><span class="">simp</span><span class="delimiter">]</span><span class="delimiter">:</span><span class="">      </span><span class="string">&quot;n &#8804; m &#10233; (TConst n) &#8804; (TConst m)&quot;</span><span class="">
 </span><span class="">  </span><span class="keyword1"><span class="command">definition</span></span><span class=""> </span><span class="">less_tag</span><span class="delimiter">:</span><span class=""> </span><span class="string">&quot;(x::&#39;a tag_const) &lt; y &#10231; (x &#8804; y) &#8743; (x &#8800; y)&quot;</span><span class="">
 </span><span class="">  </span><span class="keyword1"><span class="command">instance</span></span><span class=""> </span><span class="keyword1"><span class="command">proof</span></span><span class="">
 </span><span class="">    </span><span class="keyword3"><span class="command">show</span></span><span class=""> </span><span class="string">&quot;&#8896;x y :: &#39;a tag_const. (x &lt; y) = (x &#8804; y &#8743; &#172; y &#8804; x)&quot;</span><span class="">

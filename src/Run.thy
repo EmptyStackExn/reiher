@@ -16,7 +16,7 @@ type_synonym '\<tau> instant = "clock \<Rightarrow> (bool \<times> '\<tau> tag_c
 typedef (overloaded) '\<tau>::linordered_field run =
   "{ \<rho>::nat \<Rightarrow> '\<tau> instant. \<forall>c. mono (\<lambda>n. time (\<rho> n c)) }"
 proof
-  show "(\<lambda>_ _. (undefined, \<tau>\<^sub>r\<^sub>a\<^sub>t 0)) \<in> {\<rho>::nat \<Rightarrow> clock \<Rightarrow> bool \<times> '\<tau> tag_const. \<forall>c::clock. mono (\<lambda>n::nat. time (\<rho> n c))}"
+  show "(\<lambda>_ _. (undefined, \<tau>\<^sub>c\<^sub>s\<^sub>t 0)) \<in> {\<rho>::nat \<Rightarrow> clock \<Rightarrow> bool \<times> '\<tau> tag_const. \<forall>c::clock. mono (\<lambda>n::nat. time (\<rho> n c))}"
   using mono_def by auto
 qed
 (*
@@ -56,7 +56,7 @@ definition consistent_run :: "('\<tau>::linordered_field) constr list \<Rightarr
 
 (* Initial states *)
 abbreviation initial_run :: "('\<tau>::linordered_field) run" ("\<rho>\<^sub>\<odot>") where
-  "\<rho>\<^sub>\<odot> \<equiv> Abs_run ((\<lambda>_ _. (undefined, \<tau>\<^sub>r\<^sub>a\<^sub>t 0)) ::nat \<Rightarrow> clock \<Rightarrow> (bool \<times> '\<tau> tag_const))"
+  "\<rho>\<^sub>\<odot> \<equiv> Abs_run ((\<lambda>_ _. (undefined, \<tau>\<^sub>c\<^sub>s\<^sub>t 0)) ::nat \<Rightarrow> clock \<Rightarrow> (bool \<times> '\<tau> tag_const))"
 
 (* To ensure monotonicity, time tag is set at a specific instant and forever after (stuttering) *)
 fun time_update
@@ -71,9 +71,9 @@ fun run_update :: "('\<tau>::linordered_field) run \<Rightarrow> '\<tau> constr 
   | "\<rho> \<langle> K \<Down> n @ \<lfloor> \<tau>\<^sub>v\<^sub>a\<^sub>r(K', n') \<oplus> \<tau> \<rfloor> \<rangle> =
      Abs_run (time_update n K (time ((Rep_run \<rho>) n' K') + \<tau>) (Rep_run \<rho>))"
   | "\<rho> \<langle> \<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>1, n\<^sub>1) \<doteq> \<alpha> * \<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>2, n\<^sub>2) + \<beta> \<rangle> =
-     Abs_run (if time ((Rep_run \<rho>) n\<^sub>1 K\<^sub>1) = \<tau>\<^sub>r\<^sub>a\<^sub>t 0 \<and> time ((Rep_run \<rho>) n\<^sub>2 K\<^sub>2) \<noteq> \<tau>\<^sub>r\<^sub>a\<^sub>t 0
+     Abs_run (if time ((Rep_run \<rho>) n\<^sub>1 K\<^sub>1) = \<tau>\<^sub>c\<^sub>s\<^sub>t 0 \<and> time ((Rep_run \<rho>) n\<^sub>2 K\<^sub>2) \<noteq> \<tau>\<^sub>c\<^sub>s\<^sub>t 0
       then (time_update n\<^sub>1 K\<^sub>1 (\<alpha> * time ((Rep_run \<rho>) n\<^sub>2 K\<^sub>2) + \<beta>) (Rep_run \<rho>))
-      else if time ((Rep_run \<rho>) n\<^sub>2 K\<^sub>2) = \<tau>\<^sub>r\<^sub>a\<^sub>t 0 \<and> time ((Rep_run \<rho>) n\<^sub>1 K\<^sub>1) \<noteq> \<tau>\<^sub>r\<^sub>a\<^sub>t 0
+      else if time ((Rep_run \<rho>) n\<^sub>2 K\<^sub>2) = \<tau>\<^sub>c\<^sub>s\<^sub>t 0 \<and> time ((Rep_run \<rho>) n\<^sub>1 K\<^sub>1) \<noteq> \<tau>\<^sub>c\<^sub>s\<^sub>t 0
            then time_update n\<^sub>2 K\<^sub>2 ((time ((Rep_run \<rho>) n\<^sub>1 K\<^sub>1) - \<beta>) / \<alpha>) (Rep_run \<rho>)
            else (Rep_run \<rho>) 
      )"
