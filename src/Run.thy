@@ -92,7 +92,7 @@ lemma witness_consistency':
 
 (**) section \<open>Rules and properties of consistence\<close> (**)
 
-declare [[show_sorts]]
+(* declare [[show_sorts]] *)
 
 lemma context_consistency_preservationI:
   "consistent_run ((\<gamma> :: ('\<tau>::linordered_field) constr) # \<Gamma>) \<Longrightarrow> consistent_run \<Gamma>"

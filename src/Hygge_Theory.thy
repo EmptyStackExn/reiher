@@ -187,43 +187,46 @@ lemma complete_direct_successors:
       by fastforce
   next
     case (Cons \<psi> \<Psi>)
-    then show ?case
-      proof (induct \<psi>)
+      then show ?case
+      proof (cases \<psi>)
         case (Sporadic K \<tau>)
-        then show ?case
-          using HeronConf_interp_stepwise_sporadic_cases Cnext_solve_sporadic
-          by (smt UN_iff UnE insert_subset subsetI)
+        then show ?thesis
+          using HeronConf_interp_stepwise_sporadic_cases[of "\<Gamma>" "n" "K" "\<tau>" "\<Psi>" "\<Phi>"]
+                Cnext_solve_sporadic[of "\<Gamma>" "n" "\<Psi>" "K" "\<tau>" "\<Phi>"] by blast
       next
         case (SporadicOn K1 \<tau> K2)
-        then show ?case 
-          using HeronConf_interp_stepwise_sporadicon_cases Cnext_solve_sporadicon
-          by (smt UN_iff UnE insert_subset subsetI)
+        then show ?thesis 
+          using HeronConf_interp_stepwise_sporadicon_cases[of "\<Gamma>" "n" "K1" "\<tau>" "K2" "\<Psi>" "\<Phi>"]
+                Cnext_solve_sporadicon[of "\<Gamma>" "n" "\<Psi>" "K1" "\<tau>" "K2" "\<Phi>"] by blast
       next
         case (TagRelation K1 \<alpha> K2 \<beta>)
-        then show ?case
-          using HeronConf_interp_stepwise_tagrel_cases Cnext_solve_tagrel
-          by (smt UN_iff UnE insert_subset subsetI)
+        then show ?thesis
+          using HeronConf_interp_stepwise_tagrel_cases[of "\<Gamma>" "n" "K1" "\<alpha>" "K2" "\<beta>" "\<Psi>" "\<Phi>"]
+                Cnext_solve_tagrel[of "K1" "n" "\<alpha>" "K2" "\<beta>" "\<Gamma>" "\<Psi>" "\<Phi>"] by blast
       next
         case (TagRelationGen K\<^sub>1 K\<^sub>2 R)
-        then show ?case
-          using HeronConf_interp_stepwise_tagrelgen_cases Cnext_solve_tagrelgen
-          by (smt UN_iff UnE insert_subset subsetI)
+        then show ?thesis
+          using HeronConf_interp_stepwise_tagrelgen_cases[of "\<Gamma>" "n" "K\<^sub>1" "K\<^sub>2" "R" "\<Psi>" "\<Phi>"]
+                Cnext_solve_tagrelgen[of "K\<^sub>1" "n" "K\<^sub>2" "R" "\<Gamma>" "\<Psi>" "\<Phi>"] by blast
       next
         case (Implies K1 K2)
-        then show ?case
-          using HeronConf_interp_stepwise_implies_cases Cnext_solve_implies
-          by (smt UN_iff UnE insert_subset subsetI)
+        then show ?thesis
+          using HeronConf_interp_stepwise_implies_cases[of "\<Gamma>" "n" "K1" "K2" "\<Psi>" "\<Phi>"]
+                Cnext_solve_implies[of "K1" "n" "\<Gamma>" "\<Psi>" "K2" "\<Phi>"] by blast
       next
         case (TimeDelayedBy Kmast \<tau> Kmeas Kslave)
-        then show ?case
-          using HeronConf_interp_stepwise_timedelayed_cases Cnext_solve_timedelayed
-          by (smt UN_iff UnE insert_subset subsetI)
+        then show ?thesis
+          using HeronConf_interp_stepwise_timedelayed_cases[of "\<Gamma>" "n" "Kmast" "\<tau>" "Kmeas" "Kslave" "\<Psi>" "\<Phi>"]
+                Cnext_solve_timedelayed[of "Kmast" "n" "\<Gamma>" "\<Psi>" "\<tau>" "Kmeas" "Kslave" "\<Phi>"] by blast
       qed
   qed
 
 lemma complete_direct_successors':
   shows "\<lbrakk> \<S> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g \<subseteq> (\<Union>X\<in>\<C>\<^sub>n\<^sub>e\<^sub>x\<^sub>t \<S>. \<lbrakk> X \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g)"
-  by (metis HeronConf_interpretation.cases complete_direct_successors)
+proof -
+  from HeronConf_interpretation.cases obtain \<Gamma> n \<Psi> \<Phi> where "\<S> = (\<Gamma>, n \<turnstile> \<Psi> \<triangleright> \<Phi>)" by blast
+  with complete_direct_successors[of "\<Gamma>" "n" "\<Psi>" "\<Phi>"] show ?thesis by simp
+qed
 
 lemma branch_existence:
   assumes "\<rho> \<in> \<lbrakk> \<S>\<^sub>1 \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
@@ -240,7 +243,7 @@ lemma branch_existence':
   next
     case (Suc k)
     then show ?case
-      by (meson branch_existence relpowp_Suc_I)
+      using branch_existence relpowp_Suc_I[of "k" "operational_semantics_step"] by blast
   qed
 
 text \<open>Any run from initial specification [\<Psi>] has a corresponding configuration
@@ -508,8 +511,7 @@ theorem instant_computation_termination:
   shows "wfP (\<lambda>(\<S>\<^sub>1:: 'a :: linordered_field config) \<S>\<^sub>2. \<S>\<^sub>1  \<hookrightarrow>\<^sub>e\<^sup>\<leftarrow>  \<S>\<^sub>2)"
   proof (simp add: wfP_def)
     show "wf {((\<S>\<^sub>1:: 'a :: linordered_field config), \<S>\<^sub>2). \<S>\<^sub>1 \<hookrightarrow>\<^sub>e\<^sup>\<leftarrow> \<S>\<^sub>2}"
-    apply (rule wf_subset)
-    proof -
+    proof (rule wf_subset)
       have "measure \<mu>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g = { (\<S>\<^sub>2, (\<S>\<^sub>1:: 'a :: linordered_field config)). \<mu>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g \<S>\<^sub>2 < \<mu>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g \<S>\<^sub>1 }"
         by (simp add: inv_image_def less_eq measure_def)
       then show "{((\<S>\<^sub>1:: 'a :: linordered_field config), \<S>\<^sub>2). \<S>\<^sub>1 \<hookrightarrow>\<^sub>e\<^sup>\<leftarrow> \<S>\<^sub>2} \<subseteq> (measure \<mu>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g)"
