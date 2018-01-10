@@ -87,15 +87,37 @@ theorem TESL_interp_unfold_stepwise_positive_atoms:
 theorem TESL_interp_unfold_stepwise_negative_atoms:
   assumes "\<not> positive_atom \<phi>"
   shows "\<lbrakk> \<phi> \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<Inter> {Y. \<exists>n::nat. Y = \<lbrakk> \<phi> \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup>}"
-  by (smt Collect_cong TESL_interp_unfold_stepwise_implies TESL_interp_unfold_stepwise_tagrel TESL_interp_unfold_stepwise_tagrelgen TESL_interp_unfold_stepwise_timedelayed assms positive_atom.elims(3))
+proof (cases \<phi>)
+  case (Sporadic x11 x12) thus ?thesis using assms by simp
+next
+  case (SporadicOn x21 x22 x23) thus ?thesis using assms by simp
+next
+  case (TagRelation x31 x32 x33 x34)
+  thus ?thesis using TESL_interp_unfold_stepwise_tagrel by simp
+next
+  case (TagRelationGen x41 x42 x43)
+  thus ?thesis using TESL_interp_unfold_stepwise_tagrelgen by simp
+next
+  case (Implies x51 x52)
+  thus ?thesis using TESL_interp_unfold_stepwise_implies by simp
+next
+  case (TimeDelayedBy x61 x62 x63 x64)
+  thus ?thesis using TESL_interp_unfold_stepwise_timedelayed by simp
+qed
 
 lemma forall_nat_expansion:
-  "(\<forall>n\<^sub>1 \<ge> (n\<^sub>0::nat). P n\<^sub>1) \<equiv> P n\<^sub>0 \<and> (\<forall>n\<^sub>1 \<ge> Suc n\<^sub>0. P n\<^sub>1)"
-  by (smt Suc_leD dual_order.antisym not_less_eq_eq)
+  "(\<forall>n\<^sub>1 \<ge> (n\<^sub>0::nat). P n\<^sub>1) = (P n\<^sub>0 \<and> (\<forall>n\<^sub>1 \<ge> Suc n\<^sub>0. P n\<^sub>1))"
+by (metis Suc_le_eq le_less)
 
 lemma exists_nat_expansion:
-  "(\<exists>n\<^sub>1 \<ge> (n\<^sub>0::nat). P n\<^sub>1) \<equiv> P n\<^sub>0 \<or> (\<exists>n\<^sub>1 \<ge> Suc n\<^sub>0. P n\<^sub>1)"
-  by (smt Suc_leD dual_order.antisym not_less_eq_eq)
+  "(\<exists>n\<^sub>1 \<ge> (n\<^sub>0::nat). P n\<^sub>1) = (P n\<^sub>0 \<or> (\<exists>n\<^sub>1 \<ge> Suc n\<^sub>0. P n\<^sub>1))"
+proof (cases "P n\<^sub>0")
+  case True
+  thus ?thesis by auto
+next
+  case False
+  thus ?thesis by (metis Suc_le_eq le_less)
+qed
 
 section \<open>Coinduction unfolding properties\<close>
 
@@ -163,6 +185,24 @@ lemma TESL_interp_stepwise_sporadicon_coind_unfold:
       qed
   qed
 
+lemma nat_set_suc:"{x. \<forall>m \<ge> n. P x m} = {x. P x n} \<inter> {x. \<forall>m \<ge> Suc n. P x m}"
+proof
+  { fix x
+    assume h:"x \<in> {x. \<forall>m \<ge> n. P x m}"
+    hence "P x n" by simp
+    moreover from h have "x \<in> {x. \<forall>m \<ge> Suc n. P x m}" by simp
+    ultimately have "x \<in> {x. P x n} \<inter> {x. \<forall>m \<ge> Suc n. P x m}" by simp
+  } thus "{x. \<forall>m \<ge> n. P x m} \<subseteq> {x. P x n} \<inter> {x. \<forall>m \<ge> Suc n. P x m}" ..
+next
+  { fix x
+    assume h:"x \<in> {x. P x n} \<inter> {x. \<forall>m \<ge> Suc n. P x m}"
+    hence "P x n" by simp
+    moreover from h have "\<forall>m \<ge> Suc n. P x m" by simp
+    ultimately have "\<forall>m \<ge> n. P x m" using forall_nat_expansion by blast
+    hence "x \<in> {x. \<forall>m \<ge> n. P x m}" by simp
+  } thus "{x. P x n} \<inter> {x. \<forall>m \<ge> Suc n. P x m} \<subseteq> {x. \<forall>m \<ge> n. P x m}" ..
+qed
+
 lemma TESL_interp_stepwise_tagrel_coind_unfold:
   shows "\<lbrakk> tag-relation K\<^sub>1 = \<alpha> * K\<^sub>2 + \<beta> \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> =
     \<lbrakk> \<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>1, n) \<doteq> \<alpha> * \<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>2, n) + \<beta> \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m
@@ -171,7 +211,7 @@ lemma TESL_interp_stepwise_tagrel_coind_unfold:
     have "{ \<rho>. \<forall>m\<ge>n. time ((Rep_run \<rho>) m K\<^sub>1) = \<alpha> * time ((Rep_run \<rho>) m K\<^sub>2) + \<beta> }
          = { \<rho>. time ((Rep_run \<rho>) n K\<^sub>1) = \<alpha> * time ((Rep_run \<rho>) n K\<^sub>2) + \<beta> }
          \<inter> { \<rho>. \<forall>m\<ge>Suc n. time ((Rep_run \<rho>) m K\<^sub>1) = \<alpha> * time ((Rep_run \<rho>) m K\<^sub>2) + \<beta> }"
-      by (smt Collect_cong Collect_conj_eq Suc_leD eq_refl le_antisym not_less_eq_eq)
+      using nat_set_suc[of "n" "\<lambda>x y. time ((Rep_run x) y K\<^sub>1) = \<alpha> * time ((Rep_run x) y K\<^sub>2) + \<beta>"] by simp
   then show ?thesis by auto
   qed
 
@@ -183,9 +223,9 @@ lemma TESL_interp_stepwise_tagrelgen_coind_unfold:
     have "{ \<rho>. \<forall>m\<ge>n. R (time ((Rep_run \<rho>) m K\<^sub>1), time ((Rep_run \<rho>) m K\<^sub>2)) }
          = { \<rho>. R (time ((Rep_run \<rho>) n K\<^sub>1), time ((Rep_run \<rho>) n K\<^sub>2)) }
          \<inter> { \<rho>. \<forall>m\<ge>Suc n. R (time ((Rep_run \<rho>) m K\<^sub>1), time ((Rep_run \<rho>) m K\<^sub>2)) }"
-      by (smt Collect_cong Collect_conj_eq Suc_leD eq_refl le_antisym not_less_eq_eq)
+      using nat_set_suc[of "n" "\<lambda>x y. R (time ((Rep_run x) y K\<^sub>1), time ((Rep_run x) y K\<^sub>2))"] by simp
   then show ?thesis by auto
-  qed
+qed
 
 lemma TESL_interp_stepwise_implies_coind_unfold:
   shows "\<lbrakk> master implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> =
@@ -195,7 +235,7 @@ lemma TESL_interp_stepwise_implies_coind_unfold:
     have "{ \<rho>. \<forall>m\<ge>n. hamlet ((Rep_run \<rho>) m master) \<longrightarrow> hamlet ((Rep_run \<rho>) m slave) }
           = { \<rho>. hamlet ((Rep_run \<rho>) n master) \<longrightarrow> hamlet ((Rep_run \<rho>) n slave) }
           \<inter> { \<rho>. \<forall>m\<ge>Suc n. hamlet ((Rep_run \<rho>) m master) \<longrightarrow> hamlet ((Rep_run \<rho>) m slave) }"
-      by (smt Collect_cong Collect_conj_eq Suc_leD eq_refl le_antisym not_less_eq_eq)
+      using nat_set_suc[of "n" "\<lambda>x y. hamlet ((Rep_run x) y master) \<longrightarrow> hamlet ((Rep_run x) y slave)"] by simp
     then show ?thesis by auto
   qed
 
@@ -213,7 +253,9 @@ lemma TESL_interp_stepwise_timedelayed_coind_unfold:
            \<inter> { \<rho>. \<forall>m\<ge>Suc n. hamlet ((Rep_run \<rho>) m master) \<longrightarrow>
                  (let measured_time = time ((Rep_run \<rho>) m measuring) in
                   \<exists>p \<ge> m. hamlet ((Rep_run \<rho>) p slave) \<and> time ((Rep_run \<rho>) p measuring) = measured_time + \<delta>\<tau>)}"
-      by (smt Collect_cong Collect_conj_eq Suc_leD eq_refl le_antisym not_less_eq_eq)
+      using nat_set_suc[of "n" "\<lambda>x y. hamlet ((Rep_run x) y master) \<longrightarrow>
+                 (let measured_time = time ((Rep_run x) y measuring) in
+                  \<exists>p \<ge> y. hamlet ((Rep_run x) p slave) \<and> time ((Rep_run x) p measuring) = measured_time + \<delta>\<tau>)"] by simp
     then show ?thesis by auto
   qed
 
