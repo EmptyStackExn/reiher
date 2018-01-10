@@ -1,7 +1,7 @@
 Hygge
 ===================
 
-**Hygge** (pronounced [ˈhyɡ̊ə]) is a library in [Isabelle/HOL](http://isabelle.in.tum.de/) of operational and denotational semantics for the [Tagged Events Specification Language (TESL)](http://wwwdi.supelec.fr/software/TESL/).
+**Hygge** (pronounced [ˈhyɡ̊ə]) is a library in [Isabelle/HOL](http://isabelle.in.tum.de/) of operational and denotational semantics for the [Tagged Events Specification Language (TESL)](http://wdi.supelec.fr/software/TESL/).
 
 Getting started
 -------------------
