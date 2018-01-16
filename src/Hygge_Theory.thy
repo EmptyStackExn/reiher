@@ -19,7 +19,7 @@ theorem solve_start:
 
 section \<open>Soundness\<close>
 
-
+(* Compact proof, depends on the order of the cases in operational_semantics_elim *)
 lemma sound_reduction:
   assumes "(\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1)  \<hookrightarrow>  (\<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2)"
   shows "\<lbrakk>\<lbrakk> \<Gamma>\<^sub>1 \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk>\<lbrakk> \<Psi>\<^sub>1 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^sub>1\<^esup> \<inter> \<lbrakk>\<lbrakk> \<Phi>\<^sub>1 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^sub>1\<^esup>
@@ -47,7 +47,69 @@ proof -
   qed
 qed
 
-(* More verbose version *)
+(* More Isar-ish proof, still depends on the order of the cases in operational_semantics_elim *)
+(*
+lemma sound_reduction_xxx:
+  assumes "(\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1)  \<hookrightarrow>  (\<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2)"
+  shows "\<lbrakk>\<lbrakk> \<Gamma>\<^sub>1 \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk>\<lbrakk> \<Psi>\<^sub>1 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^sub>1\<^esup> \<inter> \<lbrakk>\<lbrakk> \<Phi>\<^sub>1 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^sub>1\<^esup>
+          \<supseteq>  \<lbrakk>\<lbrakk> \<Gamma>\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk>\<lbrakk> \<Psi>\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^sub>2\<^esup> \<inter> \<lbrakk>\<lbrakk> \<Phi>\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^sub>2\<^esup>"
+proof -
+  from assms consider
+    (a) "(\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1)  \<hookrightarrow>\<^sub>i  (\<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2)"
+  | (b) "(\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1)  \<hookrightarrow>\<^sub>e  (\<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2)"
+    using operational_semantics_step.simps by blast
+  thus ?thesis
+  proof (cases)
+    case a
+    thus ?thesis by (simp add: operational_semantics_intro.simps)
+  next
+    case b thus ?thesis
+    proof (rule operational_semantics_elim.cases, goal_cases)
+      case (1 \<Gamma> n K \<tau> \<Psi> \<Phi>) 
+      thus ?case
+        using HeronConf_interp_stepwise_sporadic_cases HeronConf_interpretation.simps by blast
+    next
+      case (2 \<Gamma> n K \<tau> \<Psi> \<Phi>)
+      then show ?case 
+        using HeronConf_interp_stepwise_sporadic_cases HeronConf_interpretation.simps by blast
+    next
+      case (3 \<Gamma> n K\<^sub>1 \<tau> K\<^sub>2 \<Psi> \<Phi>)
+      then show ?case 
+        using HeronConf_interp_stepwise_sporadicon_cases HeronConf_interpretation.simps by blast
+    next
+      case (4 \<Gamma> n K\<^sub>1 \<tau> K\<^sub>2 \<Psi> \<Phi>)
+      then show ?case 
+        using HeronConf_interp_stepwise_sporadicon_cases HeronConf_interpretation.simps by blast
+    next
+      case (5 \<Gamma> n K\<^sub>1 \<alpha> K\<^sub>2 \<beta> \<Psi> \<Phi>)
+      then show ?case 
+        using HeronConf_interp_stepwise_tagrel_cases HeronConf_interpretation.simps by blast
+    next
+      case (6 \<Gamma> n K\<^sub>1 K\<^sub>2 R \<Psi> \<Phi>)
+      then show ?case 
+        using HeronConf_interp_stepwise_tagrelgen_cases HeronConf_interpretation.simps by blast
+    next
+      case (7 \<Gamma> n K\<^sub>1 K\<^sub>2 \<Psi> \<Phi>)
+      then show ?case 
+        using HeronConf_interp_stepwise_implies_cases HeronConf_interpretation.simps by blast
+    next
+      case (8 \<Gamma> n K\<^sub>1 K\<^sub>2 \<Psi> \<Phi>)
+      then show ?case 
+        using HeronConf_interp_stepwise_implies_cases HeronConf_interpretation.simps by blast
+    next
+      case (9 \<Gamma> n K\<^sub>1 \<delta>\<tau> K\<^sub>2 K\<^sub>3 \<Psi> \<Phi>)
+      then show ?case 
+        using HeronConf_interp_stepwise_timedelayed_cases HeronConf_interpretation.simps by blast
+    next
+      case (10 \<Gamma> n K\<^sub>1 \<delta>\<tau> K\<^sub>2 K\<^sub>3 \<Psi> \<Phi>)
+      then show ?case 
+        using HeronConf_interp_stepwise_timedelayed_cases HeronConf_interpretation.simps by blast
+    qed
+  qed
+qed
+*)
+
+(* More verbose version, independent on the order of the cases in operational_semantics_elim *)
 (*
 lemma sound_reduction_bis:
   assumes "(\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1)  \<hookrightarrow>  (\<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2)"
