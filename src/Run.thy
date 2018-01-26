@@ -28,6 +28,13 @@ lemma Abs_run_inverse_rewrite_unsafe:
   "Rep_run (Abs_run \<rho>) = \<rho>"
   oops (* Use [sorry] when testing *)
 
+fun symbolic_run_interpretation_primitive_predic :: "('\<tau>::linordered_field) run \<Rightarrow> '\<tau> constr \<Rightarrow> bool" ("_ \<turnstile> _") where
+    "\<rho> \<turnstile> K \<Up> n  = (hamlet ((Rep_run \<rho>) n K) = True)"
+  | "\<rho> \<turnstile> K \<not>\<Up> n = (hamlet ((Rep_run \<rho>) n K) = False)"
+  | "\<rho> \<turnstile> K \<Down> n @ \<lfloor> \<tau> \<rfloor> = (time ((Rep_run \<rho>) n K) = \<tau>)"
+  | "\<rho> \<turnstile> K \<Down> n @ \<lfloor> \<tau>\<^sub>v\<^sub>a\<^sub>r(K', n') \<oplus> \<tau> \<rfloor> = (time ((Rep_run \<rho>) n K) = time ((Rep_run \<rho>) n' K') + \<tau>)"
+  | "\<rho> \<turnstile> (\<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>1, n\<^sub>1)) \<doteq> \<alpha> * \<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>2, n\<^sub>2) + \<beta> = (time ((Rep_run \<rho>) n\<^sub>1 K\<^sub>1) = \<alpha> * time ((Rep_run \<rho>) n\<^sub>2 K\<^sub>2) + \<beta>)"
+  | "\<rho> \<turnstile> \<langle>\<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>1, n\<^sub>1), \<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>2, n\<^sub>2)\<rangle> \<epsilon> R = R (time ((Rep_run \<rho>) n\<^sub>1 K\<^sub>1), time ((Rep_run \<rho>) n\<^sub>2 K\<^sub>2))"
 
 fun symbolic_run_interpretation_primitive :: "('\<tau>::linordered_field) constr \<Rightarrow> '\<tau> run set" ("\<lbrakk> _ \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m") where
     "\<lbrakk> K \<Up> n  \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m   = { \<rho>. hamlet ((Rep_run \<rho>) n K) = True }"
@@ -47,6 +54,21 @@ lemma symbolic_run_interp_cons_morph:
 
 definition consistent_run :: "('\<tau>::linordered_field) constr list \<Rightarrow> bool" where 
   "consistent_run \<Gamma> \<equiv> \<exists>\<rho>. \<rho> \<in> \<lbrakk>\<lbrakk> \<Gamma> \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m"
+
+(* Counts the number of ticks in run [\<rho>] on clock [K] from indexes 0 to [n] *)
+fun TESL_tick_count :: "('\<tau>::linordered_field) run \<Rightarrow> clock \<Rightarrow> nat \<Rightarrow> nat" ("#\<^sup>\<le> _ _ _") where
+    "#\<^sup>\<le> \<rho> K 0       = (if hamlet ((Rep_run \<rho>) 0 K)
+                       then 1
+                       else 0)"
+  | "#\<^sup>\<le> \<rho> K (Suc n) = (if hamlet ((Rep_run \<rho>) (Suc n) K)
+                       then 1 + #\<^sup>\<le> \<rho> K n
+                       else #\<^sup>\<le> \<rho> K n)"
+
+(* Counts the number of ticks in run [\<rho>] on clock [K] from indexes 0 to [n - 1] *)
+fun TESL_tick_count_strictly :: "('\<tau>::linordered_field) run \<Rightarrow> clock \<Rightarrow> nat \<Rightarrow> nat" ("#\<^sup>< _ _ _") where
+    "#\<^sup>< \<rho> K 0       = 0"
+  | "#\<^sup>< \<rho> K (Suc n) = #\<^sup>\<le> \<rho> K n"
+
 
 (**) section \<open>Defining a method for witness construction\<close> (**)
 

@@ -40,6 +40,7 @@ datatype '\<tau> TESL_atomic =
   | TagRelationGen "clock" "clock" "('\<tau> tag_const \<times> '\<tau> tag_const) \<Rightarrow> bool" ("tag-relation \<langle>_, _\<rangle> \<in> _" 55)
   | Implies        "clock" "clock"                         (infixr "implies" 55)
   | TimeDelayedBy  "clock" "'\<tau> tag_const" "clock" "clock"     ("_ time-delayed by _ on _ implies _" 55)
+  | Precedes       "clock" "clock"                         (infixr "precedes" 55)
 
 type_synonym '\<tau> TESL_formula = "'\<tau> TESL_atomic list"
 

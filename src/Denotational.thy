@@ -30,6 +30,8 @@ fun TESL_interpretation_atomic
                           \<and> time ((Rep_run \<rho>) m measuring) = measured_time + \<delta>\<tau>
                  )
         }"
+  | "\<lbrakk> master precedes slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
+        { \<rho>. \<forall>n::nat. #\<^sup>< \<rho> master n \<ge> #\<^sup>\<le> \<rho> slave n }"
 
 section \<open>Denotational interpretation for TESL formulae\<close>
 
