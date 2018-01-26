@@ -60,8 +60,8 @@ inductive operational_semantics_elim :: "('\<tau>::linordered_field) concrete_co
      \<leadsto>\<^sub>e  (\<rho>, n \<turnstile> ((K\<^sub>3 sporadic \<lfloor>\<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>2, n) \<oplus> \<delta>\<tau>\<rfloor> on K\<^sub>2) # \<Psi>) \<triangleright> ((K\<^sub>1 time-delayed by \<delta>\<tau> on K\<^sub>2 implies K\<^sub>3) # \<Phi>))"
 | precedes_e:
   "#\<^sup>< \<rho> master n \<ge> #\<^sup>\<le> \<rho> slave n \<Longrightarrow>
-   (\<rho>, n \<turnstile> ((K\<^sub>1 implies K\<^sub>2) # \<Psi>) \<triangleright> \<Phi>)
-     \<leadsto>\<^sub>e  (\<rho>, n \<turnstile> \<Psi> \<triangleright> ((K\<^sub>1 implies K\<^sub>2) # \<Phi>))"
+   (\<rho>, n \<turnstile> ((K\<^sub>1 precedes K\<^sub>2) # \<Psi>) \<triangleright> \<Phi>)
+     \<leadsto>\<^sub>e  (\<rho>, n \<turnstile> \<Psi> \<triangleright> ((K\<^sub>1 precedes K\<^sub>2) # \<Phi>))"
 
 inductive operational_semantics_step :: "('\<tau>::linordered_field) concrete_config \<Rightarrow> '\<tau> concrete_config \<Rightarrow> bool" ("_ \<leadsto> _" 70) where
     intro_part: "(\<rho>\<^sub>1, n\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1)  \<leadsto>\<^sub>i  (\<rho>\<^sub>2, n\<^sub>2 \<turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2)
