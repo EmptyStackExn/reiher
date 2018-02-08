@@ -11,12 +11,12 @@ abbreviation uncurry_conf
   :: "('\<tau>::linordered_field) run \<Rightarrow> instant_index \<Rightarrow> '\<tau> TESL_formula \<Rightarrow> '\<tau> TESL_formula \<Rightarrow> '\<tau> concrete_config" ("_, _ \<turnstile> _ \<triangleright> _" 80) where
   "\<rho>, n \<turnstile> \<Psi> \<triangleright> \<Phi> \<equiv> (\<rho>, n, \<Psi>, \<Phi>)"
 
-inductive operational_semantics_intro :: "('\<tau>::linordered_field) concrete_config \<Rightarrow> '\<tau> concrete_config \<Rightarrow> bool" ("_ \<leadsto>\<^sub>i _" 70) where
+inductive concrete_operational_semantics_intro :: "('\<tau>::linordered_field) concrete_config \<Rightarrow> '\<tau> concrete_config \<Rightarrow> bool" ("_ \<leadsto>\<^sub>i _" 70) where
   instant_i:
   "(\<rho>, n \<turnstile> [] \<triangleright> \<Phi>)
      \<leadsto>\<^sub>i  (\<rho>, Suc n \<turnstile> \<Phi> \<triangleright> [])"
 
-inductive operational_semantics_elim :: "('\<tau>::linordered_field) concrete_config \<Rightarrow> '\<tau> concrete_config \<Rightarrow> bool" ("_ \<leadsto>\<^sub>e _" 70) where
+inductive concrete_operational_semantics_elim :: "('\<tau>::linordered_field) concrete_config \<Rightarrow> '\<tau> concrete_config \<Rightarrow> bool" ("_ \<leadsto>\<^sub>e _" 70) where
   sporadic_e1:
   "(\<rho>, n \<turnstile> ((K sporadic \<tau>) # \<Psi>) \<triangleright> \<Phi>)
      \<leadsto>\<^sub>e  (\<rho>, n \<turnstile> \<Psi> \<triangleright> ((K sporadic \<tau>) # \<Phi>))"
@@ -63,7 +63,7 @@ inductive operational_semantics_elim :: "('\<tau>::linordered_field) concrete_co
    (\<rho>, n \<turnstile> ((K\<^sub>1 precedes K\<^sub>2) # \<Psi>) \<triangleright> \<Phi>)
      \<leadsto>\<^sub>e  (\<rho>, n \<turnstile> \<Psi> \<triangleright> ((K\<^sub>1 precedes K\<^sub>2) # \<Phi>))"
 
-inductive operational_semantics_step :: "('\<tau>::linordered_field) concrete_config \<Rightarrow> '\<tau> concrete_config \<Rightarrow> bool" ("_ \<leadsto> _" 70) where
+inductive concrete_operational_semantics_step :: "('\<tau>::linordered_field) concrete_config \<Rightarrow> '\<tau> concrete_config \<Rightarrow> bool" ("_ \<leadsto> _" 70) where
     intro_part: "(\<rho>\<^sub>1, n\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1)  \<leadsto>\<^sub>i  (\<rho>\<^sub>2, n\<^sub>2 \<turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2)
    \<Longrightarrow> (\<rho>\<^sub>1, n\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1)  \<leadsto>  (\<rho>\<^sub>2, n\<^sub>2 \<turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2)"
   | elims_part: "(\<rho>\<^sub>1, n\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1)  \<leadsto>\<^sub>e  (\<rho>\<^sub>2, n\<^sub>2 \<turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2)

@@ -12,6 +12,16 @@ fun HeronConf_interpretation_concrete
 
 section {* Soundness *}
 
+lemma sound_reduction_concrete_intro:
+  assumes "\<lparr> \<rho>, Suc n \<turnstile> \<Phi> \<triangleright> [] \<rparr>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
+  shows "\<lparr> \<rho>, n \<turnstile> [] \<triangleright> \<Phi> \<rparr>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
+  proof -
+    have "\<rho> \<in> \<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>"
+      using assms by auto
+    then show ?thesis
+      by auto
+  qed
+
 lemma sound_reduction_concrete_sporadic_e1:
   assumes "\<rho> \<turnstile> (K \<not>\<Up> n)"
   assumes "\<lparr> \<rho>, n \<turnstile> \<Psi> \<triangleright> ((K sporadic \<tau>) # \<Phi>) \<rparr>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
@@ -267,6 +277,41 @@ lemma sound_reduction_concrete_precedes_e:
     then show ?thesis
       using assms(2) by auto
   qed
+
+fun local_run_assumption :: "'\<tau>::linordered_field TESL_atomic \<Rightarrow> '\<tau> run \<Rightarrow> nat \<Rightarrow> bool" where
+    "local_run_assumption (K sporadic \<tau>) \<rho> n =
+      (True
+      \<or> (\<rho> \<turnstile> (K \<Up> n) \<and> \<rho> \<turnstile> (K \<Down> n @ \<lfloor>\<tau>\<rfloor>)))"
+  | "local_run_assumption (K\<^sub>1 sporadic \<tau> on K\<^sub>2) \<rho> n = 
+      (True
+      \<or> (\<rho> \<turnstile> (K\<^sub>1 \<Up> n) \<and> \<rho> \<turnstile> (K\<^sub>2 \<Down> n @ \<tau>)))"
+  | "local_run_assumption (tag-relation K\<^sub>1 = \<alpha> * K\<^sub>2 + \<beta>) \<rho> n =
+      \<rho> \<turnstile> ((\<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>1, n)) \<doteq> \<alpha> * \<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>2, n) + \<beta>)"
+  | "local_run_assumption (tag-relation \<langle>K\<^sub>1, K\<^sub>2\<rangle> \<in> R) \<rho> n =
+      \<rho> \<turnstile> (\<langle>\<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>1, n), \<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>2, n)\<rangle> \<epsilon> R)"
+  | "local_run_assumption (master implies slave) \<rho> n =
+      (\<rho> \<turnstile> (master \<not>\<Up> n)
+      \<or> (\<rho> \<turnstile> (master \<Up> n) \<and> \<rho> \<turnstile> (slave \<Up> n)))"
+  | "local_run_assumption (master time-delayed by \<delta>\<tau> on measuring implies slave) \<rho> n = 
+      (\<rho> \<turnstile> (master \<not>\<Up> n)
+      \<or> \<rho> \<turnstile> (master \<Up> n))"
+  | "local_run_assumption (master precedes slave) \<rho> n =
+      (#\<^sup>< \<rho> master n \<ge> #\<^sup>\<le> \<rho> slave n)"
+
+theorem sound_reduction_concrete:
+  assumes "(\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> \<psi> # \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1)  \<leadsto>\<^sub>e  (\<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2)"
+  assumes "local_run_assumption \<psi> \<rho> n"
+  assumes "\<lparr> \<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2 \<rparr>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
+  shows "\<lparr> \<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> \<psi> # \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1 \<rparr>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
+  proof (insert assms, erule concrete_operational_semantics_elim.cases)
+    show "\<And>\<rho> n K \<tau> \<Psi> \<Phi>.
+       (\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> \<psi> # \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1) =
+       (\<rho>, n \<turnstile> (K sporadic \<tau>) # \<Psi> \<triangleright> \<Phi>) \<Longrightarrow>
+       (\<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2 = \<rho>, n \<turnstile> \<Psi> \<triangleright> (K sporadic \<tau>) # \<Phi>) \<Longrightarrow>
+       \<lparr> \<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> \<psi> # \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1 \<rparr>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
+      using sound_reduction_concrete_sporadic_e1
+      sorry  
+  sorry  
 
 section {* Completeness *}
 
