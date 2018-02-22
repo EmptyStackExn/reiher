@@ -19,7 +19,6 @@ theorem solve_start:
 
 section \<open>Soundness\<close>
 
-(* Compact proof, depends on the order of the cases in operational_semantics_elim *)
 lemma sound_reduction:
   assumes "(\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1)  \<hookrightarrow>  (\<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2)"
   shows "\<lbrakk>\<lbrakk> \<Gamma>\<^sub>1 \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk>\<lbrakk> \<Psi>\<^sub>1 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^sub>1\<^esup> \<inter> \<lbrakk>\<lbrakk> \<Phi>\<^sub>1 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^sub>1\<^esup>
@@ -36,189 +35,15 @@ proof -
   next
     case b thus ?thesis
       apply (rule operational_semantics_elim.cases)
-      using HeronConf_interp_stepwise_sporadic_cases HeronConf_interpretation.simps apply blast
-      apply auto[1]
       using HeronConf_interp_stepwise_sporadicon_cases HeronConf_interpretation.simps apply blast+
       using HeronConf_interp_stepwise_tagrel_cases HeronConf_interpretation.simps apply blast
       using HeronConf_interp_stepwise_tagrelgen_cases HeronConf_interpretation.simps apply blast
       using HeronConf_interp_stepwise_implies_cases HeronConf_interpretation.simps apply blast+
+      using HeronConf_interp_stepwise_implies_not_cases HeronConf_interpretation.simps apply blast+
       using HeronConf_interp_stepwise_timedelayed_cases HeronConf_interpretation.simps apply blast+
     done
   qed
 qed
-
-(* More Isar-ish proof, still depends on the order of the cases in operational_semantics_elim *)
-(*
-lemma sound_reduction_xxx:
-  assumes "(\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1)  \<hookrightarrow>  (\<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2)"
-  shows "\<lbrakk>\<lbrakk> \<Gamma>\<^sub>1 \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk>\<lbrakk> \<Psi>\<^sub>1 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^sub>1\<^esup> \<inter> \<lbrakk>\<lbrakk> \<Phi>\<^sub>1 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^sub>1\<^esup>
-          \<supseteq>  \<lbrakk>\<lbrakk> \<Gamma>\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk>\<lbrakk> \<Psi>\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^sub>2\<^esup> \<inter> \<lbrakk>\<lbrakk> \<Phi>\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^sub>2\<^esup>"
-proof -
-  from assms consider
-    (a) "(\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1)  \<hookrightarrow>\<^sub>i  (\<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2)"
-  | (b) "(\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1)  \<hookrightarrow>\<^sub>e  (\<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2)"
-    using operational_semantics_step.simps by blast
-  thus ?thesis
-  proof (cases)
-    case a
-    thus ?thesis by (simp add: operational_semantics_intro.simps)
-  next
-    case b thus ?thesis
-    proof (rule operational_semantics_elim.cases, goal_cases)
-      case (1 \<Gamma> n K \<tau> \<Psi> \<Phi>) 
-      thus ?case
-        using HeronConf_interp_stepwise_sporadic_cases HeronConf_interpretation.simps by blast
-    next
-      case (2 \<Gamma> n K \<tau> \<Psi> \<Phi>)
-      then show ?case 
-        using HeronConf_interp_stepwise_sporadic_cases HeronConf_interpretation.simps by blast
-    next
-      case (3 \<Gamma> n K\<^sub>1 \<tau> K\<^sub>2 \<Psi> \<Phi>)
-      then show ?case 
-        using HeronConf_interp_stepwise_sporadicon_cases HeronConf_interpretation.simps by blast
-    next
-      case (4 \<Gamma> n K\<^sub>1 \<tau> K\<^sub>2 \<Psi> \<Phi>)
-      then show ?case 
-        using HeronConf_interp_stepwise_sporadicon_cases HeronConf_interpretation.simps by blast
-    next
-      case (5 \<Gamma> n K\<^sub>1 \<alpha> K\<^sub>2 \<beta> \<Psi> \<Phi>)
-      then show ?case 
-        using HeronConf_interp_stepwise_tagrel_cases HeronConf_interpretation.simps by blast
-    next
-      case (6 \<Gamma> n K\<^sub>1 K\<^sub>2 R \<Psi> \<Phi>)
-      then show ?case 
-        using HeronConf_interp_stepwise_tagrelgen_cases HeronConf_interpretation.simps by blast
-    next
-      case (7 \<Gamma> n K\<^sub>1 K\<^sub>2 \<Psi> \<Phi>)
-      then show ?case 
-        using HeronConf_interp_stepwise_implies_cases HeronConf_interpretation.simps by blast
-    next
-      case (8 \<Gamma> n K\<^sub>1 K\<^sub>2 \<Psi> \<Phi>)
-      then show ?case 
-        using HeronConf_interp_stepwise_implies_cases HeronConf_interpretation.simps by blast
-    next
-      case (9 \<Gamma> n K\<^sub>1 \<delta>\<tau> K\<^sub>2 K\<^sub>3 \<Psi> \<Phi>)
-      then show ?case 
-        using HeronConf_interp_stepwise_timedelayed_cases HeronConf_interpretation.simps by blast
-    next
-      case (10 \<Gamma> n K\<^sub>1 \<delta>\<tau> K\<^sub>2 K\<^sub>3 \<Psi> \<Phi>)
-      then show ?case 
-        using HeronConf_interp_stepwise_timedelayed_cases HeronConf_interpretation.simps by blast
-    qed
-  qed
-qed
-*)
-
-(* More verbose version, independent on the order of the cases in operational_semantics_elim *)
-(*
-lemma sound_reduction_bis:
-  assumes "(\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1)  \<hookrightarrow>  (\<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2)"
-  shows "\<lbrakk>\<lbrakk> \<Gamma>\<^sub>1 \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk>\<lbrakk> \<Psi>\<^sub>1 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^sub>1\<^esup> \<inter> \<lbrakk>\<lbrakk> \<Phi>\<^sub>1 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^sub>1\<^esup>
-          \<supseteq>  \<lbrakk>\<lbrakk> \<Gamma>\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk>\<lbrakk> \<Psi>\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^sub>2\<^esup> \<inter> \<lbrakk>\<lbrakk> \<Phi>\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^sub>2\<^esup>"
-  proof (insert assms, erule operational_semantics_step.cases)
-  show "\<And>\<Gamma>\<^sub>1' n\<^sub>1' \<Psi>\<^sub>1' \<Phi>\<^sub>1' \<Gamma>\<^sub>2' n\<^sub>2' \<Psi>\<^sub>2' \<Phi>\<^sub>2'.
-       (\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1) = (\<Gamma>\<^sub>1', n\<^sub>1' \<turnstile> \<Psi>\<^sub>1' \<triangleright> \<Phi>\<^sub>1') \<Longrightarrow>
-       (\<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2) = (\<Gamma>\<^sub>2', n\<^sub>2' \<turnstile> \<Psi>\<^sub>2' \<triangleright> \<Phi>\<^sub>2') \<Longrightarrow>
-       (\<Gamma>\<^sub>1', n\<^sub>1' \<turnstile> \<Psi>\<^sub>1' \<triangleright> \<Phi>\<^sub>1') \<hookrightarrow>\<^sub>i (\<Gamma>\<^sub>2', n\<^sub>2' \<turnstile> \<Psi>\<^sub>2' \<triangleright> \<Phi>\<^sub>2') \<Longrightarrow>
-       \<lbrakk>\<lbrakk> \<Gamma>\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk>\<lbrakk> \<Psi>\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^sub>2\<^esup> \<inter> \<lbrakk>\<lbrakk> \<Phi>\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^sub>2\<^esup>
-       \<subseteq> \<lbrakk>\<lbrakk> \<Gamma>\<^sub>1 \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk>\<lbrakk> \<Psi>\<^sub>1 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^sub>1\<^esup> \<inter> \<lbrakk>\<lbrakk> \<Phi>\<^sub>1 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^sub>1\<^esup>"
-    by (erule operational_semantics_intro.cases, auto)
-  show "\<And>\<Gamma>\<^sub>1' n\<^sub>1' \<Psi>\<^sub>1' \<Phi>\<^sub>1' \<Gamma>\<^sub>2' n\<^sub>2' \<Psi>\<^sub>2' \<Phi>\<^sub>2'.
-       (\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1) = (\<Gamma>\<^sub>1', n\<^sub>1' \<turnstile> \<Psi>\<^sub>1' \<triangleright> \<Phi>\<^sub>1') \<Longrightarrow>
-       (\<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2) = (\<Gamma>\<^sub>2', n\<^sub>2' \<turnstile> \<Psi>\<^sub>2' \<triangleright> \<Phi>\<^sub>2') \<Longrightarrow>
-       (\<Gamma>\<^sub>1', n\<^sub>1' \<turnstile> \<Psi>\<^sub>1' \<triangleright> \<Phi>\<^sub>1') \<hookrightarrow>\<^sub>e (\<Gamma>\<^sub>2', n\<^sub>2' \<turnstile> \<Psi>\<^sub>2' \<triangleright> \<Phi>\<^sub>2') \<Longrightarrow>
-       \<lbrakk>\<lbrakk> \<Gamma>\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk>\<lbrakk> \<Psi>\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^sub>2\<^esup> \<inter> \<lbrakk>\<lbrakk> \<Phi>\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^sub>2\<^esup>
-       \<subseteq> \<lbrakk>\<lbrakk> \<Gamma>\<^sub>1 \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk>\<lbrakk> \<Psi>\<^sub>1 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^sub>1\<^esup> \<inter> \<lbrakk>\<lbrakk> \<Phi>\<^sub>1 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^sub>1\<^esup>"
-    proof (erule operational_semantics_elim.cases)
-    show "\<And>\<Gamma>\<^sub>1' n\<^sub>1' \<Psi>\<^sub>1' \<Phi>\<^sub>1' \<Gamma>\<^sub>2' n\<^sub>2' \<Psi>\<^sub>2' \<Phi>\<^sub>2' \<Gamma> n K \<tau> \<Psi> \<Phi>.
-       (\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1) = (\<Gamma>\<^sub>1', n\<^sub>1' \<turnstile> \<Psi>\<^sub>1' \<triangleright> \<Phi>\<^sub>1') \<Longrightarrow>
-       (\<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2) = (\<Gamma>\<^sub>2', n\<^sub>2' \<turnstile> \<Psi>\<^sub>2' \<triangleright> \<Phi>\<^sub>2') \<Longrightarrow>
-       (\<Gamma>\<^sub>1', n\<^sub>1' \<turnstile> \<Psi>\<^sub>1' \<triangleright> \<Phi>\<^sub>1') = (\<Gamma>, n \<turnstile> ((K sporadic \<tau>) # \<Psi>) \<triangleright> \<Phi>) \<Longrightarrow>
-       (\<Gamma>\<^sub>2', n\<^sub>2' \<turnstile> \<Psi>\<^sub>2' \<triangleright> \<Phi>\<^sub>2') = (\<Gamma>, n \<turnstile> \<Psi> \<triangleright> ((K sporadic \<tau>) # \<Phi>)) \<Longrightarrow>
-       \<lbrakk>\<lbrakk> \<Gamma>\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk>\<lbrakk> \<Psi>\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^sub>2\<^esup> \<inter> \<lbrakk>\<lbrakk> \<Phi>\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^sub>2\<^esup>
-       \<subseteq> \<lbrakk>\<lbrakk> \<Gamma>\<^sub>1 \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk>\<lbrakk> \<Psi>\<^sub>1 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^sub>1\<^esup> \<inter> \<lbrakk>\<lbrakk> \<Phi>\<^sub>1 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^sub>1\<^esup>"
-      using HeronConf_interp_stepwise_sporadic_cases HeronConf_interpretation.simps by blast
-    show "\<And>\<Gamma>\<^sub>1' n\<^sub>1' \<Psi>\<^sub>1' \<Phi>\<^sub>1' \<Gamma>\<^sub>2' n\<^sub>2' \<Psi>\<^sub>2' \<Phi>\<^sub>2' \<Gamma> n K \<tau> \<Psi> \<Phi>.
-       (\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1) = (\<Gamma>\<^sub>1', n\<^sub>1' \<turnstile> \<Psi>\<^sub>1' \<triangleright> \<Phi>\<^sub>1') \<Longrightarrow>
-       (\<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2) = (\<Gamma>\<^sub>2', n\<^sub>2' \<turnstile> \<Psi>\<^sub>2' \<triangleright> \<Phi>\<^sub>2') \<Longrightarrow>
-       (\<Gamma>\<^sub>1', n\<^sub>1' \<turnstile> \<Psi>\<^sub>1' \<triangleright> \<Phi>\<^sub>1') = (\<Gamma>, n \<turnstile> ((K sporadic \<tau>) # \<Psi>) \<triangleright> \<Phi>) \<Longrightarrow>
-       (\<Gamma>\<^sub>2', n\<^sub>2' \<turnstile> \<Psi>\<^sub>2' \<triangleright> \<Phi>\<^sub>2') = (((K \<Up> n) # (K \<Down> n @ \<lfloor> \<tau> \<rfloor>) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> \<Phi>) \<Longrightarrow>
-       \<lbrakk>\<lbrakk> \<Gamma>\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk>\<lbrakk> \<Psi>\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^sub>2\<^esup> \<inter> \<lbrakk>\<lbrakk> \<Phi>\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^sub>2\<^esup>
-       \<subseteq> \<lbrakk>\<lbrakk> \<Gamma>\<^sub>1 \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk>\<lbrakk> \<Psi>\<^sub>1 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^sub>1\<^esup> \<inter> \<lbrakk>\<lbrakk> \<Phi>\<^sub>1 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^sub>1\<^esup>"
-      using HeronConf_interp_stepwise_sporadic_cases by auto
-    show "\<And>\<Gamma>\<^sub>1' n\<^sub>1' \<Psi>\<^sub>1' \<Phi>\<^sub>1' \<Gamma>\<^sub>2' n\<^sub>2' \<Psi>\<^sub>2' \<Phi>\<^sub>2' \<Gamma> n K\<^sub>1 \<tau> K\<^sub>2 \<Psi> \<Phi>.
-       (\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1) = (\<Gamma>\<^sub>1', n\<^sub>1' \<turnstile> \<Psi>\<^sub>1' \<triangleright> \<Phi>\<^sub>1') \<Longrightarrow>
-       (\<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2) = (\<Gamma>\<^sub>2', n\<^sub>2' \<turnstile> \<Psi>\<^sub>2' \<triangleright> \<Phi>\<^sub>2') \<Longrightarrow>
-       (\<Gamma>\<^sub>1', n\<^sub>1' \<turnstile> \<Psi>\<^sub>1' \<triangleright> \<Phi>\<^sub>1') = (\<Gamma>, n \<turnstile> ((K\<^sub>1 sporadic \<tau> on K\<^sub>2) # \<Psi>) \<triangleright> \<Phi>) \<Longrightarrow>
-       (\<Gamma>\<^sub>2', n\<^sub>2' \<turnstile> \<Psi>\<^sub>2' \<triangleright> \<Phi>\<^sub>2') = (\<Gamma>, n \<turnstile> \<Psi> \<triangleright> ((K\<^sub>1 sporadic \<tau> on K\<^sub>2) # \<Phi>)) \<Longrightarrow>
-       \<lbrakk>\<lbrakk> \<Gamma>\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk>\<lbrakk> \<Psi>\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^sub>2\<^esup> \<inter> \<lbrakk>\<lbrakk> \<Phi>\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^sub>2\<^esup>
-       \<subseteq> \<lbrakk>\<lbrakk> \<Gamma>\<^sub>1 \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk>\<lbrakk> \<Psi>\<^sub>1 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^sub>1\<^esup> \<inter> \<lbrakk>\<lbrakk> \<Phi>\<^sub>1 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^sub>1\<^esup>"
-      using HeronConf_interp_stepwise_sporadicon_cases by fastforce
-    show "\<And>\<Gamma>\<^sub>1' n\<^sub>1' \<Psi>\<^sub>1' \<Phi>\<^sub>1' \<Gamma>\<^sub>2' n\<^sub>2' \<Psi>\<^sub>2' \<Phi>\<^sub>2' \<Gamma> n K\<^sub>1 \<tau> K\<^sub>2 \<Psi> \<Phi>.
-       (\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1) = (\<Gamma>\<^sub>1', n\<^sub>1' \<turnstile> \<Psi>\<^sub>1' \<triangleright> \<Phi>\<^sub>1') \<Longrightarrow>
-       (\<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2) = (\<Gamma>\<^sub>2', n\<^sub>2' \<turnstile> \<Psi>\<^sub>2' \<triangleright> \<Phi>\<^sub>2') \<Longrightarrow>
-       (\<Gamma>\<^sub>1', n\<^sub>1' \<turnstile> \<Psi>\<^sub>1' \<triangleright> \<Phi>\<^sub>1') = (\<Gamma>, n \<turnstile> ((K\<^sub>1 sporadic \<tau> on K\<^sub>2) # \<Psi>) \<triangleright> \<Phi>) \<Longrightarrow>
-       (\<Gamma>\<^sub>2', n\<^sub>2' \<turnstile> \<Psi>\<^sub>2' \<triangleright> \<Phi>\<^sub>2') = (((K\<^sub>1 \<Up> n) # (K\<^sub>2 \<Down> n @ \<tau>) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> \<Phi>) \<Longrightarrow>
-       \<lbrakk>\<lbrakk> \<Gamma>\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk>\<lbrakk> \<Psi>\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^sub>2\<^esup> \<inter> \<lbrakk>\<lbrakk> \<Phi>\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^sub>2\<^esup>
-       \<subseteq> \<lbrakk>\<lbrakk> \<Gamma>\<^sub>1 \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk>\<lbrakk> \<Psi>\<^sub>1 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^sub>1\<^esup> \<inter> \<lbrakk>\<lbrakk> \<Phi>\<^sub>1 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^sub>1\<^esup>"
-      using HeronConf_interp_stepwise_sporadicon_cases
-      by fastforce
-    show "\<And>\<Gamma>\<^sub>1' n\<^sub>1' \<Psi>\<^sub>1' \<Phi>\<^sub>1' \<Gamma>\<^sub>2' n\<^sub>2' \<Psi>\<^sub>2' \<Phi>\<^sub>2' \<Gamma> n K\<^sub>1 \<alpha> K\<^sub>2 \<beta> \<Psi> \<Phi>.
-       (\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1) = (\<Gamma>\<^sub>1', n\<^sub>1' \<turnstile> \<Psi>\<^sub>1' \<triangleright> \<Phi>\<^sub>1') \<Longrightarrow>
-       (\<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2) = (\<Gamma>\<^sub>2', n\<^sub>2' \<turnstile> \<Psi>\<^sub>2' \<triangleright> \<Phi>\<^sub>2') \<Longrightarrow>
-       (\<Gamma>\<^sub>1', n\<^sub>1' \<turnstile> \<Psi>\<^sub>1' \<triangleright> \<Phi>\<^sub>1') = (\<Gamma>, n \<turnstile> ((tag-relation K\<^sub>1 = \<alpha> * K\<^sub>2 + \<beta>) # \<Psi>) \<triangleright> \<Phi>) \<Longrightarrow>
-       (\<Gamma>\<^sub>2', n\<^sub>2' \<turnstile> \<Psi>\<^sub>2' \<triangleright> \<Phi>\<^sub>2') =
-       ((((\<tau>\<^sub>v\<^sub>a\<^sub>r (K\<^sub>1, n)) \<doteq> \<alpha> * \<tau>\<^sub>v\<^sub>a\<^sub>r (K\<^sub>2, n) + \<beta>) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> ((tag-relation K\<^sub>1 = \<alpha> * K\<^sub>2 + \<beta>) # \<Phi>)) \<Longrightarrow>
-       \<lbrakk>\<lbrakk> \<Gamma>\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk>\<lbrakk> \<Psi>\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^sub>2\<^esup> \<inter> \<lbrakk>\<lbrakk> \<Phi>\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^sub>2\<^esup>
-       \<subseteq> \<lbrakk>\<lbrakk> \<Gamma>\<^sub>1 \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk>\<lbrakk> \<Psi>\<^sub>1 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^sub>1\<^esup> \<inter> \<lbrakk>\<lbrakk> \<Phi>\<^sub>1 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^sub>1\<^esup>"
-      using HeronConf_interp_stepwise_tagrel_cases HeronConf_interpretation.simps by blast
-    show "\<And>\<Gamma>\<^sub>1' n\<^sub>1' \<Psi>\<^sub>1' \<Phi>\<^sub>1' \<Gamma>\<^sub>2' n\<^sub>2' \<Psi>\<^sub>2' \<Phi>\<^sub>2' \<Gamma> n K\<^sub>1 K\<^sub>2 R \<Psi> \<Phi>.
-       (\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1) = (\<Gamma>\<^sub>1', n\<^sub>1' \<turnstile> \<Psi>\<^sub>1' \<triangleright> \<Phi>\<^sub>1') \<Longrightarrow>
-       (\<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2) = (\<Gamma>\<^sub>2', n\<^sub>2' \<turnstile> \<Psi>\<^sub>2' \<triangleright> \<Phi>\<^sub>2') \<Longrightarrow>
-       (\<Gamma>\<^sub>1', n\<^sub>1' \<turnstile> \<Psi>\<^sub>1' \<triangleright> \<Phi>\<^sub>1') = (\<Gamma>, n \<turnstile> ((tag-relation \<langle>K\<^sub>1, K\<^sub>2\<rangle> \<in> R) # \<Psi>) \<triangleright> \<Phi>) \<Longrightarrow>
-       (\<Gamma>\<^sub>2', n\<^sub>2' \<turnstile> \<Psi>\<^sub>2' \<triangleright> \<Phi>\<^sub>2') = (((\<langle>\<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>1, n), \<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>2, n)\<rangle> \<epsilon> R) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> ((tag-relation \<langle>K\<^sub>1, K\<^sub>2\<rangle> \<in> R) # \<Phi>)) \<Longrightarrow>
-       \<lbrakk>\<lbrakk> \<Gamma>\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk>\<lbrakk> \<Psi>\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^sub>2\<^esup> \<inter> \<lbrakk>\<lbrakk> \<Phi>\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^sub>2\<^esup>
-       \<subseteq> \<lbrakk>\<lbrakk> \<Gamma>\<^sub>1 \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk>\<lbrakk> \<Psi>\<^sub>1 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^sub>1\<^esup> \<inter> \<lbrakk>\<lbrakk> \<Phi>\<^sub>1 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^sub>1\<^esup>"
-      using HeronConf_interp_stepwise_tagrelgen_cases HeronConf_interpretation.simps by blast
-    show "\<And>\<Gamma>\<^sub>1' n\<^sub>1' \<Psi>\<^sub>1' \<Phi>\<^sub>1' \<Gamma>\<^sub>2' n\<^sub>2' \<Psi>\<^sub>2' \<Phi>\<^sub>2' \<Gamma> n K\<^sub>1 K\<^sub>2 \<Psi> \<Phi>.
-       (\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1) = (\<Gamma>\<^sub>1', n\<^sub>1' \<turnstile> \<Psi>\<^sub>1' \<triangleright> \<Phi>\<^sub>1') \<Longrightarrow>
-       (\<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2) = (\<Gamma>\<^sub>2', n\<^sub>2' \<turnstile> \<Psi>\<^sub>2' \<triangleright> \<Phi>\<^sub>2') \<Longrightarrow>
-       (\<Gamma>\<^sub>1', n\<^sub>1' \<turnstile> \<Psi>\<^sub>1' \<triangleright> \<Phi>\<^sub>1') = (\<Gamma>, n \<turnstile> ((K\<^sub>1 implies K\<^sub>2) # \<Psi>) \<triangleright> \<Phi>) \<Longrightarrow>
-       (\<Gamma>\<^sub>2', n\<^sub>2' \<turnstile> \<Psi>\<^sub>2' \<triangleright> \<Phi>\<^sub>2') = (((K\<^sub>1 \<not>\<Up> n) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> ((K\<^sub>1 implies K\<^sub>2) # \<Phi>)) \<Longrightarrow>
-       \<lbrakk>\<lbrakk> \<Gamma>\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk>\<lbrakk> \<Psi>\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^sub>2\<^esup> \<inter> \<lbrakk>\<lbrakk> \<Phi>\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^sub>2\<^esup>
-       \<subseteq> \<lbrakk>\<lbrakk> \<Gamma>\<^sub>1 \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk>\<lbrakk> \<Psi>\<^sub>1 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^sub>1\<^esup> \<inter> \<lbrakk>\<lbrakk> \<Phi>\<^sub>1 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^sub>1\<^esup>"
-      using HeronConf_interp_stepwise_implies_cases HeronConf_interpretation.simps by blast
-    show "\<And>\<Gamma>\<^sub>1' n\<^sub>1' \<Psi>\<^sub>1' \<Phi>\<^sub>1' \<Gamma>\<^sub>2' n\<^sub>2' \<Psi>\<^sub>2' \<Phi>\<^sub>2' \<Gamma> n K\<^sub>1 K\<^sub>2 \<Psi> \<Phi>.
-       (\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1) = (\<Gamma>\<^sub>1', n\<^sub>1' \<turnstile> \<Psi>\<^sub>1' \<triangleright> \<Phi>\<^sub>1') \<Longrightarrow>
-       (\<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2) = (\<Gamma>\<^sub>2', n\<^sub>2' \<turnstile> \<Psi>\<^sub>2' \<triangleright> \<Phi>\<^sub>2') \<Longrightarrow>
-       (\<Gamma>\<^sub>1', n\<^sub>1' \<turnstile> \<Psi>\<^sub>1' \<triangleright> \<Phi>\<^sub>1') = (\<Gamma>, n \<turnstile> ((K\<^sub>1 implies K\<^sub>2) # \<Psi>) \<triangleright> \<Phi>) \<Longrightarrow>
-       (\<Gamma>\<^sub>2', n\<^sub>2' \<turnstile> \<Psi>\<^sub>2' \<triangleright> \<Phi>\<^sub>2') = (((K\<^sub>1 \<Up> n) # (K\<^sub>2 \<Up> n) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> ((K\<^sub>1 implies K\<^sub>2) # \<Phi>)) \<Longrightarrow>
-       \<lbrakk>\<lbrakk> \<Gamma>\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk>\<lbrakk> \<Psi>\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^sub>2\<^esup> \<inter> \<lbrakk>\<lbrakk> \<Phi>\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^sub>2\<^esup>
-       \<subseteq> \<lbrakk>\<lbrakk> \<Gamma>\<^sub>1 \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk>\<lbrakk> \<Psi>\<^sub>1 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^sub>1\<^esup> \<inter> \<lbrakk>\<lbrakk> \<Phi>\<^sub>1 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^sub>1\<^esup>"
-      using HeronConf_interp_stepwise_implies_cases HeronConf_interpretation.simps by blast
-    show "\<And>\<Gamma>\<^sub>1' n\<^sub>1' \<Psi>\<^sub>1' \<Phi>\<^sub>1' \<Gamma>\<^sub>2' n\<^sub>2' \<Psi>\<^sub>2' \<Phi>\<^sub>2' \<Gamma> n K\<^sub>1 \<delta>\<tau> K\<^sub>2 K\<^sub>3 \<Psi> \<Phi>.
-       (\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1) = (\<Gamma>\<^sub>1', n\<^sub>1' \<turnstile> \<Psi>\<^sub>1' \<triangleright> \<Phi>\<^sub>1') \<Longrightarrow>
-       (\<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2) = (\<Gamma>\<^sub>2', n\<^sub>2' \<turnstile> \<Psi>\<^sub>2' \<triangleright> \<Phi>\<^sub>2') \<Longrightarrow>
-       (\<Gamma>\<^sub>1', n\<^sub>1' \<turnstile> \<Psi>\<^sub>1' \<triangleright> \<Phi>\<^sub>1') = (\<Gamma>, n \<turnstile> ((K\<^sub>1 time-delayed by \<delta>\<tau> on K\<^sub>2 implies K\<^sub>3) # \<Psi>) \<triangleright> \<Phi>) \<Longrightarrow>
-       (\<Gamma>\<^sub>2', n\<^sub>2' \<turnstile> \<Psi>\<^sub>2' \<triangleright> \<Phi>\<^sub>2') =
-       (((K\<^sub>1 \<not>\<Up> n) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> ((K\<^sub>1 time-delayed by \<delta>\<tau> on K\<^sub>2 implies K\<^sub>3) # \<Phi>)) \<Longrightarrow>
-       \<lbrakk>\<lbrakk> \<Gamma>\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk>\<lbrakk> \<Psi>\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^sub>2\<^esup> \<inter> \<lbrakk>\<lbrakk> \<Phi>\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^sub>2\<^esup>
-       \<subseteq> \<lbrakk>\<lbrakk> \<Gamma>\<^sub>1 \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk>\<lbrakk> \<Psi>\<^sub>1 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^sub>1\<^esup> \<inter> \<lbrakk>\<lbrakk> \<Phi>\<^sub>1 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^sub>1\<^esup>"
-      using HeronConf_interp_stepwise_timedelayed_cases HeronConf_interpretation.simps by blast
-    show "\<And>\<Gamma>\<^sub>1' n\<^sub>1' \<Psi>\<^sub>1' \<Phi>\<^sub>1' \<Gamma>\<^sub>2' n\<^sub>2' \<Psi>\<^sub>2' \<Phi>\<^sub>2' \<Gamma> n K\<^sub>1 \<delta>\<tau> K\<^sub>2 K\<^sub>3 \<Psi> \<Phi>.
-       (\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1) = (\<Gamma>\<^sub>1', n\<^sub>1' \<turnstile> \<Psi>\<^sub>1' \<triangleright> \<Phi>\<^sub>1') \<Longrightarrow>
-       (\<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2) = (\<Gamma>\<^sub>2', n\<^sub>2' \<turnstile> \<Psi>\<^sub>2' \<triangleright> \<Phi>\<^sub>2') \<Longrightarrow>
-       (\<Gamma>\<^sub>1', n\<^sub>1' \<turnstile> \<Psi>\<^sub>1' \<triangleright> \<Phi>\<^sub>1') = (\<Gamma>, n \<turnstile> ((K\<^sub>1 time-delayed by \<delta>\<tau> on K\<^sub>2 implies K\<^sub>3) # \<Psi>) \<triangleright> \<Phi>) \<Longrightarrow>
-       (\<Gamma>\<^sub>2', n\<^sub>2' \<turnstile> \<Psi>\<^sub>2' \<triangleright> \<Phi>\<^sub>2') =
-       (((K\<^sub>1 \<Up> n) #
-       \<Gamma>), n \<turnstile> ((K\<^sub>3 sporadic \<lfloor> \<tau>\<^sub>v\<^sub>a\<^sub>r (K\<^sub>2, n) \<oplus> \<delta>\<tau> \<rfloor> on K\<^sub>2) #
-               \<Psi>) \<triangleright> ((K\<^sub>1 time-delayed by \<delta>\<tau> on K\<^sub>2 implies K\<^sub>3) # \<Phi>)) \<Longrightarrow>
-       \<lbrakk>\<lbrakk> \<Gamma>\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk>\<lbrakk> \<Psi>\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^sub>2\<^esup> \<inter> \<lbrakk>\<lbrakk> \<Phi>\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^sub>2\<^esup>
-       \<subseteq> \<lbrakk>\<lbrakk> \<Gamma>\<^sub>1 \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk>\<lbrakk> \<Psi>\<^sub>1 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^sub>1\<^esup> \<inter> \<lbrakk>\<lbrakk> \<Phi>\<^sub>1 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^sub>1\<^esup>"
-      using HeronConf_interp_stepwise_timedelayed_cases HeronConf_interpretation.simps by blast
-    qed
-  qed
-*)
 
 inductive_cases step_elim:"\<S>\<^sub>1 \<hookrightarrow> \<S>\<^sub>2"
 
@@ -288,11 +113,6 @@ lemma complete_direct_successors:
     case (Cons \<psi> \<Psi>) print_facts
       then show ?case
       proof (cases \<psi>)
-        case (Sporadic K \<tau>)
-        then show ?thesis
-          using HeronConf_interp_stepwise_sporadic_cases[of "\<Gamma>" "n" "K" "\<tau>" "\<Psi>" "\<Phi>"]
-                Cnext_solve_sporadic[of "\<Gamma>" "n" "\<Psi>" "K" "\<tau>" "\<Phi>"] by blast
-      next
         case (SporadicOn K1 \<tau> K2)
         then show ?thesis 
           using HeronConf_interp_stepwise_sporadicon_cases[of "\<Gamma>" "n" "K1" "\<tau>" "K2" "\<Psi>" "\<Phi>"]
@@ -312,6 +132,11 @@ lemma complete_direct_successors:
         then show ?thesis
           using HeronConf_interp_stepwise_implies_cases[of "\<Gamma>" "n" "K1" "K2" "\<Psi>" "\<Phi>"]
                 Cnext_solve_implies[of "K1" "n" "\<Gamma>" "\<Psi>" "K2" "\<Phi>"] by blast
+      next
+        case (ImpliesNot K1 K2)
+        then show ?thesis
+          using HeronConf_interp_stepwise_implies_not_cases[of "\<Gamma>" "n" "K1" "K2" "\<Psi>" "\<Phi>"]
+                Cnext_solve_implies_not[of "K1" "n" "\<Gamma>" "\<Psi>" "K2" "\<Phi>"] by blast
       next
         case (TimeDelayedBy Kmast \<tau> Kmeas Kslave)
         thus ?thesis
@@ -376,37 +201,6 @@ lemma instant_index_increase:
     case (Cons \<psi> \<Psi>)
   then show ?case
     proof (induct \<psi>)
-      case (Sporadic K \<tau>)
-        have branches: "\<lbrakk> \<Gamma>, n \<turnstile> ((K sporadic \<tau>) # \<Psi>) \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g =
-                          \<lbrakk> \<Gamma>, n \<turnstile> \<Psi> \<triangleright> ((K sporadic \<tau>) # \<Phi>) \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
-                        \<union> \<lbrakk> ((K \<Up> n) # (K \<Down> n @ \<lfloor>\<tau>\<rfloor>) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
-            using HeronConf_interp_stepwise_sporadic_cases by simp
-        have br1: "\<rho> \<in> \<lbrakk> \<Gamma>, n \<turnstile> \<Psi> \<triangleright> ((K sporadic \<tau>) # \<Phi>) \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
-                  \<Longrightarrow> \<exists>\<Gamma>\<^sub>k \<Psi>\<^sub>k \<Phi>\<^sub>k k. ((\<Gamma>, n \<turnstile> ((K sporadic \<tau>) # \<Psi>) \<triangleright> \<Phi>) \<hookrightarrow>\<^bsup>k\<^esup> (\<Gamma>\<^sub>k, Suc n \<turnstile> \<Psi>\<^sub>k \<triangleright> \<Phi>\<^sub>k))
-                                  \<and> \<rho> \<in> \<lbrakk> \<Gamma>\<^sub>k, Suc n \<turnstile> \<Psi>\<^sub>k \<triangleright> \<Phi>\<^sub>k \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
-        proof -
-          assume h1: "\<rho> \<in> \<lbrakk> \<Gamma>, n \<turnstile> \<Psi> \<triangleright> ((K sporadic \<tau>) # \<Phi>) \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
-          have "\<exists>\<Gamma>\<^sub>k \<Psi>\<^sub>k \<Phi>\<^sub>k k. ((\<Gamma>, n \<turnstile> \<Psi> \<triangleright> ((K sporadic \<tau>) # \<Phi>)) \<hookrightarrow>\<^bsup>k\<^esup> (\<Gamma>\<^sub>k, Suc n \<turnstile> \<Psi>\<^sub>k \<triangleright> \<Phi>\<^sub>k))
-                            \<and> \<rho> \<in> \<lbrakk> \<Gamma>\<^sub>k, Suc n \<turnstile> \<Psi>\<^sub>k \<triangleright> \<Phi>\<^sub>k \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
-            using h1 Sporadic.prems by simp
-          then show ?thesis
-            by (meson elims_part relpowp_Suc_I2 sporadic_e1)
-        qed
-        moreover have br2:
-          "\<rho> \<in> \<lbrakk> ((K \<Up> n) # (K \<Down> n @ \<lfloor>\<tau>\<rfloor>) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
-        \<Longrightarrow> \<exists>\<Gamma>\<^sub>k \<Psi>\<^sub>k \<Phi>\<^sub>k k. ((\<Gamma>, n \<turnstile> ((K sporadic \<tau>) # \<Psi>) \<triangleright> \<Phi>) \<hookrightarrow>\<^bsup>k\<^esup> (\<Gamma>\<^sub>k, Suc n \<turnstile> \<Psi>\<^sub>k \<triangleright> \<Phi>\<^sub>k))
-                        \<and> \<rho> \<in> \<lbrakk> \<Gamma>\<^sub>k, Suc n \<turnstile> \<Psi>\<^sub>k \<triangleright> \<Phi>\<^sub>k \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
-        proof -
-          assume h2: "\<rho> \<in> \<lbrakk> ((K \<Up> n) # (K \<Down> n @ \<lfloor>\<tau>\<rfloor>) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
-          have "\<exists>\<Gamma>\<^sub>k \<Psi>\<^sub>k \<Phi>\<^sub>k k. ((((K \<Up> n) # (K \<Down> n @ \<lfloor>\<tau>\<rfloor>) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> \<Phi>) \<hookrightarrow>\<^bsup>k\<^esup> (\<Gamma>\<^sub>k, Suc n \<turnstile> \<Psi>\<^sub>k \<triangleright> \<Phi>\<^sub>k))
-                            \<and> \<rho> \<in> \<lbrakk> \<Gamma>\<^sub>k, Suc n \<turnstile> \<Psi>\<^sub>k \<triangleright> \<Phi>\<^sub>k \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
-            using h2 Sporadic.prems by simp
-          then show ?thesis
-            by (meson elims_part relpowp_Suc_I2 sporadic_e2)
-        qed
-      ultimately show ?case
-        by (metis Sporadic.prems(2) UnE branches)
-    next
       case (SporadicOn K\<^sub>1 \<tau> K\<^sub>2)
       have branches: "\<lbrakk> \<Gamma>, n \<turnstile> ((K\<^sub>1 sporadic \<tau> on K\<^sub>2) # \<Psi>) \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
                     = \<lbrakk> \<Gamma>, n \<turnstile> \<Psi> \<triangleright> ((K\<^sub>1 sporadic \<tau> on K\<^sub>2) # \<Phi>) \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
@@ -495,6 +289,10 @@ lemma instant_index_increase:
         qed
       ultimately show ?case
         using Implies.prems(2) by fastforce
+    next
+      case (ImpliesNot K\<^sub>1 K\<^sub>2)
+      then show ?case
+        sorry
     next
       case (TimeDelayedBy K\<^sub>1 \<delta>\<tau> K\<^sub>2 K\<^sub>3)
       have branches: "\<lbrakk> \<Gamma>, n \<turnstile> ((K\<^sub>1 time-delayed by \<delta>\<tau> on K\<^sub>2 implies K\<^sub>3) # \<Psi>) \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g

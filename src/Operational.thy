@@ -17,15 +17,7 @@ inductive operational_semantics_intro :: "('\<tau>::linordered_field) config \<R
      \<hookrightarrow>\<^sub>i  (\<Gamma>, Suc n \<turnstile> \<Phi> \<triangleright> [])"
 
 inductive operational_semantics_elim :: "('\<tau>::linordered_field) config \<Rightarrow> '\<tau> config \<Rightarrow> bool" ("_ \<hookrightarrow>\<^sub>e _" 70) where
-  sporadic_e1:
-  "(* consistent_run \<Gamma> \<Longrightarrow> *)
-   (\<Gamma>, n \<turnstile> ((K sporadic \<tau>) # \<Psi>) \<triangleright> \<Phi>)
-     \<hookrightarrow>\<^sub>e  (\<Gamma>, n \<turnstile> \<Psi> \<triangleright> ((K sporadic \<tau>) # \<Phi>))"
-| sporadic_e2:
-  "(* consistent_run ((K \<Up> n) # (K \<Down> n @ \<lfloor>\<tau>\<rfloor>) # \<Gamma>) \<Longrightarrow> *)
-   (\<Gamma>, n \<turnstile> ((K sporadic \<tau>) # \<Psi>) \<triangleright> \<Phi>)
-     \<hookrightarrow>\<^sub>e  (((K \<Up> n) # (K \<Down> n @ \<lfloor>\<tau>\<rfloor>) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> \<Phi>)"
-| sporadic_on_e1:
+  sporadic_on_e1:
   "(* consistent_run \<Gamma> \<Longrightarrow> *)
    (\<Gamma>, n \<turnstile> ((K\<^sub>1 sporadic \<tau> on K\<^sub>2) # \<Psi>) \<triangleright> \<Phi>)
      \<hookrightarrow>\<^sub>e  (\<Gamma>, n \<turnstile> \<Psi> \<triangleright> ((K\<^sub>1 sporadic \<tau> on K\<^sub>2) # \<Phi>))"
@@ -48,6 +40,14 @@ inductive operational_semantics_elim :: "('\<tau>::linordered_field) config \<Ri
   "(* consistent_run ((K\<^sub>1 \<Up> n) # (K\<^sub>2 \<Up> n) # \<Gamma>) \<Longrightarrow> *)
    (\<Gamma>, n \<turnstile> ((K\<^sub>1 implies K\<^sub>2) # \<Psi>) \<triangleright> \<Phi>)
      \<hookrightarrow>\<^sub>e  (((K\<^sub>1 \<Up> n) # (K\<^sub>2 \<Up> n) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> ((K\<^sub>1 implies K\<^sub>2) # \<Phi>))"
+| implies_not_e1:
+  "(* consistent_run (K\<^sub>1 \<not>\<Up> n # \<Gamma>) \<Longrightarrow> *)
+   (\<Gamma>, n \<turnstile> ((K\<^sub>1 implies not K\<^sub>2) # \<Psi>) \<triangleright> \<Phi>)
+     \<hookrightarrow>\<^sub>e  (((K\<^sub>1 \<not>\<Up> n) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> ((K\<^sub>1 implies not K\<^sub>2) # \<Phi>))"
+| implies_not_e2:
+  "(* consistent_run ((K\<^sub>1 \<Up> n) # (K\<^sub>2 \<Up> n) # \<Gamma>) \<Longrightarrow> *)
+   (\<Gamma>, n \<turnstile> ((K\<^sub>1 implies not K\<^sub>2) # \<Psi>) \<triangleright> \<Phi>)
+     \<hookrightarrow>\<^sub>e  (((K\<^sub>1 \<Up> n) # (K\<^sub>2 \<not>\<Up> n) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> ((K\<^sub>1 implies not K\<^sub>2) # \<Phi>))"
 | timedelayed_e1:
   "(* consistent_run (K\<^sub>1 \<not>\<Up> n # \<Gamma>) \<Longrightarrow> *)
    (\<Gamma>, n \<turnstile> ((K\<^sub>1 time-delayed by \<delta>\<tau> on K\<^sub>2 implies K\<^sub>3) # \<Psi>) \<triangleright> \<Phi>)
@@ -101,12 +101,6 @@ lemma Cnext_solve_instant:
           \<supseteq> { \<Gamma>, Suc n \<turnstile> \<Phi> \<triangleright> [] }"
   by (simp add: operational_semantics_step.simps operational_semantics_intro.instant_i)
 
-lemma Cnext_solve_sporadic:
-  shows "(\<C>\<^sub>n\<^sub>e\<^sub>x\<^sub>t (\<Gamma>, n \<turnstile> ((K sporadic \<tau>) # \<Psi>) \<triangleright> \<Phi>))
-          \<supseteq> { \<Gamma>, n \<turnstile> \<Psi> \<triangleright> ((K sporadic \<tau>) # \<Phi>),
-              ((K \<Up> n) # (K \<Down> n @ \<lfloor>\<tau>\<rfloor>) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> \<Phi> }"
-  by (simp add: operational_semantics_step.simps operational_semantics_elim.sporadic_e1 operational_semantics_elim.sporadic_e2)
-
 lemma Cnext_solve_sporadicon:
   shows "(\<C>\<^sub>n\<^sub>e\<^sub>x\<^sub>t (\<Gamma>, n \<turnstile> ((K\<^sub>1 sporadic \<tau> on K\<^sub>2) # \<Psi>) \<triangleright> \<Phi>))
           \<supseteq> { \<Gamma>, n \<turnstile> \<Psi> \<triangleright> ((K\<^sub>1 sporadic \<tau> on K\<^sub>2) # \<Phi>),
@@ -128,6 +122,12 @@ lemma Cnext_solve_implies:
           \<supseteq> { ((K\<^sub>1 \<not>\<Up> n) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> ((K\<^sub>1 implies K\<^sub>2) # \<Phi>),
               ((K\<^sub>1 \<Up> n) # (K\<^sub>2 \<Up> n) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> ((K\<^sub>1 implies K\<^sub>2) # \<Phi>)}"
   by (simp add: operational_semantics_step.simps operational_semantics_elim.implies_e1 operational_semantics_elim.implies_e2)
+
+lemma Cnext_solve_implies_not:
+  shows "(\<C>\<^sub>n\<^sub>e\<^sub>x\<^sub>t (\<Gamma>, n \<turnstile> ((K\<^sub>1 implies not K\<^sub>2) # \<Psi>) \<triangleright> \<Phi>))
+          \<supseteq> { ((K\<^sub>1 \<not>\<Up> n) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> ((K\<^sub>1 implies not K\<^sub>2) # \<Phi>),
+              ((K\<^sub>1 \<Up> n) # (K\<^sub>2 \<not>\<Up> n) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> ((K\<^sub>1 implies not K\<^sub>2) # \<Phi>)}"
+  by (simp add: operational_semantics_step.simps operational_semantics_elim.implies_not_e1 operational_semantics_elim.implies_not_e2)
 
 lemma Cnext_solve_timedelayed:
   shows "(\<C>\<^sub>n\<^sub>e\<^sub>x\<^sub>t (\<Gamma>, n \<turnstile> ((K\<^sub>1 time-delayed by \<delta>\<tau> on K\<^sub>2 implies K\<^sub>3) # \<Psi>) \<triangleright> \<Phi>))

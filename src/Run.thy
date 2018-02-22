@@ -32,6 +32,8 @@ lemma Abs_run_inverse_rewrite_unsafe:
 fun symbolic_run_interpretation_primitive :: "('\<tau>::linordered_field) constr \<Rightarrow> '\<tau> run set" ("\<lbrakk> _ \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m") where
     "\<lbrakk> K \<Up> n  \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m   = { \<rho>. hamlet ((Rep_run \<rho>) n K) = True }"
   | "\<lbrakk> K \<not>\<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m   = { \<rho>. hamlet ((Rep_run \<rho>) n K) = False }"
+  | "\<lbrakk> K \<not>\<Up>\<^sup>< n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m   = { \<rho>. \<forall>i < n. hamlet ((Rep_run \<rho>) i K) = False }"
+  | "\<lbrakk> K \<not>\<Up>\<^sup>\<ge> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m   = { \<rho>. \<forall>i \<ge> n. hamlet ((Rep_run \<rho>) i K) = False }"
   | "\<lbrakk> K \<Down> n @ \<lfloor> \<tau> \<rfloor> \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m = { \<rho>. time ((Rep_run \<rho>) n K) = \<tau> }"
   | "\<lbrakk> K \<Down> n @ \<lfloor> \<tau>\<^sub>v\<^sub>a\<^sub>r(K', n') \<oplus> \<tau> \<rfloor> \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m = { \<rho>. time ((Rep_run \<rho>) n K) = time ((Rep_run \<rho>) n' K') + \<tau> }"
   | "\<lbrakk> (\<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>1, n\<^sub>1)) \<doteq> \<alpha> * \<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>2, n\<^sub>2) + \<beta> \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m = { \<rho>. time ((Rep_run \<rho>) n\<^sub>1 K\<^sub>1) = \<alpha> * time ((Rep_run \<rho>) n\<^sub>2 K\<^sub>2) + \<beta> }"
