@@ -36,8 +36,8 @@ proof -
     case b thus ?thesis
       apply (rule operational_semantics_elim.cases)
       using HeronConf_interp_stepwise_sporadicon_cases HeronConf_interpretation.simps apply blast+
+      (* using HeronConf_interp_stepwise_tagrelaff_cases HeronConf_interpretation.simps apply blast *)
       using HeronConf_interp_stepwise_tagrel_cases HeronConf_interpretation.simps apply blast
-      using HeronConf_interp_stepwise_tagrelgen_cases HeronConf_interpretation.simps apply blast
       using HeronConf_interp_stepwise_implies_cases HeronConf_interpretation.simps apply blast+
       using HeronConf_interp_stepwise_implies_not_cases HeronConf_interpretation.simps apply blast+
       using HeronConf_interp_stepwise_timedelayed_cases HeronConf_interpretation.simps apply blast+
@@ -117,16 +117,16 @@ lemma complete_direct_successors:
         then show ?thesis 
           using HeronConf_interp_stepwise_sporadicon_cases[of "\<Gamma>" "n" "K1" "\<tau>" "K2" "\<Psi>" "\<Phi>"]
                 Cnext_solve_sporadicon[of "\<Gamma>" "n" "\<Psi>" "K1" "\<tau>" "K2" "\<Phi>"] by blast
-      next
-        case (TagRelation K1 \<alpha> K2 \<beta>)
+(*    next
+        case (TagRelationAff K1 \<alpha> K2 \<beta>)
         then show ?thesis
-          using HeronConf_interp_stepwise_tagrel_cases[of "\<Gamma>" "n" "K1" "\<alpha>" "K2" "\<beta>" "\<Psi>" "\<Phi>"]
-                Cnext_solve_tagrel[of "K1" "n" "\<alpha>" "K2" "\<beta>" "\<Gamma>" "\<Psi>" "\<Phi>"] by blast
+          using HeronConf_interp_stepwise_tagrelaff_cases[of "\<Gamma>" "n" "K1" "\<alpha>" "K2" "\<beta>" "\<Psi>" "\<Phi>"]
+                Cnext_solve_tagrel[of "K1" "n" "\<alpha>" "K2" "\<beta>" "\<Gamma>" "\<Psi>" "\<Phi>"] by blast *)
       next
-        case (TagRelationGen K\<^sub>1 K\<^sub>2 R)
+        case (TagRelation K\<^sub>1 K\<^sub>2 R)
         then show ?thesis
-          using HeronConf_interp_stepwise_tagrelgen_cases[of "\<Gamma>" "n" "K\<^sub>1" "K\<^sub>2" "R" "\<Psi>" "\<Phi>"]
-                Cnext_solve_tagrelgen[of "K\<^sub>1" "n" "K\<^sub>2" "R" "\<Gamma>" "\<Psi>" "\<Phi>"] by blast
+          using HeronConf_interp_stepwise_tagrel_cases[of "\<Gamma>" "n" "K\<^sub>1" "K\<^sub>2" "R" "\<Psi>" "\<Phi>"]
+                Cnext_solve_tagrel[of "K\<^sub>1" "n" "K\<^sub>2" "R" "\<Gamma>" "\<Psi>" "\<Phi>"] by blast
       next
         case (Implies K1 K2)
         then show ?thesis
@@ -230,31 +230,33 @@ lemma instant_index_increase:
         qed
       ultimately show ?case
         by (metis SporadicOn.prems(2) UnE branches)
+(*
     next
-      case (TagRelation K\<^sub>1 \<alpha> K\<^sub>2 \<beta>)
+      case (TagRelationAff K\<^sub>1 \<alpha> K\<^sub>2 \<beta>)
       have branches: "\<lbrakk> \<Gamma>, n \<turnstile> ((tag-relation K\<^sub>1 = \<alpha> * K\<^sub>2 + \<beta>) # \<Psi>) \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
           = \<lbrakk> (((\<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>1, n)) \<doteq> \<alpha> * \<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>2, n) + \<beta>) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> ((tag-relation K\<^sub>1 = \<alpha> * K\<^sub>2 + \<beta>) # \<Phi>) \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
-        using HeronConf_interp_stepwise_tagrel_cases by simp
+        using HeronConf_interp_stepwise_tagrelaff_cases by simp
       then show ?case
         proof -
           have "\<exists>\<Gamma>\<^sub>k \<Psi>\<^sub>k \<Phi>\<^sub>k k. (((((\<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>1, n)) \<doteq> \<alpha> * \<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>2, n) + \<beta>) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> ((tag-relation K\<^sub>1 = \<alpha> * K\<^sub>2 + \<beta>) # \<Phi>))
               \<hookrightarrow>\<^bsup>k\<^esup> (\<Gamma>\<^sub>k, Suc n \<turnstile> \<Psi>\<^sub>k \<triangleright> \<Phi>\<^sub>k)) \<and> \<rho> \<in> \<lbrakk> \<Gamma>\<^sub>k, Suc n \<turnstile> \<Psi>\<^sub>k \<triangleright> \<Phi>\<^sub>k \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
-            using TagRelation.prems by simp
+            using TagRelationAff.prems by simp
           then show ?thesis
             by (meson elims_part relpowp_Suc_I2 tagrel_e)
         qed
+*)
     next
-      case (TagRelationGen K\<^sub>1 K\<^sub>2 R)
+      case (TagRelation K\<^sub>1 K\<^sub>2 R)
       have branches: "\<lbrakk> \<Gamma>, n \<turnstile> ((tag-relation \<langle>K\<^sub>1, K\<^sub>2\<rangle> \<in> R) # \<Psi>) \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
-          = \<lbrakk> ((\<langle>\<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>1, n), \<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>2, n)\<rangle> \<epsilon> R) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> ((tag-relation \<langle>K\<^sub>1, K\<^sub>2\<rangle> \<in> R) # \<Phi>) \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
-        using HeronConf_interp_stepwise_tagrelgen_cases by simp
+          = \<lbrakk> ((\<langle>\<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>1, n), \<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>2, n)\<rangle> \<in> R) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> ((tag-relation \<langle>K\<^sub>1, K\<^sub>2\<rangle> \<in> R) # \<Phi>) \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
+        using HeronConf_interp_stepwise_tagrel_cases by simp
       then show ?case
         proof -
-          have "\<exists>\<Gamma>\<^sub>k \<Psi>\<^sub>k \<Phi>\<^sub>k k. ((((\<langle>\<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>1, n), \<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>2, n)\<rangle> \<epsilon> R) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> ((tag-relation \<langle>K\<^sub>1, K\<^sub>2\<rangle> \<in> R) # \<Phi>))
+          have "\<exists>\<Gamma>\<^sub>k \<Psi>\<^sub>k \<Phi>\<^sub>k k. ((((\<langle>\<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>1, n), \<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>2, n)\<rangle> \<in> R) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> ((tag-relation \<langle>K\<^sub>1, K\<^sub>2\<rangle> \<in> R) # \<Phi>))
               \<hookrightarrow>\<^bsup>k\<^esup> (\<Gamma>\<^sub>k, Suc n \<turnstile> \<Psi>\<^sub>k \<triangleright> \<Phi>\<^sub>k)) \<and> \<rho> \<in> \<lbrakk> \<Gamma>\<^sub>k, Suc n \<turnstile> \<Psi>\<^sub>k \<triangleright> \<Phi>\<^sub>k \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
-            using TagRelationGen.prems by simp
+            using TagRelation.prems by simp
           then show ?thesis
-            by (meson elims_part relpowp_Suc_I2 tagrelgen_e)
+            by (meson elims_part relpowp_Suc_I2 tagrel_e)
         qed
     next
       case (Implies K\<^sub>1 K\<^sub>2)

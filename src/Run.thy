@@ -28,6 +28,26 @@ lemma Abs_run_inverse_rewrite_unsafe:
   "Rep_run (Abs_run \<rho>) = \<rho>"
   oops (* Use [sorry] when testing *)
 
+(* Counts the number of ticks in run [\<rho>] on clock [K] from indexes 0 to [n] *)
+fun run_tick_count :: "('\<tau>::linordered_field) run \<Rightarrow> clock \<Rightarrow> nat \<Rightarrow> nat" ("#\<^sup>\<le> _ _ _") where
+    "#\<^sup>\<le> \<rho> K 0       = (if hamlet ((Rep_run \<rho>) 0 K)
+                       then 1
+                       else 0)"
+  | "#\<^sup>\<le> \<rho> K (Suc n) = (if hamlet ((Rep_run \<rho>) (Suc n) K)
+                       then 1 + #\<^sup>\<le> \<rho> K n
+                       else #\<^sup>\<le> \<rho> K n)"
+
+(* Counts the number of ticks in run [\<rho>] on clock [K] from indexes 0 to [n - 1] *)
+fun run_tick_count_strictly :: "('\<tau>::linordered_field) run \<Rightarrow> clock \<Rightarrow> nat \<Rightarrow> nat" ("#\<^sup>< _ _ _") where
+    "#\<^sup>< \<rho> K 0       = 0"
+  | "#\<^sup>< \<rho> K (Suc n) = #\<^sup>\<le> \<rho> K n"
+
+fun counter_expr_eval :: "('\<tau>::linordered_field) run \<Rightarrow> cnt_expr \<Rightarrow> nat" ("\<lbrakk> _ \<turnstile> _ \<rbrakk>\<^sub>c\<^sub>n\<^sub>t\<^sub>e\<^sub>x\<^sub>p\<^sub>r") where
+    "\<lbrakk> \<rho> \<turnstile> NatCst cst \<rbrakk>\<^sub>c\<^sub>n\<^sub>t\<^sub>e\<^sub>x\<^sub>p\<^sub>r = cst"
+  | "\<lbrakk> \<rho> \<turnstile> #\<^sup>< clk indx \<rbrakk>\<^sub>c\<^sub>n\<^sub>t\<^sub>e\<^sub>x\<^sub>p\<^sub>r = run_tick_count_strictly \<rho> clk indx"
+  | "\<lbrakk> \<rho> \<turnstile> #\<^sup>\<le> clk indx \<rbrakk>\<^sub>c\<^sub>n\<^sub>t\<^sub>e\<^sub>x\<^sub>p\<^sub>r = run_tick_count \<rho> clk indx"
+  | "\<lbrakk> \<rho> \<turnstile> Plus e\<^sub>1 e\<^sub>2 \<rbrakk>\<^sub>c\<^sub>n\<^sub>t\<^sub>e\<^sub>x\<^sub>p\<^sub>r = \<lbrakk> \<rho> \<turnstile> e\<^sub>1 \<rbrakk>\<^sub>c\<^sub>n\<^sub>t\<^sub>e\<^sub>x\<^sub>p\<^sub>r + \<lbrakk> \<rho> \<turnstile> e\<^sub>2 \<rbrakk>\<^sub>c\<^sub>n\<^sub>t\<^sub>e\<^sub>x\<^sub>p\<^sub>r"
+  | "\<lbrakk> \<rho> \<turnstile> LTimes n e \<rbrakk>\<^sub>c\<^sub>n\<^sub>t\<^sub>e\<^sub>x\<^sub>p\<^sub>r = n * \<lbrakk> \<rho> \<turnstile> e \<rbrakk>\<^sub>c\<^sub>n\<^sub>t\<^sub>e\<^sub>x\<^sub>p\<^sub>r"
 
 fun symbolic_run_interpretation_primitive :: "('\<tau>::linordered_field) constr \<Rightarrow> '\<tau> run set" ("\<lbrakk> _ \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m") where
     "\<lbrakk> K \<Up> n  \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m   = { \<rho>. hamlet ((Rep_run \<rho>) n K) = True }"
@@ -36,8 +56,9 @@ fun symbolic_run_interpretation_primitive :: "('\<tau>::linordered_field) constr
   | "\<lbrakk> K \<not>\<Up>\<^sup>\<ge> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m   = { \<rho>. \<forall>i \<ge> n. hamlet ((Rep_run \<rho>) i K) = False }"
   | "\<lbrakk> K \<Down> n @ \<lfloor> \<tau> \<rfloor> \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m = { \<rho>. time ((Rep_run \<rho>) n K) = \<tau> }"
   | "\<lbrakk> K \<Down> n @ \<lfloor> \<tau>\<^sub>v\<^sub>a\<^sub>r(K', n') \<oplus> \<tau> \<rfloor> \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m = { \<rho>. time ((Rep_run \<rho>) n K) = time ((Rep_run \<rho>) n' K') + \<tau> }"
-  | "\<lbrakk> (\<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>1, n\<^sub>1)) \<doteq> \<alpha> * \<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>2, n\<^sub>2) + \<beta> \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m = { \<rho>. time ((Rep_run \<rho>) n\<^sub>1 K\<^sub>1) = \<alpha> * time ((Rep_run \<rho>) n\<^sub>2 K\<^sub>2) + \<beta> }"
-  | "\<lbrakk> \<langle>\<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>1, n\<^sub>1), \<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>2, n\<^sub>2)\<rangle> \<epsilon> R \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m = { \<rho>. R (time ((Rep_run \<rho>) n\<^sub>1 K\<^sub>1), time ((Rep_run \<rho>) n\<^sub>2 K\<^sub>2)) }"
+  (* | "\<lbrakk> (\<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>1, n\<^sub>1)) \<doteq> \<alpha> * \<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>2, n\<^sub>2) + \<beta> \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m = { \<rho>. time ((Rep_run \<rho>) n\<^sub>1 K\<^sub>1) = \<alpha> * time ((Rep_run \<rho>) n\<^sub>2 K\<^sub>2) + \<beta> }" *)
+  | "\<lbrakk> \<langle>\<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>1, n\<^sub>1), \<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>2, n\<^sub>2)\<rangle> \<in> R \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m = { \<rho>. R (time ((Rep_run \<rho>) n\<^sub>1 K\<^sub>1), time ((Rep_run \<rho>) n\<^sub>2 K\<^sub>2)) }"
+  | "\<lbrakk> cnt_e\<^sub>1 \<preceq> cnt_e\<^sub>2 \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m = { \<rho>. \<lbrakk> \<rho> \<turnstile> cnt_e\<^sub>1 \<rbrakk>\<^sub>c\<^sub>n\<^sub>t\<^sub>e\<^sub>x\<^sub>p\<^sub>r \<le> \<lbrakk> \<rho> \<turnstile> cnt_e\<^sub>2 \<rbrakk>\<^sub>c\<^sub>n\<^sub>t\<^sub>e\<^sub>x\<^sub>p\<^sub>r }"
 
 fun symbolic_run_interpretation :: "('\<tau>::linordered_field) constr list \<Rightarrow> ('\<tau>::linordered_field) run set" ("\<lbrakk>\<lbrakk> _ \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m") where
     "\<lbrakk>\<lbrakk> [] \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m = { _. True }"

@@ -15,8 +15,8 @@ fun TESL_interpretation_atomic
   | "\<lbrakk> K\<^sub>1 sporadic \<lfloor>\<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>i, n\<^sub>i) \<oplus> \<delta>\<tau>\<rfloor> on K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
         { \<rho>. \<exists>n::nat. hamlet ((Rep_run \<rho>) n K\<^sub>1) = True
                        \<and> time ((Rep_run \<rho>) n K\<^sub>2) = time ((Rep_run \<rho>) n\<^sub>i K\<^sub>i) + \<delta>\<tau> }"
-  | "\<lbrakk> tag-relation K\<^sub>1 = \<alpha> * K\<^sub>2 + \<beta> \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
-        { \<rho>. \<forall>n::nat. time ((Rep_run \<rho>) n K\<^sub>1) = \<alpha> * time ((Rep_run \<rho>) n K\<^sub>2) + \<beta> }"
+  (* | "\<lbrakk> tag-relation K\<^sub>1 = \<alpha> * K\<^sub>2 + \<beta> \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
+        { \<rho>. \<forall>n::nat. time ((Rep_run \<rho>) n K\<^sub>1) = \<alpha> * time ((Rep_run \<rho>) n K\<^sub>2) + \<beta> }" *)
   | "\<lbrakk> tag-relation \<langle>K\<^sub>1, K\<^sub>2\<rangle> \<in> R \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
         { \<rho>. \<forall>n::nat. R (time ((Rep_run \<rho>) n K\<^sub>1), time ((Rep_run \<rho>) n K\<^sub>2)) }"
   | "\<lbrakk> master implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
@@ -30,6 +30,8 @@ fun TESL_interpretation_atomic
                           \<and> time ((Rep_run \<rho>) m measuring) = measured_time + \<delta>\<tau>
                  )
         }"
+  | "\<lbrakk> K\<^sub>1 precedes K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
+        { \<rho>. \<forall>n::nat. (run_tick_count \<rho> K\<^sub>2 n) \<le> (run_tick_count_strictly \<rho> K\<^sub>1 n) }"
 
 section \<open>Denotational interpretation for TESL formulae\<close>
 
@@ -196,6 +198,7 @@ lemma NoSporadic_setinc:
   shows "set (NoSporadic \<Phi>) \<subseteq> set \<Phi>"
   by auto
 
+(*
 lemma Tagrel_affine_sugar:
   shows "\<lbrakk> tag-relation K\<^sub>1 = \<alpha> * K\<^sub>2 + \<beta> \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<lbrakk> tag-relation \<langle>K\<^sub>1, K\<^sub>2\<rangle> \<in> (\<lambda>(\<tau>\<^sub>1, \<tau>\<^sub>2). \<tau>\<^sub>1 = \<alpha> * \<tau>\<^sub>2 + \<beta>) \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
   proof -
@@ -204,5 +207,6 @@ lemma Tagrel_affine_sugar:
       by auto
     then show ?thesis by auto
   qed
+*)
 
 end

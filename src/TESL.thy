@@ -20,13 +20,12 @@ datatype '\<tau> tag_expr =
     Const    "'\<tau> tag_const"           ("\<lfloor> _ \<rfloor>")
   | AddDelay "tag_var" "'\<tau> tag_const" ("\<lfloor> _ \<oplus> _ \<rfloor>")
 
-datatype nat_expr =
+datatype cnt_expr =
     NatCst "nat"
-  | TickCountLe "clock" "instant_index"
-  | TickCountLeq "clock" "instant_index"
-  | Plus "nat_expr" "nat_expr"
-  | Times "nat" "nat_expr"
-
+  | TickCountLe "clock" "instant_index"  ("#\<^sup><")
+  | TickCountLeq "clock" "instant_index" ("#\<^sup>\<le>")
+  | Plus "cnt_expr" "cnt_expr"
+  | LTimes "nat" "cnt_expr"
 
 (* Primitives for symbolic runs *)
 datatype '\<tau> constr =
@@ -35,9 +34,9 @@ datatype '\<tau> constr =
   | NotTicks      "clock"   "instant_index"                       ("_ \<not>\<Up> _")
   | NotTicksUntil "clock"   "instant_index"                       ("_ \<not>\<Up>\<^sup>< _")
   | NotTicksFrom  "clock"   "instant_index"                       ("_ \<not>\<Up>\<^sup>\<ge> _")
-  | Affine        "tag_var" "'\<tau> tag_const"     "tag_var" "'\<tau> tag_const" ("_ \<doteq> _ * _ + _")
-  | ArithGen      "tag_var" "tag_var" "('\<tau> tag_const \<times> '\<tau> tag_const) \<Rightarrow> bool" ("\<langle>_, _\<rangle> \<epsilon> _")
-  | Ineq          "nat_expr" "nat_expr"                           ("_ \<lesssim> _")
+  (* | Affine        "tag_var" "'\<tau> tag_const"     "tag_var" "'\<tau> tag_const" ("_ \<doteq> _ * _ + _") *)
+  | TagArith      "tag_var" "tag_var" "('\<tau> tag_const \<times> '\<tau> tag_const) \<Rightarrow> bool" ("\<langle>_, _\<rangle> \<in> _")
+  | CounterArith  "cnt_expr" "cnt_expr"                           ("_ \<preceq> _")
 
 type_synonym '\<tau> system = "'\<tau> constr list"
 
@@ -45,13 +44,14 @@ text{* Define as follows the syntax of TESL *}
 
 (* TESL language *)
 datatype '\<tau> TESL_atomic =
-    (* Sporadic       "clock" "'\<tau> tag_const"                     (infixr "sporadic" 55) *)
+  (* Sporadic       "clock" "'\<tau> tag_const"                     (infixr "sporadic" 55) *)
     SporadicOn     "clock" "'\<tau> tag_expr"  "clock"             ("_ sporadic _ on _" 55)
-  | TagRelation    "clock" "'\<tau> tag_const" "clock" "'\<tau> tag_const" ("tag-relation _ = _ * _ + _" 55)
-  | TagRelationGen "clock" "clock" "('\<tau> tag_const \<times> '\<tau> tag_const) \<Rightarrow> bool" ("tag-relation \<langle>_, _\<rangle> \<in> _" 55)
+  (* | TagRelationAff "clock" "'\<tau> tag_const" "clock" "'\<tau> tag_const" ("tag-relation _ = _ * _ + _" 55) *)
+  | TagRelation    "clock" "clock" "('\<tau> tag_const \<times> '\<tau> tag_const) \<Rightarrow> bool" ("tag-relation \<langle>_, _\<rangle> \<in> _" 55)
   | Implies        "clock" "clock"                         (infixr "implies" 55)
   | ImpliesNot     "clock" "clock"                         (infixr "implies not" 55)
   | TimeDelayedBy  "clock" "'\<tau> tag_const" "clock" "clock"     ("_ time-delayed by _ on _ implies _" 55)
+  | Precedes       "clock" "clock"                         (infixr "precedes" 55)
 
 type_synonym '\<tau> TESL_formula = "'\<tau> TESL_atomic list"
 
