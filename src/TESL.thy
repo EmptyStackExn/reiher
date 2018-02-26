@@ -5,20 +5,20 @@ begin
 text {* We define as follows the syntax of primitives to describe symbolic runs *}
 
 (** Clocks **)
-datatype clock = Clk "string"        ("\<lceil> _ \<rceil>")
+datatype clock = Clk "string"        (* ("\<lceil> _ \<rceil>") *)
 type_synonym instant_index = "nat"
 
 (** Tags **) 
 (* Constants *)
 datatype '\<tau> tag_const =
-    TConst   '\<tau>                   ("\<tau>\<^sub>c\<^sub>s\<^sub>t")
+    TConst   '\<tau>                    ("\<tau>\<^sub>c\<^sub>s\<^sub>t")
 (* Variables *)
 datatype tag_var =
-    Schematic "clock * instant_index" ("\<tau>\<^sub>v\<^sub>a\<^sub>r")
+    TSchematic "clock * instant_index" ("\<tau>\<^sub>v\<^sub>a\<^sub>r")
 (* Expressions *)
 datatype '\<tau> tag_expr =
-    Const    "'\<tau> tag_const"           ("\<lfloor> _ \<rfloor>")
-  | AddDelay "tag_var" "'\<tau> tag_const" ("\<lfloor> _ \<oplus> _ \<rfloor>")
+    Const    "'\<tau> tag_const"          ("\<lparr> _ \<rparr>")
+  | AddDelay "tag_var" "'\<tau> tag_const" ("\<lparr> _ \<oplus> _ \<rparr>")
 
 datatype cnt_expr =
     NatCst "nat"
@@ -34,9 +34,10 @@ datatype '\<tau> constr =
   | NotTicks      "clock"   "instant_index"                       ("_ \<not>\<Up> _")
   | NotTicksUntil "clock"   "instant_index"                       ("_ \<not>\<Up>\<^sup>< _")
   | NotTicksFrom  "clock"   "instant_index"                       ("_ \<not>\<Up>\<^sup>\<ge> _")
+  | TagArith      "tag_var" "tag_var" "('\<tau> tag_const \<times> '\<tau> tag_const) \<Rightarrow> bool" ("\<lfloor>_, _\<rfloor> \<in> _")
+  | TickCntArith  "cnt_expr" "cnt_expr" "(nat \<times> nat) \<Rightarrow> bool"               ("\<lceil>_, _\<rceil> \<in> _")
+  | TickCntLeq    "cnt_expr" "cnt_expr"                           ("_ \<preceq> _")
   (* | Affine        "tag_var" "'\<tau> tag_const"     "tag_var" "'\<tau> tag_const" ("_ \<doteq> _ * _ + _") *)
-  | TagArith      "tag_var" "tag_var" "('\<tau> tag_const \<times> '\<tau> tag_const) \<Rightarrow> bool" ("\<langle>_, _\<rangle> \<in> _")
-  | CounterArith  "cnt_expr" "cnt_expr"                           ("_ \<preceq> _")
 
 type_synonym '\<tau> system = "'\<tau> constr list"
 
@@ -47,7 +48,7 @@ datatype '\<tau> TESL_atomic =
   (* Sporadic       "clock" "'\<tau> tag_const"                     (infixr "sporadic" 55) *)
     SporadicOn     "clock" "'\<tau> tag_expr"  "clock"             ("_ sporadic _ on _" 55)
   (* | TagRelationAff "clock" "'\<tau> tag_const" "clock" "'\<tau> tag_const" ("tag-relation _ = _ * _ + _" 55) *)
-  | TagRelation    "clock" "clock" "('\<tau> tag_const \<times> '\<tau> tag_const) \<Rightarrow> bool" ("tag-relation \<langle>_, _\<rangle> \<in> _" 55)
+  | TagRelation    "clock" "clock" "('\<tau> tag_const \<times> '\<tau> tag_const) \<Rightarrow> bool" ("tag-relation \<lfloor>_, _\<rfloor> \<in> _" 55)
   | Implies        "clock" "clock"                         (infixr "implies" 55)
   | ImpliesNot     "clock" "clock"                         (infixr "implies not" 55)
   | TimeDelayedBy  "clock" "'\<tau> tag_const" "clock" "clock"     ("_ time-delayed by _ on _ implies _" 55)

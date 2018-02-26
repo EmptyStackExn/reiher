@@ -32,8 +32,8 @@ inductive operational_semantics_elim :: "('\<tau>::linordered_field) config \<Ri
      \<hookrightarrow>\<^sub>e  ((((\<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>1, n)) \<doteq> \<alpha> * \<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>2, n) + \<beta>) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> ((tag-relation K\<^sub>1 = \<alpha> * K\<^sub>2 + \<beta>) # \<Phi>))"
 *)
 | tagrel_e:
-  "(\<Gamma>, n \<turnstile> ((tag-relation \<langle>K\<^sub>1, K\<^sub>2\<rangle> \<in> R) # \<Psi>) \<triangleright> \<Phi>)
-     \<hookrightarrow>\<^sub>e  (((\<langle>\<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>1, n), \<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>2, n)\<rangle> \<in> R) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> ((tag-relation \<langle>K\<^sub>1, K\<^sub>2\<rangle> \<in> R) # \<Phi>))"
+  "(\<Gamma>, n \<turnstile> ((tag-relation \<lfloor>K\<^sub>1, K\<^sub>2\<rfloor> \<in> R) # \<Psi>) \<triangleright> \<Phi>)
+     \<hookrightarrow>\<^sub>e  (((\<lfloor>\<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>1, n), \<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>2, n)\<rfloor> \<in> R) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> ((tag-relation \<lfloor>K\<^sub>1, K\<^sub>2\<rfloor> \<in> R) # \<Phi>))"
 | implies_e1:
   "(* consistent_run (K\<^sub>1 \<not>\<Up> n # \<Gamma>) \<Longrightarrow> *)
    (\<Gamma>, n \<turnstile> ((K\<^sub>1 implies K\<^sub>2) # \<Psi>) \<triangleright> \<Phi>)
@@ -57,7 +57,10 @@ inductive operational_semantics_elim :: "('\<tau>::linordered_field) config \<Ri
 | timedelayed_e2:
   "(* consistent_run (K\<^sub>1 \<Up> n # \<Gamma>) \<Longrightarrow> *)
    (\<Gamma>, n \<turnstile> ((K\<^sub>1 time-delayed by \<delta>\<tau> on K\<^sub>2 implies K\<^sub>3) # \<Psi>) \<triangleright> \<Phi>)
-     \<hookrightarrow>\<^sub>e  (((K\<^sub>1 \<Up> n) # \<Gamma>), n \<turnstile> ((K\<^sub>3 sporadic \<lfloor>\<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>2, n) \<oplus> \<delta>\<tau>\<rfloor> on K\<^sub>2) # \<Psi>) \<triangleright> ((K\<^sub>1 time-delayed by \<delta>\<tau> on K\<^sub>2 implies K\<^sub>3) # \<Phi>))"
+     \<hookrightarrow>\<^sub>e  (((K\<^sub>1 \<Up> n) # \<Gamma>), n \<turnstile> ((K\<^sub>3 sporadic \<lparr>\<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>2, n) \<oplus> \<delta>\<tau>\<rparr> on K\<^sub>2) # \<Psi>) \<triangleright> ((K\<^sub>1 time-delayed by \<delta>\<tau> on K\<^sub>2 implies K\<^sub>3) # \<Phi>))"
+| precedes_e:
+  "(\<Gamma>, n \<turnstile> ((K\<^sub>1 precedes K\<^sub>2) # \<Psi>) \<triangleright> \<Phi>)
+     \<hookrightarrow>\<^sub>e  (((\<lceil>#\<^sup>\<le> K\<^sub>2 n, #\<^sup>< K\<^sub>1 n\<rceil> \<in> (\<lambda>(x,y). x\<le>y)) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> ((K\<^sub>1 precedes K\<^sub>2) # \<Phi>))"
 
 inductive operational_semantics_step :: "('\<tau>::linordered_field) config \<Rightarrow> '\<tau> config \<Rightarrow> bool" ("_ \<hookrightarrow> _" 70) where
     intro_part: "(\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1)  \<hookrightarrow>\<^sub>i  (\<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2)
@@ -117,8 +120,8 @@ lemma Cnext_solve_tagrelaff:
 *)
 
 lemma Cnext_solve_tagrel:
-  shows "(\<C>\<^sub>n\<^sub>e\<^sub>x\<^sub>t (\<Gamma>, n \<turnstile> ((tag-relation \<langle>K\<^sub>1, K\<^sub>2\<rangle> \<in> R) # \<Psi>) \<triangleright> \<Phi>))
-          \<supseteq> { ((\<langle>\<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>1, n), \<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>2, n)\<rangle> \<in> R) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> ((tag-relation \<langle>K\<^sub>1, K\<^sub>2\<rangle> \<in> R) # \<Phi>) }"
+  shows "(\<C>\<^sub>n\<^sub>e\<^sub>x\<^sub>t (\<Gamma>, n \<turnstile> ((tag-relation \<lfloor>K\<^sub>1, K\<^sub>2\<rfloor> \<in> R) # \<Psi>) \<triangleright> \<Phi>))
+          \<supseteq> { ((\<lfloor>\<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>1, n), \<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>2, n)\<rfloor> \<in> R) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> ((tag-relation \<lfloor>K\<^sub>1, K\<^sub>2\<rfloor> \<in> R) # \<Phi>) }"
   by (simp add: operational_semantics_step.simps operational_semantics_elim.tagrel_e)
 
 lemma Cnext_solve_implies:
@@ -136,8 +139,13 @@ lemma Cnext_solve_implies_not:
 lemma Cnext_solve_timedelayed:
   shows "(\<C>\<^sub>n\<^sub>e\<^sub>x\<^sub>t (\<Gamma>, n \<turnstile> ((K\<^sub>1 time-delayed by \<delta>\<tau> on K\<^sub>2 implies K\<^sub>3) # \<Psi>) \<triangleright> \<Phi>))
           \<supseteq> { ((K\<^sub>1 \<not>\<Up> n) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> ((K\<^sub>1 time-delayed by \<delta>\<tau> on K\<^sub>2 implies K\<^sub>3) # \<Phi>),
-              ((K\<^sub>1 \<Up> n) # \<Gamma>), n \<turnstile> ((K\<^sub>3 sporadic \<lfloor>\<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>2, n) \<oplus> \<delta>\<tau>\<rfloor> on K\<^sub>2) # \<Psi>) \<triangleright> ((K\<^sub>1 time-delayed by \<delta>\<tau> on K\<^sub>2 implies K\<^sub>3) # \<Phi>) }"
+              ((K\<^sub>1 \<Up> n) # \<Gamma>), n \<turnstile> ((K\<^sub>3 sporadic \<lparr>\<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>2, n) \<oplus> \<delta>\<tau>\<rparr> on K\<^sub>2) # \<Psi>) \<triangleright> ((K\<^sub>1 time-delayed by \<delta>\<tau> on K\<^sub>2 implies K\<^sub>3) # \<Phi>) }"
   by (simp add: operational_semantics_step.simps operational_semantics_elim.timedelayed_e1 operational_semantics_elim.timedelayed_e2)
+
+lemma Cnext_solve_precedes:
+  shows "(\<C>\<^sub>n\<^sub>e\<^sub>x\<^sub>t (\<Gamma>, n \<turnstile> ((K\<^sub>1 precedes K\<^sub>2) # \<Psi>) \<triangleright> \<Phi>))
+          \<supseteq> { ((\<lceil>#\<^sup>\<le> K\<^sub>2 n, #\<^sup>< K\<^sub>1 n\<rceil> \<in> (\<lambda>(x,y). x\<le>y)) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> ((K\<^sub>1 precedes K\<^sub>2) # \<Phi>) }"
+  by (simp add: operational_semantics_step.simps operational_semantics_elim.precedes_e)
 
 lemma empty_spec_reductions:
   shows "([], 0 \<turnstile> [] \<triangleright> []) \<hookrightarrow>\<^bsup>k\<^esup> ([], k \<turnstile> [] \<triangleright> [])"

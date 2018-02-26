@@ -10,14 +10,14 @@ section \<open>Denotational interpretation for atomic TESL formulae\<close>
 (* Denotational interpretation of TESL atomic formulae *)
 fun TESL_interpretation_atomic
     :: "('\<tau>::linordered_field) TESL_atomic \<Rightarrow> '\<tau> run set" ("\<lbrakk> _ \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L") where
-    "\<lbrakk> K\<^sub>1 sporadic \<lfloor>\<tau>\<rfloor> on K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
+    "\<lbrakk> K\<^sub>1 sporadic \<lparr>\<tau>\<rparr> on K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
         { \<rho>. \<exists>n::nat. hamlet ((Rep_run \<rho>) n K\<^sub>1) = True \<and> time ((Rep_run \<rho>) n K\<^sub>2) = \<tau> }"
-  | "\<lbrakk> K\<^sub>1 sporadic \<lfloor>\<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>i, n\<^sub>i) \<oplus> \<delta>\<tau>\<rfloor> on K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
+  | "\<lbrakk> K\<^sub>1 sporadic \<lparr>\<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>i, n\<^sub>i) \<oplus> \<delta>\<tau>\<rparr> on K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
         { \<rho>. \<exists>n::nat. hamlet ((Rep_run \<rho>) n K\<^sub>1) = True
                        \<and> time ((Rep_run \<rho>) n K\<^sub>2) = time ((Rep_run \<rho>) n\<^sub>i K\<^sub>i) + \<delta>\<tau> }"
   (* | "\<lbrakk> tag-relation K\<^sub>1 = \<alpha> * K\<^sub>2 + \<beta> \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
         { \<rho>. \<forall>n::nat. time ((Rep_run \<rho>) n K\<^sub>1) = \<alpha> * time ((Rep_run \<rho>) n K\<^sub>2) + \<beta> }" *)
-  | "\<lbrakk> tag-relation \<langle>K\<^sub>1, K\<^sub>2\<rangle> \<in> R \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
+  | "\<lbrakk> tag-relation \<lfloor>K\<^sub>1, K\<^sub>2\<rfloor> \<in> R \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
         { \<rho>. \<forall>n::nat. R (time ((Rep_run \<rho>) n K\<^sub>1), time ((Rep_run \<rho>) n K\<^sub>2)) }"
   | "\<lbrakk> master implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
         { \<rho>. \<forall>n::nat. hamlet ((Rep_run \<rho>) n master) \<longrightarrow> hamlet ((Rep_run \<rho>) n slave) }"
@@ -200,9 +200,9 @@ lemma NoSporadic_setinc:
 
 (*
 lemma Tagrel_affine_sugar:
-  shows "\<lbrakk> tag-relation K\<^sub>1 = \<alpha> * K\<^sub>2 + \<beta> \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<lbrakk> tag-relation \<langle>K\<^sub>1, K\<^sub>2\<rangle> \<in> (\<lambda>(\<tau>\<^sub>1, \<tau>\<^sub>2). \<tau>\<^sub>1 = \<alpha> * \<tau>\<^sub>2 + \<beta>) \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
+  shows "\<lbrakk> tag-relation K\<^sub>1 = \<alpha> * K\<^sub>2 + \<beta> \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<lbrakk> tag-relation \<lfloor>K\<^sub>1, K\<^sub>2\<rfloor> \<in> (\<lambda>(\<tau>\<^sub>1, \<tau>\<^sub>2). \<tau>\<^sub>1 = \<alpha> * \<tau>\<^sub>2 + \<beta>) \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
   proof -
-    have "\<lbrakk> tag-relation \<langle>K\<^sub>1, K\<^sub>2\<rangle> \<in> (\<lambda>(\<tau>\<^sub>1, \<tau>\<^sub>2). \<tau>\<^sub>1 = \<alpha> * \<tau>\<^sub>2 + \<beta>) \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L
+    have "\<lbrakk> tag-relation \<lfloor>K\<^sub>1, K\<^sub>2\<rfloor> \<in> (\<lambda>(\<tau>\<^sub>1, \<tau>\<^sub>2). \<tau>\<^sub>1 = \<alpha> * \<tau>\<^sub>2 + \<beta>) \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L
        = { \<rho>. \<forall>n::nat. (\<lambda>(\<tau>\<^sub>1, \<tau>\<^sub>2). \<tau>\<^sub>1 = \<alpha> * \<tau>\<^sub>2 + \<beta>) (time ((Rep_run \<rho>) n K\<^sub>1), time ((Rep_run \<rho>) n K\<^sub>2)) }"
       by auto
     then show ?thesis by auto
