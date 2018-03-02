@@ -42,6 +42,7 @@ proof -
       using HeronConf_interp_stepwise_implies_not_cases HeronConf_interpretation.simps apply blast+
       using HeronConf_interp_stepwise_timedelayed_cases HeronConf_interpretation.simps apply blast+
       using HeronConf_interp_stepwise_precedes_cases HeronConf_interpretation.simps apply blast+
+      using HeronConf_interp_stepwise_strictly_precedes_cases HeronConf_interpretation.simps apply blast+
     done
   qed
 qed
@@ -149,6 +150,10 @@ lemma complete_direct_successors:
           using HeronConf_interp_stepwise_precedes_cases[of "\<Gamma>" "n" "K1" "K2" "\<Psi>" "\<Phi>"]
                 Cnext_solve_precedes[of "K2" "n" "K1" "\<Gamma>" "\<Psi>"  "\<Phi>"]
           by blast
+      next
+        case (StrictlyPrecedes K1 K2)
+        then show ?thesis
+          sorry
       qed
   qed
 
@@ -359,6 +364,10 @@ lemma instant_index_increase:
       then show ?case
         by (metis (no_types, lifting) HeronConf_interp_stepwise_precedes_cases elims_part
             precedes_e relpowp_Suc_I2)
+    next
+      case (StrictlyPrecedes K\<^sub>1 K\<^sub>2)
+      then show ?case
+        sorry
     qed
   qed
 
