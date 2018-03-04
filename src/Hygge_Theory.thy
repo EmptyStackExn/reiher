@@ -41,8 +41,9 @@ proof -
       using HeronConf_interp_stepwise_implies_cases HeronConf_interpretation.simps apply blast+
       using HeronConf_interp_stepwise_implies_not_cases HeronConf_interpretation.simps apply blast+
       using HeronConf_interp_stepwise_timedelayed_cases HeronConf_interpretation.simps apply blast+
-      using HeronConf_interp_stepwise_precedes_cases HeronConf_interpretation.simps apply blast+
+      using HeronConf_interp_stepwise_weakly_precedes_cases HeronConf_interpretation.simps apply blast+
       using HeronConf_interp_stepwise_strictly_precedes_cases HeronConf_interpretation.simps apply blast+
+      using HeronConf_interp_stepwise_kills_cases HeronConf_interpretation.simps apply blast+
     done
   qed
 qed
@@ -145,13 +146,17 @@ lemma complete_direct_successors:
           using HeronConf_interp_stepwise_timedelayed_cases[of "\<Gamma>" "n" "Kmast" "\<tau>" "Kmeas" "Kslave" "\<Psi>" "\<Phi>"]
                 Cnext_solve_timedelayed[of "Kmast" "n" "\<Gamma>" "\<Psi>" "\<tau>" "Kmeas" "Kslave" "\<Phi>"] by blast
       next
-        case (Precedes K1 K2)
+        case (WeaklyPrecedes K1 K2)
         then show ?thesis
-          using HeronConf_interp_stepwise_precedes_cases[of "\<Gamma>" "n" "K1" "K2" "\<Psi>" "\<Phi>"]
-                Cnext_solve_precedes[of "K2" "n" "K1" "\<Gamma>" "\<Psi>"  "\<Phi>"]
+          using HeronConf_interp_stepwise_weakly_precedes_cases[of "\<Gamma>" "n" "K1" "K2" "\<Psi>" "\<Phi>"]
+                Cnext_solve_weakly_precedes[of "K2" "n" "K1" "\<Gamma>" "\<Psi>"  "\<Phi>"]
           by blast
       next
         case (StrictlyPrecedes K1 K2)
+        then show ?thesis
+          sorry
+      next
+        case (Kills K1 K2)
         then show ?thesis
           sorry
       qed
@@ -360,12 +365,16 @@ lemma instant_index_increase:
       ultimately show ?case
         using TimeDelayedBy.prems(2) by (metis UnE branches more_branches)
     next
-      case (Precedes K\<^sub>1 K\<^sub>2)
+      case (WeaklyPrecedes K\<^sub>1 K\<^sub>2)
       then show ?case
-        by (metis (no_types, lifting) HeronConf_interp_stepwise_precedes_cases elims_part
-            precedes_e relpowp_Suc_I2)
+        by (metis (no_types, lifting) HeronConf_interp_stepwise_weakly_precedes_cases elims_part
+            weakly_precedes_e relpowp_Suc_I2)
     next
       case (StrictlyPrecedes K\<^sub>1 K\<^sub>2)
+      then show ?case
+        sorry
+    next
+      case (Kills K\<^sub>1 K\<^sub>2)
       then show ?case
         sorry
     qed
