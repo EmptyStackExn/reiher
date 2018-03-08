@@ -154,11 +154,14 @@ lemma complete_direct_successors:
       next
         case (StrictlyPrecedes K1 K2)
         then show ?thesis
-          sorry
+          using HeronConf_interp_stepwise_strictly_precedes_cases[of "\<Gamma>" "n" "K1" "K2" "\<Psi>" "\<Phi>"]
+                Cnext_solve_strictly_precedes[of "K2" "n" "K1" "\<Gamma>" "\<Psi>"  "\<Phi>"]
+          by blast
       next
         case (Kills K1 K2)
         then show ?thesis
-          sorry
+          using HeronConf_interp_stepwise_kills_cases[of "\<Gamma>" "n" "K1" "K2" "\<Psi>" "\<Phi>"]
+                Cnext_solve_kills[of "K1" "n" "\<Gamma>" "\<Psi>" "K2" "\<Phi>"] by blast
       qed
   qed
 
@@ -311,8 +314,7 @@ lemma instant_index_increase:
     next
       case (ImpliesNot K\<^sub>1 K\<^sub>2)
       then show ?case
-        by (metis (no_types, lifting) HeronConf_interp_stepwise_implies_not_cases UnE
-            elims_part implies_not_e1 implies_not_e2 relpowp_Suc_I2)
+        by (metis (no_types, lifting) HeronConf_interp_stepwise_implies_not_cases Un_iff elims_part implies_not_e1 implies_not_e2 relpowp_Suc_I2)
     next
       case (TimeDelayedBy K\<^sub>1 \<delta>\<tau> K\<^sub>2 K\<^sub>3)
       have branches: "\<lbrakk> \<Gamma>, n \<turnstile> ((K\<^sub>1 time-delayed by \<delta>\<tau> on K\<^sub>2 implies K\<^sub>3) # \<Psi>) \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
@@ -372,11 +374,13 @@ lemma instant_index_increase:
     next
       case (StrictlyPrecedes K\<^sub>1 K\<^sub>2)
       then show ?case
-        sorry
+        by (metis (no_types, lifting) HeronConf_interp_stepwise_strictly_precedes_cases elims_part
+            strictly_precedes_e relpowp_Suc_I2)
     next
       case (Kills K\<^sub>1 K\<^sub>2)
       then show ?case
-        sorry
+        by (metis (no_types, lifting) HeronConf_interp_stepwise_kills_cases UnE
+            elims_part kills_e1 kills_e2 relpowp_Suc_I2)
     qed
   qed
 

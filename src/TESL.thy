@@ -22,7 +22,7 @@ datatype '\<tau> tag_expr =
 
 datatype cnt_expr =
     NatCst "nat"
-  | TickCountLe "clock" "instant_index"  ("#\<^sup><")
+  | TickCountLess "clock" "instant_index"  ("#\<^sup><")
   | TickCountLeq "clock" "instant_index" ("#\<^sup>\<le>")
   | Plus "cnt_expr" "cnt_expr"
   | LTimes "nat" "cnt_expr"
@@ -32,8 +32,8 @@ datatype '\<tau> constr =
     Timestamp     "clock"   "instant_index" "'\<tau> tag_expr"          ("_ \<Down> _ @ _")
   | Ticks         "clock"   "instant_index"                       ("_ \<Up> _")
   | NotTicks      "clock"   "instant_index"                       ("_ \<not>\<Up> _")
-  | NotTicksUntil "clock"   "instant_index"                       ("_ \<not>\<Up>\<^sup>< _")
-  | NotTicksFrom  "clock"   "instant_index"                       ("_ \<not>\<Up>\<^sup>\<ge> _")
+  | NotTicksUntil "clock"   "instant_index"                       ("_ \<not>\<Up> < _")
+  | NotTicksFrom  "clock"   "instant_index"                       ("_ \<not>\<Up> \<ge> _")
   | TagArith      "tag_var" "tag_var" "('\<tau> tag_const \<times> '\<tau> tag_const) \<Rightarrow> bool" ("\<lfloor>_, _\<rfloor> \<in> _")
   | TickCntArith  "cnt_expr" "cnt_expr" "(nat \<times> nat) \<Rightarrow> bool"               ("\<lceil>_, _\<rceil> \<in> _")
   | TickCntLeq    "cnt_expr" "cnt_expr"                           ("_ \<preceq> _")
