@@ -21,11 +21,8 @@ datatype '\<tau> tag_expr =
   | AddDelay "tag_var" "'\<tau> tag_const" ("\<lparr> _ \<oplus> _ \<rparr>")
 
 datatype cnt_expr =
-    NatCst "nat"
-  | TickCountLess "clock" "instant_index"  ("#\<^sup><")
+    TickCountLess "clock" "instant_index"  ("#\<^sup><")
   | TickCountLeq "clock" "instant_index" ("#\<^sup>\<le>")
-  | Plus "cnt_expr" "cnt_expr"
-  | LTimes "nat" "cnt_expr"
 
 (* Primitives for symbolic runs *)
 datatype '\<tau> constr =
