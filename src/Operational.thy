@@ -65,19 +65,19 @@ inductive operational_semantics_elim :: "('\<tau>::linordered_field) config \<Ri
 | delayed_e2:
 (* When K1 ticks, K1 delayed by k on K2 arms a timer counting k occurrences of K2 *)
   "(\<Gamma>, n \<turnstile> ((K\<^sub>1 delayed by k on K\<^sub>2 implies K\<^sub>3) # \<Psi>) \<triangleright> \<Phi>)
-     \<hookrightarrow>\<^sub>e  (((K\<^sub>1 \<Up> n) # \<Gamma>), n \<turnstile> ((timer k on K\<^sub>2 implies K\<^sub>3) # \<Psi>) \<triangleright> ((K\<^sub>1 delayed by k on K\<^sub>2 implies K\<^sub>3) # \<Phi>))"
+     \<hookrightarrow>\<^sub>e  (((K\<^sub>1 \<Up> n) # \<Gamma>), n \<turnstile> ((K\<^sub>1 timer k,k on K\<^sub>2 implies K\<^sub>3) # \<Psi>) \<triangleright> ((K\<^sub>1 delayed by k on K\<^sub>2 implies K\<^sub>3) # \<Phi>))"
 | timer_e1:
 (* When a timer reaches 0, it forces a ticks on the slave clock *)
-  "(\<Gamma>, n \<turnstile> ((timer 0 on K\<^sub>2 implies K\<^sub>3) # \<Psi>) \<triangleright> \<Phi>)
+  "(\<Gamma>, n \<turnstile> ((K\<^sub>1 timer p,0 on K\<^sub>2 implies K\<^sub>3) # \<Psi>) \<triangleright> \<Phi>)
      \<hookrightarrow>\<^sub>e  (((K\<^sub>3 \<Up> n) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> \<Phi>)"
 | timer_e2:
 (* When its measuring clock does not tick, a timer is unchanged *)
-  "(\<Gamma>, n \<turnstile> ((timer (Suc k) on K\<^sub>2 implies K\<^sub>3) # \<Psi>) \<triangleright> \<Phi>)
-     \<hookrightarrow>\<^sub>e  (((K\<^sub>2 \<not>\<Up> n) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> ((timer (Suc k) on K\<^sub>2 implies K\<^sub>3) # \<Phi>))"
+  "(\<Gamma>, n \<turnstile> ((K\<^sub>1 timer p,(Suc k) on K\<^sub>2 implies K\<^sub>3) # \<Psi>) \<triangleright> \<Phi>)
+     \<hookrightarrow>\<^sub>e  (((K\<^sub>2 \<not>\<Up> n) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> ((K\<^sub>1 timer p,(Suc k) on K\<^sub>2 implies K\<^sub>3) # \<Phi>))"
 | timer_e3:
 (* When its measuring clock ticks, a timer is decremented (and processed by timer_e1 if it reaches 0 *)
-  "(\<Gamma>, n \<turnstile> ((timer (Suc k) on K\<^sub>2 implies K\<^sub>3) # \<Psi>) \<triangleright> \<Phi>)
-     \<hookrightarrow>\<^sub>e  (((K\<^sub>2 \<Up> n) # \<Gamma>), n \<turnstile> ((timer k on K\<^sub>2 implies K\<^sub>3) # \<Psi>) \<triangleright> \<Phi>)"
+  "(\<Gamma>, n \<turnstile> ((K\<^sub>1 timer p,(Suc k) on K\<^sub>2 implies K\<^sub>3) # \<Psi>) \<triangleright> \<Phi>)
+     \<hookrightarrow>\<^sub>e  (((K\<^sub>2 \<Up> n) # \<Gamma>), n \<turnstile> ((K\<^sub>1 timer p,k on K\<^sub>2 implies K\<^sub>3) # \<Psi>) \<triangleright> \<Phi>)"
 | weakly_precedes_e:
   "(\<Gamma>, n \<turnstile> ((K\<^sub>1 weakly precedes K\<^sub>2) # \<Psi>) \<triangleright> \<Phi>)
      \<hookrightarrow>\<^sub>e  (((\<lceil>#\<^sup>\<le> K\<^sub>2 n, #\<^sup>\<le> K\<^sub>1 n\<rceil> \<in> (\<lambda>(x,y). x\<le>y)) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> ((K\<^sub>1 weakly precedes K\<^sub>2) # \<Phi>))"
@@ -174,18 +174,18 @@ lemma Cnext_solve_timedelayed:
 lemma Cnext_solve_delayed:
   shows "(\<C>\<^sub>n\<^sub>e\<^sub>x\<^sub>t (\<Gamma>, n \<turnstile> ((K\<^sub>1 delayed by k on K\<^sub>2 implies K\<^sub>3) # \<Psi>) \<triangleright> \<Phi>))
           \<supseteq> { ((K\<^sub>1 \<not>\<Up> n) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> ((K\<^sub>1 delayed by k on K\<^sub>2 implies K\<^sub>3) # \<Phi>),
-              ((K\<^sub>1 \<Up> n) # \<Gamma>), n \<turnstile> ((timer k on K\<^sub>2 implies K\<^sub>3) # \<Psi>) \<triangleright> ((K\<^sub>1 delayed by k on K\<^sub>2 implies K\<^sub>3) # \<Phi>) }"
+              ((K\<^sub>1 \<Up> n) # \<Gamma>), n \<turnstile> ((K\<^sub>1 timer k,k on K\<^sub>2 implies K\<^sub>3) # \<Psi>) \<triangleright> ((K\<^sub>1 delayed by k on K\<^sub>2 implies K\<^sub>3) # \<Phi>) }"
   by (simp add: operational_semantics_step.simps operational_semantics_elim.delayed_e1 operational_semantics_elim.delayed_e2)
 
 lemma Cnext_solve_timer_0:
-  shows "(\<C>\<^sub>n\<^sub>e\<^sub>x\<^sub>t (\<Gamma>, n \<turnstile> ((timer 0 on K\<^sub>2 implies K\<^sub>3) # \<Psi>) \<triangleright> \<Phi>))
+  shows "(\<C>\<^sub>n\<^sub>e\<^sub>x\<^sub>t (\<Gamma>, n \<turnstile> ((K\<^sub>1 timer p,0 on K\<^sub>2 implies K\<^sub>3) # \<Psi>) \<triangleright> \<Phi>))
           \<supseteq> { ((K\<^sub>3 \<Up> n) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> \<Phi> }"
   by (simp add: elims_part timer_e1)
 
 lemma Cnext_solve_timer_succ:
-  shows "(\<C>\<^sub>n\<^sub>e\<^sub>x\<^sub>t (\<Gamma>, n \<turnstile> ((timer (Suc k) on K\<^sub>2 implies K\<^sub>3) # \<Psi>) \<triangleright> \<Phi>))
-          \<supseteq> { ((K\<^sub>2 \<not>\<Up> n) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> ((timer (Suc k) on K\<^sub>2 implies K\<^sub>3) # \<Phi>),
-              ((K\<^sub>2 \<Up> n) # \<Gamma>), n \<turnstile> ((timer k on K\<^sub>2 implies K\<^sub>3) # \<Psi>) \<triangleright> \<Phi> }"
+  shows "(\<C>\<^sub>n\<^sub>e\<^sub>x\<^sub>t (\<Gamma>, n \<turnstile> ((K\<^sub>1 timer p,(Suc k) on K\<^sub>2 implies K\<^sub>3) # \<Psi>) \<triangleright> \<Phi>))
+          \<supseteq> { ((K\<^sub>2 \<not>\<Up> n) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> ((K\<^sub>1 timer p,(Suc k) on K\<^sub>2 implies K\<^sub>3) # \<Phi>),
+              ((K\<^sub>2 \<Up> n) # \<Gamma>), n \<turnstile> ((K\<^sub>1 timer p,k on K\<^sub>2 implies K\<^sub>3) # \<Psi>) \<triangleright> \<Phi> }"
   by (simp add: elims_part timer_e2 timer_e3)
 
 lemma Cnext_solve_weakly_precedes:
