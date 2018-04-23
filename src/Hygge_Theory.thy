@@ -146,12 +146,6 @@ lemma complete_direct_successors:
           using HeronConf_interp_stepwise_timedelayed_cases[of "\<Gamma>" "n" "Kmast" "\<tau>" "Kmeas" "Kslave" "\<Psi>" "\<Phi>"]
                 Cnext_solve_timedelayed[of "Kmast" "n" "\<Gamma>" "\<Psi>" "\<tau>" "Kmeas" "Kslave" "\<Phi>"] by blast
       next
-        case (DelayedBy x61 x62 x63 x64)
-        then show ?thesis sorry
-      next
-        case (TimerOn x71 x72 x73 x74 x75)
-        then show ?thesis sorry
-      next
         case (WeaklyPrecedes K1 K2)
         then show ?thesis
           using HeronConf_interp_stepwise_weakly_precedes_cases[of "\<Gamma>" "n" "K1" "K2" "\<Psi>" "\<Phi>"]

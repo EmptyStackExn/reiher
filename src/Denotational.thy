@@ -28,20 +28,6 @@ fun TESL_interpretation_atomic
                           \<and> time ((Rep_run \<rho>) m measuring) = measured_time + \<delta>\<tau>
                  )
         }"
-  | "\<lbrakk> master delayed by k on measuring implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
-        { \<rho>. \<forall>n. hamlet ((Rep_run \<rho>) n master) \<longrightarrow>
-                 (let measured_count = run_tick_count \<rho> measuring n in
-                  \<exists>m \<ge> n. hamlet ((Rep_run \<rho>) m slave)
-                          \<and> run_tick_count \<rho> measuring m = measured_count + k
-                 )
-        }"
-  | "\<lbrakk> master timer p,k on measuring implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
-        { \<rho>. \<forall>n. hamlet ((Rep_run \<rho>) n master) \<longrightarrow>
-                 (let measured_count = run_tick_count \<rho> measuring n in
-                  \<exists>m \<ge> n. hamlet ((Rep_run \<rho>) m slave)
-                          \<and> run_tick_count \<rho> measuring m = measured_count + p
-                 )
-        }"
   | "\<lbrakk> K\<^sub>1 weakly precedes K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
         { \<rho>. \<forall>n::nat. (run_tick_count \<rho> K\<^sub>2 n) \<le> (run_tick_count \<rho> K\<^sub>1 n) }"
   | "\<lbrakk> K\<^sub>1 strictly precedes K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =

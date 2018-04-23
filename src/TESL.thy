@@ -46,8 +46,6 @@ datatype '\<tau> TESL_atomic =
   | Implies        "clock" "clock"                         (infixr "implies" 55)
   | ImpliesNot     "clock" "clock"                         (infixr "implies not" 55)
   | TimeDelayedBy  "clock" "'\<tau> tag_const" "clock" "clock"     ("_ time-delayed by _ on _ implies _" 55)
-  | DelayedBy      "clock" "nat" "clock" "clock"     ("_ delayed by _ on _ implies _" 55)
-  | TimerOn        "clock" "nat" "nat" "clock" "clock"     ("_ timer _ , _ on _ implies _" 55)
   | WeaklyPrecedes "clock" "clock"                         (infixr "weakly precedes" 55)
   | StrictlyPrecedes "clock" "clock"                       (infixr "strictly precedes" 55)
   | Kills          "clock" "clock"                         (infixr "kills" 55)

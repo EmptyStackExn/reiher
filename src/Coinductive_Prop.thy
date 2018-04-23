@@ -30,20 +30,6 @@ fun TESL_interpretation_atomic_stepwise
                           \<and> time ((Rep_run \<rho>) m measuring) = measured_time + \<delta>\<tau>
                  )
         }"
-  | "\<lbrakk> master delayed by k on measuring implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> i\<^esup> =
-        { \<rho>. \<forall>n\<ge>i. hamlet ((Rep_run \<rho>) n master) \<longrightarrow>
-                 (let measured_count = run_tick_count \<rho> measuring n in
-                  \<exists>m \<ge> n. hamlet ((Rep_run \<rho>) m slave)
-                          \<and> run_tick_count \<rho> measuring m = measured_count + k
-                 )
-        }"
-  | "\<lbrakk> master timer p,k on measuring implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> i\<^esup> =
-        { \<rho>. \<forall>n\<ge>i. hamlet ((Rep_run \<rho>) n master) \<longrightarrow>
-                 (let measured_count = run_tick_count \<rho> measuring n in
-                  \<exists>m \<ge> n. hamlet ((Rep_run \<rho>) m slave)
-                          \<and> run_tick_count \<rho> measuring m = measured_count + p
-                 )
-        }" (* TODO: incomplete definition: if K1 occurred before i and k \<noteq> 0, we have to make K3 tick after k occurrences of K2. *)
   | "\<lbrakk> K\<^sub>1 weakly precedes K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> i\<^esup> =
         { \<rho>. \<forall>n\<ge>i. (run_tick_count \<rho> K\<^sub>2 n) \<le> (run_tick_count \<rho> K\<^sub>1 n) }"
   | "\<lbrakk> K\<^sub>1 strictly precedes K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> i\<^esup> =
@@ -89,16 +75,6 @@ lemma TESL_interp_unfold_stepwise_implies_not:
 lemma TESL_interp_unfold_stepwise_timedelayed:
   shows "\<lbrakk> master time-delayed by \<delta>\<tau> on measuring implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L
     = \<Inter> {Y. \<exists>n::nat. Y = \<lbrakk> master time-delayed by \<delta>\<tau> on measuring implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup>}"
-  by auto
-
-lemma TESL_interp_unfold_stepwise_delayed:
-  shows "\<lbrakk> master delayed by k on measuring implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L
-    = \<Inter> {Y. \<exists>n::nat. Y = \<lbrakk> master delayed by k on measuring implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup>}"
-  by auto
-
-lemma TESL_interp_unfold_stepwise_timer:
-  shows "\<lbrakk> master timer p,k on measuring implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L
-    = \<Inter> {Y. \<exists>n::nat. Y = \<lbrakk> master timer p,k on measuring implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup>}"
   by auto
 
 lemma TESL_interp_unfold_stepwise_weakly_precedes:
@@ -148,12 +124,6 @@ next
 next
   case (TimeDelayedBy x61 x62 x63 x64)
   thus ?thesis using TESL_interp_unfold_stepwise_timedelayed by simp
-next
-  case (DelayedBy x61 x62 x63 x64)
-  then show ?thesis using TESL_interp_unfold_stepwise_delayed by simp
-next
-  case (TimerOn x71 x72 x73 x74 x75)
-  then show ?thesis using TESL_interp_unfold_stepwise_timer by simp
 next
   case (WeaklyPrecedes x61 x62)
   then show ?thesis
@@ -396,12 +366,6 @@ lemma TESL_interpretation_stepwise_zero:
     then show ?case by simp
   next
     case (TimeDelayedBy x1 x2 x3 x4)
-    then show ?case by simp
-  next
-    case (DelayedBy x1 x2 x3 x4)
-    then show ?case by simp
-  next
-    case (TimerOn x1 x2 x3 x4 x5)
     then show ?case by simp
   next
     case (WeaklyPrecedes x1 x2)
