@@ -5,7 +5,7 @@ begin
 text {* We define as follows the syntax of primitives to describe symbolic runs *}
 
 (** Clocks **)
-datatype clock = Clk "string"        (* ("\<lceil> _ \<rceil>") *)
+datatype clock = Clk "string"
 type_synonym instant_index = "nat"
 
 (** Tags **) 
@@ -42,7 +42,7 @@ text{* Define as follows the syntax of TESL *}
 (* TESL language *)
 datatype '\<tau> TESL_atomic =
     SporadicOn     "clock" "'\<tau> tag_expr"  "clock"             ("_ sporadic _ on _" 55)
-  | TagRelation    "clock" "clock" "('\<tau> tag_const \<times> '\<tau> tag_const) \<Rightarrow> bool" ("tag-relation \<lfloor>_, _\<rfloor> \<in> _" 55)
+  | TagRelation    "clock" "clock" "('\<tau> tag_const \<times> '\<tau> tag_const) \<Rightarrow> bool" ("time-relation \<lfloor>_, _\<rfloor> \<in> _" 55)
   | Implies        "clock" "clock"                         (infixr "implies" 55)
   | ImpliesNot     "clock" "clock"                         (infixr "implies not" 55)
   | TimeDelayedBy  "clock" "'\<tau> tag_const" "clock" "clock"     ("_ time-delayed by _ on _ implies _" 55)

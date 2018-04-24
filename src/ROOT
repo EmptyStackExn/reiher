@@ -1,6 +1,0 @@
-session Hygge_Theory = "HOL" +
-  description {*
-    Denotational and operational semantics for TESL
-  *}
-  theories
-    Hygge_Theory

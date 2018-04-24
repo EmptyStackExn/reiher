@@ -15,7 +15,7 @@ fun TESL_interpretation_atomic
   | "\<lbrakk> K\<^sub>1 sporadic \<lparr>\<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>i, n\<^sub>i) \<oplus> \<delta>\<tau>\<rparr> on K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
         { \<rho>. \<exists>n::nat. hamlet ((Rep_run \<rho>) n K\<^sub>1) = True
                        \<and> time ((Rep_run \<rho>) n K\<^sub>2) = time ((Rep_run \<rho>) n\<^sub>i K\<^sub>i) + \<delta>\<tau> }"
-  | "\<lbrakk> tag-relation \<lfloor>K\<^sub>1, K\<^sub>2\<rfloor> \<in> R \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
+  | "\<lbrakk> time-relation \<lfloor>K\<^sub>1, K\<^sub>2\<rfloor> \<in> R \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
         { \<rho>. \<forall>n::nat. R (time ((Rep_run \<rho>) n K\<^sub>1), time ((Rep_run \<rho>) n K\<^sub>2)) }"
   | "\<lbrakk> master implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
         { \<rho>. \<forall>n::nat. hamlet ((Rep_run \<rho>) n master) \<longrightarrow> hamlet ((Rep_run \<rho>) n slave) }"
@@ -199,16 +199,5 @@ lemma NoSporadic_idem [simp]:
 lemma NoSporadic_setinc:
   shows "set (NoSporadic \<Phi>) \<subseteq> set \<Phi>"
   by auto
-
-(*
-lemma Tagrel_affine_sugar:
-  shows "\<lbrakk> tag-relation K\<^sub>1 = \<alpha> * K\<^sub>2 + \<beta> \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<lbrakk> tag-relation \<lfloor>K\<^sub>1, K\<^sub>2\<rfloor> \<in> (\<lambda>(\<tau>\<^sub>1, \<tau>\<^sub>2). \<tau>\<^sub>1 = \<alpha> * \<tau>\<^sub>2 + \<beta>) \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
-  proof -
-    have "\<lbrakk> tag-relation \<lfloor>K\<^sub>1, K\<^sub>2\<rfloor> \<in> (\<lambda>(\<tau>\<^sub>1, \<tau>\<^sub>2). \<tau>\<^sub>1 = \<alpha> * \<tau>\<^sub>2 + \<beta>) \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L
-       = { \<rho>. \<forall>n::nat. (\<lambda>(\<tau>\<^sub>1, \<tau>\<^sub>2). \<tau>\<^sub>1 = \<alpha> * \<tau>\<^sub>2 + \<beta>) (time ((Rep_run \<rho>) n K\<^sub>1), time ((Rep_run \<rho>) n K\<^sub>2)) }"
-      by auto
-    then show ?thesis by auto
-  qed
-*)
 
 end
