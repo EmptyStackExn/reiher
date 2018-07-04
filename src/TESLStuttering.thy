@@ -22,23 +22,6 @@ proof -
   thus ?thesis by auto
 qed
 
-(* Wrong. Not a denotational definition. *)
-lemma sporadic_var_sub:
-  assumes "sub \<lless> r"
-      and "sub \<in> \<lbrakk> c sporadic \<lparr>\<tau>\<^sub>v\<^sub>a\<^sub>r(c\<^sub>i, n\<^sub>i) \<oplus> \<delta>\<tau>\<rparr> on c' \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
-    shows "r \<in> \<lbrakk> c sporadic \<lparr>\<tau>\<^sub>v\<^sub>a\<^sub>r(c\<^sub>i, n\<^sub>i) \<oplus> \<delta>\<tau>\<rparr> on c' \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
-proof -
-  from assms(1) is_subrun_def obtain f
-    where "dilating f sub r" by blast
-  hence "\<forall>n c. time ((Rep_run sub) n c) = time ((Rep_run r) (f n) c)
-           \<and> hamlet ((Rep_run sub) n c) = hamlet ((Rep_run r) (f n) c)" by (simp add: dilating_def)
-  moreover from assms(2) have
-    "sub \<in> {r. \<exists> n. hamlet ((Rep_run r) n c) \<and> time ((Rep_run r) n c') = time ((Rep_run r) n\<^sub>i c\<^sub>i) + \<delta>\<tau>}" by simp
-  from this obtain k where "hamlet ((Rep_run sub) k c) \<and> time ((Rep_run sub) k c') = time ((Rep_run sub) n\<^sub>i c\<^sub>i) + \<delta>\<tau>" by blast
-  ultimately have "hamlet ((Rep_run r) (f k) c) \<and> time ((Rep_run r) (f k) c') = time ((Rep_run r) (f n\<^sub>i) c\<^sub>i) + \<delta>\<tau>" by simp
-  hence "\<exists>n'. hamlet ((Rep_run r) n' c) \<and> time ((Rep_run r) n' c') = time ((Rep_run r) (f n\<^sub>i) c\<^sub>i) + \<delta>\<tau>" by auto
-  thus ?thesis oops
-
 text {*
   Implications are preserved in a dilated run.
 *}
@@ -86,7 +69,7 @@ proof -
   ultimately have "\<forall>n. (tick_count r c\<^sub>2 n) \<le> (tick_count r c\<^sub>1 n)"
     using  dil_tick_count tick_count_is_fun assms(1) by metis
   thus ?thesis 
-    using TESL_interpretation_atomic.simps(7) assms dil_tick_count by blast
+    using TESL_interpretation_atomic.simps(8) assms dil_tick_count by blast
 qed
 
 (* Redo all the lemmas for strictly precedes? APITA! *)
@@ -117,7 +100,7 @@ proof -
   from assms(2) have "\<forall>n. hamlet ((Rep_run sub) n a)
                           \<longrightarrow> (\<exists>m \<ge> n. hamlet ((Rep_run sub) m b)
                                     \<and> time ((Rep_run sub) m ms) =  time ((Rep_run sub) n ms) + \<delta>\<tau>)"
-    using TESL_interpretation_atomic.simps(6)[of "a" "\<delta>\<tau>" "ms" "b"] by simp
+    using TESL_interpretation_atomic.simps(7)[of "a" "\<delta>\<tau>" "ms" "b"] by simp
   hence **:"\<forall>n\<^sub>0. hamlet ((Rep_run r) (f n\<^sub>0) a)
                   \<longrightarrow> (\<exists>m\<^sub>0 \<ge> n\<^sub>0. hamlet ((Rep_run r) (f m\<^sub>0) b)
                              \<and>  time ((Rep_run r) (f m\<^sub>0) ms) = time ((Rep_run r) (f n\<^sub>0) ms) + \<delta>\<tau>)"
@@ -140,7 +123,7 @@ proof -
 qed
 
 text {*
-  Tag relations are preserved by contraction
+  Time relations are preserved by contraction
 *}
 lemma tagrel_sub_inv:
   assumes "sub \<lless> r"
@@ -158,6 +141,27 @@ proof -
   ultimately have "\<forall>n\<^sub>0. R (time ((Rep_run sub) n\<^sub>0 c\<^sub>1), time ((Rep_run sub) n\<^sub>0 c\<^sub>2))" by auto
   thus ?thesis by simp
 qed
+
+text {*
+  A time relation becomes a loose time relation through dilation of a run.
+*}
+lemma loose_tagrel_sub:
+  assumes "sub \<lless> r"
+      and "sub \<in> \<lbrakk> time-relation \<lfloor>c\<^sub>1,c\<^sub>2\<rfloor> \<in> R \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
+    shows "r \<in> \<lbrakk> loose time-relation \<lfloor>c\<^sub>1,c\<^sub>2\<rfloor> \<in> R \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
+proof -
+  from assms(1) is_subrun_def obtain f where "dilating f sub r" by blast
+  moreover from assms(2) TESL_interpretation_atomic.simps(3) have
+    "sub \<in> {r. \<forall>n. R (time ((Rep_run r) n c\<^sub>1), time ((Rep_run r) n c\<^sub>2))}" by blast
+  hence "\<forall>n. R (time ((Rep_run sub) n c\<^sub>1), time ((Rep_run sub) n c\<^sub>2))" by simp
+  moreover have "\<forall>n\<^sub>0. R (time ((Rep_run r) (f n\<^sub>0) c\<^sub>1), time ((Rep_run r) (f n\<^sub>0) c\<^sub>2))"
+    using calculation by (simp add:dilating_def)
+  ultimately have
+    "\<forall>n. (\<exists>c. hamlet ((Rep_run r) n c)) \<longrightarrow> R (time ((Rep_run r) n c\<^sub>1), time ((Rep_run r) n c\<^sub>2))"
+    using ticks_image_sub' by blast
+  thus ?thesis by simp
+qed
+
 
 
 end

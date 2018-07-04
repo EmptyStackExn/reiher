@@ -665,5 +665,12 @@ proof -
   qed
 qed
 
+text {*
+  A time relation is a stricter specification than the equivalent loose time relation.
+*}
+lemma tagrel_is_loose:
+  shows   "\<lbrakk> time-relation \<lfloor>H\<^sub>1,H\<^sub>2\<rfloor> \<in> R \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L \<subseteq> \<lbrakk> loose time-relation \<lfloor>H\<^sub>1,H\<^sub>2\<rfloor> \<in> R \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
+by auto
+
 
 end
