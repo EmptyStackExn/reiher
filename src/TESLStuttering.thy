@@ -139,5 +139,25 @@ proof -
   thus ?thesis by simp
 qed
 
+text {*
+  Tag relations are preserved by contraction
+*}
+lemma tagrel_sub_inv:
+  assumes "sub \<lless> r"
+      and "r \<in> \<lbrakk> time-relation \<lfloor>c\<^sub>1, c\<^sub>2\<rfloor> \<in> R \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
+    shows "sub \<in> \<lbrakk> time-relation \<lfloor>c\<^sub>1, c\<^sub>2\<rfloor> \<in> R \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
+proof -
+  from assms(1) is_subrun_def obtain f where df:"dilating f sub r" by blast
+  moreover from assms(2) TESL_interpretation_atomic.simps(3) have
+    "r \<in> {\<rho>. \<forall>n. R (time ((Rep_run \<rho>) n c\<^sub>1), time ((Rep_run \<rho>) n c\<^sub>2))}" by blast
+  hence "\<forall>n. R (time ((Rep_run r) n c\<^sub>1), time ((Rep_run r) n c\<^sub>2))" by simp
+  hence "\<forall>n. (\<exists>n\<^sub>0. f n\<^sub>0 = n) \<longrightarrow> R (time ((Rep_run r) n c\<^sub>1), time ((Rep_run r) n c\<^sub>2))" by simp
+  hence "\<forall>n\<^sub>0. R (time ((Rep_run r) (f n\<^sub>0) c\<^sub>1), time ((Rep_run r) (f n\<^sub>0) c\<^sub>2))" by blast
+  moreover from dilating_def df have
+    "\<forall>n c. time ((Rep_run sub) n c) = time ((Rep_run r) (f n) c)" by blast
+  ultimately have "\<forall>n\<^sub>0. R (time ((Rep_run sub) n\<^sub>0 c\<^sub>1), time ((Rep_run sub) n\<^sub>0 c\<^sub>2))" by auto
+  thus ?thesis by simp
+qed
+
 
 end
