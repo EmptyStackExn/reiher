@@ -5,22 +5,27 @@ imports Denotational
 begin
 text {*
   A dilating function inserts empty instants in a run.
-  It is strictly increasing, the image of a nat is greater than it, 
+  It is strictly increasing, the image of a nat is greater than it,
+  no instant is inserted before the first one 
   and if n is not in the image of the function, no clock ticks at instant n.
 *}
 definition dilating_fun
 where
   "dilating_fun (f::nat \<Rightarrow> nat) (r::'a::linordered_field run)
-    \<equiv> strict_mono f \<and> (\<forall>n. f n \<ge> n \<and> ((\<nexists>n\<^sub>0. f n\<^sub>0 = n) \<longrightarrow> (\<forall>c. \<not>(hamlet ((Rep_run r) n c)))))"
+    \<equiv> strict_mono f \<and> (f 0 = 0) \<and> (\<forall>n. f n \<ge> n
+    \<and> ((\<nexists>n\<^sub>0. f n\<^sub>0 = n) \<longrightarrow> (\<forall>c. \<not>(hamlet ((Rep_run r) n c))))
+   )"
 
 text {*
   Dilating a run. A run r is a dilation of a run sub by function f if:
     * f is a dilating function on the hamlet of r
+    * time is preserved in stuttering instants
     * the time in r is the time in sub dilated by f
     * the hamlet in r is the hamlet in sub dilated by f
 *}
 definition dilating
   where "dilating f sub r \<equiv>   dilating_fun f r
+                            \<and> (\<forall>n. (\<nexists>n\<^sub>0. f n\<^sub>0 = (Suc n)) \<longrightarrow> (\<forall>c. time ((Rep_run r) (Suc n) c) = time ((Rep_run r) n c)))
                             \<and> (\<forall>n c. time ((Rep_run sub) n c) = time ((Rep_run r) (f n) c))
                             \<and> (\<forall>n c. hamlet ((Rep_run sub) n c) = hamlet ((Rep_run r) (f n) c))"
 
