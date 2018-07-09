@@ -147,7 +147,7 @@ proof -
     then show ?case
     proof (cases "\<nexists>n\<^sub>0. f n\<^sub>0 = Suc n")
       case True
-        thus ?thesis by (metis Suc.IH calculation dilating_def)
+        thus ?thesis by (metis Suc.IH calculation dilating_def dilating_fun_def)
     next
       case False
       from this obtain n\<^sub>0 where n\<^sub>0prop:"f n\<^sub>0 = Suc n" by blast
