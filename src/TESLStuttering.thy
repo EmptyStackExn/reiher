@@ -66,10 +66,88 @@ proof -
     "sub \<in> {r. \<forall>n. (run_tick_count r c\<^sub>2 n) \<le> (run_tick_count r c\<^sub>1 n)}" by simp
   hence "\<forall>n. (run_tick_count sub c\<^sub>2 n) \<le> (run_tick_count sub c\<^sub>1 n)" by simp
   from dil_tick_count[OF assms(1) this] have "\<forall>n. (run_tick_count r c\<^sub>2 n) \<le> (run_tick_count r c\<^sub>1 n)" by simp
-  thus ?thesis 
-    using TESL_interpretation_atomic.simps(8)[of "c\<^sub>1" "c\<^sub>2"] by simp
+  thus ?thesis by simp
 qed
 
+theorem strictly_precedes_sub2:
+  assumes "sub \<lless> r"
+      and "sub \<in> \<lbrakk>c\<^sub>1 strictly precedes c\<^sub>2\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
+    shows "r \<in> \<lbrakk>c\<^sub>1 strictly precedes c\<^sub>2\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
+proof -
+  from assms(1) is_subrun_def obtain f where *:"dilating f sub r" by blast
+  from assms(2) have "sub \<in> { \<rho>. \<forall>n::nat. (run_tick_count \<rho> c\<^sub>2 n) \<le> (run_tick_count_strictly \<rho> c\<^sub>1 n) }" by simp
+  with strictly_precedes_alt_def2[of "c\<^sub>2" "c\<^sub>1"]  have
+    "sub \<in> { \<rho>. (\<not>hamlet ((Rep_run \<rho>) 0 c\<^sub>2)) \<and> (\<forall>n::nat. (run_tick_count \<rho> c\<^sub>2 (Suc n)) \<le> (run_tick_count \<rho> c\<^sub>1 n)) }"
+  by blast
+  hence "(\<not>hamlet ((Rep_run sub) 0 c\<^sub>2)) \<and> (\<forall>n::nat. (run_tick_count sub c\<^sub>2 (Suc n)) \<le> (run_tick_count sub c\<^sub>1 n))"
+    by simp
+  hence
+    1:"(\<not>hamlet ((Rep_run sub) 0 c\<^sub>2)) \<and> (\<forall>n::nat. (tick_count sub c\<^sub>2 (Suc n)) \<le> (tick_count sub c\<^sub>1 n))"
+  by (simp add: tick_count_is_fun)
+  have "\<forall>n::nat. (tick_count r c\<^sub>2 (Suc n)) \<le> (tick_count r c\<^sub>1 n)"
+  proof -
+    { fix n::nat
+      have "tick_count r c\<^sub>2 (Suc n) \<le> tick_count r c\<^sub>1 n"
+      proof (cases "\<exists>n\<^sub>0. f n\<^sub>0 = n")
+        case True (* n is in the image of f *)
+          from this obtain n\<^sub>0 where fn:"f n\<^sub>0 = n" by blast
+          show ?thesis
+          proof (cases "\<exists>sn\<^sub>0. f sn\<^sub>0 = Suc n")
+            case True (* Suc n is in the image of f *)
+              from this obtain sn\<^sub>0 where fsn:"f sn\<^sub>0 = Suc n" by blast
+              with fn have "sn\<^sub>0 = Suc n\<^sub>0" using strict_mono_suc * dilating_def dilating_fun_def by blast
+              with 1 have "tick_count sub c\<^sub>2 sn\<^sub>0 \<le> tick_count sub c\<^sub>1 n\<^sub>0" by simp
+              thus ?thesis using fn fsn tick_count_sub[OF *] by simp
+          next
+            case False (* Suc n is not in the image of f *)
+              hence "\<not>hamlet ((Rep_run r) (Suc n) c\<^sub>2)"
+                using * by (simp add: dilating_def dilating_fun_def)
+              hence "tick_count r c\<^sub>2 (Suc n) = tick_count r c\<^sub>2 n" by (simp add: tick_count_suc)
+              also have "... = tick_count sub c\<^sub>2 n\<^sub>0" using fn tick_count_sub[OF *] by simp
+              finally have "tick_count r c\<^sub>2 (Suc n) = tick_count sub c\<^sub>2 n\<^sub>0" .
+              moreover have "tick_count sub c\<^sub>2 n\<^sub>0 \<le> tick_count sub c\<^sub>2 (Suc n\<^sub>0)"
+                by (simp add: tick_count_suc)
+              ultimately have "tick_count r c\<^sub>2 (Suc n) \<le> tick_count sub c\<^sub>2 (Suc n\<^sub>0)" by simp
+              moreover have "tick_count sub c\<^sub>2 (Suc n\<^sub>0) \<le> tick_count sub c\<^sub>1 n\<^sub>0" using 1 by simp
+              ultimately have "tick_count r c\<^sub>2 (Suc n) \<le> tick_count sub c\<^sub>1 n\<^sub>0" by simp
+              thus ?thesis using tick_count_sub[OF *] fn by simp
+          qed
+      next
+        case False (* n is not in the image of f *)
+          from greatest_prev_image[OF * this] obtain n\<^sub>p
+            where np_prop:"f n\<^sub>p < n \<and> (\<forall>k. f n\<^sub>p < k \<and> k \<le> n \<longrightarrow> (\<nexists>k\<^sub>0. f k\<^sub>0 = k))" by blast
+          from tick_count_latest[OF * this] have "tick_count r c\<^sub>1 n = tick_count r c\<^sub>1 (f n\<^sub>p)" . 
+          hence a:"tick_count r c\<^sub>1 n = tick_count sub c\<^sub>1 n\<^sub>p" using tick_count_sub[OF *] by simp
+          have b: "tick_count sub c\<^sub>2 (Suc n\<^sub>p) \<le> tick_count sub c\<^sub>1 n\<^sub>p" using 1 by simp
+          show ?thesis
+          proof (cases "\<exists>sn\<^sub>0. f sn\<^sub>0 = Suc n")
+            case True (* Suc n is in the image of f *)
+              from this obtain sn\<^sub>0 where fsn:"f sn\<^sub>0 = Suc n" by blast
+              from next_non_stuttering[OF * np_prop this]  have sn_prop:"sn\<^sub>0 = Suc n\<^sub>p" .
+              with b have "tick_count sub c\<^sub>2 sn\<^sub>0 \<le> tick_count sub c\<^sub>1 n\<^sub>p" by simp
+              thus ?thesis using tick_count_sub[OF *] fsn a by auto
+          next
+            case False (* Suc n is not in the image of f *)
+              hence "\<not>hamlet ((Rep_run r) (Suc n) c\<^sub>2)"
+                using * by (simp add: dilating_def dilating_fun_def)
+              hence "tick_count r c\<^sub>2 (Suc n) = tick_count r c\<^sub>2 n" by (simp add: tick_count_suc)
+              also have "... = tick_count sub c\<^sub>2 n\<^sub>p" using np_prop tick_count_sub[OF *]
+                by (simp add: tick_count_latest[OF * np_prop])
+              finally have "tick_count r c\<^sub>2 (Suc n) = tick_count sub c\<^sub>2 n\<^sub>p" .
+              moreover have "tick_count sub c\<^sub>2 n\<^sub>p \<le> tick_count sub c\<^sub>2 (Suc n\<^sub>p)"
+                by (simp add: tick_count_suc)
+              ultimately have "tick_count r c\<^sub>2 (Suc n) \<le> tick_count sub c\<^sub>2 (Suc n\<^sub>p)" by simp
+              moreover have "tick_count sub c\<^sub>2 (Suc n\<^sub>p) \<le> tick_count sub c\<^sub>1 n\<^sub>p" using 1 by simp
+              ultimately have "tick_count r c\<^sub>2 (Suc n) \<le> tick_count sub c\<^sub>1 n\<^sub>p" by simp
+              thus ?thesis using np_prop mono_tick_count  using a by linarith
+          qed
+      qed
+    } thus ?thesis ..
+  qed
+  moreover from 1 have "\<not>hamlet ((Rep_run r) 0 c\<^sub>2)"
+    using "*" empty_dilated_prefix ticks_sub by fastforce
+  ultimately show ?thesis by (simp add: tick_count_is_fun strictly_precedes_alt_def2) 
+qed
 
 text {*
   Time delayed relations are preserved in a dilated run.
@@ -168,62 +246,3 @@ corollary tagrel_sub:
 using tagrel_sub'[OF assms] unfolding TESL_interpretation_atomic.simps(3) by simp
 
 end
-
-(*
-(* Redo all the lemmas for strictly precedes? APITA! *)
-(* Not proven *)
-theorem strictly_precedes_sub:
-  assumes "sub \<lless> r"
-      and "sub \<in> \<lbrakk>c\<^sub>1 strictly precedes c\<^sub>2\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
-    shows "r \<in> \<lbrakk>c\<^sub>1 strictly precedes c\<^sub>2\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
-proof -
-  from assms(1) is_subrun_def obtain f where *:"dilating f sub r" by blast
-  from assms(2) have
-    "\<forall>n. (run_tick_count sub c\<^sub>2 n) \<le> (run_tick_count_strictly sub c\<^sub>1 n)" by simp
-  hence "\<forall>n. (tick_count sub c\<^sub>2 n) \<le> (tick_count_strict sub c\<^sub>1 n)"
-    using tick_count_is_fun tick_count_strict_is_fun by metis
-  hence "\<forall>n. tick_count r c\<^sub>2 (f n) \<le> tick_count_strict r c\<^sub>1 (f n)"
-    using tick_count_sub[OF *, of "c\<^sub>2"] tick_count_strict_sub[OF *, of "c\<^sub>1"] by simp
-  hence "\<forall>n. (tick_count r c\<^sub>2 n) \<le> (tick_count_strict r c\<^sub>1 n)"
-    sorry
-  hence "r \<in> {\<rho>. \<forall>n. (tick_count \<rho> c\<^sub>2 n) \<le> (tick_count_strict \<rho> c\<^sub>1 n)}" by simp
-  hence "r \<in> {\<rho>. \<forall>n. (run_tick_count \<rho> c\<^sub>2 n) \<le> (run_tick_count_strictly \<rho> c\<^sub>1 n)}"
-    using tick_count_is_fun[of _ "c\<^sub>2"] tick_count_strict_is_fun[of _ "c\<^sub>1"] sorry
-  thus ?thesis using TESL_interpretation_atomic.simps(9)[symmetric, of "c\<^sub>2" "c\<^sub>1"] 
-    oops
-
-(* Not proven *)
-theorem strictly_precedes_sub:
-  assumes "sub \<lless> r"
-      and "sub \<in> \<lbrakk>c\<^sub>1 strictly precedes c\<^sub>2\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
-    shows "r \<in> \<lbrakk>c\<^sub>1 strictly precedes c\<^sub>2\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
-proof -
-  from assms(1) is_subrun_def obtain f where *:"dilating f sub r" by blast
-  from assms(2) strictly_precedes_alt_def1 have
-    "\<forall>n::nat. (run_tick_count_strictly sub c\<^sub>2 (Suc n)) \<le> (run_tick_count_strictly sub c\<^sub>1 n)" by simp
-  hence "\<forall>n::nat. (run_tick_count_strictly r c\<^sub>2 (f (Suc n))) \<le> (run_tick_count_strictly r c\<^sub>1 (f n))"
-    using tick_count_strict_sub[OF *] tick_count_strict_is_fun by metis
-  hence "\<forall>n::nat. (run_tick_count_strictly r c\<^sub>2 (Suc n)) \<le> (run_tick_count_strictly r c\<^sub>1 n)" 
-oops
-
-(* Not proven *)
-theorem strictly_precedes_sub:
-  assumes "sub \<lless> r"
-      and "sub \<in> \<lbrakk>c\<^sub>1 strictly precedes c\<^sub>2\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
-    shows "r \<in> \<lbrakk>c\<^sub>1 strictly precedes c\<^sub>2\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
-proof -
-  from assms(1) is_subrun_def obtain f where *:"dilating f sub r" by blast
-  from assms(2) TESL_interpretation_atomic.simps(8) strictly_precedes_alt_def2 have
-    0:"(\<not>hamlet ((Rep_run sub) 0 c\<^sub>2)) \<and> (\<forall>n::nat. (run_tick_count sub c\<^sub>2 (Suc n)) \<le> (run_tick_count sub c\<^sub>1 n))" by blast
-  hence 1:"(\<not>hamlet ((Rep_run r) (f 0) c\<^sub>2)) \<and> (\<forall>n::nat. (run_tick_count r c\<^sub>2 (f (Suc n))) \<le> (run_tick_count r c\<^sub>1 (f n)))"
-    using * dilating_def run_tick_count_sub[OF *] by metis
-  have "(\<not>hamlet ((Rep_run r) 0 c\<^sub>2)) \<and> (\<forall>n::nat. (run_tick_count r c\<^sub>2 (Suc n)) \<le> (run_tick_count r c\<^sub>1 n))"
-  proof
-    from 1 "*" empty_dilated_prefix show "\<not>hamlet ((Rep_run r) 0 c\<^sub>2)" by fastforce
-    from 1 have "\<forall>n::nat. (run_tick_count r c\<^sub>2 (f (Suc n))) \<le> (run_tick_count r c\<^sub>1 (f n))" by simp
-    from 0 show "\<forall>n::nat. (run_tick_count r c\<^sub>2 (Suc n)) \<le> (run_tick_count r c\<^sub>1 n)"
-      using dil_tick_count_suc[OF assms(1)] by simp
-  qed
-  thus ?thesis using TESL_interpretation_atomic.simps(8) strictly_precedes_alt_def2 by blast
-qed
-*)
