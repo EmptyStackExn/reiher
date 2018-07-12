@@ -1,5 +1,5 @@
-theory TESLStuttering
-imports TESLStutteringLemmas
+theory Stuttering
+imports StutteringLemmas
 
 begin
 

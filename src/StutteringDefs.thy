@@ -1,4 +1,4 @@
-theory TESLStutteringDefs
+theory StutteringDefs
 
 imports Denotational
 

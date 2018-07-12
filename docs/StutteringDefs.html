@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title>Theory StutteringDefs (Isabelle2017: October 2017)</title>
+<link media="all" rel="stylesheet" type="text/css" href="isabelle.css"/>
+</head>
+
+<body>
+<div class="head"><h1>Theory StutteringDefs</h1>
+
+<span class="command">theory</span> <span class="name">StutteringDefs</span><br/>
+<span class="keyword">imports</span> <a href="Denotational.html"><span class="name">Denotational</span></a><br/>
+
+</div>
+<div class="source">
+<pre class="source"><span class="keyword1"><span class="command">theory</span></span><span class=""> </span><span class="">StutteringDefs</span><span class="">
+</span><span class="">
+</span><span class="keyword2"><span class="keyword">imports</span></span><span class=""> </span><span class="">Denotational</span><span class="">
+</span><span class="">
+</span><span class="keyword2"><span class="keyword">begin</span></span><span class="">
+</span><span class="">
+</span><span class="keyword1"><span class="command">section</span></span><span class=""> </span><span class="verbatim">{* Invariance of specifications by stuttering *}</span><span class="">
+</span><span class="">
+</span><span class="keyword1"><span class="command">subsection</span></span><span class=""> </span><span class="verbatim">{* Definition of stuttering *}</span><span class="">
+</span><span class="">
+</span><span class="keyword1"><span class="command">text</span></span><span class=""> </span><span class="verbatim">{*
+  A dilating function inserts empty instants in a run.
+  It is strictly increasing, the image of a nat is greater than it,
+  no instant is inserted before the first one 
+  and if n is not in the image of the function, no clock ticks at instant n.
+*}</span><span class="">
+</span><span class="keyword1"><span class="command">definition</span></span><span class=""> </span><span class="">dilating_fun</span><span class="">
+</span><span class="keyword2"><span class="keyword">where</span></span><span class="">
+</span><span class="">  </span><span class="string">&quot;dilating_fun (f::nat &#8658; nat) (r::&#39;a::linordered_field run)
+    &#8801; strict_mono f &#8743; (f 0 = 0) &#8743; (&#8704;n. f n &#8805; n
+    &#8743; ((&#8708;n<span class="hidden">&#8681;</span><sub>0</sub>. f n<span class="hidden">&#8681;</span><sub>0</sub> = n) &#10230; (&#8704;c. &#172;(hamlet ((Rep_run r) n c))))
+    &#8743; ((&#8708;n<span class="hidden">&#8681;</span><sub>0</sub>. f n<span class="hidden">&#8681;</span><sub>0</sub> = (Suc n)) &#10230; (&#8704;c. time ((Rep_run r) (Suc n) c) = time ((Rep_run r) n c)))
+   )&quot;</span><span class="">
+</span><span class="">
+</span><span class="keyword1"><span class="command">text</span></span><span class=""> </span><span class="verbatim">{*
+  Dilating a run. A run r is a dilation of a run sub by function f if:
+    * f is a dilating function on the hamlet of r
+    * time is preserved in stuttering instants
+    * the time in r is the time in sub dilated by f
+    * the hamlet in r is the hamlet in sub dilated by f
+*}</span><span class="">
+</span><span class="keyword1"><span class="command">definition</span></span><span class=""> </span><span class="">dilating</span><span class="">
+</span><span class="">  </span><span class="keyword2"><span class="keyword">where</span></span><span class=""> </span><span class="string">&quot;dilating f sub r &#8801;   dilating_fun f r
+                            &#8743; (&#8704;n c. time ((Rep_run sub) n c) = time ((Rep_run r) (f n) c))
+                            &#8743; (&#8704;n c. hamlet ((Rep_run sub) n c) = hamlet ((Rep_run r) (f n) c))&quot;</span><span class="">
+</span><span class="">
+</span><span class="keyword1"><span class="command">text</span></span><span class=""> </span><span class="verbatim">{*
+  A run is a subrun of another run if there exists a dilation between them.
+*}</span><span class="">
+</span><span class="keyword1"><span class="command">definition</span></span><span class=""> </span><span class="">is_subrun</span><span class=""> </span><span class="delimiter">::</span><span class="string">&quot;&#39;a::linordered_field run &#8658; &#39;a run &#8658; bool&quot;</span><span class=""> </span><span class="delimiter">(</span><span class="keyword2"><span class="keyword">infixl</span></span><span class=""> </span><span class="string">&quot;&#8810;&quot;</span><span class=""> </span><span class="">60</span><span class="delimiter">)</span><span class="">
+</span><span class="keyword2"><span class="keyword">where</span></span><span class="">
+</span><span class="">  </span><span class="string">&quot;sub &#8810; r &#8801; (&#8707;f. dilating f sub r)&quot;</span><span class="">
+</span><span class="">
+</span><span class="keyword1"><span class="command">text</span></span><span class=""> </span><span class="verbatim">{*
+  tick_count r c n = number of ticks of clock c in run r upto instant n
+*}</span><span class="">
+</span><span class="keyword1"><span class="command">definition</span></span><span class=""> </span><span class="">tick_count</span><span class=""> </span><span class="delimiter">::</span><span class=""> </span><span class="string">&quot;&#39;a::linordered_field run &#8658; clock &#8658; nat &#8658; nat&quot;</span><span class="">
+</span><span class="keyword2"><span class="keyword">where</span></span><span class="">
+</span><span class="">  </span><span class="string">&quot;tick_count r c n = card {i. i &#8804; n &#8743; hamlet ((Rep_run r) i c)}&quot;</span><span class="">
+</span><span class="">
+</span><span class="keyword1"><span class="command">text</span></span><span class=""> </span><span class="verbatim">{*
+  tick_count_strict r c n = number of ticks of clock c in run r upto but excluding instant n
+*}</span><span class="">
+</span><span class="keyword1"><span class="command">definition</span></span><span class=""> </span><span class="">tick_count_strict</span><span class=""> </span><span class="delimiter">::</span><span class=""> </span><span class="string">&quot;&#39;a::linordered_field run &#8658; clock &#8658; nat &#8658; nat&quot;</span><span class="">
+</span><span class="keyword2"><span class="keyword">where</span></span><span class="">
+</span><span class="">  </span><span class="string">&quot;tick_count_strict r c n = card {i. i &lt; n &#8743; hamlet ((Rep_run r) i c)}&quot;</span><span class="">
+</span><span class="">
+</span><span class="">
+</span><span class="keyword2"><span class="keyword">end</span></span><span class="">
+</span></pre>
+
+</div>
+</body>
+</html>

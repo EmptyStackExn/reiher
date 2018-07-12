@@ -1,6 +1,6 @@
-theory TESLStutteringLemmas
+theory StutteringLemmas
 
-imports TESLStutteringDefs
+imports StutteringDefs
 
 begin
 
