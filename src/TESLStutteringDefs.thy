@@ -3,6 +3,11 @@ theory TESLStutteringDefs
 imports Denotational
 
 begin
+
+section {* Invariance of specifications by stuttering *}
+
+subsection {* Definition of stuttering *}
+
 text {*
   A dilating function inserts empty instants in a run.
   It is strictly increasing, the image of a nat is greater than it,

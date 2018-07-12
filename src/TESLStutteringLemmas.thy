@@ -4,6 +4,11 @@ imports TESLStutteringDefs
 
 begin
 
+subsection {* Lemmas used to prove the invariance by stuttering *}
+
+text {*
+  A dilating function is injective.
+*}
 lemma dilating_fun_injects:
   assumes "dilating_fun f r"
   shows   "inj_on f A"

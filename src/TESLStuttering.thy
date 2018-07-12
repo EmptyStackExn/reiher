@@ -245,4 +245,21 @@ corollary tagrel_sub:
     shows "r \<in> \<lbrakk> time-relation \<lfloor>c\<^sub>1,c\<^sub>2\<rfloor> \<in> R \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
 using tagrel_sub'[OF assms] unfolding TESL_interpretation_atomic.simps(3) by simp
 
+theorem kill_sub:
+  assumes "sub \<lless> r"
+      and "sub \<in> \<lbrakk> c\<^sub>1 kills c\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
+    shows "r \<in> \<lbrakk> c\<^sub>1 kills c\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
+proof -
+  from assms(1) is_subrun_def obtain f where *:"dilating f sub r" by blast
+  from assms(2) TESL_interpretation_atomic.simps(9) have
+    "\<forall>n. hamlet (Rep_run sub n c\<^sub>1) \<longrightarrow> (\<forall>m\<ge>n. \<not> hamlet (Rep_run sub m c\<^sub>2))" by simp
+  hence "\<forall>n. hamlet (Rep_run r (f n) c\<^sub>1) \<longrightarrow> (\<forall>m\<ge>n. \<not> hamlet (Rep_run r (f m) c\<^sub>2))"
+    using ticks_sub[OF *] by simp
+  hence "\<forall>n. hamlet (Rep_run r (f n) c\<^sub>1) \<longrightarrow> (\<forall>m\<ge> (f n). \<not> hamlet (Rep_run r m c\<^sub>2))"
+    by (metis "*" dilating_def dilating_fun_def strict_mono_less_eq)
+  hence "\<forall>n. hamlet (Rep_run r n c\<^sub>1) \<longrightarrow> (\<forall>m \<ge> n. \<not> hamlet (Rep_run r m c\<^sub>2))"
+    using ticks_imp_ticks_subk[OF *] by blast
+  thus ?thesis using TESL_interpretation_atomic.simps(9) by blast
+qed
+
 end
