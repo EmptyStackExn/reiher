@@ -24,10 +24,12 @@ where
 
 text {*
   Dilating a run. A run r is a dilation of a run sub by function f if:
-    * f is a dilating function on the hamlet of r
-    * time is preserved in stuttering instants
-    * the time in r is the time in sub dilated by f
-    * the hamlet in r is the hamlet in sub dilated by f
+  \begin{itemize}
+    \item f is a dilating function on the hamlet of r
+    \item time is preserved in stuttering instants
+    \item the time in r is the time in sub dilated by f
+    \item the hamlet in r is the hamlet in sub dilated by f%
+  \end{itemize}
 *}
 definition dilating
   where "dilating f sub r \<equiv>   dilating_fun f r
