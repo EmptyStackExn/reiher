@@ -1,6 +1,7 @@
 theory Hygge_Theory
 imports
   "Corecursive_Prop"
+  "TESLStuttering"
 
 begin
 
