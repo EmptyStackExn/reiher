@@ -788,73 +788,76 @@ proof -
   finally show ?thesis .
 qed
 
-(*
-lemma dil_tick_count_suc:
-  assumes "sub \<lless> r"
-      and "\<forall>n. run_tick_count sub a (Suc n) \<le> run_tick_count sub b n"
-    shows "run_tick_count r a (Suc n) \<le> run_tick_count r b n"
+lemma card_prop_mono:
+  assumes "m \<le> n"
+    shows "card {i::nat. i \<le> m \<and> P i} \<le> card {i. i \<le> n \<and> P i}"
 proof -
-  from assms(1) is_subrun_def obtain f where *:"dilating f sub r" by blast
-  show ?thesis
-  proof (induction n)
-    case 0
-    from assms(2) have "tick_count sub a (Suc 0) \<le> tick_count sub b 0" using tick_count_is_fun by metis
-    hence 1:"tick_count r a (f (Suc 0)) \<le> tick_count r b (f 0)" using tick_count_sub[OF *] by simp
-    from * dilating_def dilating_fun_def have "0 \<le> f 0" by simp
-    hence "tick_count r a (Suc 0) \<le> tick_count r b 0"
-    proof -
-      consider (a) "0 < f 0" | (b) "0 = f 0" by linarith thus ?thesis
-      proof (cases)
-        case a thus ?thesis using 1 sorry
-      next
-        case b thus ?thesis using 1 sorry
-      qed
-    qed
-    thus ?case by (simp add: tick_count_is_fun)
+  from assms have "{i. i \<le> m \<and> P i} \<subseteq> {i. i \<le> n \<and> P i}" by auto
+  moreover have "finite {i. i \<le> n \<and> P i}" by simp
+  ultimately show ?thesis by (simp add: card_mono)
+qed
+
+lemma mono_tick_count:
+  "mono (\<lambda> k. tick_count r c k)"
+proof
+  { fix x y::nat
+    assume "x \<le> y"
+    from card_prop_mono[OF this] have "tick_count r c x \<le> tick_count r c y"
+      unfolding tick_count_def by simp
+  } thus "\<And>x y. x \<le> y \<Longrightarrow> tick_count r c x \<le> tick_count r c y" .
+qed
+
+lemma greatest_prev_image:
+  assumes "dilating f sub r"
+    shows "(\<nexists>n\<^sub>0. f n\<^sub>0 = n) \<Longrightarrow> (\<exists>n\<^sub>p. f n\<^sub>p < n \<and> (\<forall>k. f n\<^sub>p < k \<and> k \<le> n \<longrightarrow> (\<nexists>k\<^sub>0. f k\<^sub>0 = k)))"
+proof (induction n)
+  case 0
+    with assms have "f 0 = 0" by (simp add: dilating_def dilating_fun_def)
+    thus ?case using "0.prems" by blast
+next
+  case (Suc n)
+  show ?case
+  proof (cases "\<exists>n\<^sub>0. f n\<^sub>0 = n")
+    case True
+      from this obtain n\<^sub>0 where "f n\<^sub>0 = n" by blast
+      hence "f n\<^sub>0 < (Suc n) \<and> (\<forall>k. f n\<^sub>0 < k \<and> k \<le> (Suc n) \<longrightarrow> (\<nexists>k\<^sub>0. f k\<^sub>0 = k))"
+        using Suc.prems Suc_leI le_antisym by blast
+      thus ?thesis by blast
   next
-    case (Suc n) 
-    from assms(2) have "tick_count sub a (Suc n) \<le> tick_count sub b (Suc n)"
-      using tick_count_is_fun sorry
-    hence 1:"tick_count r a (f (Suc n)) \<le> tick_count r b (f (Suc n))" using tick_count_sub[OF *] by simp
-    thus ?case using assms tick_count_f_suc_sub[OF *] Suc.IH sorry
+    case False
+    from Suc.IH[OF this] obtain n\<^sub>p
+      where "f n\<^sub>p < n \<and> (\<forall>k. f n\<^sub>p < k \<and> k \<le> n \<longrightarrow> (\<nexists>k\<^sub>0. f k\<^sub>0 = k))" by blast
+    with Suc(2) have "f n\<^sub>p < (Suc n) \<and> (\<forall>k. f n\<^sub>p < k \<and> k \<le> (Suc n) \<longrightarrow> (\<nexists>k\<^sub>0. f k\<^sub>0 = k))"
+      by (metis le_SucE less_Suc_eq)
+    thus ?thesis by blast
   qed
 qed
 
-lemma dil_tick_count_strict:
-  assumes "sub \<lless> r"
-      and "\<forall>n. run_tick_count_strictly sub a (Suc n) \<le> run_tick_count_strictly sub b n"
-    shows "run_tick_count_strictly r a (Suc n) \<le> run_tick_count_strictly r b n"
-proof -
-  from assms(1) is_subrun_def obtain f where *:"dilating f sub r" by blast
-  show ?thesis
-  proof (induction n)
-    case 0
-    from assms(2) have "tick_count_strict sub a (Suc 0) \<le> tick_count_strict sub b 0" using tick_count_strict_is_fun by metis
-    hence 1:"tick_count_strict r a (f (Suc 0)) \<le> tick_count_strict r b (f 0)" using tick_count_strict_sub[OF *] by simp
-    from * dilating_def dilating_fun_def have "0 \<le> f 0" by simp
-    hence "tick_count_strict r a (Suc 0) \<le> tick_count_strict r b 0"
-    proof -
-      consider (a) "0 < f 0" | (b) "0 = f 0" by linarith thus ?thesis
-      proof (cases)
-        case a
-        from empty_dilated_prefix[OF * this] have "tick_count_strict r a (Suc 0) = 0"
-          unfolding tick_count_strict_def by auto
-        thus ?thesis by simp
-      next
-        case b thus ?thesis
-          by (metis "*" "1" tick_count_strict_sub tick_count_strict_suc tick_count_sub)
-      qed
-    qed
-    thus ?case by (simp add: tick_count_strict_is_fun)
-  next
-    case (Suc n) 
-    from assms(2) have "tick_count_strict sub a (Suc (Suc n)) \<le> tick_count_strict sub b (Suc n)"
-      using tick_count_strict_is_fun by metis
-    hence 1:"tick_count_strict r a (f (Suc (Suc n))) \<le> tick_count_strict r b (f (Suc n))"
-      using tick_count_strict_sub[OF *] by simp
-    thus ?case using Suc.IH 
-      oops
+lemma strict_mono_suc:
+  assumes "strict_mono f"
+      and "f sn = Suc (f n)"
+    shows "sn = Suc n"
+by (metis Suc_lessI assms lessI not_less_eq strict_mono_def strict_mono_less)
 
-*)
+lemma tick_count_latest:
+  assumes "dilating f sub r"
+      and "f n\<^sub>p < n \<and> (\<forall>k. f n\<^sub>p < k \<and> k \<le> n \<longrightarrow> (\<nexists>k\<^sub>0. f k\<^sub>0 = k))"
+    shows "tick_count r c n = tick_count r c (f n\<^sub>p)"
+by (smt Collect_cong assms le_trans not_le_imp_less not_less_iff_gr_or_eq tick_count_def ticks_imp_ticks_subk)
+
+lemma next_non_stuttering:
+  assumes "dilating f sub r"
+      and "f n\<^sub>p < n \<and> (\<forall>k. f n\<^sub>p < k \<and> k \<le> n \<longrightarrow> (\<nexists>k\<^sub>0. f k\<^sub>0 = k))"
+      and "f sn\<^sub>0 = Suc n"
+    shows "sn\<^sub>0 = Suc n\<^sub>p"
+proof -
+  from assms(1) have smf:"strict_mono f" by (simp add: dilating_def dilating_fun_def)
+  from assms(2) have "f n\<^sub>p < n" by simp
+  with smf assms(3) have *:"sn\<^sub>0 > n\<^sub>p" using strict_mono_less by fastforce
+  from assms(2) have "f (Suc n\<^sub>p) > n" by (metis lessI not_le_imp_less smf strict_mono_less)
+  hence "Suc n \<le> f (Suc n\<^sub>p)" by simp
+  hence "sn\<^sub>0 \<le> Suc n\<^sub>p" using assms(3) smf using strict_mono_less_eq by fastforce
+  with * show ?thesis by simp
+qed
 
 end
