@@ -1,3 +1,5 @@
+chapter\<open>Equivalence of Operational and Denotational Semantics\<close>
+
 theory Corecursive_Prop
   imports
   "SymbolicPrimitive"
@@ -140,7 +142,7 @@ next
   thus ?thesis by (metis Suc_le_eq le_less)
 qed
 
-section \<open>Coinduction unfolding properties\<close>
+section \<open>Coinduction Unfolding Properties\<close>
 
 lemma TESL_interp_stepwise_sporadicon_cst_coind_unfold:
   shows "\<lbrakk> K\<^sub>1 sporadic \<lparr>\<tau>\<rparr> on K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> =

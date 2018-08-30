@@ -1,10 +1,12 @@
+chapter {* Properties of TESL *}
+
+section \<open>Stuttering Invariance\<close>
+
 theory StutteringDefs
 
 imports Denotational
 
 begin
-
-section {* Invariance of specifications by stuttering *}
 
 subsection {* Definition of stuttering *}
 

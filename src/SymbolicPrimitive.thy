@@ -1,10 +1,9 @@
-section\<open>Symbolic Primitive Constraints on Runs\<close>
 
 theory SymbolicPrimitive
   imports Run
 begin
 
-section \<open>Primitives for Symbolic Runs \<close>
+section \<open>Semantics of Primitive Constraints \<close>
 
 fun symbolic_run_interpretation_primitive :: "('\<tau>::linordered_field) constr \<Rightarrow> '\<tau> run set" ("\<lbrakk> _ \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m") where
     "\<lbrakk> K \<Up> n  \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m     = { \<rho>. hamlet ((Rep_run \<rho>) n K) }"

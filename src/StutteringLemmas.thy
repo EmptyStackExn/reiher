@@ -1,4 +1,4 @@
-section\<open>Stuttering Lemmas\<close>
+subsection\<open>Stuttering Lemmas\<close>
 
 theory StutteringLemmas
 

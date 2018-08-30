@@ -1,6 +1,4 @@
-chapter\<open>Properties of TESL\<close>
-
-section\<open>Stuttering Invariance\<close>
+subsection\<open>Main Theorems\<close>
 
 theory Stuttering
 imports StutteringLemmas

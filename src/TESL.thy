@@ -28,7 +28,7 @@ datatype cnt_expr =
     TickCountLess "clock" "instant_index"  ("#\<^sup><")
   | TickCountLeq "clock" "instant_index" ("#\<^sup>\<le>")
 
-(* Primitives for symbolic runs *)
+subsection\<open> Symbolic Primitives for Runs \<close> 
 datatype '\<tau> constr =
     Timestamp     "clock"   "instant_index" "'\<tau> tag_expr"          ("_ \<Down> _ @ _")
   | Ticks         "clock"   "instant_index"                       ("_ \<Up> _")
@@ -43,7 +43,7 @@ type_synonym '\<tau> system = "'\<tau> constr list"
 
 text{* Define as follows the syntax of TESL *}
 
-(* TESL language *)
+subsection\<open>Operators for the TESL language\<close> 
 datatype '\<tau> TESL_atomic =
     SporadicOn     "clock" "'\<tau> tag_expr"  "clock"             ("_ sporadic _ on _" 55)
   | TagRelation    "clock" "clock" "('\<tau> tag_const \<times> '\<tau> tag_const) \<Rightarrow> bool" ("time-relation \<lfloor>_, _\<rfloor> \<in> _" 55)
