@@ -1,3 +1,5 @@
+chapter\<open>The Core of the TESL Language: Syntax and basic Definitions\<close>
+
 theory TESL
 imports Main
 
@@ -5,7 +7,7 @@ begin
 text {* We define as follows the syntax of primitives to describe symbolic runs *}
 
 (** Clocks **)
-datatype clock = Clk "string"
+datatype     clock         = Clk "string"
 type_synonym instant_index = "nat"
 
 (** Tags **) 

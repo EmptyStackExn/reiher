@@ -1,0 +1,13 @@
+session "TESL" = "HOL" +
+  options [document = pdf,document_output = "output" (*, quick_and_dirty = true *)]
+  theories
+    Introduction
+    Denotational
+    Operational
+    (* Foo *)
+    (* Bar *)
+    (* Baz *)
+  document_files
+    "root.tex"
+    "root.bib"
+    "figures/glue.pdf"
