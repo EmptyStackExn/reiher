@@ -1,10 +1,14 @@
+chapter \<open>Operational Semantics\<close>
+text\<open>\label{chap:operational_semantics}\<close>
+
 theory Operational
 imports
     "TESL"
     "Run"
 
 begin
-text{* Operational steps *}
+
+section\<open>Operational steps\<close>
 
 abbreviation uncurry_conf
   :: "('\<tau>::linordered_field) system \<Rightarrow> instant_index \<Rightarrow> '\<tau> TESL_formula \<Rightarrow> '\<tau> TESL_formula \<Rightarrow> '\<tau> config" ("_, _ \<turnstile> _ \<triangleright> _" 80) where
@@ -76,6 +80,9 @@ abbreviation operational_semantics_step_relpowp :: "('\<tau>::linordered_field) 
 
 definition operational_semantics_elim_inv :: "('\<tau>::linordered_field) config \<Rightarrow> '\<tau> config \<Rightarrow> bool" ("_ \<hookrightarrow>\<^sub>e\<^sup>\<leftarrow> _" 70) where
   "\<C>\<^sub>1 \<hookrightarrow>\<^sub>e\<^sup>\<leftarrow> \<C>\<^sub>2 \<equiv> \<C>\<^sub>2 \<hookrightarrow>\<^sub>e \<C>\<^sub>1"
+
+
+section\<open>Basic Lemmas\<close>
 
 lemma operational_semantics_trans_generalized:
   assumes "\<C>\<^sub>1 \<hookrightarrow>\<^bsup>n\<^esup> \<C>\<^sub>2"

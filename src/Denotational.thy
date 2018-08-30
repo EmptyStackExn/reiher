@@ -1,9 +1,13 @@
+chapter \<open>Denotational Semantics\<close>
+
 theory Denotational
 imports
     "TESL"
     "Run"
 
 begin
+
+
 
 section \<open>Denotational interpretation for atomic TESL formulae\<close>
 
@@ -71,7 +75,7 @@ theorem TESL_interp_homo_append:
   qed
 
 
-subsection \<open>Equational laws for TESL formulae denotationally interpreted\<close>
+section \<open>Equational laws for TESL formulae denotationally interpreted\<close>
 
 lemma TESL_interp_assoc:
   shows "\<lbrakk>\<lbrakk> (\<Phi>\<^sub>1 @ \<Phi>\<^sub>2) @ \<Phi>\<^sub>3 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<lbrakk>\<lbrakk> \<Phi>\<^sub>1 @ (\<Phi>\<^sub>2 @ \<Phi>\<^sub>3) \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
@@ -186,7 +190,7 @@ lemma TESL_interp_absorb2:
   shows "\<lbrakk>\<lbrakk> \<Phi>\<^sub>1 @ \<Phi>\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<lbrakk>\<lbrakk> \<Phi>\<^sub>1 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
   using TESL_interp_absorb1 TESL_interp_commute incl by blast
 
-subsection \<open>Some special cases\<close>
+section \<open>Some special cases\<close>
 
 lemma NoSporadic_stable [simp]:
   shows "\<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L \<subseteq> \<lbrakk>\<lbrakk> NoSporadic \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"

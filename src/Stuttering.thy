@@ -1,11 +1,13 @@
+chapter\<open>Properties of TESL\<close>
+
+section\<open>Stuttering Invariance\<close>
+
 theory Stuttering
 imports StutteringLemmas
 
 begin
 
-text {*
-  Sporadic specifications are preserved in a dilated run.
-*}
+text {*  Sporadic specifications are preserved in a dilated run. *}
 lemma sporadic_sub:
   assumes "sub \<lless> r"
       and "sub \<in> \<lbrakk>c sporadic \<lparr>\<tau>\<rparr> on c'\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"

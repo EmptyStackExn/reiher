@@ -2,11 +2,11 @@ session "TESL" = "HOL" +
   options [document = pdf,document_output = "output" (*, quick_and_dirty = true *)]
   theories
     Introduction
+    TESL Run 
     Denotational
     Operational
-    (* Foo *)
-    (* Bar *)
-    (* Baz *)
+    SymbolicPrimitive Corecursive_Prop
+    StutteringDefs StutteringLemmas Stuttering
   document_files
     "root.tex"
     "root.bib"

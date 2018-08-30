@@ -1,5 +1,6 @@
 theory Corecursive_Prop
-imports
+  imports
+  "SymbolicPrimitive"
   "Operational"
   "Denotational"
 

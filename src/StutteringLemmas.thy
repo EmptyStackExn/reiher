@@ -1,3 +1,5 @@
+section\<open>Stuttering Lemmas\<close>
+
 theory StutteringLemmas
 
 imports StutteringDefs
@@ -27,7 +29,7 @@ using dilating_fun_def assms by blast
 text {*
   The image of the ticks in a interval by a dilating function is the interval 
   bounded by the image of the bound of the original interval.
-  This is proven for all 4 kinds of intervals: ]m, n[, [m, n[, ]m, n] and [m, n].
+  This is proven for all 4 kinds of intervals: \verb+]m, n[+, \verb+[m, n[+, \verb+]m, n]+ and \verb+[m, n]+.
 *}
 lemma dilating_fun_image_strict:
   assumes "dilating_fun f r"
@@ -183,9 +185,8 @@ lemma ticks_image_sub':
   shows   "\<exists>n\<^sub>0. f n\<^sub>0 = n"
 using assms dilating_def dilating_fun_def by metis
 
-text {*
-  Time is preserved by dilation when ticks occur.
-*}
+text \<open>Time is preserved by dilation when ticks occur.\<close>
+
 lemma ticks_tag_image:
   assumes "dilating f sub r"
   and     "\<exists>c. hamlet ((Rep_run r) k c)"
@@ -198,9 +199,7 @@ proof -
   ultimately show ?thesis by blast
 qed
 
-text {*
-  TESL operators are preserved by dilation.
-*}
+text \<open>TESL operators are preserved by dilation.\<close>
 
 lemma ticks_sub:
   assumes "dilating f sub r"
@@ -212,9 +211,8 @@ lemma no_tick_sub:
   shows   "(\<nexists>n\<^sub>0. f n\<^sub>0 = n) \<longrightarrow> \<not>hamlet ((Rep_run r) n a)"
 using assms dilating_def dilating_fun_def by blast
 
-text {*
-  Lifting a total function to a partial function on an option domain.
-*}
+text \<open>Lifting a total function to a partial function on an option domain.\<close>
+
 definition opt_lift::"('a \<Rightarrow> 'a) \<Rightarrow> ('a option \<Rightarrow> 'a option)"
 where
   "opt_lift f \<equiv> \<lambda>x. case x of None \<Rightarrow> None | Some y \<Rightarrow> Some (f y)"
@@ -253,7 +251,7 @@ lemma Least_strict_mono:
 using Least_mono[OF strict_mono_mono, OF assms] .
 
 text {*
-  A non empty set of nats has a least element.
+  A non empty set of @{typ nat}s has a least element.
 *}
 lemma Least_nat_ex:
   "(n::nat) \<in> S \<Longrightarrow> \<exists>x \<in> S. (\<forall>y \<in> S. x \<le> y)"
@@ -412,9 +410,8 @@ next
 qed
 
 
-text {*
-  No tick can occur in a dilated run before the image of 0 by the dilation function.
-*}
+text \<open>No tick can occur in a dilated run before the image of 0 by the dilation function. \<close>
+
 lemma empty_dilated_prefix:
   assumes "dilating f sub r"
   and     "n < f 0"
@@ -465,16 +462,12 @@ proof -
     by (metis (mono_tags, lifting) Collect_cong assms empty_dilated_prefix le0 not_le_imp_less)
 qed
 
-text {*
-  A singleton of nat can be defined with a weaker property.
-*}
+text\<open>A singleton of @{typ nat} can be defined with a weaker property.\<close> 
 lemma nat_sing_prop:
   "{i::nat. i = k \<and> P(i)} = {i::nat. i = k \<and> P(k)}"
 by auto
 
-text {*
-  The set definition and the function definition of tick_count are equivalent.
-*}
+text \<open>The set definition and the function definition of @{const tick_count} are equivalent.\<close>
 lemma tick_count_is_fun[code]:"tick_count r c n = run_tick_count r c n"
 proof (induction n)
   case 0
@@ -505,9 +498,7 @@ next
     qed
 qed
 
-text {*
-  The set definition and the function definition of tick_count_strict are equivalent.
-*}
+text\<open>The set definition and the function definition of @{const tick_count_strict}  are equivalent.\<close> 
 lemma tick_count_strict_suc:"tick_count_strict r c (Suc n) = tick_count r c n"
   unfolding tick_count_def tick_count_strict_def using less_Suc_eq_le by auto
 
