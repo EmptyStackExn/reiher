@@ -8,9 +8,8 @@ begin
 
 subsection {* Lemmas used to prove the invariance by stuttering *}
 
-text {*
-  A dilating function is injective.
-*}
+text \<open>A dilating function is injective.\<close>
+
 lemma dilating_fun_injects:
   assumes "dilating_fun f r"
   shows   "inj_on f A"
@@ -26,11 +25,12 @@ lemma ticks_image:
   shows   "\<exists>n\<^sub>0. f n\<^sub>0 = n"
 using dilating_fun_def assms by blast
 
-text {*
+text \<open> 
   The image of the ticks in a interval by a dilating function is the interval 
   bounded by the image of the bound of the original interval.
-  This is proven for all 4 kinds of intervals: \verb+]m, n[+, \verb+[m, n[+, \verb+]m, n]+ and \verb+[m, n]+.
-*}
+  This is proven for all 4 kinds of intervals:  \<^verbatim>\<open>]m, n[\<close>, \<^verbatim>\<open>[m, n[\<close>, \<^verbatim>\<open>]m, n]\<close> and \<^verbatim>\<open>[m, n]\<close>.
+\<close>
+
 lemma dilating_fun_image_strict:
   assumes "dilating_fun f r"
   shows   "{k. f m < k \<and> k < f n \<and> hamlet ((Rep_run r) k c)}

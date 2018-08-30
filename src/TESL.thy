@@ -1,4 +1,4 @@
-chapter\<open>The Core of the TESL Language: Syntax and Basic Definitions\<close>
+chapter\<open>The Core of the TESL Language: Syntax and Basics\<close>
 
 theory TESL
 imports Main
