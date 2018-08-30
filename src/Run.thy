@@ -26,18 +26,18 @@ lemma Abs_run_inverse_rewrite_unsafe:
   oops (* Use [sorry] when testing *)
 
 (* Counts the number of ticks in run [\<rho>] on clock [K] from indexes 0 to [n] *)
-fun run_tick_count :: "('\<tau>::linordered_field) run \<Rightarrow> clock \<Rightarrow> nat \<Rightarrow> nat" ("#\<^sup>\<le> _ _ _") where
-    "#\<^sup>\<le> \<rho> K 0       = (if hamlet ((Rep_run \<rho>) 0 K)
-                       then 1
-                       else 0)"
-  | "#\<^sup>\<le> \<rho> K (Suc n) = (if hamlet ((Rep_run \<rho>) (Suc n) K)
-                       then 1 + #\<^sup>\<le> \<rho> K n
-                       else #\<^sup>\<le> \<rho> K n)"
+fun run_tick_count :: "('\<tau>::linordered_field) run \<Rightarrow> clock \<Rightarrow> nat \<Rightarrow> nat" ("#\<^sub>\<le> _ _ _") where
+    "(#\<^sub>\<le> \<rho> K 0)       = (if hamlet ((Rep_run \<rho>) 0 K)
+                         then 1
+                         else 0)"
+  | "(#\<^sub>\<le> \<rho> K (Suc n)) = (if hamlet ((Rep_run \<rho>) (Suc n) K)
+                         then 1 + (#\<^sub>\<le> \<rho> K n)
+                         else (#\<^sub>\<le> \<rho> K n))"
 
 (* Counts the number of ticks in run [\<rho>] on clock [K] from indexes 0 to [n - 1] *)
-fun run_tick_count_strictly :: "('\<tau>::linordered_field) run \<Rightarrow> clock \<Rightarrow> nat \<Rightarrow> nat" ("#\<^sup>< _ _ _") where
-    "#\<^sup>< \<rho> K 0       = 0"
-  | "#\<^sup>< \<rho> K (Suc n) = #\<^sup>\<le> \<rho> K n"
+fun run_tick_count_strictly :: "('\<tau>::linordered_field) run \<Rightarrow> clock \<Rightarrow> nat \<Rightarrow> nat" ("#\<^sub>< _ _ _") where
+    "(#\<^sub>< \<rho> K 0)       = 0"
+  | "(#\<^sub>< \<rho> K (Suc n)) = #\<^sub>\<le> \<rho> K n"
 
 fun counter_expr_eval :: "('\<tau>::linordered_field) run \<Rightarrow> cnt_expr \<Rightarrow> nat" ("\<lbrakk> _ \<turnstile> _ \<rbrakk>\<^sub>c\<^sub>n\<^sub>t\<^sub>e\<^sub>x\<^sub>p\<^sub>r") where
     "\<lbrakk> \<rho> \<turnstile> #\<^sup>< clk indx \<rbrakk>\<^sub>c\<^sub>n\<^sub>t\<^sub>e\<^sub>x\<^sub>p\<^sub>r = run_tick_count_strictly \<rho> clk indx"

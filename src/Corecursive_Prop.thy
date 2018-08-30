@@ -565,7 +565,7 @@ lemma HeronConf_interp_stepwise_weakly_precedes_cases:
 
 lemma HeronConf_interp_stepwise_weakly_precedes_cases':
   shows "\<lbrakk> \<Gamma>, n \<turnstile> ((K\<^sub>1 weakly precedes K\<^sub>2) # \<Psi>) \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
-          = \<lbrakk> ((#\<^sup>\<le> K\<^sub>2 n \<preceq> #\<^sup>\<le> K\<^sub>1 n) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> ((K\<^sub>1 weakly precedes K\<^sub>2) # \<Phi>) \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
+          = \<lbrakk> (((#\<^sup>\<le> K\<^sub>2 n) \<preceq> (#\<^sup>\<le> K\<^sub>1 n)) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> ((K\<^sub>1 weakly precedes K\<^sub>2) # \<Phi>) \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
   oops
 
 lemma HeronConf_interp_stepwise_strictly_precedes_cases:
