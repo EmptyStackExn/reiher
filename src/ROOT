@@ -6,6 +6,7 @@ session "TESL" = "HOL" +
     Denotational
     Operational
     SymbolicPrimitive Corecursive_Prop
+    Hygge_Theory
     StutteringDefs StutteringLemmas Stuttering
   document_files
     "root.tex"

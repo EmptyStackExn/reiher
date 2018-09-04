@@ -1,13 +1,17 @@
+chapter\<open>Main Theorems\<close>
+
 theory Hygge_Theory
 imports
   "Corecursive_Prop"
-  "Stuttering"
 
 begin
 
-section \<open>Initial configuration\<close>
+section\<open>Initial configuration\<close>
 
-text \<open>Solving a specification [\<Psi>] means to start operational semantics at initial configuration [], 0 \<turnstile> \<Psi> \<triangleright> []\<close>
+text\<open>
+  Solving a specification @{term "\<Psi>"} means to start operational semantics at initial 
+  configuration @{term "[], 0 \<turnstile> \<Psi> \<triangleright> []"}
+\<close>
 theorem solve_start:
   shows "\<lbrakk>\<lbrakk> \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<lbrakk> [], 0 \<turnstile> \<Psi> \<triangleright> [] \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
   proof -
@@ -96,8 +100,10 @@ proof -
   qed
 qed
 
-text \<open>From initial configuration, any reduction step number [k] providing a
-      configuration [\<S>] will denote runs from initial specification [\<Psi>].\<close>
+text\<open>
+  From initial configuration, any reduction step number @{term "k"} providing a
+  configuration @{term "\<S>"} will denote runs from initial specification @{term "\<Psi>"}.
+\<close>
 theorem soundness:
   assumes "([], 0 \<turnstile> \<Psi> \<triangleright> []) \<hookrightarrow>\<^bsup>k\<^esup> \<S>"
   shows "\<lbrakk>\<lbrakk> \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L \<supseteq> \<lbrakk> \<S> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
@@ -175,18 +181,19 @@ lemma branch_existence:
 lemma branch_existence':
   assumes "\<rho> \<in> \<lbrakk> \<S>\<^sub>1 \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
   shows "\<exists>\<S>\<^sub>2. (\<S>\<^sub>1 \<hookrightarrow>\<^bsup>k\<^esup> \<S>\<^sub>2) \<and> (\<rho> \<in> \<lbrakk> \<S>\<^sub>2 \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g)"
-  proof (induct k)
-    case 0
+proof (induct k)
+  case 0
+    then show ?case by (simp add: assms)
+next
+  case (Suc k)
     then show ?case
-      by (simp add: assms)
-  next
-    case (Suc k)
-    then show ?case
-      using branch_existence relpowp_Suc_I[of "k" "operational_semantics_step"] by blast
-  qed
+    using branch_existence relpowp_Suc_I[of "k" "operational_semantics_step"] by blast
+qed
 
-text \<open>Any run from initial specification [\<Psi>] has a corresponding configuration
-      [\<S>] at any reduction step number [k] starting from initial configuration.\<close>
+text\<open>
+  Any run from initial specification @{term "\<Psi>"} has a corresponding configuration
+  @{term "\<S>"} at any reduction step number @{term "k"} starting from initial configuration.
+\<close>
 theorem completeness:
   assumes "\<rho> \<in> \<lbrakk>\<lbrakk> \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
   shows "\<exists>\<S>. (([], 0 \<turnstile> \<Psi> \<triangleright> [])  \<hookrightarrow>\<^bsup>k\<^esup>  \<S>)
@@ -369,46 +376,48 @@ lemma instant_index_increase_generalized:
   assumes "\<rho> \<in> \<lbrakk> \<Gamma>, n \<turnstile> \<Psi> \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
   shows   "\<exists>\<Gamma>\<^sub>k \<Psi>\<^sub>k \<Phi>\<^sub>k k. ((\<Gamma>, n \<turnstile> \<Psi> \<triangleright> \<Phi>) \<hookrightarrow>\<^bsup>k\<^esup> (\<Gamma>\<^sub>k, n\<^sub>k \<turnstile> \<Psi>\<^sub>k \<triangleright> \<Phi>\<^sub>k))
                          \<and> \<rho> \<in> \<lbrakk> \<Gamma>\<^sub>k, n\<^sub>k \<turnstile> \<Psi>\<^sub>k \<triangleright> \<Phi>\<^sub>k \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
-  proof -
-    obtain \<delta>k where diff: "n\<^sub>k = \<delta>k + Suc n"
-      using add.commute assms(1) less_iff_Suc_add by auto
-    show ?thesis
-      proof (subst diff, subst diff, insert assms(2), induct \<delta>k)
-        case 0
-        then show ?case
-          using instant_index_increase assms(2) by simp
-      next
-        case (Suc \<delta>k)
-        have f0: "\<rho> \<in> \<lbrakk> \<Gamma>, n \<turnstile> \<Psi> \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g \<Longrightarrow> \<exists>\<Gamma>\<^sub>k \<Psi>\<^sub>k \<Phi>\<^sub>k k.
-             ((\<Gamma>, n \<turnstile> \<Psi> \<triangleright> \<Phi>) \<hookrightarrow>\<^bsup>k\<^esup> (\<Gamma>\<^sub>k, \<delta>k + Suc n \<turnstile> \<Psi>\<^sub>k \<triangleright> \<Phi>\<^sub>k))
-            \<and> \<rho> \<in> \<lbrakk> \<Gamma>\<^sub>k, \<delta>k + Suc n \<turnstile> \<Psi>\<^sub>k \<triangleright> \<Phi>\<^sub>k \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
-          using Suc.hyps by blast
-        obtain \<Gamma>\<^sub>k \<Psi>\<^sub>k \<Phi>\<^sub>k k
-          where cont: "((\<Gamma>, n \<turnstile> \<Psi> \<triangleright> \<Phi>) \<hookrightarrow>\<^bsup>k\<^esup> (\<Gamma>\<^sub>k, \<delta>k + Suc n \<turnstile> \<Psi>\<^sub>k \<triangleright> \<Phi>\<^sub>k)) \<and> \<rho> \<in> \<lbrakk> \<Gamma>\<^sub>k, \<delta>k + Suc n \<turnstile> \<Psi>\<^sub>k \<triangleright> \<Phi>\<^sub>k \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
-          using f0 assms(1) Suc.prems by blast
-        then have fcontinue: "\<exists>\<Gamma>\<^sub>k' \<Psi>\<^sub>k' \<Phi>\<^sub>k' k'. ((\<Gamma>\<^sub>k, \<delta>k + Suc n \<turnstile> \<Psi>\<^sub>k \<triangleright> \<Phi>\<^sub>k) \<hookrightarrow>\<^bsup>k'\<^esup> (\<Gamma>\<^sub>k', Suc (\<delta>k + Suc n) \<turnstile> \<Psi>\<^sub>k' \<triangleright> \<Phi>\<^sub>k'))
-                                              \<and> \<rho> \<in> \<lbrakk> \<Gamma>\<^sub>k', Suc (\<delta>k + Suc n) \<turnstile> \<Psi>\<^sub>k' \<triangleright> \<Phi>\<^sub>k' \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
-          using f0 cont instant_index_increase by blast
-        obtain \<Gamma>\<^sub>k' \<Psi>\<^sub>k' \<Phi>\<^sub>k' k' where cont2: "((\<Gamma>\<^sub>k, \<delta>k + Suc n \<turnstile> \<Psi>\<^sub>k \<triangleright> \<Phi>\<^sub>k) \<hookrightarrow>\<^bsup>k'\<^esup> (\<Gamma>\<^sub>k', Suc (\<delta>k + Suc n) \<turnstile> \<Psi>\<^sub>k' \<triangleright> \<Phi>\<^sub>k'))
+proof -
+  obtain \<delta>k where diff: "n\<^sub>k = \<delta>k + Suc n"
+    using add.commute assms(1) less_iff_Suc_add by auto
+  show ?thesis
+    proof (subst diff, subst diff, insert assms(2), induct \<delta>k)
+      case 0
+      then show ?case
+        using instant_index_increase assms(2) by simp
+    next
+      case (Suc \<delta>k)
+      have f0: "\<rho> \<in> \<lbrakk> \<Gamma>, n \<turnstile> \<Psi> \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g \<Longrightarrow> \<exists>\<Gamma>\<^sub>k \<Psi>\<^sub>k \<Phi>\<^sub>k k.
+           ((\<Gamma>, n \<turnstile> \<Psi> \<triangleright> \<Phi>) \<hookrightarrow>\<^bsup>k\<^esup> (\<Gamma>\<^sub>k, \<delta>k + Suc n \<turnstile> \<Psi>\<^sub>k \<triangleright> \<Phi>\<^sub>k))
+          \<and> \<rho> \<in> \<lbrakk> \<Gamma>\<^sub>k, \<delta>k + Suc n \<turnstile> \<Psi>\<^sub>k \<triangleright> \<Phi>\<^sub>k \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
+        using Suc.hyps by blast
+      obtain \<Gamma>\<^sub>k \<Psi>\<^sub>k \<Phi>\<^sub>k k
+        where cont: "((\<Gamma>, n \<turnstile> \<Psi> \<triangleright> \<Phi>) \<hookrightarrow>\<^bsup>k\<^esup> (\<Gamma>\<^sub>k, \<delta>k + Suc n \<turnstile> \<Psi>\<^sub>k \<triangleright> \<Phi>\<^sub>k)) \<and> \<rho> \<in> \<lbrakk> \<Gamma>\<^sub>k, \<delta>k + Suc n \<turnstile> \<Psi>\<^sub>k \<triangleright> \<Phi>\<^sub>k \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
+        using f0 assms(1) Suc.prems by blast
+      then have fcontinue: "\<exists>\<Gamma>\<^sub>k' \<Psi>\<^sub>k' \<Phi>\<^sub>k' k'. ((\<Gamma>\<^sub>k, \<delta>k + Suc n \<turnstile> \<Psi>\<^sub>k \<triangleright> \<Phi>\<^sub>k) \<hookrightarrow>\<^bsup>k'\<^esup> (\<Gamma>\<^sub>k', Suc (\<delta>k + Suc n) \<turnstile> \<Psi>\<^sub>k' \<triangleright> \<Phi>\<^sub>k'))
                                             \<and> \<rho> \<in> \<lbrakk> \<Gamma>\<^sub>k', Suc (\<delta>k + Suc n) \<turnstile> \<Psi>\<^sub>k' \<triangleright> \<Phi>\<^sub>k' \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
-          using Suc.prems using fcontinue cont by blast
-        have trans: "(\<Gamma>, n \<turnstile> \<Psi> \<triangleright> \<Phi>) \<hookrightarrow>\<^bsup>k + k'\<^esup> (\<Gamma>\<^sub>k', Suc (\<delta>k + Suc n) \<turnstile> \<Psi>\<^sub>k' \<triangleright> \<Phi>\<^sub>k')"
-          using operational_semantics_trans_generalized cont cont2
-          by blast
-        moreover have suc_assoc: "Suc \<delta>k + Suc n = Suc (\<delta>k + Suc n)"
-          by arith
-        ultimately show ?case 
-          proof (subst suc_assoc)
-          show "\<exists>\<Gamma>\<^sub>k \<Psi>\<^sub>k \<Phi>\<^sub>k k.
-                 ((\<Gamma>, n \<turnstile> \<Psi> \<triangleright> \<Phi>) \<hookrightarrow>\<^bsup>k\<^esup> (\<Gamma>\<^sub>k, Suc (\<delta>k + Suc n) \<turnstile> \<Psi>\<^sub>k \<triangleright> \<Phi>\<^sub>k))
-                \<and> \<rho> \<in> \<lbrakk> \<Gamma>\<^sub>k, Suc \<delta>k + Suc n \<turnstile> \<Psi>\<^sub>k \<triangleright> \<Phi>\<^sub>k \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
-            using cont2 local.trans by auto
-          qed
-    qed
+        using f0 cont instant_index_increase by blast
+      obtain \<Gamma>\<^sub>k' \<Psi>\<^sub>k' \<Phi>\<^sub>k' k' where cont2: "((\<Gamma>\<^sub>k, \<delta>k + Suc n \<turnstile> \<Psi>\<^sub>k \<triangleright> \<Phi>\<^sub>k) \<hookrightarrow>\<^bsup>k'\<^esup> (\<Gamma>\<^sub>k', Suc (\<delta>k + Suc n) \<turnstile> \<Psi>\<^sub>k' \<triangleright> \<Phi>\<^sub>k'))
+                                          \<and> \<rho> \<in> \<lbrakk> \<Gamma>\<^sub>k', Suc (\<delta>k + Suc n) \<turnstile> \<Psi>\<^sub>k' \<triangleright> \<Phi>\<^sub>k' \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
+        using Suc.prems using fcontinue cont by blast
+      have trans: "(\<Gamma>, n \<turnstile> \<Psi> \<triangleright> \<Phi>) \<hookrightarrow>\<^bsup>k + k'\<^esup> (\<Gamma>\<^sub>k', Suc (\<delta>k + Suc n) \<turnstile> \<Psi>\<^sub>k' \<triangleright> \<Phi>\<^sub>k')"
+        using operational_semantics_trans_generalized cont cont2
+        by blast
+      moreover have suc_assoc: "Suc \<delta>k + Suc n = Suc (\<delta>k + Suc n)"
+        by arith
+      ultimately show ?case 
+        proof (subst suc_assoc)
+        show "\<exists>\<Gamma>\<^sub>k \<Psi>\<^sub>k \<Phi>\<^sub>k k.
+               ((\<Gamma>, n \<turnstile> \<Psi> \<triangleright> \<Phi>) \<hookrightarrow>\<^bsup>k\<^esup> (\<Gamma>\<^sub>k, Suc (\<delta>k + Suc n) \<turnstile> \<Psi>\<^sub>k \<triangleright> \<Phi>\<^sub>k))
+              \<and> \<rho> \<in> \<lbrakk> \<Gamma>\<^sub>k, Suc \<delta>k + Suc n \<turnstile> \<Psi>\<^sub>k \<triangleright> \<Phi>\<^sub>k \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
+          using cont2 local.trans by auto
+        qed
   qed
+qed
 
-text \<open>Any run from initial specification [\<Psi>] has a corresponding configuration
-      indexed at [n]-th instant starting from initial configuration.\<close>
+text\<open>
+  Any run from initial specification @{term "\<Psi>"} has a corresponding configuration
+  indexed at @{term "n"}-th instant starting from initial configuration.
+\<close>
 theorem progress:
   assumes "\<rho> \<in> \<lbrakk>\<lbrakk> \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
   shows   "\<exists>k \<Gamma>\<^sub>k \<Psi>\<^sub>k \<Phi>\<^sub>k. (([], 0 \<turnstile> \<Psi> \<triangleright> [])  \<hookrightarrow>\<^bsup>k\<^esup> (\<Gamma>\<^sub>k, n \<turnstile> \<Psi>\<^sub>k \<triangleright> \<Phi>\<^sub>k))

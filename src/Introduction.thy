@@ -1,4 +1,4 @@
-chapter\<open>A Gentle Introduction into the TESL Language\<close>
+chapter\<open>A Gentle Introduction to TESL\<close>
 
 (*<*)
 theory Introduction
@@ -11,15 +11,17 @@ section \<open>Context\<close>
 text\<open>
 The design of complex systems involves different formalisms for modeling their different parts or 
 aspects. The global model of a system may therefore consist of a coordination of concurrent 
-sub-models that use differential equations, state machines, synchronous data-flow networks, 
-discrete event models and so on. This raises the interest in architectural composition languages 
-that allow for “bolting the respective sub-models together”, along their various interfaces, and 
+sub-models that use different paradigms such as differential equations, state machines, 
+synchronous data-flow networks, 
+discrete event models and so on, as illustrated in \autoref{fig:het-timed-system}. 
+This raises the interest in architectural composition languages 
+that allow for ``bolting the respective sub-models together'', along their various interfaces, and 
 specifying the various ways of collaboration and coordination~\cite{nguyenvan:hal-01583815}.
 
-We are interested in languages that allow for specifying timed coordination of subsystems by 
+We are interested in languages that allow for specifying the timed coordination of subsystems by 
 addressing the following conceptual issues:
 \<^item> events may occur in different sub-systems at unrelated times, leading to polychronous systems, 
-  which do not necessarily have a base clock,
+  which do not necessarily have a common base clock,
 \<^item> the behavior of the sub-systems is observed only at a series of discrete instants, and time 
   coordination has to take this discretization into account,
 \<^item> the instants at which a system is observed may be arbitrary and should not change its behavior 
@@ -40,6 +42,51 @@ text\<open>
  \caption{A Heterogeneous Timed System Model}
  \label{fig:het-timed-system}
 \end{figure}\<close>
+
+text\<open>
+In order to tackle the heterogeneous nature of the subsystems, we abstract their behavior as clocks. 
+Each clock models an event – something that can occur or not at a given time. 
+This time is measured in a time frame associated with each clock, and the nature of time 
+(integer, rational, real or any type with a linear order) is specific to each clock. 
+When the event associated with a clock occurs, the clock ticks. In order to support any kind of 
+behavior for the subsystems, we are only interested in specifying what we can observe at a series 
+of discrete instants. There are two constraints on observations: a clock may tick only at an 
+observation instant, and the time on any clock cannot decrease from an instant to the next one. 
+However, it is always possible to add arbitrary observation instants, which allows for stuttering 
+and modular composition of systems.
+As a consequence, the key concept of our setting is the notion of a clock-indexed Kripke model: 
+\(\Sigma^\infty = \mathbb{N} \rightarrow \mathbb{K} \rightarrow (\mathbb{B} \times \mathbb{T})\),
+where \(\mathbb{K}\) is an enumerable set of clocks, \(\mathbb{B}\) is the set of booleans – used to 
+indicate that a clock ticks at a given instant – and \(\mathbb{T}\) is a universal metric time 
+space for which we only assume that it is large enough to contain all individual time spaces 
+of clocks and that it is ordered by some linear ordering \(\leq_{\mathbb{T}}\).
+\<close>
+
+text\<open>
+  The elements of \(\Sigma^\infty\) are called runs. A specification language is a set of 
+  operators that constrains the set of possible monotonic runs. Specifications are composed by 
+  intersecting the denoted run sets of constraint operators.
+  Consequently, such specification languages do not limit the number of clocks used to model a 
+  system (as long as it is finite) and it is always possible to add clocks to a specification. 
+  Moreover they are compositional by construction since the composition of specifications 
+  consists of the conjunction of their constraints.
+\<close>
+
+text\<open>
+  This work provides the following contributions:
+  \<^item> defining the non-trivial language TESL\(^{\star}\) in terms of clock-indexed Kripke models, 
+  \<^item> proving that this denotational semantics is stuttering invariant,
+  \<^item> defining an adapted form of symbolic primitives and presenting the set of operational semantic rules,
+  \<^item> presenting formal proofs for soundness, completeness, and progress of the latter.
+\<close>
+
+section\<open>The TESL Language\<close>
+
+text\<open>
+  The TESL language was initially designed to coordinate the execution of heterogeneous components
+  during the simulation of a system (citer XXX). We define here a minimal kernel of operators that
+  will form the basis of a family of specification languages, including the original TESL language.
+\<close>
 
 (*<*)
 end
