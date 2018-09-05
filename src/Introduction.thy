@@ -16,7 +16,7 @@ synchronous data-flow networks,
 discrete event models and so on, as illustrated in \autoref{fig:het-timed-system}. 
 This raises the interest in architectural composition languages 
 that allow for ``bolting the respective sub-models together'', along their various interfaces, and 
-specifying the various ways of collaboration and coordination~\cite{nguyenvan:hal-01583815}.
+specifying the various ways of collaboration and coordination~@{cite "nguyenvan:hal-01583815"}.
 
 We are interested in languages that allow for specifying the timed coordination of subsystems by 
 addressing the following conceptual issues:
@@ -43,27 +43,37 @@ text\<open>
  \label{fig:het-timed-system}
 \end{figure}\<close>
 
+(*<*)
+consts dummyInfty :: "'a \<Rightarrow> 'a"   ("(_\<^sup>\<infinity>)" [1000] 999)
+consts dummyTESLSTAR :: "'a"          ("TESL\<^sup>*")
+consts dummyFUN   :: "'a set \<Rightarrow> 'b set \<Rightarrow> 'c set"          (infixl "\<rightarrow>" 100)
+consts dummyCLOCK :: "'a set"     ("\<K>") 
+consts dummyBOOL :: "bool set"     ("\<bool>") 
+consts dummyTIMES :: "'a set"      ("\<T>") 
+consts dummyLEQ   :: "'a \<Rightarrow> 'a \<Rightarrow> bool"          (infixl "\<le>\<^sub>\<T>" 100)
+
+(*>*)
+
 text\<open>
 In order to tackle the heterogeneous nature of the subsystems, we abstract their behavior as clocks. 
-Each clock models an event – something that can occur or not at a given time. 
-This time is measured in a time frame associated with each clock, and the nature of time 
-(integer, rational, real or any type with a linear order) is specific to each clock. 
+Each clock models an event – something that can occur or not at a given time. This time is measured 
+in a time frame associated with each clock, and the nature of time (integer, rational, real or any 
+type with a linear order) is specific to each clock. 
 When the event associated with a clock occurs, the clock ticks. In order to support any kind of 
 behavior for the subsystems, we are only interested in specifying what we can observe at a series 
 of discrete instants. There are two constraints on observations: a clock may tick only at an 
 observation instant, and the time on any clock cannot decrease from an instant to the next one. 
 However, it is always possible to add arbitrary observation instants, which allows for stuttering 
-and modular composition of systems.
+and modular composition of systems. 
 As a consequence, the key concept of our setting is the notion of a clock-indexed Kripke model: 
-\(\Sigma^\infty = \mathbb{N} \rightarrow \mathbb{K} \rightarrow (\mathbb{B} \times \mathbb{T})\),
-where \(\mathbb{K}\) is an enumerable set of clocks, \(\mathbb{B}\) is the set of booleans – used to 
-indicate that a clock ticks at a given instant – and \(\mathbb{T}\) is a universal metric time 
-space for which we only assume that it is large enough to contain all individual time spaces 
-of clocks and that it is ordered by some linear ordering \(\leq_{\mathbb{T}}\).
+@{term "\<Sigma>\<^sup>\<infinity> = \<nat> \<rightarrow> \<K> \<rightarrow> (\<bool> \<times> \<T>)"}, where @{term "\<K>"} is an enumerable set of clocks, @{term "\<bool>"} 
+is the set of booleans – used to  indicate that a clock ticks at a given instant – and @{term "\<T>"} 
+is a universal metric time space for which we only assume that it is large enough to contain all 
+individual time spaces of clocks and that it is ordered by some linear ordering @{term "(\<le>\<^sub>\<T>)"}.
 \<close>
 
 text\<open>
-  The elements of \(\Sigma^\infty\) are called runs. A specification language is a set of 
+  The elements of @{term "\<Sigma>\<^sup>\<infinity>"} are called runs. A specification language is a set of 
   operators that constrains the set of possible monotonic runs. Specifications are composed by 
   intersecting the denoted run sets of constraint operators.
   Consequently, such specification languages do not limit the number of clocks used to model a 
@@ -74,20 +84,30 @@ text\<open>
 
 text\<open>
   This work provides the following contributions:
-  \<^item> defining the non-trivial language TESL\(^{\star}\) in terms of clock-indexed Kripke models, 
+  \<^item> defining the non-trivial language @{term "TESL\<^sup>*"} in terms of clock-indexed Kripke models, 
   \<^item> proving that this denotational semantics is stuttering invariant,
   \<^item> defining an adapted form of symbolic primitives and presenting the set of operational semantic rules,
   \<^item> presenting formal proofs for soundness, completeness, and progress of the latter.
 \<close>
 
 section\<open>The TESL Language\<close>
-
+   
 text\<open>
   The TESL language was initially designed to coordinate the execution of heterogeneous components
-  during the simulation of a system (citer XXX). We define here a minimal kernel of operators that
-  will form the basis of a family of specification languages, including the original TESL language.
-\<close>
-
+  during the simulation of a system \<^cancel>\<open>@{cite "XXX"}\<close>. We define here a minimal kernel of operators 
+  that will form the basis of a family of specification languages, including the original TESL 
+  language.
+\<close>  
+   
 (*<*)
+no_notation dummyInfty      ("(_\<^sup>\<infinity>)" )
+no_notation dummyTESLSTAR   ("TESL\<^sup>*")
+no_notation dummyFUN        (infixl "\<rightarrow>" 100)
+no_notation dummyCLOCK      ("\<K>") 
+no_notation dummyBOOL       ("\<bool>") 
+no_notation dummyTIMES      ("\<T>") 
+no_notation dummyLEQ        (infixl "\<le>\<^sub>\<T>" 100)
+
+
 end
 (*>*)
