@@ -44,14 +44,22 @@ text\<open>
 \end{figure}\<close>
 
 (*<*)
-consts dummyInfty :: "'a \<Rightarrow> 'a"   ("(_\<^sup>\<infinity>)" [1000] 999)
-consts dummyTESLSTAR :: "'a"          ("TESL\<^sup>*")
-consts dummyFUN   :: "'a set \<Rightarrow> 'b set \<Rightarrow> 'c set"          (infixl "\<rightarrow>" 100)
-consts dummyCLOCK :: "'a set"     ("\<K>") 
-consts dummyBOOL :: "bool set"     ("\<bool>") 
-consts dummyTIMES :: "'a set"      ("\<T>") 
-consts dummyLEQ   :: "'a \<Rightarrow> 'a \<Rightarrow> bool"          (infixl "\<le>\<^sub>\<T>" 100)
+(* Constants and notation to be able to write what we want as Isabelle terms, not as LaTeX maths *)
+consts dummyInfty    :: "'a \<Rightarrow> 'a"
+consts dummyTESLSTAR :: "'a"
+consts dummyFUN      :: "'a set \<Rightarrow> 'b set \<Rightarrow> 'c set"
+consts dummyCLOCK    :: "'a set"
+consts dummyBOOL     :: "bool set" 
+consts dummyTIMES    :: "'a set" 
+consts dummyLEQ      :: "'a \<Rightarrow> 'a \<Rightarrow> bool"
 
+notation dummyInfty    ("(_\<^sup>\<infinity>)" [1000] 999)
+notation dummyTESLSTAR ("TESL\<^sup>*")
+notation dummyFUN      (infixl "\<rightarrow>" 100)
+notation dummyCLOCK    ("\<K>") 
+notation dummyBOOL     ("\<bool>") 
+notation dummyTIMES    ("\<T>") 
+notation dummyLEQ      (infixl "\<le>\<^sub>\<T>" 100)
 (*>*)
 
 text\<open>
