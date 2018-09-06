@@ -7,10 +7,10 @@ begin
 
 section\<open>Syntactic Representation\<close>
 text\<open>
-  We define here the syntax of TESL specifications:
+  We define here the syntax of TESL specifications.
 \<close>
 
-subsection\<open>Basic elements in a specification\<close>
+subsection\<open>Basic elements of a specification\<close>
 text\<open>
   The following items appear in specifications:
   \<^item> Clocks, which are identified by a name.
@@ -35,8 +35,6 @@ datatype '\<tau> tag_expr =
   Const    "'\<tau> tag_const"           ("\<lparr> _ \<rparr>")
 | AddDelay "tag_var" "'\<tau> tag_const" ("\<lparr> _ \<oplus> _ \<rparr>")
 
-subsection\<open>Syntax of the Operators\<close>
-text{* Define as follows the syntax of TESL *}
 
 subsection\<open>Operators for the TESL language\<close>
 text\<open>
