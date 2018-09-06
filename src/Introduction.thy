@@ -94,19 +94,67 @@ text\<open>
   This work provides the following contributions:
   \<^item> defining the non-trivial language @{term "TESL\<^sup>*"} in terms of clock-indexed Kripke models, 
   \<^item> proving that this denotational semantics is stuttering invariant,
-  \<^item> defining an adapted form of symbolic primitives and presenting the set of operational semantic rules,
+  \<^item> defining an adapted form of symbolic primitives and presenting the set of operational 
+    semantic rules,
   \<^item> presenting formal proofs for soundness, completeness, and progress of the latter.
 \<close>
 
 section\<open>The TESL Language\<close>
    
 text\<open>
-  The TESL language was initially designed to coordinate the execution of heterogeneous components
-  during the simulation of a system \<^cancel>\<open>@{cite "XXX"}\<close>. We define here a minimal kernel of operators 
-  that will form the basis of a family of specification languages, including the original TESL 
-  language.
+  The TESL language @{cite "BouJacHarPro2014MEMOCODE"} was initially designed to coordinate the
+  execution of heterogeneous components during the simulation of a system. We define here a minimal
+  kernel of operators that will form the basis of a family of specification languages, including the
+  original TESL language, which is described at \url{http://wdi.supelec.fr/software/TESL/}.
 \<close>  
-   
+
+subsection\<open>Instantaneous Causal Operators\<close>
+text\<open>
+  TESL has operators to deal with instantaneous causality, i.e. to react to an event occurrence
+  in the very same observation instant.
+  \<^item> \<^verbatim>\<open>c1 implies c2\<close> means that at any instant where \<^verbatim>\<open>c1\<close> ticks, \<^verbatim>\<open>c2\<close> has to tick too.
+  \<^item> \<^verbatim>\<open>c1 implies not c2\<close> means that at any instant where \<^verbatim>\<open>c1\<close> ticks, \<^verbatim>\<open>c2\<close> cannot tick.
+  \<^item> \<^verbatim>\<open>c1 kills c2\<close> means that at any instant where \<^verbatim>\<open>c1\<close> ticks, and at any future instant, 
+    \<^verbatim>\<open>c2\<close> cannot tick.
+\<close>
+
+subsection\<open>Temporal Operators\<close>
+text\<open>
+  TESL also has chronometric temporal operators that deal with dates and chronometric delays.
+  \<^item> \<^verbatim>\<open>c sporadic t\<close> means that clock \<^verbatim>\<open>c\<close> must have a tick at time \<^verbatim>\<open>t\<close> on its own time scale.
+  \<^item> \<^verbatim>\<open>c1 sporadic t on c2\<close> means that clock \<^verbatim>\<open>c1\<close> must have a tick at an instant where the time 
+    on \<^verbatim>\<open>c2\<close> is \<^verbatim>\<open>t\<close>.
+  \<^item> \<^verbatim>\<open>c1 time delayed by d on m implies c2\<close> means every time clock \<^verbatim>\<open>c1\<close> ticks, \<^verbatim>\<open>c2\<close> must have 
+    a tick at an instant where the time on \<^verbatim>\<open>m\<close> is \<^verbatim>\<open>d\<close> later than it was when \<^verbatim>\<open>c1\<close> had ticked.
+    This means that every tick on \<^verbatim>\<open>c1\<close> is followed by a tick on \<^verbatim>\<open>c2\<close> after a delay \<^verbatim>\<open>d\<close> measured
+    on the time scale of closk \<^verbatim>\<open>m\<close>.
+  \<^item> \<^verbatim>\<open>time relation (c1, c2) in R\<close> means that at every instant, the current times on clocks \<^verbatim>\<open>c1\<close>
+    and \<^verbatim>\<open>c2\<close> must be in relation \<^verbatim>\<open>R\<close>. By default, the time lines of different clocks are 
+    independent. This operator allows us to link two time lines, for instance to model the fact
+    that time in a GPS satellite and time in a GPS receiver on Earth are not the same but are 
+    related. Time being polymorphic in TESL, this can also be used to model the fact that the
+    angular position on the camshaft of an engine moves twice as fast as the angular position 
+    on the crankshaft~\footnote{See \url{http://wdi.supelec.fr/software/TESL/GalleryEngine} 
+    for more details}. We will consider only linear relations here so that finding solutions 
+    is decidable.
+\<close>
+
+subsection\<open>Asynchronous Operators\<close>
+text\<open>
+  The last category of TESL operators allows the specification of asynchronous relations between
+  event occurrences. They do not tell when ticks have to occur, then only put bounds on the set 
+  of instants at which they should occur.
+  \<^item> \<^verbatim>\<open>c1 weakly precedes c2\<close> means that for each tick on \<^verbatim>\<open>c2\<close>, there must be at least one tick
+    on \<^verbatim>\<open>c1\<close> at a previous instant or at the same instant. This can also be expressed by saying
+    that at each instant, the number of ticks on \<^verbatim>\<open>c2\<close> since the beginning of the run must be lower 
+    or equal to the number of ticks on \<^verbatim>\<open>c1\<close>.
+  \<^item> \<^verbatim>\<open>c1 strictly precedes c2\<close> means that for each tick on \<^verbatim>\<open>c2\<close>, there must be at least one tick
+    on \<^verbatim>\<open>c1\<close> at a previous instant. This can also be expressed by saying that at each instant, 
+    the number of ticks on \<^verbatim>\<open>c2\<close> from the beginning of the run to this instant must be lower or 
+    equal to the number of ticks on \<^verbatim>\<open>c1\<close> from the beginning of the run to the previous instant.
+\<close>
+
+
 (*<*)
 no_notation dummyInfty      ("(_\<^sup>\<infinity>)" )
 no_notation dummyTESLSTAR   ("TESL\<^sup>*")
