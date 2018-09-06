@@ -24,23 +24,6 @@ datatype '\<tau> tag_expr =
     Const    "'\<tau> tag_const"          ("\<lparr> _ \<rparr>")
   | AddDelay "tag_var" "'\<tau> tag_const" ("\<lparr> _ \<oplus> _ \<rparr>")
 
-datatype cnt_expr =
-    TickCountLess "clock" "instant_index"  ("#\<^sup><")
-  | TickCountLeq "clock" "instant_index" ("#\<^sup>\<le>")
-
-subsection\<open> Symbolic Primitives for Runs \<close> 
-datatype '\<tau> constr =
-    Timestamp     "clock"   "instant_index" "'\<tau> tag_expr"          ("_ \<Down> _ @ _")
-  | Ticks         "clock"   "instant_index"                       ("_ \<Up> _")
-  | NotTicks      "clock"   "instant_index"                       ("_ \<not>\<Up> _")
-  | NotTicksUntil "clock"   "instant_index"                       ("_ \<not>\<Up> < _")
-  | NotTicksFrom  "clock"   "instant_index"                       ("_ \<not>\<Up> \<ge> _")
-  | TagArith      "tag_var" "tag_var" "('\<tau> tag_const \<times> '\<tau> tag_const) \<Rightarrow> bool" ("\<lfloor>_, _\<rfloor> \<in> _")
-  | TickCntArith  "cnt_expr" "cnt_expr" "(nat \<times> nat) \<Rightarrow> bool"               ("\<lceil>_, _\<rceil> \<in> _")
-  | TickCntLeq    "cnt_expr" "cnt_expr"                           ("_ \<preceq> _")
-
-type_synonym '\<tau> system = "'\<tau> constr list"
-
 text{* Define as follows the syntax of TESL *}
 
 subsection\<open>Operators for the TESL language\<close> 
@@ -65,48 +48,41 @@ abbreviation NoSporadic :: "'\<tau> TESL_formula \<Rightarrow> '\<tau> TESL_form
       _ sporadic _ on _ \<Rightarrow> False
     | _ \<Rightarrow> True) f)"
 
-(* The abstract machine
-   Follows the intuition: past [\<Gamma>], current index [n], present [\<Psi>], future [\<Phi>]
-   Beware: This type is slightly different from which originally implemented in Heron
-*)
-type_synonym '\<tau> config = "'\<tau> system * instant_index * '\<tau> TESL_formula * '\<tau> TESL_formula"
-
-(*declare[[show_sorts]]*)
 
 (* Instanciating tag_const to give field structure *)
 instantiation tag_const :: (plus)plus
 begin
   fun plus_tag_const :: "'a tag_const \<Rightarrow> 'a tag_const \<Rightarrow> 'a tag_const" where
       TConst_plus: "(TConst n) + (TConst p) = (TConst (n + p))"
-  instance proof qed
+  instance by (rule Groups.class.Groups.plus.of_class.intro)
 end
 
 instantiation tag_const :: (minus)minus
 begin
   fun minus_tag_const :: "'a tag_const \<Rightarrow> 'a tag_const \<Rightarrow> 'a tag_const" where
       TConst_minus: "(TConst n) - (TConst p) = (TConst (n - p))"
-  instance proof qed
+  instance by (rule Groups.class.Groups.minus.of_class.intro)
 end
 
 instantiation tag_const :: (times)times
 begin
   fun times_tag_const :: "'a tag_const \<Rightarrow> 'a tag_const \<Rightarrow> 'a tag_const" where
       TConst_times: "(TConst n) * (TConst p) = (TConst (n * p))"
-  instance proof qed
+  instance by (rule Groups.class.Groups.times.of_class.intro)
 end
 
 instantiation tag_const :: (divide)divide
 begin
   fun divide_tag_const :: "'a tag_const \<Rightarrow> 'a tag_const \<Rightarrow> 'a tag_const" where
       TConst_divide: "divide (TConst n) (TConst p) = (TConst (divide n p))"
-  instance proof qed
+  instance by (rule Rings.class.Rings.divide.of_class.intro)
 end
 
 instantiation tag_const :: (inverse)inverse
 begin
   fun inverse_tag_const :: "'a tag_const \<Rightarrow> 'a tag_const" where
       TConst_inverse: "inverse (TConst n) = (TConst (inverse n))"
-  instance proof qed
+  instance by (rule Fields.class.Fields.inverse.of_class.intro)
 end
 
 instantiation tag_const :: (order)order

@@ -3,8 +3,7 @@ text\<open>\label{chap:operational_semantics}\<close>
 
 theory Operational
 imports
-    "TESL"
-    "Run"
+    "SymbolicPrimitive"
 
 begin
 

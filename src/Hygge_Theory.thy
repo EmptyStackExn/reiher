@@ -119,7 +119,7 @@ lemma complete_direct_successors:
       using HeronConf_interp_stepwise_instant_cases operational_semantics_step.simps operational_semantics_intro.instant_i
       by fastforce
   next
-    case (Cons \<psi> \<Psi>) print_facts
+    case (Cons \<psi> \<Psi>)
       then show ?case
       proof (cases \<psi>)
         case (SporadicOn K1 \<tau> K2)
