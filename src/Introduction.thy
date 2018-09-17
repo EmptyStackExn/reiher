@@ -20,17 +20,17 @@ specifying the various ways of collaboration and coordination~@{cite "nguyenvan:
 
 We are interested in languages that allow for specifying the timed coordination of subsystems by 
 addressing the following conceptual issues:
-\<^item> events may occur in different sub-systems at unrelated times, leading to polychronous systems, 
+\<^item> events may occur in different sub-systems at unrelated times, leading to \<^emph>\<open>polychronous\<close> systems, 
   which do not necessarily have a common base clock,
 \<^item> the behavior of the sub-systems is observed only at a series of discrete instants, and time 
-  coordination has to take this discretization into account,
+  coordination has to take this \<^emph>\<open>discretization\<close> into account,
 \<^item> the instants at which a system is observed may be arbitrary and should not change its behavior 
-  (stuttering invariance),
+  (\<^emph>\<open>stuttering invariance\<close>),
 \<^item> coordination between subsystems involves causality, so the occurrence of an event may enforce 
   the occurrence of other events, possibly after a certain duration has elapsed or an event has 
   occurred a given number of times,
 \<^item> the domain of time (discrete, rational, continuous,. . . ) may be different in the subsystems, 
-  leading to polytimed systems,
+  leading to \<^emph>\<open>polytimed\<close> systems,
 \<^item> the time frames of different sub-systems may be related (for instance, time in a GPS satellite 
   and in a GPS receiver on Earth are related although they are not the same).
 \<close>
@@ -86,7 +86,7 @@ text\<open>
   intersecting the denoted run sets of constraint operators.
   Consequently, such specification languages do not limit the number of clocks used to model a 
   system (as long as it is finite) and it is always possible to add clocks to a specification. 
-  Moreover they are compositional by construction since the composition of specifications 
+  Moreover they are \<^emph>\<open>compositional\<close> by construction since the composition of specifications 
   consists of the conjunction of their constraints.
 \<close>
 
@@ -134,9 +134,8 @@ text\<open>
     that time in a GPS satellite and time in a GPS receiver on Earth are not the same but are 
     related. Time being polymorphic in TESL, this can also be used to model the fact that the
     angular position on the camshaft of an engine moves twice as fast as the angular position 
-    on the crankshaft~\footnote{See \url{http://wdi.supelec.fr/software/TESL/GalleryEngine} 
-    for more details}. We will consider only linear relations here so that finding solutions 
-    is decidable.
+    on the crankshaft~\<^footnote>\<open>See \url{http://wdi.supelec.fr/software/TESL/GalleryEngine} for more details\<close>. 
+    We will consider only linear relations here so that finding solutions is decidable.
 \<close>
 
 subsection\<open>Asynchronous Operators\<close>
