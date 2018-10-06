@@ -154,13 +154,4 @@ lemma empty_spec_reductions:
       using instant_i operational_semantics_step.simps by fastforce 
   qed
 
-(* To decide finite-satisfiability of TESL specifications *)
-inductive finite_SAT :: "('\<tau>::linordered_field) config \<Rightarrow> bool" ("\<TTurnstile> _" 50) where
-  finite_SAT_ax: "set (NoSporadic \<Phi>) = set \<Phi> \<Longrightarrow>
-                    consistent_run \<Gamma> \<Longrightarrow>
-                   \<TTurnstile> (\<Gamma>, n \<turnstile> \<Psi> \<triangleright> \<Phi>)"
-| finite_SAT_i: "(\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1) \<hookrightarrow> (\<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2) \<Longrightarrow>
-                   \<TTurnstile> (\<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2) \<Longrightarrow>
-                   \<TTurnstile> (\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1)"
-
 end

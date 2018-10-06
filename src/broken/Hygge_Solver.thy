@@ -1,5 +1,6 @@
-theory Hygge
+theory Hygge_Solver
 imports
+  "Run_Concretizer"
   "Operational"
   "$ISABELLE_HOME/src/HOL/Eisbach/Eisbach_Tools" 
 
@@ -158,8 +159,8 @@ named_theorems init
 declare instant_i [init]
 
 named_theorems elims
-declare sporadic_e2 [elims]
-declare sporadic_e1 [elims]
+declare sporadic_on_e2 [elims]
+declare sporadic_on_e1 [elims]
 declare implies_e2 [elims]
 declare implies_e1 [elims]
 

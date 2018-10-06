@@ -32,14 +32,6 @@ lemma Abs_run_inverse_rewrite:
   "\<forall>c. mono (\<lambda>n. time (\<rho> n c)) \<Longrightarrow> Rep_run (Abs_run \<rho>) = \<rho>"
   by (simp add: Abs_run_inverse)
 
-(*<*)
-text\<open>Do we want to explain this trick? Is it still useful?\<close>
-(* WARNING: Admitting monotonicity to compute faster. Use for debugging purposes only. *)
-lemma Abs_run_inverse_rewrite_unsafe:
-  "Rep_run (Abs_run \<rho>) = \<rho>"
-oops (* Use [sorry] when testing *)
-(*>*)
-
 text\<open>
   @{term "run_tick_count \<rho> K n"} counts the number of ticks on clock @{term "K"} 
   in the interval \<^verbatim>\<open>[0, n]\<close> of run @{term "\<rho>"}.
