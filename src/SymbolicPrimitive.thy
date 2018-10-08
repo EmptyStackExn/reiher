@@ -3,7 +3,37 @@ theory SymbolicPrimitive
   imports Run
 begin
 
+datatype cnt_expr =
+    TickCountLess "clock" "instant_index"  ("#\<^sup><")
+  | TickCountLeq "clock" "instant_index" ("#\<^sup>\<le>")
+
+subsection\<open> Symbolic Primitives for Runs \<close> 
+datatype '\<tau> constr =
+    Timestamp     "clock"   "instant_index" "'\<tau> tag_expr"          ("_ \<Down> _ @ _")
+  | Ticks         "clock"   "instant_index"                       ("_ \<Up> _")
+  | NotTicks      "clock"   "instant_index"                       ("_ \<not>\<Up> _")
+  | NotTicksUntil "clock"   "instant_index"                       ("_ \<not>\<Up> < _")
+  | NotTicksFrom  "clock"   "instant_index"                       ("_ \<not>\<Up> \<ge> _")
+  | TagArith      "tag_var" "tag_var" "('\<tau> tag_const \<times> '\<tau> tag_const) \<Rightarrow> bool" ("\<lfloor>_, _\<rfloor> \<in> _")
+  | TickCntArith  "cnt_expr" "cnt_expr" "(nat \<times> nat) \<Rightarrow> bool"               ("\<lceil>_, _\<rceil> \<in> _")
+  | TickCntLeq    "cnt_expr" "cnt_expr"                           ("_ \<preceq> _")
+
+type_synonym '\<tau> system = "'\<tau> constr list"
+
+(* The abstract machine
+   Follows the intuition: past [\<Gamma>], current index [n], present [\<Psi>], future [\<Phi>]
+   Beware: This type is slightly different from which originally implemented in Heron
+*)
+type_synonym '\<tau> config = "'\<tau> system * instant_index * '\<tau> TESL_formula * '\<tau> TESL_formula"
+
+
 section \<open>Semantics of Primitive Constraints \<close>
+
+fun counter_expr_eval :: "('\<tau>::linordered_field) run \<Rightarrow> cnt_expr \<Rightarrow> nat" ("\<lbrakk> _ \<turnstile> _ \<rbrakk>\<^sub>c\<^sub>n\<^sub>t\<^sub>e\<^sub>x\<^sub>p\<^sub>r")
+where
+    "\<lbrakk> \<rho> \<turnstile> #\<^sup>< clk indx \<rbrakk>\<^sub>c\<^sub>n\<^sub>t\<^sub>e\<^sub>x\<^sub>p\<^sub>r = run_tick_count_strictly \<rho> clk indx"
+  | "\<lbrakk> \<rho> \<turnstile> #\<^sup>\<le> clk indx \<rbrakk>\<^sub>c\<^sub>n\<^sub>t\<^sub>e\<^sub>x\<^sub>p\<^sub>r = run_tick_count \<rho> clk indx"
+
 
 fun symbolic_run_interpretation_primitive :: "('\<tau>::linordered_field) constr \<Rightarrow> '\<tau> run set" ("\<lbrakk> _ \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m") where
     "\<lbrakk> K \<Up> n  \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m     = { \<rho>. hamlet ((Rep_run \<rho>) n K) }"
