@@ -41,7 +41,10 @@ text\<open>
   The type of atomic TESL constraints, which can be combined to form specifications.
 \<close>
 datatype '\<tau> TESL_atomic =
+\<^cancel>\<open>
     SporadicOn       "clock" "'\<tau> tag_expr"  "clock"         ("_ sporadic _ on _" 55)
+\<close>
+    SporadicOn       "clock" "'\<tau> tag_const"  "clock"         ("_ sporadic _ on _" 55)
   | TagRelation      "clock" "clock" "('\<tau> tag_const \<times> '\<tau> tag_const) \<Rightarrow> bool" 
                                                             ("time-relation \<lfloor>_, _\<rfloor> \<in> _" 55)
   | Implies          "clock" "clock"                        (infixr "implies" 55)

@@ -9,7 +9,8 @@ datatype cnt_expr =
 
 subsection\<open> Symbolic Primitives for Runs \<close> 
 datatype '\<tau> constr =
-    Timestamp     "clock"   "instant_index" "'\<tau> tag_expr"          ("_ \<Down> _ @ _")
+    Timestamp     "clock"   "instant_index" "'\<tau> tag_expr"         ("_ \<Down> _ @ _")
+  | Sporadic      "clock"   "'\<tau> tag_expr"   "clock"               ("_ @ _ \<Rightarrow> _")
   | Ticks         "clock"   "instant_index"                       ("_ \<Up> _")
   | NotTicks      "clock"   "instant_index"                       ("_ \<not>\<Up> _")
   | NotTicksUntil "clock"   "instant_index"                       ("_ \<not>\<Up> < _")
@@ -37,6 +38,8 @@ where
 
 fun symbolic_run_interpretation_primitive :: "('\<tau>::linordered_field) constr \<Rightarrow> '\<tau> run set" ("\<lbrakk> _ \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m") where
     "\<lbrakk> K \<Up> n  \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m     = { \<rho>. hamlet ((Rep_run \<rho>) n K) }"
+  | "\<lbrakk> K @ \<lparr>\<tau>\<rparr> \<Rightarrow> K' \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m = { \<rho>. \<forall>n. time ((Rep_run \<rho>) n K) = \<tau> \<longrightarrow> hamlet ((Rep_run \<rho>) n K')}"
+  | "\<lbrakk> K @ \<lparr>\<tau>\<^sub>v\<^sub>a\<^sub>r(K', n\<^sub>0) \<oplus> \<delta>t\<rparr> \<Rightarrow> K'' \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m = { \<rho>. \<forall>n. time ((Rep_run \<rho>) n K) = time ((Rep_run \<rho>) n\<^sub>0 K') + \<delta>t \<longrightarrow> hamlet ((Rep_run \<rho>) n K'')}"
   | "\<lbrakk> K \<not>\<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m     = { \<rho>. \<not>hamlet ((Rep_run \<rho>) n K) }"
   | "\<lbrakk> K \<not>\<Up> < n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m   = { \<rho>. \<forall>i < n. \<not> hamlet ((Rep_run \<rho>) i K)}"
   | "\<lbrakk> K \<not>\<Up> \<ge> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m   = { \<rho>. \<forall>i \<ge> n. \<not> hamlet ((Rep_run \<rho>) i K) }"

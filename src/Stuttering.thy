@@ -8,8 +8,8 @@ begin
 text {*  Sporadic specifications are preserved in a dilated run. *}
 lemma sporadic_sub:
   assumes "sub \<lless> r"
-      and "sub \<in> \<lbrakk>c sporadic \<lparr>\<tau>\<rparr> on c'\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
-    shows "r \<in> \<lbrakk>c sporadic \<lparr>\<tau>\<rparr> on c'\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
+      and "sub \<in> \<lbrakk>c sporadic \<tau> on c'\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
+    shows "r \<in> \<lbrakk>c sporadic \<tau> on c'\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
 proof -
   from assms(1) is_subrun_def obtain f
     where "dilating f sub r" by blast
@@ -161,7 +161,7 @@ proof -
   from assms(2) have "\<forall>n. hamlet ((Rep_run sub) n a)
                           \<longrightarrow> (\<exists>m \<ge> n. hamlet ((Rep_run sub) m b)
                                     \<and> time ((Rep_run sub) m ms) =  time ((Rep_run sub) n ms) + \<delta>\<tau>)"
-    using TESL_interpretation_atomic.simps(6)[of "a" "\<delta>\<tau>" "ms" "b"] by simp
+    using TESL_interpretation_atomic.simps(5)[of "a" "\<delta>\<tau>" "ms" "b"] by simp
   hence **:"\<forall>n\<^sub>0. hamlet ((Rep_run r) (f n\<^sub>0) a)
                   \<longrightarrow> (\<exists>m\<^sub>0 \<ge> n\<^sub>0. hamlet ((Rep_run r) (f m\<^sub>0) b)
                              \<and>  time ((Rep_run r) (f m\<^sub>0) ms) = time ((Rep_run r) (f n\<^sub>0) ms) + \<delta>\<tau>)"
@@ -192,7 +192,7 @@ lemma tagrel_sub_inv:
     shows "sub \<in> \<lbrakk> time-relation \<lfloor>c\<^sub>1, c\<^sub>2\<rfloor> \<in> R \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
 proof -
   from assms(1) is_subrun_def obtain f where df:"dilating f sub r" by blast
-  moreover from assms(2) TESL_interpretation_atomic.simps(3) have
+  moreover from assms(2) TESL_interpretation_atomic.simps(2) have
     "r \<in> {\<rho>. \<forall>n. R (time ((Rep_run \<rho>) n c\<^sub>1), time ((Rep_run \<rho>) n c\<^sub>2))}" by blast
   hence "\<forall>n. R (time ((Rep_run r) n c\<^sub>1), time ((Rep_run r) n c\<^sub>2))" by simp
   hence "\<forall>n. (\<exists>n\<^sub>0. f n\<^sub>0 = n) \<longrightarrow> R (time ((Rep_run r) n c\<^sub>1), time ((Rep_run r) n c\<^sub>2))" by simp
@@ -212,7 +212,7 @@ lemma tagrel_sub':
     shows "R (time ((Rep_run r) n c\<^sub>1), time ((Rep_run r) n c\<^sub>2))"
 proof -
   from assms(1) is_subrun_def obtain f where *:"dilating f sub r" by blast
-  moreover from assms(2) TESL_interpretation_atomic.simps(3) have
+  moreover from assms(2) TESL_interpretation_atomic.simps(2) have
     "sub \<in> {r. \<forall>n. R (time ((Rep_run r) n c\<^sub>1), time ((Rep_run r) n c\<^sub>2))}" by blast
   hence 1:"\<forall>n. R (time ((Rep_run sub) n c\<^sub>1), time ((Rep_run sub) n c\<^sub>2))" by simp
   show ?thesis
@@ -251,7 +251,7 @@ theorem kill_sub:
     shows "r \<in> \<lbrakk> c\<^sub>1 kills c\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
 proof -
   from assms(1) is_subrun_def obtain f where *:"dilating f sub r" by blast
-  from assms(2) TESL_interpretation_atomic.simps(9) have
+  from assms(2) TESL_interpretation_atomic.simps(8) have
     "\<forall>n. hamlet (Rep_run sub n c\<^sub>1) \<longrightarrow> (\<forall>m\<ge>n. \<not> hamlet (Rep_run sub m c\<^sub>2))" by simp
   hence "\<forall>n. hamlet (Rep_run r (f n) c\<^sub>1) \<longrightarrow> (\<forall>m\<ge>n. \<not> hamlet (Rep_run r (f m) c\<^sub>2))"
     using ticks_sub[OF *] by simp
@@ -259,7 +259,7 @@ proof -
     by (metis "*" dilating_def dilating_fun_def strict_mono_less_eq)
   hence "\<forall>n. hamlet (Rep_run r n c\<^sub>1) \<longrightarrow> (\<forall>m \<ge> n. \<not> hamlet (Rep_run r m c\<^sub>2))"
     using ticks_imp_ticks_subk[OF *] by blast
-  thus ?thesis using TESL_interpretation_atomic.simps(9) by blast
+  thus ?thesis using TESL_interpretation_atomic.simps(8) by blast
 qed
 
 end
