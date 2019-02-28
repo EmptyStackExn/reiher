@@ -7,10 +7,10 @@ datatype cnt_expr =
     TickCountLess "clock" "instant_index"  ("#\<^sup><")
   | TickCountLeq "clock" "instant_index" ("#\<^sup>\<le>")
 
-subsection\<open> Symbolic Primitives for Runs \<close> 
+subsection\<open> Symbolic Primitives for Runs \<close>
 datatype '\<tau> constr =
-    Timestamp     "clock"   "instant_index" "'\<tau> tag_expr"         ("_ \<Down> _ @ _")
-  | Sporadic      "clock"   "'\<tau> tag_expr"   "clock"               ("_ @ _ \<Rightarrow> _")
+    Timestamp     "clock"   "instant_index" "'\<tau> tag_const"         ("_ \<Down> _ @ _")
+  | TimeDelay     "clock"   "instant_index" "'\<tau> tag_const"   "clock"    ("_ @ _ \<oplus> _ \<Rightarrow> _")
   | Ticks         "clock"   "instant_index"                       ("_ \<Up> _")
   | NotTicks      "clock"   "instant_index"                       ("_ \<not>\<Up> _")
   | NotTicksUntil "clock"   "instant_index"                       ("_ \<not>\<Up> < _")
@@ -38,17 +38,14 @@ where
 
 fun symbolic_run_interpretation_primitive :: "('\<tau>::linordered_field) constr \<Rightarrow> '\<tau> run set" ("\<lbrakk> _ \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m") where
     "\<lbrakk> K \<Up> n  \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m     = { \<rho>. hamlet ((Rep_run \<rho>) n K) }"
-  | "\<lbrakk> K @ \<lparr>\<tau>\<rparr> \<Rightarrow> K' \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m = { \<rho>. \<forall>n. time ((Rep_run \<rho>) n K) = \<tau> \<longrightarrow> hamlet ((Rep_run \<rho>) n K')}"
-  | "\<lbrakk> K @ \<lparr>\<tau>\<^sub>v\<^sub>a\<^sub>r(K', n\<^sub>0) \<oplus> \<delta>t\<rparr> \<Rightarrow> K'' \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m = { \<rho>. \<forall>n. time ((Rep_run \<rho>) n K) = time ((Rep_run \<rho>) n\<^sub>0 K') + \<delta>t \<longrightarrow> hamlet ((Rep_run \<rho>) n K'')}"
+  | "\<lbrakk> K @ n\<^sub>0 \<oplus> \<delta>t \<Rightarrow> K' \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m = { \<rho>. \<exists>n \<ge> n\<^sub>0. time ((Rep_run \<rho>) n K) = time ((Rep_run \<rho>) n\<^sub>0 K) + \<delta>t \<and> hamlet ((Rep_run \<rho>) n K')}"
   | "\<lbrakk> K \<not>\<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m     = { \<rho>. \<not>hamlet ((Rep_run \<rho>) n K) }"
   | "\<lbrakk> K \<not>\<Up> < n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m   = { \<rho>. \<forall>i < n. \<not> hamlet ((Rep_run \<rho>) i K)}"
   | "\<lbrakk> K \<not>\<Up> \<ge> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m   = { \<rho>. \<forall>i \<ge> n. \<not> hamlet ((Rep_run \<rho>) i K) }"
-  | "\<lbrakk> K \<Down> n @ \<lparr> \<tau> \<rparr> \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m = { \<rho>. time ((Rep_run \<rho>) n K) = \<tau> }"
-  | "\<lbrakk> K \<Down> n @ \<lparr> \<tau>\<^sub>v\<^sub>a\<^sub>r(K', n') \<oplus> \<tau> \<rparr> \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m = { \<rho>. time ((Rep_run \<rho>) n K) = time ((Rep_run \<rho>) n' K') + \<tau> }"
+  | "\<lbrakk> K \<Down> n @ \<tau> \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m = { \<rho>. time ((Rep_run \<rho>) n K) = \<tau> }"
   | "\<lbrakk> \<lfloor>\<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>1, n\<^sub>1), \<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>2, n\<^sub>2)\<rfloor> \<in> R \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m = { \<rho>. R (time ((Rep_run \<rho>) n\<^sub>1 K\<^sub>1), time ((Rep_run \<rho>) n\<^sub>2 K\<^sub>2)) }"
   | "\<lbrakk> \<lceil>e\<^sub>1, e\<^sub>2\<rceil> \<in> R \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m = { \<rho>. R (\<lbrakk> \<rho> \<turnstile> e\<^sub>1 \<rbrakk>\<^sub>c\<^sub>n\<^sub>t\<^sub>e\<^sub>x\<^sub>p\<^sub>r, \<lbrakk> \<rho> \<turnstile> e\<^sub>2 \<rbrakk>\<^sub>c\<^sub>n\<^sub>t\<^sub>e\<^sub>x\<^sub>p\<^sub>r) }"
   | "\<lbrakk> cnt_e\<^sub>1 \<preceq> cnt_e\<^sub>2 \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m = { \<rho>. \<lbrakk> \<rho> \<turnstile> cnt_e\<^sub>1 \<rbrakk>\<^sub>c\<^sub>n\<^sub>t\<^sub>e\<^sub>x\<^sub>p\<^sub>r \<le> \<lbrakk> \<rho> \<turnstile> cnt_e\<^sub>2 \<rbrakk>\<^sub>c\<^sub>n\<^sub>t\<^sub>e\<^sub>x\<^sub>p\<^sub>r }"
-  (* | "\<lbrakk> (\<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>1, n\<^sub>1)) \<doteq> \<alpha> * \<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>2, n\<^sub>2) + \<beta> \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m = { \<rho>. time ((Rep_run \<rho>) n\<^sub>1 K\<^sub>1) = \<alpha> * time ((Rep_run \<rho>) n\<^sub>2 K\<^sub>2) + \<beta> }" *)
 
 fun symbolic_run_interpretation :: "('\<tau>::linordered_field) constr list \<Rightarrow> ('\<tau>::linordered_field) run set" ("\<lbrakk>\<lbrakk> _ \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m") where
     "\<lbrakk>\<lbrakk> [] \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m = { _. True }"
@@ -117,13 +114,7 @@ text \<open>Similar to the expansion laws of lattices\<close>
 
 theorem symrun_interp_expansion:
   shows "\<lbrakk>\<lbrakk> \<Gamma>\<^sub>1 @ \<Gamma>\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m = \<lbrakk>\<lbrakk> \<Gamma>\<^sub>1 \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk>\<lbrakk> \<Gamma>\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m"
-  proof (induct \<Gamma>\<^sub>1)
-    case Nil
-    then show ?case by simp
-  next
-    case (Cons a \<Gamma>\<^sub>1)
-    then show ?case by auto
-  qed
+by (induction \<Gamma>\<^sub>1, auto)
 
 section \<open>Equational laws for TESL formulae denotationally interpreted\<close> 
 subsection \<open>General laws\<close>

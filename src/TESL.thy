@@ -31,10 +31,11 @@ datatype '\<tau> tag_const =
 datatype tag_var =
   TSchematic "clock * instant_index" ("\<tau>\<^sub>v\<^sub>a\<^sub>r")
 
+\<^cancel>\<open>
 datatype '\<tau> tag_expr =
   Const    "'\<tau> tag_const"           ("\<lparr> _ \<rparr>")
 | AddDelay "tag_var" "'\<tau> tag_const" ("\<lparr> _ \<oplus> _ \<rparr>")
-
+\<close>
 
 subsection\<open>Operators for the TESL language\<close>
 text\<open>
