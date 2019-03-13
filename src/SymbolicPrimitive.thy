@@ -10,11 +10,11 @@ datatype cnt_expr =
 subsection\<open> Symbolic Primitives for Runs \<close>
 datatype '\<tau> constr =
     Timestamp     "clock"   "instant_index" "'\<tau> tag_const"         ("_ \<Down> _ @ _")
-  | TimeDelay     "clock"   "instant_index" "'\<tau> tag_const"   "clock"    ("_ @ _ \<oplus> _ \<Rightarrow> _")
-  | Ticks         "clock"   "instant_index"                       ("_ \<Up> _")
-  | NotTicks      "clock"   "instant_index"                       ("_ \<not>\<Up> _")
-  | NotTicksUntil "clock"   "instant_index"                       ("_ \<not>\<Up> < _")
-  | NotTicksFrom  "clock"   "instant_index"                       ("_ \<not>\<Up> \<ge> _")
+  | TimeDelay     "clock"   "instant_index" "'\<tau> tag_const" "clock" ("_ @ _ \<oplus> _ \<Rightarrow> _")
+  | Ticks         "clock"   "instant_index"                        ("_ \<Up> _")
+  | NotTicks      "clock"   "instant_index"                        ("_ \<not>\<Up> _")
+  | NotTicksUntil "clock"   "instant_index"                        ("_ \<not>\<Up> < _")
+  | NotTicksFrom  "clock"   "instant_index"                        ("_ \<not>\<Up> \<ge> _")
   | TagArith      "tag_var" "tag_var" "('\<tau> tag_const \<times> '\<tau> tag_const) \<Rightarrow> bool" ("\<lfloor>_, _\<rfloor> \<in> _")
   | TickCntArith  "cnt_expr" "cnt_expr" "(nat \<times> nat) \<Rightarrow> bool"               ("\<lceil>_, _\<rceil> \<in> _")
   | TickCntLeq    "cnt_expr" "cnt_expr"                           ("_ \<preceq> _")
@@ -38,7 +38,7 @@ where
 
 fun symbolic_run_interpretation_primitive :: "('\<tau>::linordered_field) constr \<Rightarrow> '\<tau> run set" ("\<lbrakk> _ \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m") where
     "\<lbrakk> K \<Up> n  \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m     = { \<rho>. hamlet ((Rep_run \<rho>) n K) }"
-  | "\<lbrakk> K @ n\<^sub>0 \<oplus> \<delta>t \<Rightarrow> K' \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m = { \<rho>. \<exists>n \<ge> n\<^sub>0. time ((Rep_run \<rho>) n K) = time ((Rep_run \<rho>) n\<^sub>0 K) + \<delta>t \<and> hamlet ((Rep_run \<rho>) n K')}"
+  | "\<lbrakk> K @ n\<^sub>0 \<oplus> \<delta>t \<Rightarrow> K' \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m = { \<rho>. \<forall>n \<ge> n\<^sub>0. time ((Rep_run \<rho>) n K) = time ((Rep_run \<rho>) n\<^sub>0 K) + \<delta>t \<longrightarrow> hamlet ((Rep_run \<rho>) n K')}"
   | "\<lbrakk> K \<not>\<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m     = { \<rho>. \<not>hamlet ((Rep_run \<rho>) n K) }"
   | "\<lbrakk> K \<not>\<Up> < n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m   = { \<rho>. \<forall>i < n. \<not> hamlet ((Rep_run \<rho>) i K)}"
   | "\<lbrakk> K \<not>\<Up> \<ge> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m   = { \<rho>. \<forall>i \<ge> n. \<not> hamlet ((Rep_run \<rho>) i K) }"

@@ -159,12 +159,12 @@ theorem time_delayed_sub:
 proof -
   from assms(1) is_subrun_def obtain f where *:"dilating f sub r" by blast
   from assms(2) have "\<forall>n. hamlet ((Rep_run sub) n a)
-                          \<longrightarrow> (\<exists>m \<ge> n. hamlet ((Rep_run sub) m b)
-                                    \<and> time ((Rep_run sub) m ms) =  time ((Rep_run sub) n ms) + \<delta>\<tau>)"
+                          \<longrightarrow> (\<forall>m \<ge> n. (time ((Rep_run sub) m ms) =  time ((Rep_run sub) n ms) + \<delta>\<tau>)
+                                       \<longrightarrow> hamlet ((Rep_run sub) m b)) "
     using TESL_interpretation_atomic.simps(5)[of "a" "\<delta>\<tau>" "ms" "b"] by simp
   hence **:"\<forall>n\<^sub>0. hamlet ((Rep_run r) (f n\<^sub>0) a)
-                  \<longrightarrow> (\<exists>m\<^sub>0 \<ge> n\<^sub>0. hamlet ((Rep_run r) (f m\<^sub>0) b)
-                             \<and>  time ((Rep_run r) (f m\<^sub>0) ms) = time ((Rep_run r) (f n\<^sub>0) ms) + \<delta>\<tau>)"
+                  \<longrightarrow> (\<forall>m\<^sub>0 \<ge> n\<^sub>0. (time ((Rep_run r) (f m\<^sub>0) ms) = time ((Rep_run r) (f n\<^sub>0) ms) + \<delta>\<tau>)
+                                  \<longrightarrow> hamlet ((Rep_run r) (f m\<^sub>0) b))  "
     using * by (simp add: dilating_def)
   hence "\<forall>n. hamlet ((Rep_run r) n a)
                   \<longrightarrow> (\<exists>m \<ge> n. hamlet ((Rep_run r) m b)
@@ -173,10 +173,10 @@ proof -
     { fix n assume assm:"hamlet ((Rep_run r) n a)"
       from ticks_image_sub[OF * assm] obtain n\<^sub>0 where nfn0:"n = f n\<^sub>0" by blast
       with ** assm have
-        "(\<exists>m\<^sub>0 \<ge> n\<^sub>0. hamlet ((Rep_run r) (f m\<^sub>0) b)
-               \<and>  time ((Rep_run r) (f m\<^sub>0) ms) = time ((Rep_run r) (f n\<^sub>0) ms) + \<delta>\<tau>)" by blast
-      hence "(\<exists>m \<ge> n. hamlet ((Rep_run r) m b)
-               \<and>  time ((Rep_run r) m ms) = time ((Rep_run r) n ms) + \<delta>\<tau>)"
+        "(\<forall>m\<^sub>0 \<ge> n\<^sub>0.(time ((Rep_run r) (f m\<^sub>0) ms) = time ((Rep_run r) (f n\<^sub>0) ms) + \<delta>\<tau>)
+                    \<longrightarrow> hamlet ((Rep_run r) (f m\<^sub>0) b))" by blast
+      hence "(\<forall>m \<ge> n. (time ((Rep_run r) m ms) = time ((Rep_run r) n ms) + \<delta>\<tau>) 
+                       \<longrightarrow> hamlet ((Rep_run r) m b)) " sledgehammer
         using * nfn0 dilating_def dilating_fun_def by (metis strict_mono_less_eq)
     } thus ?thesis by simp
   qed

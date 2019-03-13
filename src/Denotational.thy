@@ -32,8 +32,8 @@ fun TESL_interpretation_atomic
   | "\<lbrakk> master time-delayed by \<delta>\<tau> on measuring implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
         { \<rho>. \<forall>n. hamlet ((Rep_run \<rho>) n master) \<longrightarrow>
                  (let measured_time = time ((Rep_run \<rho>) n measuring) in
-                  \<exists>m \<ge> n. hamlet ((Rep_run \<rho>) m slave)
-                          \<and> time ((Rep_run \<rho>) m measuring) = measured_time + \<delta>\<tau>
+                  \<forall>m \<ge> n.  time ((Rep_run \<rho>) m measuring) = measured_time + \<delta>\<tau> 
+                           \<longrightarrow> hamlet ((Rep_run \<rho>) m slave)
                  )
         }"
   | "\<lbrakk> K\<^sub>1 weakly precedes K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
