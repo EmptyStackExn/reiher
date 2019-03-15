@@ -38,7 +38,7 @@ where
 
 fun symbolic_run_interpretation_primitive :: "('\<tau>::linordered_field) constr \<Rightarrow> '\<tau> run set" ("\<lbrakk> _ \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m") where
     "\<lbrakk> K \<Up> n  \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m     = { \<rho>. hamlet ((Rep_run \<rho>) n K) }"
-  | "\<lbrakk> K @ n\<^sub>0 \<oplus> \<delta>t \<Rightarrow> K' \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m = { \<rho>. \<forall>n \<ge> n\<^sub>0. time ((Rep_run \<rho>) n K) = time ((Rep_run \<rho>) n\<^sub>0 K) + \<delta>t \<longrightarrow> hamlet ((Rep_run \<rho>) n K')}"
+  | "\<lbrakk> K @ n\<^sub>0 \<oplus> \<delta>t \<Rightarrow> K' \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m = { \<rho>. \<forall>n \<ge> n\<^sub>0. first_time \<rho> K n (time ((Rep_run \<rho>) n\<^sub>0 K) + \<delta>t) \<longrightarrow> hamlet ((Rep_run \<rho>) n K')}"
   | "\<lbrakk> K \<not>\<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m     = { \<rho>. \<not>hamlet ((Rep_run \<rho>) n K) }"
   | "\<lbrakk> K \<not>\<Up> < n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m   = { \<rho>. \<forall>i < n. \<not> hamlet ((Rep_run \<rho>) i K)}"
   | "\<lbrakk> K \<not>\<Up> \<ge> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m   = { \<rho>. \<forall>i \<ge> n. \<not> hamlet ((Rep_run \<rho>) i K) }"

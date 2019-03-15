@@ -53,5 +53,31 @@ where
     "(#\<^sub>< \<rho> K 0)       = 0"
   | "(#\<^sub>< \<rho> K (Suc n)) = #\<^sub>\<le> \<rho> K n"
 
+definition first_time :: "'a::linordered_field run \<Rightarrow> clock \<Rightarrow> nat \<Rightarrow> 'a tag_const \<Rightarrow> bool"
+where
+  "first_time \<rho> K n \<tau> \<equiv> (time ((Rep_run \<rho>) n K) = \<tau>) \<and> (\<nexists>n'. n' < n \<and> time ((Rep_run \<rho>) n' K) = \<tau>)"
+
+lemma before_first_time:
+  assumes "first_time \<rho> K n \<tau>"
+      and "m < n"
+    shows "time ((Rep_run \<rho>) m K) < \<tau>"
+proof -
+  have "mono (\<lambda>n. time (Rep_run \<rho> n K))" using Rep_run by blast
+  moreover from assms(2) have "m \<le> n" using less_imp_le by simp
+  moreover have "mono (\<lambda>n. time (Rep_run \<rho> n K))" using Rep_run by blast
+  ultimately have  "time ((Rep_run \<rho>) m K) \<le> time ((Rep_run \<rho>) n K)" by (simp add:mono_def)
+  moreover from assms(1) have "time ((Rep_run \<rho>) n K) = \<tau>" using first_time_def by blast
+  moreover from assms have "time ((Rep_run \<rho>) m K) \<noteq> \<tau>" using first_time_def by blast
+  ultimately show ?thesis by simp
+qed
+
+lemma alt_first_time_def:
+  assumes "\<forall>m < n. time ((Rep_run \<rho>) m K) < \<tau>"
+      and "time ((Rep_run \<rho>) n K) = \<tau>"
+    shows "first_time \<rho> K n \<tau>"
+proof -
+  from assms(1) have "\<forall>m < n. time ((Rep_run \<rho>) m K) \<noteq> \<tau>" by (simp add: less_le)
+  with assms(2) show ?thesis by (simp add: first_time_def)
+qed
 
 end

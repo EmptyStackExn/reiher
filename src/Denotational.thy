@@ -30,10 +30,14 @@ fun TESL_interpretation_atomic
   | "\<lbrakk> master implies not slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
         { \<rho>. \<forall>n::nat. hamlet ((Rep_run \<rho>) n master) \<longrightarrow> \<not> hamlet ((Rep_run \<rho>) n slave) }"
   | "\<lbrakk> master time-delayed by \<delta>\<tau> on measuring implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
+\<comment> \<open>
+  When master ticks, let's call t0 the current date on measuring. Then, at the first
+  instant when the date on measuring is t0+\<partial>t, slave has to tick.
+\<close>
         { \<rho>. \<forall>n. hamlet ((Rep_run \<rho>) n master) \<longrightarrow>
                  (let measured_time = time ((Rep_run \<rho>) n measuring) in
-                  \<forall>m \<ge> n.  time ((Rep_run \<rho>) m measuring) = measured_time + \<delta>\<tau> 
-                           \<longrightarrow> hamlet ((Rep_run \<rho>) m slave)
+                  \<forall>m \<ge> n.  first_time \<rho> measuring m (measured_time + \<delta>\<tau>)
+                            \<longrightarrow> hamlet ((Rep_run \<rho>) m slave)
                  )
         }"
   | "\<lbrakk> K\<^sub>1 weakly precedes K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =

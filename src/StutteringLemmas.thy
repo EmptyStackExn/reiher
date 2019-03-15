@@ -856,4 +856,88 @@ proof -
   with * show ?thesis by simp
 qed
 
+lemma stutter_no_time:
+  assumes "dilating f sub r"
+      and "\<forall>k. f n < k \<and> k \<le> m \<longrightarrow> (\<nexists>k\<^sub>0. f k\<^sub>0 = k)"
+      and "m > f n"
+    shows "time ((Rep_run r) m c) = time ((Rep_run r) (f n) c)"
+proof -
+  from assms have "\<forall>k. f n < k \<and> k \<le> m \<longrightarrow> time ((Rep_run r) k c) = time ((Rep_run r) (f n) c)"
+  proof -
+  { fix k assume hyp:"f n < k \<and> k \<le> m"
+    have "time ((Rep_run r) k c) = time ((Rep_run r) (f n) c)"
+    proof (cases "k=0")
+      case True
+        hence "n = 0" using hyp by blast
+        hence "f n = 0" using assms(1) by (simp add: dilating_def dilating_fun_def)
+        thus ?thesis by (simp add: True)
+    next
+      case False
+        hence "\<exists>k\<^sub>0. k = Suc k\<^sub>0"  using lessE by blast
+        from this obtain k\<^sub>0 where kprop:"k = Suc k\<^sub>0" by blast
+        hence "\<nexists>z. f z = Suc k\<^sub>0" using assms(2) hyp by blast
+        hence "time ((Rep_run r) k c) = time ((Rep_run r) k\<^sub>0 c)"
+          using assms(1) dilating_def dilating_fun_def kprop by blast
+      then show ?thesis sorry (* induction needed *)
+    qed
+  } thus ?thesis by simp
+  qed
+  thus ?thesis using assms(3) by blast
+qed
+
+lemma time_stuttering:
+  assumes "dilating f sub r"
+      and "time ((Rep_run sub) n c) = \<tau>"
+      and "\<forall>k. f n < k \<and> k \<le> m \<longrightarrow> (\<nexists>k\<^sub>0. f k\<^sub>0 = k)"
+      and "m > f n"
+    shows "time ((Rep_run r) m c) = \<tau>"
+proof -
+  from assms(3) have "time ((Rep_run r) m c) = time ((Rep_run r) (f n) c)"
+    using  stutter_no_time[OF assms(1,3,4)] ..
+  also from assms(1,2) have "time ((Rep_run r) (f n) c) = \<tau>" by (simp add: dilating_def)
+  finally show ?thesis .
+qed
+
+lemma first_time_image:
+  assumes "dilating f sub r"
+  shows "first_time sub c n t = first_time r c (f n) t"
+proof
+  assume "first_time sub c n t"
+  with before_first_time[OF this]
+    have *:"time ((Rep_run sub) n c) = t \<and> (\<forall>m < n. time((Rep_run sub) m c) < t)"
+      by (simp add: first_time_def)
+  hence **:"time ((Rep_run r) (f n) c) = t \<and> (\<forall>m < n. time((Rep_run r) (f m) c) < t)"
+    using assms(1) dilating_def by metis
+  have "\<forall>m < f n. time ((Rep_run r) m c) < t"
+  proof -
+  { fix m assume hyp:"m < f n"
+    have "time ((Rep_run r) m c) < t"
+    proof (cases "\<exists>m\<^sub>0. f m\<^sub>0 = m")
+      case True
+        from this obtain m\<^sub>0 where mm0:"m = f m\<^sub>0" by blast
+        with hyp have m0n:"m\<^sub>0 < n" using assms(1) by (simp add: dilating_def dilating_fun_def strict_mono_less)
+        hence "time ((Rep_run sub) m\<^sub>0 c) < t" using * by blast
+        thus ?thesis by (simp add: mm0 m0n **)
+    next
+      case False
+        hence "\<exists>m\<^sub>p. f m\<^sub>p < m \<and> (\<forall>k. f m\<^sub>p < k \<and> k \<le> m \<longrightarrow> (\<nexists>k\<^sub>0. f k\<^sub>0 = k))" using greatest_prev_image[OF assms] by simp
+        from this obtain m\<^sub>p where mp:"f m\<^sub>p < m \<and> (\<forall>k. f m\<^sub>p < k \<and> k \<le> m \<longrightarrow> (\<nexists>k\<^sub>0. f k\<^sub>0 = k))" by blast
+        hence "time ((Rep_run r) m c) = time ((Rep_run sub) m\<^sub>p c)"  using time_stuttering[OF assms] by blast
+        moreover from mp have "time ((Rep_run sub) m\<^sub>p c) < t" using *
+          by (meson assms dilating_def dilating_fun_def hyp less_trans strict_mono_less)
+        ultimately show ?thesis by simp
+      qed
+    } thus ?thesis by simp
+  qed
+  with ** show "first_time r c (f n) t" by (simp add: alt_first_time_def)
+next
+  assume "first_time r c (f n) t"
+  hence *:"time ((Rep_run r) (f n) c) = t \<and> (\<forall>k < f n. time ((Rep_run r) k c) < t)"
+    by (simp add: first_time_def before_first_time)
+  hence "time ((Rep_run sub) n c) = t" using assms dilating_def by blast
+  moreover from * have "(\<forall>k < n. time ((Rep_run sub) k c) < t)"
+    using assms dilating_def dilating_fun_def strict_monoD by fastforce
+  ultimately show "first_time sub c n t" by (simp add: alt_first_time_def)
+qed
+
 end

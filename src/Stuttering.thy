@@ -159,25 +159,51 @@ theorem time_delayed_sub:
 proof -
   from assms(1) is_subrun_def obtain f where *:"dilating f sub r" by blast
   from assms(2) have "\<forall>n. hamlet ((Rep_run sub) n a)
-                          \<longrightarrow> (\<forall>m \<ge> n. (time ((Rep_run sub) m ms) =  time ((Rep_run sub) n ms) + \<delta>\<tau>)
-                                       \<longrightarrow> hamlet ((Rep_run sub) m b)) "
+                          \<longrightarrow> (\<forall>m \<ge> n. first_time sub ms m (time ((Rep_run sub) n ms) + \<delta>\<tau>)
+                                       \<longrightarrow> hamlet ((Rep_run sub) m b))"
     using TESL_interpretation_atomic.simps(5)[of "a" "\<delta>\<tau>" "ms" "b"] by simp
   hence **:"\<forall>n\<^sub>0. hamlet ((Rep_run r) (f n\<^sub>0) a)
-                  \<longrightarrow> (\<forall>m\<^sub>0 \<ge> n\<^sub>0. (time ((Rep_run r) (f m\<^sub>0) ms) = time ((Rep_run r) (f n\<^sub>0) ms) + \<delta>\<tau>)
+                  \<longrightarrow> (\<forall>m\<^sub>0 \<ge> n\<^sub>0. first_time r ms (f m\<^sub>0) (time ((Rep_run r) (f n\<^sub>0) ms) + \<delta>\<tau>)
                                   \<longrightarrow> hamlet ((Rep_run r) (f m\<^sub>0) b))  "
-    using * by (simp add: dilating_def)
+    using first_time_image[OF *] dilating_def * by fastforce
   hence "\<forall>n. hamlet ((Rep_run r) n a)
-                  \<longrightarrow> (\<exists>m \<ge> n. hamlet ((Rep_run r) m b)
-                             \<and> time ((Rep_run r) m ms) = time ((Rep_run r) n ms) + \<delta>\<tau>)"
+                  \<longrightarrow> (\<forall>m \<ge> n. first_time r ms m (time ((Rep_run r) n ms) + \<delta>\<tau>)
+                                \<longrightarrow> hamlet ((Rep_run r) m b))"
   proof -
     { fix n assume assm:"hamlet ((Rep_run r) n a)"
       from ticks_image_sub[OF * assm] obtain n\<^sub>0 where nfn0:"n = f n\<^sub>0" by blast
-      with ** assm have
-        "(\<forall>m\<^sub>0 \<ge> n\<^sub>0.(time ((Rep_run r) (f m\<^sub>0) ms) = time ((Rep_run r) (f n\<^sub>0) ms) + \<delta>\<tau>)
+      with ** assm have ft0:
+        "(\<forall>m\<^sub>0 \<ge> n\<^sub>0. first_time r ms (f m\<^sub>0) (time ((Rep_run r) (f n\<^sub>0) ms) + \<delta>\<tau>)
                     \<longrightarrow> hamlet ((Rep_run r) (f m\<^sub>0) b))" by blast
-      hence "(\<forall>m \<ge> n. (time ((Rep_run r) m ms) = time ((Rep_run r) n ms) + \<delta>\<tau>) 
-                       \<longrightarrow> hamlet ((Rep_run r) m b)) " sledgehammer
-        using * nfn0 dilating_def dilating_fun_def by (metis strict_mono_less_eq)
+      have "(\<forall>m \<ge> n. first_time r ms m (time ((Rep_run r) n ms) + \<delta>\<tau>) 
+                       \<longrightarrow> hamlet ((Rep_run r) m b)) "
+      proof -
+      { fix m assume hyp:"m \<ge> n"
+        have "first_time r ms m (time (Rep_run r n ms) + \<delta>\<tau>) \<longrightarrow> hamlet (Rep_run r m b)"
+        proof (cases "\<exists>m\<^sub>0. m = f m\<^sub>0")
+          case True  thus ?thesis using * hyp ft0 nfn0
+            by (metis dilating_def dilating_fun_def strict_mono_less_eq)
+        next
+          case False thus ?thesis
+          proof (cases "m = 0")
+            case True
+              hence "m = f 0" using * by (simp add: dilating_def dilating_fun_def)
+              then show ?thesis using False by blast
+          next
+            case False
+            hence "\<exists>pm. m = Suc pm" by (simp add: not0_implies_Suc)
+            from this obtain pm where mpm:"m = Suc pm" by blast
+            hence "\<nexists>pm\<^sub>0. Suc pm = f pm\<^sub>0" using \<open>\<nexists>m\<^sub>0. m = f m\<^sub>0\<close> by simp 
+            with dilating_fun_def have "time (Rep_run r (Suc pm) ms) = time (Rep_run r pm ms)"
+              by (metis "*" dilating_def)
+            hence "time (Rep_run r m ms) = time (Rep_run r pm ms)" using mpm by simp
+            with mpm first_time_def have "\<not>(first_time r ms m (time (Rep_run r n ms) + \<delta>\<tau>))"
+              by (metis lessI)
+            thus ?thesis by simp
+          qed
+        qed
+      } thus ?thesis by simp
+      qed
     } thus ?thesis by simp
   qed
   thus ?thesis by simp
