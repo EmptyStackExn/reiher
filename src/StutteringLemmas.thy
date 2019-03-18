@@ -6,6 +6,18 @@ imports StutteringDefs
 
 begin
 
+lemma bounded_suc_ind:
+  assumes "\<And>k. k < m \<Longrightarrow> P (Suc (z + k)) = P (z + k)"
+  shows "k < m \<Longrightarrow> P (Suc (z + k)) = P z"
+proof (induction k)
+  case 0
+    with assms(1)[of 0] show ?case by simp
+next
+  case (Suc k')
+  with assms[of "Suc k'"] show ?case by force
+qed
+
+
 subsection {* Lemmas used to prove the invariance by stuttering *}
 
 text \<open>A dilating function is injective.\<close>
@@ -656,7 +668,15 @@ proof -
 qed
 
 lemma card_sing_prop:"card {i. i = n \<and> P i} = (if P n then 1 else 0)"
-  by (smt card_empty empty_Collect_eq is_singletonI' is_singleton_altdef mem_Collect_eq)
+proof (cases "P n")
+  case True
+    hence "{i. i = n \<and> P i} = {n}" by (simp add: Collect_conv_if)
+    with \<open>P n\<close> show ?thesis by simp
+next
+  case False
+    hence "{i. i = n \<and> P i} = {}" by (simp add: Collect_conv_if)
+    with \<open>\<not>P n\<close> show ?thesis by simp
+qed
 
 corollary tick_count_f_suc:
   assumes "dilating f sub r"
@@ -722,12 +742,12 @@ proof -
     qed
     thus ?case by (simp add: tick_count_is_fun)
   next
-    case (Suc n) 
-    from assms(2) have "tick_count sub a (Suc n) \<le> tick_count sub b (Suc n)"
+    case (Suc n') 
+    from assms(2) have "tick_count sub a (Suc n') \<le> tick_count sub b (Suc n')"
       using tick_count_is_fun by metis
-    hence 1:"tick_count r a (f (Suc n)) \<le> tick_count r b (f (Suc n))" using tick_count_sub[OF *] by simp
+    hence 1:"tick_count r a (f (Suc n')) \<le> tick_count r b (f (Suc n'))" using tick_count_sub[OF *] by simp
     thus ?case using assms tick_count_f_suc_sub[OF *] Suc.IH
-      by (smt is_subrun_def run_tick_count_sub run_tick_count_suc ticks_imp_ticks_subk)
+      by (smt "*" no_tick_sub run_tick_count_sub run_tick_count_suc)
   qed
 qed
 
@@ -862,27 +882,16 @@ lemma stutter_no_time:
       and "m > f n"
     shows "time ((Rep_run r) m c) = time ((Rep_run r) (f n) c)"
 proof -
-  from assms have "\<forall>k. f n < k \<and> k \<le> m \<longrightarrow> time ((Rep_run r) k c) = time ((Rep_run r) (f n) c)"
-  proof -
-  { fix k assume hyp:"f n < k \<and> k \<le> m"
-    have "time ((Rep_run r) k c) = time ((Rep_run r) (f n) c)"
-    proof (cases "k=0")
-      case True
-        hence "n = 0" using hyp by blast
-        hence "f n = 0" using assms(1) by (simp add: dilating_def dilating_fun_def)
-        thus ?thesis by (simp add: True)
-    next
-      case False
-        hence "\<exists>k\<^sub>0. k = Suc k\<^sub>0"  using lessE by blast
-        from this obtain k\<^sub>0 where kprop:"k = Suc k\<^sub>0" by blast
-        hence "\<nexists>z. f z = Suc k\<^sub>0" using assms(2) hyp by blast
-        hence "time ((Rep_run r) k c) = time ((Rep_run r) k\<^sub>0 c)"
-          using assms(1) dilating_def dilating_fun_def kprop by blast
-      then show ?thesis sorry (* induction needed *)
-    qed
-  } thus ?thesis by simp
-  qed
-  thus ?thesis using assms(3) by blast
+  from assms have "\<forall>k. k < m - (f n) \<longrightarrow> (\<nexists>k\<^sub>0. f k\<^sub>0 = Suc ((f n) + k))" by simp
+  hence "\<forall>k. k < m - (f n)
+            \<longrightarrow> time ((Rep_run r) (Suc ((f n) + k)) c) = time ((Rep_run r) ((f n) + k) c)"
+    using assms(1) by (simp add: dilating_def dilating_fun_def)
+  hence *:"\<forall>k. k < m - (f n) \<longrightarrow> time ((Rep_run r) (Suc ((f n) + k)) c) = time ((Rep_run r) (f n) c)"
+    using bounded_suc_ind[of "m - (f n)" "\<lambda>k. time (Rep_run r k c)" "f n"] by blast
+  from assms(3) obtain m\<^sub>0 where m0:"Suc m\<^sub>0 = m - (f n)" using Suc_diff_Suc by blast
+  with * have "time ((Rep_run r) (Suc ((f n) + m\<^sub>0)) c) = time ((Rep_run r) (f n) c)" by auto
+  moreover from m0 have "Suc ((f n) + m\<^sub>0) = m" by simp
+  ultimately show ?thesis by simp
 qed
 
 lemma time_stuttering:
