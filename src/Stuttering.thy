@@ -5,147 +5,143 @@ imports StutteringLemmas
 
 begin
 
-text {*  Sporadic specifications are preserved in a dilated run. *}
+text \<open>Sporadic specifications are preserved in a dilated run.\<close>
 lemma sporadic_sub:
-  assumes "sub \<lless> r"
-      and "sub \<in> \<lbrakk>c sporadic \<tau> on c'\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
-    shows "r \<in> \<lbrakk>c sporadic \<tau> on c'\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
+  assumes \<open>sub \<lless> r\<close>
+      and \<open>sub \<in> \<lbrakk>c sporadic \<tau> on c'\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<close>
+    shows \<open>r \<in> \<lbrakk>c sporadic \<tau> on c'\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<close>
 proof -
   from assms(1) is_subrun_def obtain f
-    where "dilating f sub r" by blast
-  hence "\<forall>n c. time ((Rep_run sub) n c) = time ((Rep_run r) (f n) c)
-           \<and> hamlet ((Rep_run sub) n c) = hamlet ((Rep_run r) (f n) c)" by (simp add: dilating_def)
+    where \<open>dilating f sub r\<close> by blast
+  hence \<open>\<forall>n c. time ((Rep_run sub) n c) = time ((Rep_run r) (f n) c)
+           \<and> hamlet ((Rep_run sub) n c) = hamlet ((Rep_run r) (f n) c)\<close> by (simp add: dilating_def)
   moreover from assms(2) have
-    "sub \<in> {r. \<exists> n. hamlet ((Rep_run r) n c) \<and> time ((Rep_run r) n c') = \<tau>}" by simp
-  from this obtain k where "time ((Rep_run sub) k c') = \<tau> \<and> hamlet ((Rep_run sub) k c)" by auto
-  ultimately have "time ((Rep_run r) (f k) c') = \<tau> \<and> hamlet ((Rep_run r) (f k) c)" by simp
+    \<open>sub \<in> {r. \<exists> n. hamlet ((Rep_run r) n c) \<and> time ((Rep_run r) n c') = \<tau>}\<close> by simp
+  from this obtain k where \<open>time ((Rep_run sub) k c') = \<tau> \<and> hamlet ((Rep_run sub) k c)\<close> by auto
+  ultimately have \<open>time ((Rep_run r) (f k) c') = \<tau> \<and> hamlet ((Rep_run r) (f k) c)\<close> by simp
   thus ?thesis by auto
 qed
 
-text {*
-  Implications are preserved in a dilated run.
-*}
+text \<open>Implications are preserved in a dilated run.\<close>
 theorem implies_sub:
-  assumes "sub \<lless> r"
-      and "sub \<in> \<lbrakk>c\<^sub>1 implies c\<^sub>2\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
-    shows "r \<in> \<lbrakk>c\<^sub>1 implies c\<^sub>2\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
+  assumes \<open>sub \<lless> r\<close>
+      and \<open>sub \<in> \<lbrakk>c\<^sub>1 implies c\<^sub>2\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<close>
+    shows \<open>r \<in> \<lbrakk>c\<^sub>1 implies c\<^sub>2\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<close>
 proof -
-  from assms(1) is_subrun_def obtain f where "dilating f sub r" by blast
+  from assms(1) is_subrun_def obtain f where \<open>dilating f sub r\<close> by blast
   moreover from assms(2) have
-    "sub \<in> {r. \<forall>n. hamlet ((Rep_run r) n c\<^sub>1) \<longrightarrow> hamlet ((Rep_run r) n c\<^sub>2)}" by simp
-  hence "\<forall>n. hamlet ((Rep_run sub) n c\<^sub>1) \<longrightarrow> hamlet ((Rep_run sub) n c\<^sub>2)" by simp
-  ultimately have "\<forall>n. hamlet ((Rep_run r) n c\<^sub>1) \<longrightarrow> hamlet ((Rep_run r) n c\<^sub>2)"
+    \<open>sub \<in> {r. \<forall>n. hamlet ((Rep_run r) n c\<^sub>1) \<longrightarrow> hamlet ((Rep_run r) n c\<^sub>2)}\<close> by simp
+  hence \<open>\<forall>n. hamlet ((Rep_run sub) n c\<^sub>1) \<longrightarrow> hamlet ((Rep_run sub) n c\<^sub>2)\<close> by simp
+  ultimately have \<open>\<forall>n. hamlet ((Rep_run r) n c\<^sub>1) \<longrightarrow> hamlet ((Rep_run r) n c\<^sub>2)\<close>
     using ticks_imp_ticks_subk ticks_sub by blast
   thus ?thesis by simp
 qed
 
 theorem implies_not_sub:
-  assumes "sub \<lless> r"
-      and "sub \<in> \<lbrakk>c\<^sub>1 implies not c\<^sub>2\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
-    shows "r \<in> \<lbrakk>c\<^sub>1 implies not c\<^sub>2\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
+  assumes \<open>sub \<lless> r\<close>
+      and \<open>sub \<in> \<lbrakk>c\<^sub>1 implies not c\<^sub>2\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<close>
+    shows \<open>r \<in> \<lbrakk>c\<^sub>1 implies not c\<^sub>2\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<close>
 proof -
-  from assms(1) is_subrun_def obtain f where "dilating f sub r" by blast
+  from assms(1) is_subrun_def obtain f where \<open>dilating f sub r\<close> by blast
   moreover from assms(2) have
-    "sub \<in> {r. \<forall>n. hamlet ((Rep_run r) n c\<^sub>1) \<longrightarrow> \<not> hamlet ((Rep_run r) n c\<^sub>2)}" by simp
-  hence "\<forall>n. hamlet ((Rep_run sub) n c\<^sub>1) \<longrightarrow> \<not> hamlet ((Rep_run sub) n c\<^sub>2)" by simp
-  ultimately have "\<forall>n. hamlet ((Rep_run r) n c\<^sub>1) \<longrightarrow> \<not> hamlet ((Rep_run r) n c\<^sub>2)"
+    \<open>sub \<in> {r. \<forall>n. hamlet ((Rep_run r) n c\<^sub>1) \<longrightarrow> \<not> hamlet ((Rep_run r) n c\<^sub>2)}\<close> by simp
+  hence \<open>\<forall>n. hamlet ((Rep_run sub) n c\<^sub>1) \<longrightarrow> \<not> hamlet ((Rep_run sub) n c\<^sub>2)\<close> by simp
+  ultimately have \<open>\<forall>n. hamlet ((Rep_run r) n c\<^sub>1) \<longrightarrow> \<not> hamlet ((Rep_run r) n c\<^sub>2)\<close>
     using ticks_imp_ticks_subk ticks_sub by blast
   thus ?thesis by simp
 qed
 
-text {*
-  Precedence relations are preserved in a dilated run.
-*}
+text \<open>Precedence relations are preserved in a dilated run.\<close>
 theorem weakly_precedes_sub:
-  assumes "sub \<lless> r"
-      and "sub \<in> \<lbrakk>c\<^sub>1 weakly precedes c\<^sub>2\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
-    shows "r \<in> \<lbrakk>c\<^sub>1 weakly precedes c\<^sub>2\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
+  assumes \<open>sub \<lless> r\<close>
+      and \<open>sub \<in> \<lbrakk>c\<^sub>1 weakly precedes c\<^sub>2\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<close>
+    shows \<open>r \<in> \<lbrakk>c\<^sub>1 weakly precedes c\<^sub>2\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<close>
 proof -
-  from assms(1) is_subrun_def obtain f where *:"dilating f sub r" by blast
+  from assms(1) is_subrun_def obtain f where *:\<open>dilating f sub r\<close> by blast
   from assms(2) have
-    "sub \<in> {r. \<forall>n. (run_tick_count r c\<^sub>2 n) \<le> (run_tick_count r c\<^sub>1 n)}" by simp
-  hence "\<forall>n. (run_tick_count sub c\<^sub>2 n) \<le> (run_tick_count sub c\<^sub>1 n)" by simp
-  from dil_tick_count[OF assms(1) this] have "\<forall>n. (run_tick_count r c\<^sub>2 n) \<le> (run_tick_count r c\<^sub>1 n)" by simp
+    \<open>sub \<in> {r. \<forall>n. (run_tick_count r c\<^sub>2 n) \<le> (run_tick_count r c\<^sub>1 n)}\<close> by simp
+  hence \<open>\<forall>n. (run_tick_count sub c\<^sub>2 n) \<le> (run_tick_count sub c\<^sub>1 n)\<close> by simp
+  from dil_tick_count[OF assms(1) this] have \<open>\<forall>n. (run_tick_count r c\<^sub>2 n) \<le> (run_tick_count r c\<^sub>1 n)\<close> by simp
   thus ?thesis by simp
 qed
 
 theorem strictly_precedes_sub2:
-  assumes "sub \<lless> r"
-      and "sub \<in> \<lbrakk>c\<^sub>1 strictly precedes c\<^sub>2\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
-    shows "r \<in> \<lbrakk>c\<^sub>1 strictly precedes c\<^sub>2\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
+  assumes \<open>sub \<lless> r\<close>
+      and \<open>sub \<in> \<lbrakk>c\<^sub>1 strictly precedes c\<^sub>2\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<close>
+    shows \<open>r \<in> \<lbrakk>c\<^sub>1 strictly precedes c\<^sub>2\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<close>
 proof -
-  from assms(1) is_subrun_def obtain f where *:"dilating f sub r" by blast
-  from assms(2) have "sub \<in> { \<rho>. \<forall>n::nat. (run_tick_count \<rho> c\<^sub>2 n) \<le> (run_tick_count_strictly \<rho> c\<^sub>1 n) }" by simp
-  with strictly_precedes_alt_def2[of "c\<^sub>2" "c\<^sub>1"]  have
-    "sub \<in> { \<rho>. (\<not>hamlet ((Rep_run \<rho>) 0 c\<^sub>2)) \<and> (\<forall>n::nat. (run_tick_count \<rho> c\<^sub>2 (Suc n)) \<le> (run_tick_count \<rho> c\<^sub>1 n)) }"
+  from assms(1) is_subrun_def obtain f where *:\<open>dilating f sub r\<close> by blast
+  from assms(2) have \<open>sub \<in> { \<rho>. \<forall>n::nat. (run_tick_count \<rho> c\<^sub>2 n) \<le> (run_tick_count_strictly \<rho> c\<^sub>1 n) }\<close> by simp
+  with strictly_precedes_alt_def2[of \<open>c\<^sub>2\<close> \<open>c\<^sub>1\<close>]  have
+    \<open>sub \<in> { \<rho>. (\<not>hamlet ((Rep_run \<rho>) 0 c\<^sub>2)) \<and> (\<forall>n::nat. (run_tick_count \<rho> c\<^sub>2 (Suc n)) \<le> (run_tick_count \<rho> c\<^sub>1 n)) }\<close>
   by blast
-  hence "(\<not>hamlet ((Rep_run sub) 0 c\<^sub>2)) \<and> (\<forall>n::nat. (run_tick_count sub c\<^sub>2 (Suc n)) \<le> (run_tick_count sub c\<^sub>1 n))"
+  hence \<open>(\<not>hamlet ((Rep_run sub) 0 c\<^sub>2)) \<and> (\<forall>n::nat. (run_tick_count sub c\<^sub>2 (Suc n)) \<le> (run_tick_count sub c\<^sub>1 n))\<close>
     by simp
   hence
-    1:"(\<not>hamlet ((Rep_run sub) 0 c\<^sub>2)) \<and> (\<forall>n::nat. (tick_count sub c\<^sub>2 (Suc n)) \<le> (tick_count sub c\<^sub>1 n))"
+    1:\<open>(\<not>hamlet ((Rep_run sub) 0 c\<^sub>2)) \<and> (\<forall>n::nat. (tick_count sub c\<^sub>2 (Suc n)) \<le> (tick_count sub c\<^sub>1 n))\<close>
   by (simp add: tick_count_is_fun)
-  have "\<forall>n::nat. (tick_count r c\<^sub>2 (Suc n)) \<le> (tick_count r c\<^sub>1 n)"
+  have \<open>\<forall>n::nat. (tick_count r c\<^sub>2 (Suc n)) \<le> (tick_count r c\<^sub>1 n)\<close>
   proof -
     { fix n::nat
-      have "tick_count r c\<^sub>2 (Suc n) \<le> tick_count r c\<^sub>1 n"
-      proof (cases "\<exists>n\<^sub>0. f n\<^sub>0 = n")
-        case True (* n is in the image of f *)
-          from this obtain n\<^sub>0 where fn:"f n\<^sub>0 = n" by blast
+      have \<open>tick_count r c\<^sub>2 (Suc n) \<le> tick_count r c\<^sub>1 n\<close>
+      proof (cases \<open>\<exists>n\<^sub>0. f n\<^sub>0 = n\<close>)
+        case True \<comment> \<open>n is in the image of f\<close>
+          from this obtain n\<^sub>0 where fn:\<open>f n\<^sub>0 = n\<close> by blast
           show ?thesis
-          proof (cases "\<exists>sn\<^sub>0. f sn\<^sub>0 = Suc n")
-            case True (* Suc n is in the image of f *)
-              from this obtain sn\<^sub>0 where fsn:"f sn\<^sub>0 = Suc n" by blast
-              with fn have "sn\<^sub>0 = Suc n\<^sub>0" using strict_mono_suc * dilating_def dilating_fun_def by blast
-              with 1 have "tick_count sub c\<^sub>2 sn\<^sub>0 \<le> tick_count sub c\<^sub>1 n\<^sub>0" by simp
+          proof (cases \<open>\<exists>sn\<^sub>0. f sn\<^sub>0 = Suc n\<close>)
+            case True \<comment> \<open>Suc n is in the image of f\<close>
+              from this obtain sn\<^sub>0 where fsn:\<open>f sn\<^sub>0 = Suc n\<close> by blast
+              with fn have \<open>sn\<^sub>0 = Suc n\<^sub>0\<close> using strict_mono_suc * dilating_def dilating_fun_def by blast
+              with 1 have \<open>tick_count sub c\<^sub>2 sn\<^sub>0 \<le> tick_count sub c\<^sub>1 n\<^sub>0\<close> by simp
               thus ?thesis using fn fsn tick_count_sub[OF *] by simp
           next
-            case False (* Suc n is not in the image of f *)
-              hence "\<not>hamlet ((Rep_run r) (Suc n) c\<^sub>2)"
+            case False \<comment> \<open>Suc n is not in the image of f\<close>
+              hence \<open>\<not>hamlet ((Rep_run r) (Suc n) c\<^sub>2)\<close>
                 using * by (simp add: dilating_def dilating_fun_def)
-              hence "tick_count r c\<^sub>2 (Suc n) = tick_count r c\<^sub>2 n" by (simp add: tick_count_suc)
-              also have "... = tick_count sub c\<^sub>2 n\<^sub>0" using fn tick_count_sub[OF *] by simp
-              finally have "tick_count r c\<^sub>2 (Suc n) = tick_count sub c\<^sub>2 n\<^sub>0" .
-              moreover have "tick_count sub c\<^sub>2 n\<^sub>0 \<le> tick_count sub c\<^sub>2 (Suc n\<^sub>0)"
+              hence \<open>tick_count r c\<^sub>2 (Suc n) = tick_count r c\<^sub>2 n\<close> by (simp add: tick_count_suc)
+              also have \<open>... = tick_count sub c\<^sub>2 n\<^sub>0\<close> using fn tick_count_sub[OF *] by simp
+              finally have \<open>tick_count r c\<^sub>2 (Suc n) = tick_count sub c\<^sub>2 n\<^sub>0\<close> .
+              moreover have \<open>tick_count sub c\<^sub>2 n\<^sub>0 \<le> tick_count sub c\<^sub>2 (Suc n\<^sub>0)\<close>
                 by (simp add: tick_count_suc)
-              ultimately have "tick_count r c\<^sub>2 (Suc n) \<le> tick_count sub c\<^sub>2 (Suc n\<^sub>0)" by simp
-              moreover have "tick_count sub c\<^sub>2 (Suc n\<^sub>0) \<le> tick_count sub c\<^sub>1 n\<^sub>0" using 1 by simp
-              ultimately have "tick_count r c\<^sub>2 (Suc n) \<le> tick_count sub c\<^sub>1 n\<^sub>0" by simp
+              ultimately have \<open>tick_count r c\<^sub>2 (Suc n) \<le> tick_count sub c\<^sub>2 (Suc n\<^sub>0)\<close> by simp
+              moreover have \<open>tick_count sub c\<^sub>2 (Suc n\<^sub>0) \<le> tick_count sub c\<^sub>1 n\<^sub>0\<close> using 1 by simp
+              ultimately have \<open>tick_count r c\<^sub>2 (Suc n) \<le> tick_count sub c\<^sub>1 n\<^sub>0\<close> by simp
               thus ?thesis using tick_count_sub[OF *] fn by simp
           qed
       next
-        case False (* n is not in the image of f *)
+        case False \<comment> \<open>n is not in the image of f\<close>
           from greatest_prev_image[OF * this] obtain n\<^sub>p
-            where np_prop:"f n\<^sub>p < n \<and> (\<forall>k. f n\<^sub>p < k \<and> k \<le> n \<longrightarrow> (\<nexists>k\<^sub>0. f k\<^sub>0 = k))" by blast
-          from tick_count_latest[OF * this] have "tick_count r c\<^sub>1 n = tick_count r c\<^sub>1 (f n\<^sub>p)" . 
-          hence a:"tick_count r c\<^sub>1 n = tick_count sub c\<^sub>1 n\<^sub>p" using tick_count_sub[OF *] by simp
-          have b: "tick_count sub c\<^sub>2 (Suc n\<^sub>p) \<le> tick_count sub c\<^sub>1 n\<^sub>p" using 1 by simp
+            where np_prop:\<open>f n\<^sub>p < n \<and> (\<forall>k. f n\<^sub>p < k \<and> k \<le> n \<longrightarrow> (\<nexists>k\<^sub>0. f k\<^sub>0 = k))\<close> by blast
+          from tick_count_latest[OF * this] have \<open>tick_count r c\<^sub>1 n = tick_count r c\<^sub>1 (f n\<^sub>p)\<close> . 
+          hence a:\<open>tick_count r c\<^sub>1 n = tick_count sub c\<^sub>1 n\<^sub>p\<close> using tick_count_sub[OF *] by simp
+          have b: \<open>tick_count sub c\<^sub>2 (Suc n\<^sub>p) \<le> tick_count sub c\<^sub>1 n\<^sub>p\<close> using 1 by simp
           show ?thesis
-          proof (cases "\<exists>sn\<^sub>0. f sn\<^sub>0 = Suc n")
-            case True (* Suc n is in the image of f *)
-              from this obtain sn\<^sub>0 where fsn:"f sn\<^sub>0 = Suc n" by blast
-              from next_non_stuttering[OF * np_prop this]  have sn_prop:"sn\<^sub>0 = Suc n\<^sub>p" .
-              with b have "tick_count sub c\<^sub>2 sn\<^sub>0 \<le> tick_count sub c\<^sub>1 n\<^sub>p" by simp
+          proof (cases \<open>\<exists>sn\<^sub>0. f sn\<^sub>0 = Suc n\<close>)
+            case True \<comment> \<open>Suc n is in the image of f\<close>
+              from this obtain sn\<^sub>0 where fsn:\<open>f sn\<^sub>0 = Suc n\<close> by blast
+              from next_non_stuttering[OF * np_prop this]  have sn_prop:\<open>sn\<^sub>0 = Suc n\<^sub>p\<close> .
+              with b have \<open>tick_count sub c\<^sub>2 sn\<^sub>0 \<le> tick_count sub c\<^sub>1 n\<^sub>p\<close> by simp
               thus ?thesis using tick_count_sub[OF *] fsn a by auto
           next
-            case False (* Suc n is not in the image of f *)
-              hence "\<not>hamlet ((Rep_run r) (Suc n) c\<^sub>2)"
+            case False \<comment> \<open>Suc n is not in the image of f\<close>
+              hence \<open>\<not>hamlet ((Rep_run r) (Suc n) c\<^sub>2)\<close>
                 using * by (simp add: dilating_def dilating_fun_def)
-              hence "tick_count r c\<^sub>2 (Suc n) = tick_count r c\<^sub>2 n" by (simp add: tick_count_suc)
-              also have "... = tick_count sub c\<^sub>2 n\<^sub>p" using np_prop tick_count_sub[OF *]
+              hence \<open>tick_count r c\<^sub>2 (Suc n) = tick_count r c\<^sub>2 n\<close> by (simp add: tick_count_suc)
+              also have \<open>... = tick_count sub c\<^sub>2 n\<^sub>p\<close> using np_prop tick_count_sub[OF *]
                 by (simp add: tick_count_latest[OF * np_prop])
-              finally have "tick_count r c\<^sub>2 (Suc n) = tick_count sub c\<^sub>2 n\<^sub>p" .
-              moreover have "tick_count sub c\<^sub>2 n\<^sub>p \<le> tick_count sub c\<^sub>2 (Suc n\<^sub>p)"
+              finally have \<open>tick_count r c\<^sub>2 (Suc n) = tick_count sub c\<^sub>2 n\<^sub>p\<close> .
+              moreover have \<open>tick_count sub c\<^sub>2 n\<^sub>p \<le> tick_count sub c\<^sub>2 (Suc n\<^sub>p)\<close>
                 by (simp add: tick_count_suc)
-              ultimately have "tick_count r c\<^sub>2 (Suc n) \<le> tick_count sub c\<^sub>2 (Suc n\<^sub>p)" by simp
-              moreover have "tick_count sub c\<^sub>2 (Suc n\<^sub>p) \<le> tick_count sub c\<^sub>1 n\<^sub>p" using 1 by simp
-              ultimately have "tick_count r c\<^sub>2 (Suc n) \<le> tick_count sub c\<^sub>1 n\<^sub>p" by simp
+              ultimately have \<open>tick_count r c\<^sub>2 (Suc n) \<le> tick_count sub c\<^sub>2 (Suc n\<^sub>p)\<close> by simp
+              moreover have \<open>tick_count sub c\<^sub>2 (Suc n\<^sub>p) \<le> tick_count sub c\<^sub>1 n\<^sub>p\<close> using 1 by simp
+              ultimately have \<open>tick_count r c\<^sub>2 (Suc n) \<le> tick_count sub c\<^sub>1 n\<^sub>p\<close> by simp
               thus ?thesis using np_prop mono_tick_count  using a by linarith
           qed
       qed
     } thus ?thesis ..
   qed
-  moreover from 1 have "\<not>hamlet ((Rep_run r) 0 c\<^sub>2)"
-    using "*" empty_dilated_prefix ticks_sub by fastforce
+  moreover from 1 have \<open>\<not>hamlet ((Rep_run r) 0 c\<^sub>2)\<close>
+    using * empty_dilated_prefix ticks_sub by fastforce
   ultimately show ?thesis by (simp add: tick_count_is_fun strictly_precedes_alt_def2) 
 qed
 
@@ -153,51 +149,51 @@ text {*
   Time delayed relations are preserved in a dilated run.
 *}
 theorem time_delayed_sub:
-  assumes "sub \<lless> r"
-      and "sub \<in> \<lbrakk> a time-delayed by \<delta>\<tau> on ms implies b \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
-    shows "r \<in> \<lbrakk> a time-delayed by \<delta>\<tau> on ms implies b \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
+  assumes \<open>sub \<lless> r\<close>
+      and \<open>sub \<in> \<lbrakk> a time-delayed by \<delta>\<tau> on ms implies b \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<close>
+    shows \<open>r \<in> \<lbrakk> a time-delayed by \<delta>\<tau> on ms implies b \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<close>
 proof -
-  from assms(1) is_subrun_def obtain f where *:"dilating f sub r" by blast
-  from assms(2) have "\<forall>n. hamlet ((Rep_run sub) n a)
+  from assms(1) is_subrun_def obtain f where *:\<open>dilating f sub r\<close> by blast
+  from assms(2) have \<open>\<forall>n. hamlet ((Rep_run sub) n a)
                           \<longrightarrow> (\<forall>m \<ge> n. first_time sub ms m (time ((Rep_run sub) n ms) + \<delta>\<tau>)
-                                       \<longrightarrow> hamlet ((Rep_run sub) m b))"
-    using TESL_interpretation_atomic.simps(5)[of "a" "\<delta>\<tau>" "ms" "b"] by simp
-  hence **:"\<forall>n\<^sub>0. hamlet ((Rep_run r) (f n\<^sub>0) a)
+                                       \<longrightarrow> hamlet ((Rep_run sub) m b))\<close>
+    using TESL_interpretation_atomic.simps(5)[of \<open>a\<close> \<open>\<delta>\<tau>\<close> \<open>ms\<close> \<open>b\<close>] by simp
+  hence **:\<open>\<forall>n\<^sub>0. hamlet ((Rep_run r) (f n\<^sub>0) a)
                   \<longrightarrow> (\<forall>m\<^sub>0 \<ge> n\<^sub>0. first_time r ms (f m\<^sub>0) (time ((Rep_run r) (f n\<^sub>0) ms) + \<delta>\<tau>)
-                                  \<longrightarrow> hamlet ((Rep_run r) (f m\<^sub>0) b))  "
+                                  \<longrightarrow> hamlet ((Rep_run r) (f m\<^sub>0) b))  \<close>
     using first_time_image[OF *] dilating_def * by fastforce
-  hence "\<forall>n. hamlet ((Rep_run r) n a)
+  hence \<open>\<forall>n. hamlet ((Rep_run r) n a)
                   \<longrightarrow> (\<forall>m \<ge> n. first_time r ms m (time ((Rep_run r) n ms) + \<delta>\<tau>)
-                                \<longrightarrow> hamlet ((Rep_run r) m b))"
+                                \<longrightarrow> hamlet ((Rep_run r) m b))\<close>
   proof -
-    { fix n assume assm:"hamlet ((Rep_run r) n a)"
-      from ticks_image_sub[OF * assm] obtain n\<^sub>0 where nfn0:"n = f n\<^sub>0" by blast
+    { fix n assume assm:\<open>hamlet ((Rep_run r) n a)\<close>
+      from ticks_image_sub[OF * assm] obtain n\<^sub>0 where nfn0:\<open>n = f n\<^sub>0\<close> by blast
       with ** assm have ft0:
-        "(\<forall>m\<^sub>0 \<ge> n\<^sub>0. first_time r ms (f m\<^sub>0) (time ((Rep_run r) (f n\<^sub>0) ms) + \<delta>\<tau>)
-                    \<longrightarrow> hamlet ((Rep_run r) (f m\<^sub>0) b))" by blast
-      have "(\<forall>m \<ge> n. first_time r ms m (time ((Rep_run r) n ms) + \<delta>\<tau>) 
-                       \<longrightarrow> hamlet ((Rep_run r) m b)) "
+        \<open>(\<forall>m\<^sub>0 \<ge> n\<^sub>0. first_time r ms (f m\<^sub>0) (time ((Rep_run r) (f n\<^sub>0) ms) + \<delta>\<tau>)
+                    \<longrightarrow> hamlet ((Rep_run r) (f m\<^sub>0) b))\<close> by blast
+      have \<open>(\<forall>m \<ge> n. first_time r ms m (time ((Rep_run r) n ms) + \<delta>\<tau>) 
+                       \<longrightarrow> hamlet ((Rep_run r) m b)) \<close>
       proof -
-      { fix m assume hyp:"m \<ge> n"
-        have "first_time r ms m (time (Rep_run r n ms) + \<delta>\<tau>) \<longrightarrow> hamlet (Rep_run r m b)"
-        proof (cases "\<exists>m\<^sub>0. m = f m\<^sub>0")
+      { fix m assume hyp:\<open>m \<ge> n\<close>
+        have \<open>first_time r ms m (time (Rep_run r n ms) + \<delta>\<tau>) \<longrightarrow> hamlet (Rep_run r m b)\<close>
+        proof (cases \<open>\<exists>m\<^sub>0. m = f m\<^sub>0\<close>)
           case True  thus ?thesis using * hyp ft0 nfn0
             by (metis dilating_def dilating_fun_def strict_mono_less_eq)
         next
           case False thus ?thesis
-          proof (cases "m = 0")
+          proof (cases \<open>m = 0\<close>)
             case True
-              hence "m = f 0" using * by (simp add: dilating_def dilating_fun_def)
+              hence \<open>m = f 0\<close> using * by (simp add: dilating_def dilating_fun_def)
               then show ?thesis using False by blast
           next
             case False
-            hence "\<exists>pm. m = Suc pm" by (simp add: not0_implies_Suc)
-            from this obtain pm where mpm:"m = Suc pm" by blast
-            hence "\<nexists>pm\<^sub>0. Suc pm = f pm\<^sub>0" using \<open>\<nexists>m\<^sub>0. m = f m\<^sub>0\<close> by simp 
-            with dilating_fun_def have "time (Rep_run r (Suc pm) ms) = time (Rep_run r pm ms)"
-              by (metis "*" dilating_def)
-            hence "time (Rep_run r m ms) = time (Rep_run r pm ms)" using mpm by simp
-            with mpm first_time_def have "\<not>(first_time r ms m (time (Rep_run r n ms) + \<delta>\<tau>))"
+            hence \<open>\<exists>pm. m = Suc pm\<close> by (simp add: not0_implies_Suc)
+            from this obtain pm where mpm:\<open>m = Suc pm\<close> by blast
+            hence \<open>\<nexists>pm\<^sub>0. Suc pm = f pm\<^sub>0\<close> using \<open>\<nexists>m\<^sub>0. m = f m\<^sub>0\<close> by simp 
+            with dilating_fun_def have \<open>time (Rep_run r (Suc pm) ms) = time (Rep_run r pm ms)\<close>
+              by (metis * dilating_def)
+            hence \<open>time (Rep_run r m ms) = time (Rep_run r pm ms)\<close> using mpm by simp
+            with mpm first_time_def have \<open>\<not>(first_time r ms m (time (Rep_run r n ms) + \<delta>\<tau>))\<close>
               by (metis lessI)
             thus ?thesis by simp
           qed
@@ -209,56 +205,52 @@ proof -
   thus ?thesis by simp
 qed
 
-text {*
-  Time relations are preserved by contraction
-*}
+text \<open>Time relations are preserved by contraction\<close>
 lemma tagrel_sub_inv:
-  assumes "sub \<lless> r"
-      and "r \<in> \<lbrakk> time-relation \<lfloor>c\<^sub>1, c\<^sub>2\<rfloor> \<in> R \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
-    shows "sub \<in> \<lbrakk> time-relation \<lfloor>c\<^sub>1, c\<^sub>2\<rfloor> \<in> R \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
+  assumes \<open>sub \<lless> r\<close>
+      and \<open>r \<in> \<lbrakk> time-relation \<lfloor>c\<^sub>1, c\<^sub>2\<rfloor> \<in> R \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<close>
+    shows \<open>sub \<in> \<lbrakk> time-relation \<lfloor>c\<^sub>1, c\<^sub>2\<rfloor> \<in> R \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<close>
 proof -
-  from assms(1) is_subrun_def obtain f where df:"dilating f sub r" by blast
+  from assms(1) is_subrun_def obtain f where df:\<open>dilating f sub r\<close> by blast
   moreover from assms(2) TESL_interpretation_atomic.simps(2) have
-    "r \<in> {\<rho>. \<forall>n. R (time ((Rep_run \<rho>) n c\<^sub>1), time ((Rep_run \<rho>) n c\<^sub>2))}" by blast
-  hence "\<forall>n. R (time ((Rep_run r) n c\<^sub>1), time ((Rep_run r) n c\<^sub>2))" by simp
-  hence "\<forall>n. (\<exists>n\<^sub>0. f n\<^sub>0 = n) \<longrightarrow> R (time ((Rep_run r) n c\<^sub>1), time ((Rep_run r) n c\<^sub>2))" by simp
-  hence "\<forall>n\<^sub>0. R (time ((Rep_run r) (f n\<^sub>0) c\<^sub>1), time ((Rep_run r) (f n\<^sub>0) c\<^sub>2))" by blast
+    \<open>r \<in> {\<rho>. \<forall>n. R (time ((Rep_run \<rho>) n c\<^sub>1), time ((Rep_run \<rho>) n c\<^sub>2))}\<close> by blast
+  hence \<open>\<forall>n. R (time ((Rep_run r) n c\<^sub>1), time ((Rep_run r) n c\<^sub>2))\<close> by simp
+  hence \<open>\<forall>n. (\<exists>n\<^sub>0. f n\<^sub>0 = n) \<longrightarrow> R (time ((Rep_run r) n c\<^sub>1), time ((Rep_run r) n c\<^sub>2))\<close> by simp
+  hence \<open>\<forall>n\<^sub>0. R (time ((Rep_run r) (f n\<^sub>0) c\<^sub>1), time ((Rep_run r) (f n\<^sub>0) c\<^sub>2))\<close> by blast
   moreover from dilating_def df have
-    "\<forall>n c. time ((Rep_run sub) n c) = time ((Rep_run r) (f n) c)" by blast
-  ultimately have "\<forall>n\<^sub>0. R (time ((Rep_run sub) n\<^sub>0 c\<^sub>1), time ((Rep_run sub) n\<^sub>0 c\<^sub>2))" by auto
+    \<open>\<forall>n c. time ((Rep_run sub) n c) = time ((Rep_run r) (f n) c)\<close> by blast
+  ultimately have \<open>\<forall>n\<^sub>0. R (time ((Rep_run sub) n\<^sub>0 c\<^sub>1), time ((Rep_run sub) n\<^sub>0 c\<^sub>2))\<close> by auto
   thus ?thesis by simp
 qed
 
-text {*
-  A time relation is preserved through dilation of a run.
-*}
+text \<open>A time relation is preserved through dilation of a run.\<close>
 lemma tagrel_sub':
-  assumes "sub \<lless> r"
-      and "sub \<in> \<lbrakk> time-relation \<lfloor>c\<^sub>1,c\<^sub>2\<rfloor> \<in> R \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
-    shows "R (time ((Rep_run r) n c\<^sub>1), time ((Rep_run r) n c\<^sub>2))"
+  assumes \<open>sub \<lless> r\<close>
+      and \<open>sub \<in> \<lbrakk> time-relation \<lfloor>c\<^sub>1,c\<^sub>2\<rfloor> \<in> R \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<close>
+    shows \<open>R (time ((Rep_run r) n c\<^sub>1), time ((Rep_run r) n c\<^sub>2))\<close>
 proof -
-  from assms(1) is_subrun_def obtain f where *:"dilating f sub r" by blast
+  from assms(1) is_subrun_def obtain f where *:\<open>dilating f sub r\<close> by blast
   moreover from assms(2) TESL_interpretation_atomic.simps(2) have
-    "sub \<in> {r. \<forall>n. R (time ((Rep_run r) n c\<^sub>1), time ((Rep_run r) n c\<^sub>2))}" by blast
-  hence 1:"\<forall>n. R (time ((Rep_run sub) n c\<^sub>1), time ((Rep_run sub) n c\<^sub>2))" by simp
+    \<open>sub \<in> {r. \<forall>n. R (time ((Rep_run r) n c\<^sub>1), time ((Rep_run r) n c\<^sub>2))}\<close> by blast
+  hence 1:\<open>\<forall>n. R (time ((Rep_run sub) n c\<^sub>1), time ((Rep_run sub) n c\<^sub>2))\<close> by simp
   show ?thesis
   proof (induction n)
     case 0
     then show ?case
-      by (metis (no_types, lifting) "1" calculation dilating_def dilating_fun_def)
+      by (metis (no_types, lifting) 1 calculation dilating_def dilating_fun_def)
   next
     case (Suc n)
     then show ?case
-    proof (cases "\<nexists>n\<^sub>0. f n\<^sub>0 = Suc n")
+    proof (cases \<open>\<nexists>n\<^sub>0. f n\<^sub>0 = Suc n\<close>)
       case True
         thus ?thesis by (metis Suc.IH calculation dilating_def dilating_fun_def)
     next
       case False
-      from this obtain n\<^sub>0 where n\<^sub>0prop:"f n\<^sub>0 = Suc n" by blast
-      from 1 have "R (time ((Rep_run sub) n\<^sub>0 c\<^sub>1), time ((Rep_run sub) n\<^sub>0 c\<^sub>2))" by simp
-      moreover from n\<^sub>0prop * have "time ((Rep_run sub) n\<^sub>0 c\<^sub>1) = time ((Rep_run r) (Suc n) c\<^sub>1)"
+      from this obtain n\<^sub>0 where n\<^sub>0prop:\<open>f n\<^sub>0 = Suc n\<close> by blast
+      from 1 have \<open>R (time ((Rep_run sub) n\<^sub>0 c\<^sub>1), time ((Rep_run sub) n\<^sub>0 c\<^sub>2))\<close> by simp
+      moreover from n\<^sub>0prop * have \<open>time ((Rep_run sub) n\<^sub>0 c\<^sub>1) = time ((Rep_run r) (Suc n) c\<^sub>1)\<close>
         by (simp add: dilating_def)
-      moreover from n\<^sub>0prop * have "time ((Rep_run sub) n\<^sub>0 c\<^sub>2) = time ((Rep_run r) (Suc n) c\<^sub>2)"
+      moreover from n\<^sub>0prop * have \<open>time ((Rep_run sub) n\<^sub>0 c\<^sub>2) = time ((Rep_run r) (Suc n) c\<^sub>2)\<close>
         by (simp add: dilating_def)
       ultimately show ?thesis by simp
     qed
@@ -266,24 +258,24 @@ proof -
 qed
 
 corollary tagrel_sub:
-  assumes "sub \<lless> r"
-      and "sub \<in> \<lbrakk> time-relation \<lfloor>c\<^sub>1,c\<^sub>2\<rfloor> \<in> R \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
-    shows "r \<in> \<lbrakk> time-relation \<lfloor>c\<^sub>1,c\<^sub>2\<rfloor> \<in> R \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
+  assumes \<open>sub \<lless> r\<close>
+      and \<open>sub \<in> \<lbrakk> time-relation \<lfloor>c\<^sub>1,c\<^sub>2\<rfloor> \<in> R \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<close>
+    shows \<open>r \<in> \<lbrakk> time-relation \<lfloor>c\<^sub>1,c\<^sub>2\<rfloor> \<in> R \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<close>
 using tagrel_sub'[OF assms] unfolding TESL_interpretation_atomic.simps(3) by simp
 
 theorem kill_sub:
-  assumes "sub \<lless> r"
-      and "sub \<in> \<lbrakk> c\<^sub>1 kills c\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
-    shows "r \<in> \<lbrakk> c\<^sub>1 kills c\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L"
+  assumes \<open>sub \<lless> r\<close>
+      and \<open>sub \<in> \<lbrakk> c\<^sub>1 kills c\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<close>
+    shows \<open>r \<in> \<lbrakk> c\<^sub>1 kills c\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<close>
 proof -
-  from assms(1) is_subrun_def obtain f where *:"dilating f sub r" by blast
+  from assms(1) is_subrun_def obtain f where *:\<open>dilating f sub r\<close> by blast
   from assms(2) TESL_interpretation_atomic.simps(8) have
-    "\<forall>n. hamlet (Rep_run sub n c\<^sub>1) \<longrightarrow> (\<forall>m\<ge>n. \<not> hamlet (Rep_run sub m c\<^sub>2))" by simp
-  hence "\<forall>n. hamlet (Rep_run r (f n) c\<^sub>1) \<longrightarrow> (\<forall>m\<ge>n. \<not> hamlet (Rep_run r (f m) c\<^sub>2))"
+    \<open>\<forall>n. hamlet (Rep_run sub n c\<^sub>1) \<longrightarrow> (\<forall>m\<ge>n. \<not> hamlet (Rep_run sub m c\<^sub>2))\<close> by simp
+  hence \<open>\<forall>n. hamlet (Rep_run r (f n) c\<^sub>1) \<longrightarrow> (\<forall>m\<ge>n. \<not> hamlet (Rep_run r (f m) c\<^sub>2))\<close>
     using ticks_sub[OF *] by simp
-  hence "\<forall>n. hamlet (Rep_run r (f n) c\<^sub>1) \<longrightarrow> (\<forall>m\<ge> (f n). \<not> hamlet (Rep_run r m c\<^sub>2))"
-    by (metis "*" dilating_def dilating_fun_def strict_mono_less_eq)
-  hence "\<forall>n. hamlet (Rep_run r n c\<^sub>1) \<longrightarrow> (\<forall>m \<ge> n. \<not> hamlet (Rep_run r m c\<^sub>2))"
+  hence \<open>\<forall>n. hamlet (Rep_run r (f n) c\<^sub>1) \<longrightarrow> (\<forall>m\<ge> (f n). \<not> hamlet (Rep_run r m c\<^sub>2))\<close>
+    by (metis * dilating_def dilating_fun_def strict_mono_less_eq)
+  hence \<open>\<forall>n. hamlet (Rep_run r n c\<^sub>1) \<longrightarrow> (\<forall>m \<ge> n. \<not> hamlet (Rep_run r m c\<^sub>2))\<close>
     using ticks_imp_ticks_subk[OF *] by blast
   thus ?thesis using TESL_interpretation_atomic.simps(8) by blast
 qed

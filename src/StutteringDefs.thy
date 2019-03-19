@@ -1,4 +1,4 @@
-chapter {* Properties of TESL *}
+chapter \<open>Properties of TESL\<close>
 
 section \<open>Stuttering Invariance\<close>
 
@@ -8,21 +8,21 @@ imports Denotational
 
 begin
 
-subsection {* Definition of stuttering *}
+subsection \<open>Definition of stuttering\<close>
 
-text {*
+text \<open>
   A dilating function inserts empty instants in a run.
   It is strictly increasing, the image of a @{typ nat} is greater than it,
   no instant is inserted before the first one 
   and if n is not in the image of the function, no clock ticks at instant n.
-*}
+\<close>
 definition dilating_fun
 where
-  "dilating_fun (f::nat \<Rightarrow> nat) (r::'a::linordered_field run)
+  \<open>dilating_fun (f::nat \<Rightarrow> nat) (r::'a::linordered_field run)
     \<equiv> strict_mono f \<and> (f 0 = 0) \<and> (\<forall>n. f n \<ge> n
     \<and> ((\<nexists>n\<^sub>0. f n\<^sub>0 = n) \<longrightarrow> (\<forall>c. \<not>(hamlet ((Rep_run r) n c))))
     \<and> ((\<nexists>n\<^sub>0. f n\<^sub>0 = (Suc n)) \<longrightarrow> (\<forall>c. time ((Rep_run r) (Suc n) c) = time ((Rep_run r) n c)))
-   )"
+   )\<close>
 
 text\<open>
  Dilating a run. A run @{term r} is a dilation of a run @{term sub} by function @{term f} if:
@@ -32,28 +32,27 @@ text\<open>
  \<^item> the hamlet in @{term r} is the hamlet in sub dilated by @{term f}
 \<close>
 definition dilating
-  where "dilating f sub r \<equiv>   dilating_fun f r
+  where \<open>dilating f sub r \<equiv>   dilating_fun f r
                             \<and> (\<forall>n c. time ((Rep_run sub) n c) = time ((Rep_run r) (f n) c))
-                            \<and> (\<forall>n c. hamlet ((Rep_run sub) n c) = hamlet ((Rep_run r) (f n) c))"
+                            \<and> (\<forall>n c. hamlet ((Rep_run sub) n c) = hamlet ((Rep_run r) (f n) c))\<close>
 
-text {* A \<^emph>\<open>run\<close>  is a \<^emph>\<open>subrun\<close> of another run if there exists a dilation between them.
-*}
-definition is_subrun ::"'a::linordered_field run \<Rightarrow> 'a run \<Rightarrow> bool" (infixl "\<lless>" 60)
+text \<open>A \<^emph>\<open>run\<close>  is a \<^emph>\<open>subrun\<close> of another run if there exists a dilation between them.\<close>
+definition is_subrun ::\<open>'a::linordered_field run \<Rightarrow> 'a run \<Rightarrow> bool\<close> (infixl "\<lless>" 60)
 where
-  "sub \<lless> r \<equiv> (\<exists>f. dilating f sub r)"
+  \<open>sub \<lless> r \<equiv> (\<exists>f. dilating f sub r)\<close>
 
-text {* A @{term "tick_count r c n"} is a
+text \<open>A @{term \<open>tick_count r c n\<close>} is a
   number of ticks of clock @{term c} in run @{term r} upto instant @{term n}.
-*}
-definition tick_count :: "'a::linordered_field run \<Rightarrow> clock \<Rightarrow> nat \<Rightarrow> nat"
+\<close>
+definition tick_count :: \<open>'a::linordered_field run \<Rightarrow> clock \<Rightarrow> nat \<Rightarrow> nat\<close>
 where
-  "tick_count r c n = card {i. i \<le> n \<and> hamlet ((Rep_run r) i c)}"
+  \<open>tick_count r c n = card {i. i \<le> n \<and> hamlet ((Rep_run r) i c)}\<close>
 
-text \<open>A @{term "tick_count_strict r c n"} is a number of ticks of clock @{term c} in run 
+text \<open>A @{term \<open>tick_count_strict r c n\<close>} is a number of ticks of clock @{term c} in run 
       @{term r} upto but  excluding instant @{term n}. \<close> 
-definition tick_count_strict :: "'a::linordered_field run \<Rightarrow> clock \<Rightarrow> nat \<Rightarrow> nat"
+definition tick_count_strict :: \<open>'a::linordered_field run \<Rightarrow> clock \<Rightarrow> nat \<Rightarrow> nat\<close>
 where
-  "tick_count_strict r c n = card {i. i < n \<and> hamlet ((Rep_run r) i c)}"
+  \<open>tick_count_strict r c n = card {i. i < n \<and> hamlet ((Rep_run r) i c)}\<close>
 
 
 end
