@@ -21,10 +21,11 @@ datatype '\<tau> constr =
 
 type_synonym '\<tau> system = \<open>'\<tau> constr list\<close>
 
-(* The abstract machine
-   Follows the intuition: past [\<Gamma>], current index [n], present [\<Psi>], future [\<Phi>]
-   Beware: This type is slightly different from which originally implemented in Heron
-*)
+\<comment> \<open>
+  The abstract machine follows the intuition: 
+    past [\<Gamma>], current index [n], present [\<Psi>], future [\<Phi>]
+   Beware: This type is slightly different from the one originally implemented in Heron
+\<close>
 type_synonym '\<tau> config = \<open>'\<tau> system * instant_index * '\<tau> TESL_formula * '\<tau> TESL_formula\<close>
 
 
@@ -61,11 +62,11 @@ definition consistent_context :: \<open>('\<tau>::linordered_field) constr list 
 
 subsection \<open>Defining a method for witness construction\<close> (**)
 
-(* Initial states *)
+\<comment> \<open>Initial states\<close>
 abbreviation initial_run :: \<open>('\<tau>::linordered_field) run\<close> ("\<rho>\<^sub>\<odot>") where
   \<open>\<rho>\<^sub>\<odot> \<equiv> Abs_run ((\<lambda>_ _. (False, \<tau>\<^sub>c\<^sub>s\<^sub>t 0)) ::nat \<Rightarrow> clock \<Rightarrow> (bool \<times> '\<tau> tag_const))\<close>
 
-(* To ensure monotonicity, time tag is set at a specific instant and forever after (stuttering) *)
+\<comment> \<open>To ensure monotonicity, time tag is set at a specific instant and forever after (stuttering)\<close>
 fun time_update
   :: \<open>nat \<Rightarrow> clock \<Rightarrow> ('\<tau>::linordered_field) tag_const \<Rightarrow> (nat \<Rightarrow> clock \<Rightarrow> (bool \<times> '\<tau> tag_const)) \<Rightarrow> (nat \<Rightarrow> clock \<Rightarrow> (bool \<times> '\<tau> tag_const))\<close> where
     \<open>time_update n K \<tau> \<rho> = (\<lambda>n' K'. if K = K' \<and> n \<le> n' then (hamlet (\<rho> n K), \<tau>) else \<rho> n' K')\<close>
@@ -80,7 +81,7 @@ lemma context_consistency_preservationI:
 unfolding consistent_context_def
 by auto
 
-(* This is very restrictive *)
+\<comment> \<open>This is very restrictive\<close>
 inductive context_independency :: \<open>('\<tau>::linordered_field) constr \<Rightarrow> '\<tau> constr list \<Rightarrow> bool\<close> ("_ \<bowtie> _") where
   NotTicks_independency:
   \<open>(K \<Up> n) \<notin> set \<Gamma> \<Longrightarrow> (K \<not>\<Up> n) \<bowtie> \<Gamma>\<close>
@@ -98,7 +99,7 @@ lemma context_consistency_preservationE:
 
 
 section\<open>Major Theorems\<close>
-subsection \<open>Fixpoint lemma\<close> (**)
+subsection \<open>Fixpoint lemma\<close>
 
 theorem symrun_interp_fixpoint:
   \<open>\<Inter> ((\<lambda>\<gamma>. \<lbrakk> \<gamma> \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m) ` set \<Gamma>) = \<lbrakk>\<lbrakk> \<Gamma> \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m\<close>
@@ -110,7 +111,7 @@ theorem symrun_interp_fixpoint:
     then show ?case by auto
   qed
 
-subsection \<open>Expansion law\<close> (**)
+subsection \<open>Expansion law\<close>
 text \<open>Similar to the expansion laws of lattices\<close>
 
 theorem symrun_interp_expansion:
@@ -146,7 +147,7 @@ lemma symrun_interp_right_idem:
 
 lemmas symrun_interp_aci = symrun_interp_commute symrun_interp_assoc symrun_interp_left_commute symrun_interp_left_idem
 
-(* Identity element *)
+\<comment> \<open>Identity element\<close>
 lemma symrun_interp_neutral1:
   shows \<open>\<lbrakk>\<lbrakk> [] @ \<Gamma> \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m = \<lbrakk>\<lbrakk> \<Gamma> \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m\<close>
   by simp
@@ -232,7 +233,6 @@ lemma symrun_interp_absorb2:
   assumes incl: \<open>set \<Gamma>\<^sub>2 \<subseteq> set \<Gamma>\<^sub>1\<close>
   shows \<open>\<lbrakk>\<lbrakk> \<Gamma>\<^sub>1 @ \<Gamma>\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m = \<lbrakk>\<lbrakk> \<Gamma>\<^sub>1 \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m\<close>
   using symrun_interp_absorb1 symrun_interp_commute incl by blast
-
 
 
 end

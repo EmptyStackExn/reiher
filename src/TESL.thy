@@ -31,20 +31,11 @@ datatype '\<tau> tag_const =
 datatype tag_var =
   TSchematic \<open>clock * instant_index\<close> ("\<tau>\<^sub>v\<^sub>a\<^sub>r")
 
-\<^cancel>\<open>
-datatype '\<tau> tag_expr =
-  Const    \<open>'\<tau> tag_const\<close>           ("\<lparr> _ \<rparr>")
-| AddDelay \<open>tag_var\<close> \<open>'\<tau> tag_const\<close> ("\<lparr> _ \<oplus> _ \<rparr>")
-\<close>
-
 subsection\<open>Operators for the TESL language\<close>
 text\<open>
   The type of atomic TESL constraints, which can be combined to form specifications.
 \<close>
 datatype '\<tau> TESL_atomic =
-\<^cancel>\<open>
-    SporadicOn       \<open>clock\<close> \<open>'\<tau> tag_expr\<close>  \<open>clock\<close>         ("_ sporadic _ on _" 55)
-\<close>
     SporadicOn       \<open>clock\<close> \<open>'\<tau> tag_const\<close>  \<open>clock\<close>         ("_ sporadic _ on _" 55)
   | TagRelation      \<open>clock\<close> \<open>clock\<close> \<open>('\<tau> tag_const \<times> '\<tau> tag_const) \<Rightarrow> bool\<close> 
                                                             ("time-relation \<lfloor>_, _\<rfloor> \<in> _" 55)

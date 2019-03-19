@@ -64,14 +64,10 @@ proof -
     using step_elim by blast
   thus ?thesis
   proof (cases)
-    case a
-    thus ?thesis by (rule operational_semantics_intro.cases, simp)
+    case a thus ?thesis by (rule operational_semantics_intro.cases, simp)
   next
-    case b
-    thus ?thesis
-      apply (rule operational_semantics_elim.cases)
-      using HeronConf_interpretation.simps assms sound_reduction apply blast+
-    done
+    case b thus ?thesis using assms
+      by (metis (full_types) HeronConf_interpretation.cases HeronConf_interpretation.simps sound_reduction)
   qed
 qed
 
@@ -116,7 +112,8 @@ lemma complete_direct_successors:
   proof (induct \<Psi>)
     case Nil
     show ?case
-      using HeronConf_interp_stepwise_instant_cases operational_semantics_step.simps operational_semantics_intro.instant_i
+      using HeronConf_interp_stepwise_instant_cases operational_semantics_step.simps
+            operational_semantics_intro.instant_i
       by fastforce
   next
     case (Cons \<psi> \<Psi>)

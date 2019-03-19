@@ -44,14 +44,14 @@ text\<open>
 \end{figure}\<close>
 
 (*<*)
-(* Constants and notation to be able to write what we want as Isabelle terms, not as LaTeX maths *)
-consts dummyInfty    :: "'a \<Rightarrow> 'a"
-consts dummyTESLSTAR :: "'a"
-consts dummyFUN      :: "'a set \<Rightarrow> 'b set \<Rightarrow> 'c set"
-consts dummyCLOCK    :: "'a set"
-consts dummyBOOL     :: "bool set" 
-consts dummyTIMES    :: "'a set" 
-consts dummyLEQ      :: "'a \<Rightarrow> 'a \<Rightarrow> bool"
+\<comment> \<open>Constants and notation to be able to write what we want as Isabelle terms, not as LaTeX maths\<close>
+consts dummyInfty    :: \<open>'a \<Rightarrow> 'a\<close>
+consts dummyTESLSTAR :: \<open>'a\<close>
+consts dummyFUN      :: \<open>'a set \<Rightarrow> 'b set \<Rightarrow> 'c set\<close>
+consts dummyCLOCK    :: \<open>'a set\<close>
+consts dummyBOOL     :: \<open>bool set\<close> 
+consts dummyTIMES    :: \<open>'a set\<close> 
+consts dummyLEQ      :: \<open>'a \<Rightarrow> 'a \<Rightarrow> bool\<close>
 
 notation dummyInfty    ("(_\<^sup>\<infinity>)" [1000] 999)
 notation dummyTESLSTAR ("TESL\<^sup>*")
@@ -74,14 +74,14 @@ observation instant, and the time on any clock cannot decrease from an instant t
 However, it is always possible to add arbitrary observation instants, which allows for stuttering 
 and modular composition of systems. 
 As a consequence, the key concept of our setting is the notion of a clock-indexed Kripke model: 
-@{term "\<Sigma>\<^sup>\<infinity> = \<nat> \<rightarrow> \<K> \<rightarrow> (\<bool> \<times> \<T>)"}, where @{term "\<K>"} is an enumerable set of clocks, @{term "\<bool>"} 
-is the set of booleans – used to  indicate that a clock ticks at a given instant – and @{term "\<T>"} 
+@{term \<open>\<Sigma>\<^sup>\<infinity> = \<nat> \<rightarrow> \<K> \<rightarrow> (\<bool> \<times> \<T>)\<close>}, where @{term \<open>\<K>\<close>} is an enumerable set of clocks, @{term \<open>\<bool>\<close>} 
+is the set of booleans – used to  indicate that a clock ticks at a given instant – and @{term \<open>\<T>\<close>} 
 is a universal metric time space for which we only assume that it is large enough to contain all 
-individual time spaces of clocks and that it is ordered by some linear ordering @{term "(\<le>\<^sub>\<T>)"}.
+individual time spaces of clocks and that it is ordered by some linear ordering @{term \<open>(\<le>\<^sub>\<T>)\<close>}.
 \<close>
 
 text\<open>
-  The elements of @{term "\<Sigma>\<^sup>\<infinity>"} are called runs. A specification language is a set of 
+  The elements of @{term \<open>\<Sigma>\<^sup>\<infinity>\<close>} are called runs. A specification language is a set of 
   operators that constrains the set of possible monotonic runs. Specifications are composed by 
   intersecting the denoted run sets of constraint operators.
   Consequently, such specification languages do not limit the number of clocks used to model a 
@@ -92,7 +92,7 @@ text\<open>
 
 text\<open>
   This work provides the following contributions:
-  \<^item> defining the non-trivial language @{term "TESL\<^sup>*"} in terms of clock-indexed Kripke models, 
+  \<^item> defining the non-trivial language @{term \<open>TESL\<^sup>*\<close>} in terms of clock-indexed Kripke models, 
   \<^item> proving that this denotational semantics is stuttering invariant,
   \<^item> defining an adapted form of symbolic primitives and presenting the set of operational 
     semantic rules,
