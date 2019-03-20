@@ -54,5 +54,37 @@ definition tick_count_strict :: \<open>'a::linordered_field run \<Rightarrow> cl
 where
   \<open>tick_count_strict r c n = card {i. i < n \<and> hamlet ((Rep_run r) i c)}\<close>
 
+definition contracting_fun
+  where \<open>contracting_fun g \<equiv> mono g \<and> g 0 = 0 \<and> (\<forall>n. g n \<le> n)\<close>
+
+definition contracting
+where 
+  \<open>contracting g r sub f \<equiv>  contracting_fun g
+                          \<and> (\<forall>n c k. f (g n) \<le> k \<and> k \<le> n
+                              \<longrightarrow> time ((Rep_run r) k c) = time ((Rep_run sub) (g n) c))
+                          \<and> (\<forall>n c k. f (g n) < k \<and> k \<le> n
+                              \<longrightarrow> \<not> hamlet ((Rep_run r) k c))\<close>
+
+lemma
+  assumes \<open>dilating f sub r\<close>
+    shows \<open>contracting (\<lambda>n. Max {i. f i \<le> n}) r sub f\<close>  (is \<open>contracting ?g r sub f\<close>)
+proof -
+  have \<open>mono ?g\<close>
+  proof -
+  { fix x::\<open>nat\<close> and y::\<open>nat\<close> assume hyp:\<open>x \<le> y\<close>
+    from assms have "strict_mono f" by (simp add: dilating_def dilating_fun_def)
+    hence finite:\<open>finite {i. f i \<le> y}\<close>
+      by (metis (full_types) assms dilating_def dilating_fun_def finite_less_ub)
+    from assms have "f 0 = 0" by (simp add: dilating_def dilating_fun_def)
+    hence notempty:\<open>{i. f i \<le> x} \<noteq> {}\<close> by (metis empty_Collect_eq le0)
+    hence inc:\<open>{i. f i \<le> x} \<subseteq> {i. f i \<le> y}\<close>
+      by (simp add: hyp Collect_mono le_trans)
+    from Max_mono[OF inc notempty finite] have "?g x \<le> ?g y" .
+  } thus ?thesis unfolding mono_def by simp
+  qed
+
+  from assms have "f 0 = 0" by (simp add: dilating_def dilating_fun_def)
+  have \<open>g 0 = 0\<close> sorry
+  oops
 
 end

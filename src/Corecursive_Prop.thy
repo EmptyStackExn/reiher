@@ -219,27 +219,6 @@ lemma TESL_interp_stepwise_implies_not_coind_unfold:
     then show ?thesis by auto
   qed
 
-\<^cancel>\<open>
-lemma TESL_interp_stepwise_timedelayed_coind_unfold:
-  shows \<open>\<lbrakk> master time-delayed by \<delta>\<tau> on measuring implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> =
-    (\<lbrakk> master \<not>\<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<union> \<lbrakk> master \<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk> slave sporadic \<lparr>\<tau>\<^sub>v\<^sub>a\<^sub>r(measuring, n) \<oplus> \<delta>\<tau>\<rparr> on measuring \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup>)
-    \<inter> \<lbrakk> master time-delayed by \<delta>\<tau> on measuring implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>\<close>
-  proof -
-    have \<open>{ \<rho>. \<forall>m\<ge>n. hamlet ((Rep_run \<rho>) m master) \<longrightarrow>
-                 (let measured_time = time ((Rep_run \<rho>) m measuring) in
-                  \<exists>p \<ge> m. hamlet ((Rep_run \<rho>) p slave) \<and> time ((Rep_run \<rho>) p measuring) = measured_time + \<delta>\<tau>)}
-         = { \<rho>. hamlet ((Rep_run \<rho>) n master) \<longrightarrow>
-                 (let measured_time = time ((Rep_run \<rho>) n measuring) in
-                  \<exists>p \<ge> n. hamlet ((Rep_run \<rho>) p slave) \<and> time ((Rep_run \<rho>) p measuring) = measured_time + \<delta>\<tau>)}
-           \<inter> { \<rho>. \<forall>m\<ge>Suc n. hamlet ((Rep_run \<rho>) m master) \<longrightarrow>
-                 (let measured_time = time ((Rep_run \<rho>) m measuring) in
-                  \<exists>p \<ge> m. hamlet ((Rep_run \<rho>) p slave) \<and> time ((Rep_run \<rho>) p measuring) = measured_time + \<delta>\<tau>)}\<close>
-      using nat_set_suc[of \<open>n\<close> \<open>\<lambda>x y. hamlet ((Rep_run x) y master) \<longrightarrow>
-                 (let measured_time = time ((Rep_run x) y measuring) in
-                  \<exists>p \<ge> y. hamlet ((Rep_run x) p slave) \<and> time ((Rep_run x) p measuring) = measured_time + \<delta>\<tau>)\<close>] by simp
-    then show ?thesis by auto
-  qed
-\<close>
 lemma TESL_interp_stepwise_timedelayed_coind_unfold:
   shows \<open>\<lbrakk> master time-delayed by \<delta>\<tau> on measuring implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> =
     (\<lbrakk> master \<not>\<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<union> (\<lbrakk> master \<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk> measuring @ n \<oplus> \<delta>\<tau> \<Rightarrow> slave \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m))
@@ -285,28 +264,43 @@ lemma TESL_interp_stepwise_kills_coind_unfold:
   shows \<open>\<lbrakk> K\<^sub>1 kills K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> =
     (\<lbrakk> K\<^sub>1 \<not>\<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<union> \<lbrakk> K\<^sub>1 \<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk> K\<^sub>2 \<not>\<Up> \<ge> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m)
     \<inter> \<lbrakk> K\<^sub>1 kills K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>\<close>
-  proof -
-    have \<open>{ \<rho>. \<forall>p\<ge>n. hamlet ((Rep_run \<rho>) p K\<^sub>1) \<longrightarrow> (\<forall>m\<ge>p. \<not> hamlet ((Rep_run \<rho>) m K\<^sub>2)) }
-          = { \<rho>. hamlet ((Rep_run \<rho>) n K\<^sub>1) \<longrightarrow> (\<forall>m\<ge>n. \<not> hamlet ((Rep_run \<rho>) m K\<^sub>2)) }
-          \<inter> { \<rho>. \<forall>p\<ge>Suc n. hamlet ((Rep_run \<rho>) p K\<^sub>1) \<longrightarrow> (\<forall>m\<ge>p. \<not> hamlet ((Rep_run \<rho>) m K\<^sub>2)) }\<close>
-      using nat_set_suc[of \<open>n\<close> \<open>\<lambda>\<rho> y. hamlet ((Rep_run \<rho>) y K\<^sub>1) \<longrightarrow> (\<forall>m\<ge>y. \<not> hamlet ((Rep_run \<rho>) m K\<^sub>2))\<close>]
-      by simp
-    moreover have \<open>\<lbrakk> K\<^sub>1 \<not>\<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<union> \<lbrakk> K\<^sub>1 \<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk> K\<^sub>2 \<not>\<Up> \<ge> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m
-                      = { \<rho>. hamlet ((Rep_run \<rho>) n K\<^sub>1) \<longrightarrow> (\<forall>m\<ge>n. \<not> hamlet ((Rep_run \<rho>) m K\<^sub>2)) }\<close>
-      proof -
-        have \<open>{ \<rho>. hamlet ((Rep_run \<rho>) n K\<^sub>1) \<longrightarrow> (\<forall>m\<ge>n. \<not> hamlet ((Rep_run \<rho>) m K\<^sub>2)) }
-                = { \<rho>. \<not> hamlet ((Rep_run \<rho>) n K\<^sub>1) }
-                \<union> { \<rho>. hamlet ((Rep_run \<rho>) n K\<^sub>1) \<and> (\<forall>m\<ge>n. \<not> hamlet ((Rep_run \<rho>) m K\<^sub>2)) }\<close>
-          by blast
-        then show ?thesis
-          by auto
-      qed
-    moreover have \<open>\<lbrakk> K\<^sub>1 kills K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>
-                      = { \<rho>. \<forall>p\<ge>Suc n. hamlet ((Rep_run \<rho>) p K\<^sub>1) \<longrightarrow> (\<forall>m\<ge>p. \<not> hamlet ((Rep_run \<rho>) m K\<^sub>2)) }\<close>
-      by simp
-    ultimately show ?thesis
-      by (smt Collect_cong TESL_interpretation_atomic_stepwise.simps(8))
+proof -
+  let ?kills = \<open>\<lambda>n \<rho>. \<forall>p\<ge>n. hamlet ((Rep_run \<rho>) p K\<^sub>1) \<longrightarrow> (\<forall>m\<ge>p. \<not> hamlet ((Rep_run \<rho>) m K\<^sub>2))\<close>
+  let ?ticks = \<open>\<lambda>n \<rho> c. hamlet ((Rep_run \<rho>) n c)\<close>
+  let ?dead = \<open>\<lambda>n \<rho> c. \<forall>m \<ge> n. \<not>hamlet ((Rep_run \<rho>) m c)\<close>
+  have \<open>\<lbrakk> K\<^sub>1 kills K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> = {\<rho>. ?kills n \<rho>}\<close> by simp
+  also have \<open>... = ({\<rho>. \<not> ?ticks n \<rho> K\<^sub>1}  \<inter> { \<rho>. ?kills (Suc n) \<rho>})
+                 \<union> ({\<rho>. ?ticks n \<rho> K\<^sub>1} \<inter> {\<rho>. ?dead n \<rho> K\<^sub>2})\<close>
+  proof
+    { fix \<rho>::\<open>'\<tau>::linordered_field run\<close>
+      assume \<open>\<rho> \<in> {\<rho>. ?kills n \<rho>}\<close>
+      hence \<open>?kills n \<rho>\<close> by simp
+      hence \<open>(?ticks n \<rho> K\<^sub>1 \<and> ?dead n \<rho> K\<^sub>2) \<or> (\<not>?ticks n \<rho> K\<^sub>1 \<and> ?kills (Suc n) \<rho>)\<close>
+        using Suc_leD by blast
+      hence \<open>\<rho> \<in> ({\<rho>. ?ticks n \<rho> K\<^sub>1} \<inter> {\<rho>. ?dead n \<rho> K\<^sub>2})
+               \<union> ({\<rho>. \<not> ?ticks n \<rho> K\<^sub>1} \<inter> {\<rho>. ?kills (Suc n) \<rho>})\<close>
+        by blast
+    } thus \<open>{\<rho>. ?kills n \<rho>}
+           \<subseteq> {\<rho>. \<not> ?ticks n \<rho> K\<^sub>1} \<inter> {\<rho>. ?kills (Suc n) \<rho>} 
+            \<union> {\<rho>. ?ticks n \<rho> K\<^sub>1} \<inter> {\<rho>. ?dead n \<rho> K\<^sub>2}\<close> by blast
+  next
+    { fix \<rho>::\<open>'\<tau>::linordered_field run\<close>
+      assume \<open>\<rho> \<in> ({\<rho>. \<not> ?ticks n \<rho> K\<^sub>1}  \<inter> { \<rho>. ?kills (Suc n) \<rho>})
+                 \<union> ({\<rho>. ?ticks n \<rho> K\<^sub>1} \<inter> {\<rho>. ?dead n \<rho> K\<^sub>2})\<close>
+      hence \<open>\<not> ?ticks n \<rho> K\<^sub>1 \<and> ?kills (Suc n) \<rho>
+             \<or> ?ticks n \<rho> K\<^sub>1 \<and> ?dead n \<rho> K\<^sub>2\<close> by blast
+      hence \<open>?kills n \<rho>\<close> by (metis dual_order.trans eq_iff not_less_eq_eq)
+    } thus \<open>({\<rho>. \<not> ?ticks n \<rho> K\<^sub>1}  \<inter> { \<rho>. ?kills (Suc n) \<rho>})
+                 \<union> ({\<rho>. ?ticks n \<rho> K\<^sub>1} \<inter> {\<rho>. ?dead n \<rho> K\<^sub>2})
+          \<subseteq> {\<rho>. ?kills n \<rho>}\<close> by blast
   qed
+  also have \<open>... = {\<rho>. \<not> ?ticks n \<rho> K\<^sub>1} \<inter> {\<rho>. ?kills (Suc n) \<rho>}
+                 \<union> {\<rho>. ?ticks n \<rho> K\<^sub>1} \<inter> {\<rho>. ?dead n \<rho> K\<^sub>2} \<inter> {\<rho>. ?kills (Suc n) \<rho>}\<close>
+    using Collect_cong Collect_disj_eq by auto
+  also have \<open>... = \<lbrakk> K\<^sub>1 \<not>\<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk> K\<^sub>1 kills K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>
+                 \<union> \<lbrakk> K\<^sub>1 \<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk> K\<^sub>2 \<not>\<Up> \<ge> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk> K\<^sub>1 kills K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>\<close> by simp
+  finally show ?thesis by blast
+qed
 
 fun TESL_interpretation_stepwise :: \<open>'\<tau>::linordered_field TESL_formula \<Rightarrow> nat \<Rightarrow> '\<tau> run set\<close> ("\<lbrakk>\<lbrakk> _ \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> _\<^esup>") where
     \<open>\<lbrakk>\<lbrakk> [] \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> = { _. True }\<close>

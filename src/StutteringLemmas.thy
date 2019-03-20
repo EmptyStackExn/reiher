@@ -717,40 +717,6 @@ corollary run_tick_count_sub:
   shows \<open>run_tick_count sub c n = run_tick_count r c (f n)\<close>
 using tick_count_sub[OF assms] tick_count_is_fun by metis
 
-lemma dil_tick_count:
-  assumes \<open>sub \<lless> r\<close>
-      and \<open>\<forall>n. run_tick_count sub a n \<le> run_tick_count sub b n\<close>
-    shows \<open>run_tick_count r a n \<le> run_tick_count r b n\<close>
-proof -
-  from assms(1) is_subrun_def obtain f where *:\<open>dilating f sub r\<close> by blast
-  show ?thesis
-  proof (induction n)
-    case 0
-    from assms(2) have \<open>tick_count sub a 0 \<le> tick_count sub b 0\<close> using tick_count_is_fun by metis
-    hence 1:\<open>tick_count r a (f 0) \<le> tick_count r b (f 0)\<close> using tick_count_sub[OF *] by simp
-    from * dilating_def dilating_fun_def have \<open>0 \<le> f 0\<close> by simp
-    hence \<open>tick_count r a 0 \<le> tick_count r b 0\<close>
-    proof -
-      consider (a) \<open>0 < f 0\<close> | (b) \<open>0 = f 0\<close> by linarith thus ?thesis
-      proof (cases)
-        case a
-          from empty_dilated_prefix[OF * this] show ?thesis using tick_count_def[of \<open>r\<close> _ \<open>0\<close>]
-          by (metis (mono_tags, lifting) Collect_empty_eq card.empty le_zero_eq) 
-      next
-        case b thus ?thesis using 1 by simp
-      qed
-    qed
-    thus ?case by (simp add: tick_count_is_fun)
-  next
-    case (Suc n') 
-    from assms(2) have \<open>tick_count sub a (Suc n') \<le> tick_count sub b (Suc n')\<close>
-      using tick_count_is_fun by metis
-    hence 1:\<open>tick_count r a (f (Suc n')) \<le> tick_count r b (f (Suc n'))\<close> using tick_count_sub[OF *] by simp
-    thus ?case using assms tick_count_f_suc_sub[OF *] Suc.IH
-      by (smt * no_tick_sub run_tick_count_sub run_tick_count_suc)
-  qed
-qed
-
 lemma tick_count_strict_0:
   assumes \<open>dilating f sub r\<close>
     shows \<open>tick_count_strict r c (f 0) = 0\<close>
@@ -761,6 +727,22 @@ lemma no_tick_before_suc:
       and \<open>(f n) < k \<and> k < (f (Suc n))\<close>
     shows \<open>\<not>hamlet ((Rep_run r) k c)\<close>
 by (metis assms dilating_def dilating_fun_def not_less_eq strict_mono_less)
+
+lemma tick_count_latest:
+  assumes \<open>dilating f sub r\<close>
+      and \<open>f n\<^sub>p < n \<and> (\<forall>k. f n\<^sub>p < k \<and> k \<le> n \<longrightarrow> (\<nexists>k\<^sub>0. f k\<^sub>0 = k))\<close>
+    shows \<open>tick_count r c n = tick_count r c (f n\<^sub>p)\<close>
+proof -
+  have union:\<open>{i. i \<le> n \<and> hamlet ((Rep_run r) i c)} =
+          {i. i \<le> f n\<^sub>p \<and> hamlet ((Rep_run r) i c)}
+        \<union> {i. f n\<^sub>p < i \<and> i \<le> n \<and> hamlet ((Rep_run r) i c)}\<close> using assms(2) by auto
+  have partition: \<open>{i. i \<le> f n\<^sub>p \<and> hamlet ((Rep_run r) i c)}
+        \<inter> {i. f n\<^sub>p < i \<and> i \<le> n \<and> hamlet ((Rep_run r) i c)} = {}\<close>
+    by (simp add: disjoint_iff_not_equal)
+  from assms have \<open>{i. f n\<^sub>p < i \<and> i \<le> n \<and> hamlet ((Rep_run r) i c)} = {}\<close>
+    using no_tick_sub by fastforce
+  with union and partition show ?thesis by (simp add: tick_count_def)
+qed
 
 lemma tick_count_strict_stable:
   assumes \<open>dilating f sub r\<close>
@@ -855,12 +837,6 @@ lemma strict_mono_suc:
     shows \<open>sn = Suc n\<close>
 by (metis Suc_lessI assms lessI not_less_eq strict_mono_def strict_mono_less)
 
-lemma tick_count_latest:
-  assumes \<open>dilating f sub r\<close>
-      and \<open>f n\<^sub>p < n \<and> (\<forall>k. f n\<^sub>p < k \<and> k \<le> n \<longrightarrow> (\<nexists>k\<^sub>0. f k\<^sub>0 = k))\<close>
-    shows \<open>tick_count r c n = tick_count r c (f n\<^sub>p)\<close>
-by (smt Collect_cong assms le_trans not_le_imp_less not_less_iff_gr_or_eq tick_count_def ticks_imp_ticks_subk)
-
 lemma next_non_stuttering:
   assumes \<open>dilating f sub r\<close>
       and \<open>f n\<^sub>p < n \<and> (\<forall>k. f n\<^sub>p < k \<and> k \<le> n \<longrightarrow> (\<nexists>k\<^sub>0. f k\<^sub>0 = k))\<close>
@@ -874,6 +850,44 @@ proof -
   hence \<open>Suc n \<le> f (Suc n\<^sub>p)\<close> by simp
   hence \<open>sn\<^sub>0 \<le> Suc n\<^sub>p\<close> using assms(3) smf using strict_mono_less_eq by fastforce
   with * show ?thesis by simp
+qed
+
+lemma dil_tick_count:
+  assumes \<open>sub \<lless> r\<close>
+      and \<open>\<forall>n. run_tick_count sub a n \<le> run_tick_count sub b n\<close>
+    shows \<open>run_tick_count r a n \<le> run_tick_count r b n\<close>
+proof -
+  from assms(1) is_subrun_def obtain f where *:\<open>dilating f sub r\<close> by blast
+  show ?thesis
+  proof (induction n)
+    case 0 thus ?case
+      by (metis * assms(2) dilating_def dilating_fun_def run_tick_count_sub)
+  next
+    case (Suc n') thus ?case 
+    proof -
+      from * have f3: "run_tick_count sub a (v5_1 a (Suc n') sub f) = run_tick_count r a (f (v5_1 a (Suc n') sub f))"
+        using run_tick_count_sub by blast
+      have f4: "\<forall>f r ra n c. (\<not> dilating f (r::'a run) ra \<or> \<not> hamlet (Rep_run ra n c)) \<or> (\<exists>na. f na = n \<and> hamlet (Rep_run r na c))"
+        using ticks_imp_ticks_subk by blast
+      obtain nna :: "clock \<Rightarrow> nat \<Rightarrow> 'a run \<Rightarrow> (nat \<Rightarrow> nat) \<Rightarrow> nat" where
+        f5: "\<forall>x0 x1 x3 x4. (\<exists>v5. x4 v5 = x1 \<and> hamlet (Rep_run x3 v5 x0)) = (x4 (nna x0 x1 x3 x4) = x1 \<and> hamlet (Rep_run x3 (nna x0 x1 x3 x4) x0))"
+        by moura
+      have f6: "#\<^sub>\<le> sub b nna a (Suc n') sub f = #\<^sub>\<le> r b f (nna a (Suc n') sub f)"
+        using * run_tick_count_sub by blast
+      have "#\<^sub>\<le> sub a nna a (Suc n') sub f \<le> #\<^sub>\<le> sub b nna a (Suc n') sub f"
+        by (simp add: assms(2))
+      then show ?thesis
+        using run_tick_count_sub f6 f5 f4 f3 * Suc.IH by fastforce
+    qed
+\<^cancel>\<open>
+    from assms(2) have \<open>tick_count sub a (Suc n') \<le> tick_count sub b (Suc n')\<close>
+      using tick_count_is_fun by metis
+    hence 1:\<open>tick_count r a (f (Suc n')) \<le> tick_count r b (f (Suc n'))\<close> using tick_count_sub[OF *] by simp
+    thus ?case using assms tick_count_f_suc_sub[OF *] Suc.IH
+      by (smt * no_tick_sub run_tick_count_sub run_tick_count_suc)
+  qed
+\<close>
+  qed
 qed
 
 lemma stutter_no_time:
