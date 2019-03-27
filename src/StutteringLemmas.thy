@@ -860,39 +860,37 @@ proof -
   from assms(1) is_subrun_def obtain f where *:\<open>dilating f sub r\<close> by blast
   show ?thesis
   proof (induction n)
-    case 0 thus ?case
-      by (metis * assms(2) dilating_def dilating_fun_def run_tick_count_sub)
+    case 0 
+      from assms(2) have \<open>run_tick_count sub a 0 \<le> run_tick_count sub b 0\<close> ..
+      with run_tick_count_sub[OF *, of _ 0] have \<open>run_tick_count r a (f 0) \<le> run_tick_count r b (f 0)\<close> by simp
+      moreover from * have \<open>f 0 = 0\<close> by (simp add:dilating_def dilating_fun_def)
+      ultimately show ?case by simp
   next
     case (Suc n') thus ?case 
-    proof -
-      from * have f3: "run_tick_count sub a (v5_1 a (Suc n') sub f) = run_tick_count r a (f (v5_1 a (Suc n') sub f))"
-        using run_tick_count_sub by blast
-      have f4: "\<forall>f r ra n c. (\<not> dilating f (r::'a run) ra \<or> \<not> hamlet (Rep_run ra n c)) \<or> (\<exists>na. f na = n \<and> hamlet (Rep_run r na c))"
-        using ticks_imp_ticks_subk by blast
-      obtain nna :: "clock \<Rightarrow> nat \<Rightarrow> 'a run \<Rightarrow> (nat \<Rightarrow> nat) \<Rightarrow> nat" where
-        f5: "\<forall>x0 x1 x3 x4. (\<exists>v5. x4 v5 = x1 \<and> hamlet (Rep_run x3 v5 x0)) = (x4 (nna x0 x1 x3 x4) = x1 \<and> hamlet (Rep_run x3 (nna x0 x1 x3 x4) x0))"
-        by moura
-      have f6: "#\<^sub>\<le> sub b nna a (Suc n') sub f = #\<^sub>\<le> r b f (nna a (Suc n') sub f)"
-        using * run_tick_count_sub by blast
-      have "#\<^sub>\<le> sub a nna a (Suc n') sub f \<le> #\<^sub>\<le> sub b nna a (Suc n') sub f"
-        by (simp add: assms(2))
-      then show ?thesis
-        using run_tick_count_sub f6 f5 f4 f3 * Suc.IH by fastforce
+    proof (cases \<open>\<exists>n\<^sub>0. f n\<^sub>0 = Suc n'\<close>)
+      case True
+        from this obtain n\<^sub>0 where fn0:\<open>f n\<^sub>0 = Suc n'\<close> by blast
+        show ?thesis
+        proof (cases \<open>hamlet ((Rep_run sub) n\<^sub>0 a)\<close>)
+          case True
+            have "run_tick_count r a (f n\<^sub>0) \<le> run_tick_count r b (f n\<^sub>0)"
+              using assms(2) run_tick_count_sub[OF *] by simp
+            thus ?thesis by (simp add: fn0)
+        next
+          case False
+            hence \<open>\<not> hamlet ((Rep_run r) (Suc n') a)\<close> using "*" fn0 ticks_sub by fastforce
+            thus ?thesis by (simp add: Suc.IH le_SucI)
+        qed
+    next
+      case False
+        thus ?thesis  using "*" Suc.IH no_tick_sub by fastforce
     qed
-\<^cancel>\<open>
-    from assms(2) have \<open>tick_count sub a (Suc n') \<le> tick_count sub b (Suc n')\<close>
-      using tick_count_is_fun by metis
-    hence 1:\<open>tick_count r a (f (Suc n')) \<le> tick_count r b (f (Suc n'))\<close> using tick_count_sub[OF *] by simp
-    thus ?case using assms tick_count_f_suc_sub[OF *] Suc.IH
-      by (smt * no_tick_sub run_tick_count_sub run_tick_count_suc)
-  qed
-\<close>
   qed
 qed
 
 lemma stutter_no_time:
   assumes \<open>dilating f sub r\<close>
-      and \<open>\<forall>k. f n < k \<and> k \<le> m \<longrightarrow> (\<nexists>k\<^sub>0. f k\<^sub>0 = k)\<close>
+      and \<open>\<And>k. f n < k \<and> k \<le> m \<Longrightarrow> (\<nexists>k\<^sub>0. f k\<^sub>0 = k)\<close>
       and \<open>m > f n\<close>
     shows \<open>time ((Rep_run r) m c) = time ((Rep_run r) (f n) c)\<close>
 proof -
@@ -911,12 +909,12 @@ qed
 lemma time_stuttering:
   assumes \<open>dilating f sub r\<close>
       and \<open>time ((Rep_run sub) n c) = \<tau>\<close>
-      and \<open>\<forall>k. f n < k \<and> k \<le> m \<longrightarrow> (\<nexists>k\<^sub>0. f k\<^sub>0 = k)\<close>
+      and \<open>\<And>k. f n < k \<and> k \<le> m \<Longrightarrow> (\<nexists>k\<^sub>0. f k\<^sub>0 = k)\<close>
       and \<open>m > f n\<close>
     shows \<open>time ((Rep_run r) m c) = \<tau>\<close>
 proof -
   from assms(3) have \<open>time ((Rep_run r) m c) = time ((Rep_run r) (f n) c)\<close>
-    using  stutter_no_time[OF assms(1,3,4)] ..
+    using  stutter_no_time[OF assms(1,3,4)] by blast
   also from assms(1,2) have \<open>time ((Rep_run r) (f n) c) = \<tau>\<close> by (simp add: dilating_def)
   finally show ?thesis .
 qed
@@ -961,6 +959,102 @@ next
   moreover from * have \<open>(\<forall>k < n. time ((Rep_run sub) k c) < t)\<close>
     using assms dilating_def dilating_fun_def strict_monoD by fastforce
   ultimately show \<open>first_time sub c n t\<close> by (simp add: alt_first_time_def)
+qed
+
+lemma first_dilated_instant:
+  assumes \<open>strict_mono f\<close>
+      and \<open>f (0::nat) = (0::nat)\<close>
+    shows \<open>Max {i. f i \<le> 0} = 0\<close>
+proof -
+  from assms(2) have \<open>\<forall>n > 0. f n > 0\<close> using strict_monoD[OF assms(1)] by force
+  hence \<open>\<forall>n \<noteq> 0. \<not>(f n \<le> 0)\<close> by simp
+  with assms(2) have \<open>{i. f i \<le> 0} = {0}\<close> by blast
+  thus ?thesis by simp
+qed
+
+lemma not_image_stut:
+  assumes \<open>dilating f sub r\<close>
+      and \<open>n\<^sub>0 = Max {i. f i \<le> n}\<close>
+      and \<open>f n\<^sub>0 < k \<and> k \<le> n\<close>
+    shows \<open>\<nexists>k\<^sub>0. f k\<^sub>0 = k\<close>
+proof -
+  from assms(1) have smf:\<open>strict_mono f\<close>
+                and fxge:\<open>\<forall>x. f x \<ge> x\<close>
+    by (auto simp add: dilating_def dilating_fun_def)
+  have finite_prefix:\<open>finite {i. f i \<le> n}\<close> by (simp add: finite_less_ub fxge)
+  from assms(1) have \<open>{i. f i \<le> n} \<noteq> {}\<close>
+    by (metis dilating_def dilating_fun_def empty_iff le0 mem_Collect_eq)
+  from assms(3) fxge have \<open>f n\<^sub>0 < n\<close> by linarith
+  from assms(2) have \<open>\<forall>x > n\<^sub>0. f x > n\<close> using Max.coboundedI[OF finite_prefix]
+    using not_le by auto
+  with assms(3) strict_mono_less[OF smf] show ?thesis by auto
+qed
+
+lemma contracting_inverse:
+  assumes \<open>dilating f sub r\<close>
+    shows \<open>contracting (dil_inverse f) r sub f\<close>
+proof -
+  from assms have smf:\<open>strict_mono f\<close>
+    and no_img_tick:\<open>\<forall>k. (\<nexists>k\<^sub>0. f k\<^sub>0 = k) \<longrightarrow> (\<forall>c. \<not>(hamlet ((Rep_run r) k c)))\<close>
+    and no_img_time:\<open>\<And>n. (\<nexists>n\<^sub>0. f n\<^sub>0 = (Suc n)) \<longrightarrow> (\<forall>c. time ((Rep_run r) (Suc n) c) = time ((Rep_run r) n c))\<close>
+    by (auto simp add: dilating_def dilating_fun_def)
+  have finite_prefix:\<open>\<And>n. finite {i. f i \<le> n}\<close>
+    by (metis assms dilating_def dilating_fun_def finite_less_ub)
+  have prefix_not_empty:\<open>\<And>n. {i. f i \<le> n} \<noteq> {}\<close>
+    by (metis assms dilating_def dilating_fun_def empty_iff le0 mem_Collect_eq)
+                
+
+  have 1:\<open>mono (dil_inverse f)\<close>
+  proof -
+  { fix x::\<open>nat\<close> and y::\<open>nat\<close> assume hyp:\<open>x \<le> y\<close>
+    from smf have finite:\<open>finite {i. f i \<le> y}\<close>
+      by (metis (full_types) assms dilating_def dilating_fun_def finite_less_ub)
+    from assms have "f 0 = 0" by (simp add: dilating_def dilating_fun_def)
+    hence notempty:\<open>{i. f i \<le> x} \<noteq> {}\<close> by (metis empty_Collect_eq le0)
+    hence inc:\<open>{i. f i \<le> x} \<subseteq> {i. f i \<le> y}\<close>
+      by (simp add: hyp Collect_mono le_trans)
+    from Max_mono[OF inc notempty finite] have "(dil_inverse f) x \<le> (dil_inverse f) y"
+      unfolding dil_inverse_def .
+  } thus ?thesis unfolding mono_def by simp
+  qed
+
+  from assms have f0:"f 0 = 0" by (simp add: dilating_def dilating_fun_def)
+  from first_dilated_instant[OF smf this] have 2:\<open>(dil_inverse f) 0 = 0\<close>
+    unfolding dil_inverse_def .
+
+  from assms(1) dilating_def dilating_fun_def have fge:\<open>\<forall>n. f n \<ge> n\<close> by blast
+  hence \<open>\<forall>n i. f i \<le> n \<longrightarrow> i \<le> n\<close> using le_trans by blast
+  hence 3:\<open>\<forall>n. (dil_inverse f) n \<le> n\<close> using Max_in[OF finite_prefix prefix_not_empty] 
+    unfolding dil_inverse_def by blast
+
+  from 1 2 3 have *:\<open>contracting_fun (dil_inverse f)\<close> by (simp add: contracting_fun_def)
+
+  have 4:\<open>\<forall>n c k. f ((dil_inverse f) n) < k \<and> k \<le> n
+                              \<longrightarrow> \<not> hamlet ((Rep_run r) k c)\<close>
+    using not_image_stut[OF assms] no_img_tick unfolding dil_inverse_def by blast
+
+  have 5:\<open>(\<forall>n c k. f ((dil_inverse f) n) \<le> k \<and> k \<le> n
+                      \<longrightarrow> time ((Rep_run r) k c) = time ((Rep_run sub) ((dil_inverse f) n) c))\<close>
+  proof -
+    { fix n c k assume h:\<open>f ((dil_inverse f) n) \<le> k \<and> k \<le> n\<close>
+      let ?\<tau> = \<open>time (Rep_run sub ((dil_inverse f) n) c)\<close>
+      have tau:\<open>time (Rep_run sub ((dil_inverse f) n) c) = ?\<tau>\<close> ..
+      have gn:\<open>(dil_inverse f) n = Max {i. f i \<le> n}\<close> unfolding dil_inverse_def ..
+      from time_stuttering[OF assms tau, of k] not_image_stut[OF assms gn]
+      have \<open>time ((Rep_run r) k c) = time ((Rep_run sub) ((dil_inverse f) n) c)\<close>
+      proof (cases \<open>f ((dil_inverse f) n) = k\<close>)
+        case True
+          thus ?thesis by (metis assms dilating_def)
+      next
+        case False
+          with h have \<open>f (Max {i. f i \<le> n}) < k \<and> k \<le> n\<close> by (simp add: dil_inverse_def)
+          with time_stuttering[OF assms tau, of k] not_image_stut[OF assms gn]
+            show ?thesis unfolding dil_inverse_def by auto
+      qed
+    } thus ?thesis by simp
+  qed
+
+  from * 5 4 show ?thesis unfolding contracting_def by simp
 qed
 
 end
