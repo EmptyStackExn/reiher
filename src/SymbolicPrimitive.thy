@@ -2,7 +2,6 @@ theory SymbolicPrimitive
   imports Run
 
 begin
-
 datatype cnt_expr =
     TickCountLess \<open>clock\<close> \<open>instant_index\<close>  ("#\<^sup><")
   | TickCountLeq \<open>clock\<close> \<open>instant_index\<close> ("#\<^sup>\<le>")
@@ -21,9 +20,10 @@ datatype '\<tau> constr =
 
 type_synonym '\<tau> system = \<open>'\<tau> constr list\<close>
 
+
 \<comment> \<open>
   The abstract machine follows the intuition: 
-    past [\<Gamma>], current index [n], present [\<Psi>], future [\<Phi>]
+    past [@term\<open>\<Gamma>\<close>], current index [n], present [@term\<open>\<Psi>\<close>], future [@term\<open>\<Phi>\<close>]
    Beware: This type is slightly different from the one originally implemented in Heron
 \<close>
 type_synonym '\<tau> config = \<open>'\<tau> system * instant_index * '\<tau> TESL_formula * '\<tau> TESL_formula\<close>

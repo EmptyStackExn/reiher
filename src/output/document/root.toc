@@ -1,0 +1,49 @@
+\contentsline {chapter}{\numberline {1}A Gentle Introduction to TESL}{5}{chapter.1}% 
+\contentsline {section}{\numberline {1.1}Context}{5}{section.1.1}% 
+\contentsline {section}{\numberline {1.2}The TESL Language}{7}{section.1.2}% 
+\contentsline {subsection}{\numberline {1.2.1}Instantaneous Causal Operators}{7}{subsection.1.2.1}% 
+\contentsline {subsection}{\numberline {1.2.2}Temporal Operators}{8}{subsection.1.2.2}% 
+\contentsline {subsection}{\numberline {1.2.3}Asynchronous Operators}{8}{subsection.1.2.3}% 
+\contentsline {chapter}{\numberline {2}The Core of the TESL Language: Syntax and Basics}{11}{chapter.2}% 
+\contentsline {section}{\numberline {2.1}Syntactic Representation}{11}{section.2.1}% 
+\contentsline {subsection}{\numberline {2.1.1}Basic elements of a specification}{11}{subsection.2.1.1}% 
+\contentsline {subsection}{\numberline {2.1.2}Operators for the TESL language}{12}{subsection.2.1.2}% 
+\contentsline {subsection}{\numberline {2.1.3}Field Structure of the Metric Time Space}{12}{subsection.2.1.3}% 
+\contentsline {section}{\numberline {2.2}Defining Runs}{14}{section.2.2}% 
+\contentsline {chapter}{\numberline {3}Denotational Semantics}{17}{chapter.3}% 
+\contentsline {section}{\numberline {3.1}Denotational interpretation for atomic TESL formulae}{17}{section.3.1}% 
+\contentsline {section}{\numberline {3.2}Denotational interpretation for TESL formulae}{18}{section.3.2}% 
+\contentsline {subsection}{\numberline {3.2.1}Image interpretation lemma}{18}{subsection.3.2.1}% 
+\contentsline {subsection}{\numberline {3.2.2}Expansion law}{18}{subsection.3.2.2}% 
+\contentsline {section}{\numberline {3.3}Equational laws for TESL formulae denotationally interpreted}{19}{section.3.3}% 
+\contentsline {section}{\numberline {3.4}Decreasing interpretation of TESL formulae}{19}{section.3.4}% 
+\contentsline {section}{\numberline {3.5}Some special cases}{21}{section.3.5}% 
+\contentsline {subsection}{\numberline {3.5.1}Symbolic Primitives for Runs}{22}{subsection.3.5.1}% 
+\contentsline {section}{\numberline {3.6}Semantics of Primitive Constraints}{22}{section.3.6}% 
+\contentsline {subsection}{\numberline {3.6.1}Defining a method for witness construction}{23}{subsection.3.6.1}% 
+\contentsline {section}{\numberline {3.7}Rules and properties of consistence}{23}{section.3.7}% 
+\contentsline {section}{\numberline {3.8}Major Theorems}{24}{section.3.8}% 
+\contentsline {subsection}{\numberline {3.8.1}Fixpoint lemma}{24}{subsection.3.8.1}% 
+\contentsline {subsection}{\numberline {3.8.2}Expansion law}{24}{subsection.3.8.2}% 
+\contentsline {section}{\numberline {3.9}Equational laws for TESL formulae denotationally interpreted}{24}{section.3.9}% 
+\contentsline {subsection}{\numberline {3.9.1}General laws}{24}{subsection.3.9.1}% 
+\contentsline {subsection}{\numberline {3.9.2}Decreasing interpretation of TESL formulae}{25}{subsection.3.9.2}% 
+\contentsline {chapter}{\numberline {4}Operational Semantics}{29}{chapter.4}% 
+\contentsline {section}{\numberline {4.1}Operational steps}{29}{section.4.1}% 
+\contentsline {section}{\numberline {4.2}Basic Lemmas}{31}{section.4.2}% 
+\contentsline {chapter}{\numberline {5}Equivalence of Operational and Denotational Semantics}{33}{chapter.5}% 
+\contentsline {section}{\numberline {5.1}Stepwise denotational interpretation of TESL atoms}{33}{section.5.1}% 
+\contentsline {section}{\numberline {5.2}Coinduction Unfolding Properties}{36}{section.5.2}% 
+\contentsline {section}{\numberline {5.3}Interpretation of configurations}{41}{section.5.3}% 
+\contentsline {chapter}{\numberline {6}Main Theorems}{49}{chapter.6}% 
+\contentsline {section}{\numberline {6.1}Initial configuration}{49}{section.6.1}% 
+\contentsline {section}{\numberline {6.2}Soundness}{49}{section.6.2}% 
+\contentsline {section}{\numberline {6.3}Completeness}{51}{section.6.3}% 
+\contentsline {section}{\numberline {6.4}Progress}{53}{section.6.4}% 
+\contentsline {section}{\numberline {6.5}Local termination}{58}{section.6.5}% 
+\contentsline {chapter}{\numberline {7}Properties of TESL}{61}{chapter.7}% 
+\contentsline {section}{\numberline {7.1}Stuttering Invariance}{61}{section.7.1}% 
+\contentsline {subsection}{\numberline {7.1.1}Definition of stuttering}{61}{subsection.7.1.1}% 
+\contentsline {subsection}{\numberline {7.1.2}Stuttering Lemmas}{62}{subsection.7.1.2}% 
+\contentsline {subsection}{\numberline {7.1.3}Lemmas used to prove the invariance by stuttering}{63}{subsection.7.1.3}% 
+\contentsline {subsection}{\numberline {7.1.4}Main Theorems}{85}{subsection.7.1.4}% 

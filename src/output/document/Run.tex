@@ -1,0 +1,355 @@
+%
+\begin{isabellebody}%
+\setisabellecontext{Run}%
+%
+\isadelimdocument
+%
+\endisadelimdocument
+%
+\isatagdocument
+%
+\isamarkupsection{Defining Runs%
+}
+\isamarkuptrue%
+%
+\endisatagdocument
+{\isafolddocument}%
+%
+\isadelimdocument
+%
+\endisadelimdocument
+%
+\isadelimtheory
+%
+\endisadelimtheory
+%
+\isatagtheory
+\isacommand{theory}\isamarkupfalse%
+\ Run\isanewline
+\isakeyword{imports}\ TESL\isanewline
+\ \ \ \ \ \ \isanewline
+\isakeyword{begin}%
+\endisatagtheory
+{\isafoldtheory}%
+%
+\isadelimtheory
+%
+\endisadelimtheory
+%
+\begin{isamarkuptext}%
+Runs are sequences of instants, each instant mapping a clock to a pair that whether the clock 
+  ticks or not and what is the current time on this clock. The first element of the pair is
+  called the \emph{hamlet} of the clock (to tick or not to tick), the second element is called the 
+  \emph{time}.%
+\end{isamarkuptext}\isamarkuptrue%
+\isacommand{abbreviation}\isamarkupfalse%
+\ hamlet\ \isakeyword{where}\ {\isacartoucheopen}hamlet\ {\isasymequiv}\ fst{\isacartoucheclose}\isanewline
+\isacommand{abbreviation}\isamarkupfalse%
+\ time\ \ \ \isakeyword{where}\ {\isacartoucheopen}time\ {\isasymequiv}\ snd{\isacartoucheclose}\isanewline
+\isanewline
+\isacommand{type{\isacharunderscore}synonym}\isamarkupfalse%
+\ {\isacharprime}{\isasymtau}\ instant\ {\isacharequal}\ {\isacartoucheopen}clock\ {\isasymRightarrow}\ {\isacharparenleft}bool\ {\isasymtimes}\ {\isacharprime}{\isasymtau}\ tag{\isacharunderscore}const{\isacharparenright}{\isacartoucheclose}%
+\begin{isamarkuptext}%
+Runs have the additional constraint that time cannot go backwards on any clock in the sequence 
+  of instants. Therefore, for any clock, the time projection of a run is monotonous.%
+\end{isamarkuptext}\isamarkuptrue%
+\isacommand{typedef}\isamarkupfalse%
+\ {\isacharparenleft}\isakeyword{overloaded}{\isacharparenright}\ {\isacharprime}{\isasymtau}{\isacharcolon}{\isacharcolon}linordered{\isacharunderscore}field\ run\ {\isacharequal}\isanewline
+\ \ {\isacartoucheopen}{\isacharbraceleft}\ {\isasymrho}{\isacharcolon}{\isacharcolon}nat\ {\isasymRightarrow}\ {\isacharprime}{\isasymtau}\ instant{\isachardot}\ {\isasymforall}c{\isachardot}\ mono\ {\isacharparenleft}{\isasymlambda}n{\isachardot}\ time\ {\isacharparenleft}{\isasymrho}\ n\ c{\isacharparenright}{\isacharparenright}\ {\isacharbraceright}{\isacartoucheclose}\isanewline
+%
+\isadelimproof
+%
+\endisadelimproof
+%
+\isatagproof
+\isacommand{proof}\isamarkupfalse%
+\isanewline
+\ \ \isacommand{show}\isamarkupfalse%
+\ {\isacartoucheopen}{\isacharparenleft}{\isasymlambda}{\isacharunderscore}\ {\isacharunderscore}{\isachardot}\ {\isacharparenleft}True{\isacharcomma}\ {\isasymtau}\isactrlsub c\isactrlsub s\isactrlsub t\ {\isadigit{0}}{\isacharparenright}{\isacharparenright}\ {\isasymin}\ {\isacharbraceleft}{\isasymrho}{\isachardot}\ {\isasymforall}c{\isachardot}\ mono\ {\isacharparenleft}{\isasymlambda}n{\isachardot}\ time\ {\isacharparenleft}{\isasymrho}\ n\ c{\isacharparenright}{\isacharparenright}{\isacharbraceright}{\isacartoucheclose}\ \isanewline
+\ \ \ \ \isacommand{unfolding}\isamarkupfalse%
+\ mono{\isacharunderscore}def\ \isacommand{by}\isamarkupfalse%
+\ blast\isanewline
+\isacommand{qed}\isamarkupfalse%
+%
+\endisatagproof
+{\isafoldproof}%
+%
+\isadelimproof
+\isanewline
+%
+\endisadelimproof
+\isanewline
+\isacommand{lemma}\isamarkupfalse%
+\ Abs{\isacharunderscore}run{\isacharunderscore}inverse{\isacharunderscore}rewrite{\isacharcolon}\isanewline
+\ \ {\isacartoucheopen}{\isasymforall}c{\isachardot}\ mono\ {\isacharparenleft}{\isasymlambda}n{\isachardot}\ time\ {\isacharparenleft}{\isasymrho}\ n\ c{\isacharparenright}{\isacharparenright}\ {\isasymLongrightarrow}\ Rep{\isacharunderscore}run\ {\isacharparenleft}Abs{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ {\isacharequal}\ {\isasymrho}{\isacartoucheclose}\isanewline
+%
+\isadelimproof
+\ \ %
+\endisadelimproof
+%
+\isatagproof
+\isacommand{by}\isamarkupfalse%
+\ {\isacharparenleft}simp\ add{\isacharcolon}\ Abs{\isacharunderscore}run{\isacharunderscore}inverse{\isacharparenright}%
+\endisatagproof
+{\isafoldproof}%
+%
+\isadelimproof
+%
+\endisadelimproof
+%
+\begin{isamarkuptext}%
+\isa{run{\isacharunderscore}tick{\isacharunderscore}count\ {\isasymrho}\ K\ n} counts the number of ticks on clock \isa{K} 
+  in the interval \isatt{[0{\char`\,}\ n]} of run \isa{{\isasymrho}}.%
+\end{isamarkuptext}\isamarkuptrue%
+\isacommand{fun}\isamarkupfalse%
+\ run{\isacharunderscore}tick{\isacharunderscore}count\ {\isacharcolon}{\isacharcolon}\ {\isacartoucheopen}{\isacharparenleft}{\isacharprime}{\isasymtau}{\isacharcolon}{\isacharcolon}linordered{\isacharunderscore}field{\isacharparenright}\ run\ {\isasymRightarrow}\ clock\ {\isasymRightarrow}\ nat\ {\isasymRightarrow}\ nat{\isacartoucheclose}\ {\isacharparenleft}{\isachardoublequoteopen}{\isacharhash}\isactrlsub {\isasymle}\ {\isacharunderscore}\ {\isacharunderscore}\ {\isacharunderscore}{\isachardoublequoteclose}{\isacharparenright}\ \isakeyword{where}\isanewline
+\ \ \ \ {\isacartoucheopen}{\isacharparenleft}{\isacharhash}\isactrlsub {\isasymle}\ {\isasymrho}\ K\ {\isadigit{0}}{\isacharparenright}\ \ \ \ \ \ \ {\isacharequal}\ {\isacharparenleft}if\ hamlet\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ {\isadigit{0}}\ K{\isacharparenright}\isanewline
+\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ then\ {\isadigit{1}}\isanewline
+\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ else\ {\isadigit{0}}{\isacharparenright}{\isacartoucheclose}\isanewline
+\ \ {\isacharbar}\ {\isacartoucheopen}{\isacharparenleft}{\isacharhash}\isactrlsub {\isasymle}\ {\isasymrho}\ K\ {\isacharparenleft}Suc\ n{\isacharparenright}{\isacharparenright}\ {\isacharequal}\ {\isacharparenleft}if\ hamlet\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ {\isacharparenleft}Suc\ n{\isacharparenright}\ K{\isacharparenright}\isanewline
+\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ then\ {\isadigit{1}}\ {\isacharplus}\ {\isacharparenleft}{\isacharhash}\isactrlsub {\isasymle}\ {\isasymrho}\ K\ n{\isacharparenright}\isanewline
+\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ else\ {\isacharparenleft}{\isacharhash}\isactrlsub {\isasymle}\ {\isasymrho}\ K\ n{\isacharparenright}{\isacharparenright}{\isacartoucheclose}%
+\begin{isamarkuptext}%
+\isa{run{\isacharunderscore}tick{\isacharunderscore}count{\isacharunderscore}strictly\ {\isasymrho}\ K\ n} counts the number of ticks on clock \isa{K} 
+  in the interval \isatt{[0{\char`\,}\ n[} of run \isa{{\isasymrho}}.%
+\end{isamarkuptext}\isamarkuptrue%
+\isacommand{fun}\isamarkupfalse%
+\ run{\isacharunderscore}tick{\isacharunderscore}count{\isacharunderscore}strictly\ {\isacharcolon}{\isacharcolon}\ {\isacartoucheopen}{\isacharparenleft}{\isacharprime}{\isasymtau}{\isacharcolon}{\isacharcolon}linordered{\isacharunderscore}field{\isacharparenright}\ run\ {\isasymRightarrow}\ clock\ {\isasymRightarrow}\ nat\ {\isasymRightarrow}\ nat{\isacartoucheclose}\ {\isacharparenleft}{\isachardoublequoteopen}{\isacharhash}\isactrlsub {\isacharless}\ {\isacharunderscore}\ {\isacharunderscore}\ {\isacharunderscore}{\isachardoublequoteclose}{\isacharparenright}\isanewline
+\isakeyword{where}\isanewline
+\ \ \ \ {\isacartoucheopen}{\isacharparenleft}{\isacharhash}\isactrlsub {\isacharless}\ {\isasymrho}\ K\ {\isadigit{0}}{\isacharparenright}\ \ \ \ \ \ \ {\isacharequal}\ {\isadigit{0}}{\isacartoucheclose}\isanewline
+\ \ {\isacharbar}\ {\isacartoucheopen}{\isacharparenleft}{\isacharhash}\isactrlsub {\isacharless}\ {\isasymrho}\ K\ {\isacharparenleft}Suc\ n{\isacharparenright}{\isacharparenright}\ {\isacharequal}\ {\isacharhash}\isactrlsub {\isasymle}\ {\isasymrho}\ K\ n{\isacartoucheclose}\isanewline
+\isanewline
+\isacommand{definition}\isamarkupfalse%
+\ first{\isacharunderscore}time\ {\isacharcolon}{\isacharcolon}\ {\isacartoucheopen}{\isacharprime}a{\isacharcolon}{\isacharcolon}linordered{\isacharunderscore}field\ run\ {\isasymRightarrow}\ clock\ {\isasymRightarrow}\ nat\ {\isasymRightarrow}\ {\isacharprime}a\ tag{\isacharunderscore}const\ {\isasymRightarrow}\ bool{\isacartoucheclose}\isanewline
+\isakeyword{where}\isanewline
+\ \ {\isacartoucheopen}first{\isacharunderscore}time\ {\isasymrho}\ K\ n\ {\isasymtau}\ {\isasymequiv}\ {\isacharparenleft}time\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ n\ K{\isacharparenright}\ {\isacharequal}\ {\isasymtau}{\isacharparenright}\ {\isasymand}\ {\isacharparenleft}{\isasymnexists}n{\isacharprime}{\isachardot}\ n{\isacharprime}\ {\isacharless}\ n\ {\isasymand}\ time\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ n{\isacharprime}\ K{\isacharparenright}\ {\isacharequal}\ {\isasymtau}{\isacharparenright}{\isacartoucheclose}\isanewline
+\isanewline
+\isacommand{lemma}\isamarkupfalse%
+\ before{\isacharunderscore}first{\isacharunderscore}time{\isacharcolon}\isanewline
+\ \ \isakeyword{assumes}\ {\isacartoucheopen}first{\isacharunderscore}time\ {\isasymrho}\ K\ n\ {\isasymtau}{\isacartoucheclose}\isanewline
+\ \ \ \ \ \ \isakeyword{and}\ {\isacartoucheopen}m\ {\isacharless}\ n{\isacartoucheclose}\isanewline
+\ \ \ \ \isakeyword{shows}\ {\isacartoucheopen}time\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ m\ K{\isacharparenright}\ {\isacharless}\ {\isasymtau}{\isacartoucheclose}\isanewline
+%
+\isadelimproof
+%
+\endisadelimproof
+%
+\isatagproof
+\isacommand{proof}\isamarkupfalse%
+\ {\isacharminus}\isanewline
+\ \ \isacommand{have}\isamarkupfalse%
+\ {\isacartoucheopen}mono\ {\isacharparenleft}{\isasymlambda}n{\isachardot}\ time\ {\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}\ n\ K{\isacharparenright}{\isacharparenright}{\isacartoucheclose}\ \isacommand{using}\isamarkupfalse%
+\ Rep{\isacharunderscore}run\ \isacommand{by}\isamarkupfalse%
+\ blast\isanewline
+\ \ \isacommand{moreover}\isamarkupfalse%
+\ \isacommand{from}\isamarkupfalse%
+\ assms{\isacharparenleft}{\isadigit{2}}{\isacharparenright}\ \isacommand{have}\isamarkupfalse%
+\ {\isacartoucheopen}m\ {\isasymle}\ n{\isacartoucheclose}\ \isacommand{using}\isamarkupfalse%
+\ less{\isacharunderscore}imp{\isacharunderscore}le\ \isacommand{by}\isamarkupfalse%
+\ simp\isanewline
+\ \ \isacommand{moreover}\isamarkupfalse%
+\ \isacommand{have}\isamarkupfalse%
+\ {\isacartoucheopen}mono\ {\isacharparenleft}{\isasymlambda}n{\isachardot}\ time\ {\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}\ n\ K{\isacharparenright}{\isacharparenright}{\isacartoucheclose}\ \isacommand{using}\isamarkupfalse%
+\ Rep{\isacharunderscore}run\ \isacommand{by}\isamarkupfalse%
+\ blast\isanewline
+\ \ \isacommand{ultimately}\isamarkupfalse%
+\ \isacommand{have}\isamarkupfalse%
+\ \ {\isacartoucheopen}time\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ m\ K{\isacharparenright}\ {\isasymle}\ time\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ n\ K{\isacharparenright}{\isacartoucheclose}\ \isacommand{by}\isamarkupfalse%
+\ {\isacharparenleft}simp\ add{\isacharcolon}mono{\isacharunderscore}def{\isacharparenright}\isanewline
+\ \ \isacommand{moreover}\isamarkupfalse%
+\ \isacommand{from}\isamarkupfalse%
+\ assms{\isacharparenleft}{\isadigit{1}}{\isacharparenright}\ \isacommand{have}\isamarkupfalse%
+\ {\isacartoucheopen}time\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ n\ K{\isacharparenright}\ {\isacharequal}\ {\isasymtau}{\isacartoucheclose}\ \isacommand{using}\isamarkupfalse%
+\ first{\isacharunderscore}time{\isacharunderscore}def\ \isacommand{by}\isamarkupfalse%
+\ blast\isanewline
+\ \ \isacommand{moreover}\isamarkupfalse%
+\ \isacommand{from}\isamarkupfalse%
+\ assms\ \isacommand{have}\isamarkupfalse%
+\ {\isacartoucheopen}time\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ m\ K{\isacharparenright}\ {\isasymnoteq}\ {\isasymtau}{\isacartoucheclose}\ \isacommand{using}\isamarkupfalse%
+\ first{\isacharunderscore}time{\isacharunderscore}def\ \isacommand{by}\isamarkupfalse%
+\ blast\isanewline
+\ \ \isacommand{ultimately}\isamarkupfalse%
+\ \isacommand{show}\isamarkupfalse%
+\ {\isacharquery}thesis\ \isacommand{by}\isamarkupfalse%
+\ simp\isanewline
+\isacommand{qed}\isamarkupfalse%
+%
+\endisatagproof
+{\isafoldproof}%
+%
+\isadelimproof
+\isanewline
+%
+\endisadelimproof
+\isanewline
+\isacommand{lemma}\isamarkupfalse%
+\ alt{\isacharunderscore}first{\isacharunderscore}time{\isacharunderscore}def{\isacharcolon}\isanewline
+\ \ \isakeyword{assumes}\ {\isacartoucheopen}{\isasymforall}m\ {\isacharless}\ n{\isachardot}\ time\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ m\ K{\isacharparenright}\ {\isacharless}\ {\isasymtau}{\isacartoucheclose}\isanewline
+\ \ \ \ \ \ \isakeyword{and}\ {\isacartoucheopen}time\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ n\ K{\isacharparenright}\ {\isacharequal}\ {\isasymtau}{\isacartoucheclose}\isanewline
+\ \ \ \ \isakeyword{shows}\ {\isacartoucheopen}first{\isacharunderscore}time\ {\isasymrho}\ K\ n\ {\isasymtau}{\isacartoucheclose}\isanewline
+%
+\isadelimproof
+%
+\endisadelimproof
+%
+\isatagproof
+\isacommand{proof}\isamarkupfalse%
+\ {\isacharminus}\isanewline
+\ \ \isacommand{from}\isamarkupfalse%
+\ assms{\isacharparenleft}{\isadigit{1}}{\isacharparenright}\ \isacommand{have}\isamarkupfalse%
+\ {\isacartoucheopen}{\isasymforall}m\ {\isacharless}\ n{\isachardot}\ time\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ m\ K{\isacharparenright}\ {\isasymnoteq}\ {\isasymtau}{\isacartoucheclose}\ \isacommand{by}\isamarkupfalse%
+\ {\isacharparenleft}simp\ add{\isacharcolon}\ less{\isacharunderscore}le{\isacharparenright}\isanewline
+\ \ \isacommand{with}\isamarkupfalse%
+\ assms{\isacharparenleft}{\isadigit{2}}{\isacharparenright}\ \isacommand{show}\isamarkupfalse%
+\ {\isacharquery}thesis\ \isacommand{by}\isamarkupfalse%
+\ {\isacharparenleft}simp\ add{\isacharcolon}\ first{\isacharunderscore}time{\isacharunderscore}def{\isacharparenright}\isanewline
+\isacommand{qed}\isamarkupfalse%
+%
+\endisatagproof
+{\isafoldproof}%
+%
+\isadelimproof
+\isanewline
+%
+\endisadelimproof
+%
+\isadelimtheory
+\isanewline
+%
+\endisadelimtheory
+%
+\isatagtheory
+\isacommand{end}\isamarkupfalse%
+%
+\endisatagtheory
+{\isafoldtheory}%
+%
+\isadelimtheory
+%
+\endisadelimtheory
+%
+\end{isabellebody}%
+\endinput
+%:%file=~/Documents/Recherche/Thesards/2014_Hai_NGUYEN_VAN/Heron_git/reiher2/reiher/src/Run.thy%:%
+%:%11=1%:%
+%:%27=3%:%
+%:%28=3%:%
+%:%29=4%:%
+%:%30=5%:%
+%:%31=6%:%
+%:%40=8%:%
+%:%41=9%:%
+%:%42=10%:%
+%:%43=11%:%
+%:%45=14%:%
+%:%46=14%:%
+%:%47=15%:%
+%:%48=15%:%
+%:%49=16%:%
+%:%50=17%:%
+%:%51=17%:%
+%:%53=20%:%
+%:%54=21%:%
+%:%56=23%:%
+%:%57=23%:%
+%:%58=24%:%
+%:%65=25%:%
+%:%66=25%:%
+%:%67=26%:%
+%:%68=26%:%
+%:%69=27%:%
+%:%70=27%:%
+%:%71=27%:%
+%:%72=28%:%
+%:%78=28%:%
+%:%81=29%:%
+%:%82=30%:%
+%:%83=30%:%
+%:%84=31%:%
+%:%87=32%:%
+%:%91=32%:%
+%:%92=32%:%
+%:%101=35%:%
+%:%102=36%:%
+%:%104=38%:%
+%:%105=38%:%
+%:%106=39%:%
+%:%108=41%:%
+%:%109=42%:%
+%:%113=47%:%
+%:%114=48%:%
+%:%116=50%:%
+%:%117=50%:%
+%:%118=51%:%
+%:%119=52%:%
+%:%120=53%:%
+%:%121=54%:%
+%:%122=55%:%
+%:%123=55%:%
+%:%124=56%:%
+%:%125=57%:%
+%:%126=58%:%
+%:%127=59%:%
+%:%128=59%:%
+%:%129=60%:%
+%:%130=61%:%
+%:%131=62%:%
+%:%138=63%:%
+%:%139=63%:%
+%:%140=64%:%
+%:%141=64%:%
+%:%142=64%:%
+%:%143=64%:%
+%:%144=65%:%
+%:%145=65%:%
+%:%146=65%:%
+%:%147=65%:%
+%:%148=65%:%
+%:%149=65%:%
+%:%150=66%:%
+%:%151=66%:%
+%:%152=66%:%
+%:%153=66%:%
+%:%154=66%:%
+%:%155=67%:%
+%:%156=67%:%
+%:%157=67%:%
+%:%158=67%:%
+%:%159=68%:%
+%:%160=68%:%
+%:%161=68%:%
+%:%162=68%:%
+%:%163=68%:%
+%:%164=68%:%
+%:%165=69%:%
+%:%166=69%:%
+%:%167=69%:%
+%:%168=69%:%
+%:%169=69%:%
+%:%170=69%:%
+%:%171=70%:%
+%:%172=70%:%
+%:%173=70%:%
+%:%174=70%:%
+%:%175=71%:%
+%:%181=71%:%
+%:%184=72%:%
+%:%185=73%:%
+%:%186=73%:%
+%:%187=74%:%
+%:%188=75%:%
+%:%189=76%:%
+%:%196=77%:%
+%:%197=77%:%
+%:%198=78%:%
+%:%199=78%:%
+%:%200=78%:%
+%:%201=78%:%
+%:%202=79%:%
+%:%203=79%:%
+%:%204=79%:%
+%:%205=79%:%
+%:%206=80%:%
+%:%212=80%:%
+%:%217=81%:%
+%:%222=82%:%

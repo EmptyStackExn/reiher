@@ -8,6 +8,13 @@ imports
 begin
 
 section \<open>Denotational interpretation for atomic TESL formulae\<close>
+(*<*)
+consts dummyT0 ::\<open>'\<tau> tag_const\<close>
+consts dummyDeltaT ::\<open>'\<tau> tag_const\<close>
+
+notation dummyT0    ("t\<^sub>0")
+notation dummyDeltaT ("\<delta>t")
+(*>*)
 
 fun TESL_interpretation_atomic
     :: \<open>('\<tau>::linordered_field) TESL_atomic \<Rightarrow> '\<tau> run set\<close> ("\<lbrakk> _ \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L") where
@@ -21,8 +28,8 @@ fun TESL_interpretation_atomic
         { \<rho>. \<forall>n::nat. hamlet ((Rep_run \<rho>) n master) \<longrightarrow> \<not> hamlet ((Rep_run \<rho>) n slave) }\<close>
   | \<open>\<lbrakk> master time-delayed by \<delta>\<tau> on measuring implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
     \<comment> \<open>
-      When master ticks, let's call t0 the current date on measuring. Then, at the first
-      instant when the date on measuring is t0+\<partial>t, slave has to tick.
+      When master ticks, let's call @term\<open>t\<^sub>0\<close> the current date on measuring. Then, at the first
+      instant when the date on measuring is @term\<open>t\<^sub>0+\<delta>t\<close>, slave has to tick.
     \<close>
         { \<rho>. \<forall>n. hamlet ((Rep_run \<rho>) n master) \<longrightarrow>
                  (let measured_time = time ((Rep_run \<rho>) n measuring) in
@@ -201,5 +208,10 @@ lemma NoSporadic_idem [simp]:
 lemma NoSporadic_setinc:
   shows \<open>set (NoSporadic \<Phi>) \<subseteq> set \<Phi>\<close>
   by auto
+
+(*<*)
+no_notation dummyT0    ("t\<^sub>0")
+no_notation dummyDeltaT ("\<delta>t")
+(*>*)
 
 end
