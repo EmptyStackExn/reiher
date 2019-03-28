@@ -176,9 +176,11 @@ proof -
       proof -
       { fix m assume hyp:\<open>m \<ge> n\<close>
         have \<open>first_time r ms m (time (Rep_run r n ms) + \<delta>\<tau>) \<longrightarrow> hamlet (Rep_run r m b)\<close>
-        proof (cases \<open>\<exists>m\<^sub>0. m = f m\<^sub>0\<close>)
-          case True  thus ?thesis using * hyp ft0 nfn0
-            by (metis dilating_def dilating_fun_def strict_mono_less_eq)
+        proof (cases \<open>\<exists>m\<^sub>0. f m\<^sub>0 = m\<close>)
+          case True
+          from this obtain m\<^sub>0 where \<open>m = f m\<^sub>0\<close> by blast
+          moreover have \<open>strict_mono f\<close> using * by (simp add: dilating_def dilating_fun_def)
+          ultimately show ?thesis using ft0 hyp nfn0 by (simp add: strict_mono_less_eq)
         next
           case False thus ?thesis
           proof (cases \<open>m = 0\<close>)
@@ -189,9 +191,9 @@ proof -
             case False
             hence \<open>\<exists>pm. m = Suc pm\<close> by (simp add: not0_implies_Suc)
             from this obtain pm where mpm:\<open>m = Suc pm\<close> by blast
-            hence \<open>\<nexists>pm\<^sub>0. Suc pm = f pm\<^sub>0\<close> using \<open>\<nexists>m\<^sub>0. m = f m\<^sub>0\<close> by simp 
-            with dilating_fun_def have \<open>time (Rep_run r (Suc pm) ms) = time (Rep_run r pm ms)\<close>
-              by (metis * dilating_def)
+            hence \<open>\<nexists>pm\<^sub>0. f pm\<^sub>0 = Suc pm\<close> using \<open>\<nexists>m\<^sub>0. f m\<^sub>0 = m\<close> by simp 
+            with *  have \<open>time (Rep_run r (Suc pm) ms) = time (Rep_run r pm ms)\<close>
+              using dilating_def dilating_fun_def by blast
             hence \<open>time (Rep_run r m ms) = time (Rep_run r pm ms)\<close> using mpm by simp
             with mpm first_time_def have \<open>\<not>(first_time r ms m (time (Rep_run r n ms) + \<delta>\<tau>))\<close>
               by (metis lessI)
