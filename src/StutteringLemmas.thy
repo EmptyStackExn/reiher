@@ -189,13 +189,19 @@ lemma ticks_image_sub:
   assumes \<open>dilating f sub r\<close>
   and     \<open>hamlet ((Rep_run r) n c)\<close>
   shows   \<open>\<exists>n\<^sub>0. f n\<^sub>0 = n\<close>
-using assms dilating_def ticks_image by metis
+proof -
+  from assms(1) have \<open>dilating_fun f r\<close> by (simp add: dilating_def)
+  from ticks_image[OF this assms(2)] show ?thesis .
+qed
 
 lemma ticks_image_sub':
   assumes \<open>dilating f sub r\<close>
   and     \<open>\<exists>c. hamlet ((Rep_run r) n c)\<close>
   shows   \<open>\<exists>n\<^sub>0. f n\<^sub>0 = n\<close>
-using assms dilating_def dilating_fun_def by metis
+proof -
+  from assms(1) have \<open>dilating_fun f r\<close> by (simp add: dilating_def)
+  with dilating_fun_def assms(2) show ?thesis by blast
+qed
 
 text \<open>Time is preserved by dilation when ticks occur.\<close>
 
@@ -464,14 +470,17 @@ corollary dilated_strict_prefix:
   shows   \<open>{i. i < f n \<and> hamlet ((Rep_run r) i c)}
           = image f {i. i < n \<and> hamlet ((Rep_run sub) i c)}\<close>
 proof -
-  from assms have \<open>dilating_fun f r\<close> unfolding dilating_def by simp
-  from dilating_fun_image_left[OF this, of \<open>0\<close> \<open>n\<close> \<open>c\<close>]
+  from assms have dil:\<open>dilating_fun f r\<close> unfolding dilating_def by simp
+  from dil have f0:\<open>f 0 = 0\<close>  using dilating_fun_def by blast
+  from dilating_fun_image_left[OF dil, of \<open>0\<close> \<open>n\<close> \<open>c\<close>]
   have \<open>{i. f 0 \<le> i \<and> i < f n \<and> hamlet ((Rep_run r) i c)}
         = image f {i. 0 \<le> i \<and> i < n \<and> hamlet ((Rep_run r) (f i) c)}\<close> .
-  also have \<open>... = image f {i. 0 \<le> i \<and> i < n \<and> hamlet ((Rep_run sub) i c)}\<close>
+  hence \<open>{i. i < f n \<and> hamlet ((Rep_run r) i c)}
+        = image f {i. i < n \<and> hamlet ((Rep_run r) (f i) c)}\<close>
+    using f0 by simp
+  also have \<open>... = image f {i. i < n \<and> hamlet ((Rep_run sub) i c)}\<close>
     using assms dilating_def by blast
-  finally show ?thesis
-    by (metis (mono_tags, lifting) Collect_cong assms empty_dilated_prefix le0 not_le_imp_less)
+  finally show ?thesis by simp
 qed
 
 text\<open>A singleton of @{typ nat} can be defined with a weaker property.\<close> 
@@ -551,8 +560,9 @@ proof
       using tick_count_strict_suc[symmetric, of \<open>r\<close>] by simp
     hence *:\<open>\<forall>n::nat. (run_tick_count r K\<^sub>2 (Suc n)) \<le> (run_tick_count r K\<^sub>1 n)\<close>
       by (simp add: tick_count_is_fun)
-    have \<open>tick_count_strict r K\<^sub>1 0 = 0\<close> unfolding tick_count_strict_def by simp
-    with 1 have \<open>tick_count r K\<^sub>2 0 = 0\<close> by (metis le_zero_eq)
+    from 1 have \<open>tick_count r K\<^sub>2 0 <= tick_count_strict r K\<^sub>1 0\<close> by simp
+    moreover have \<open>tick_count_strict r K\<^sub>1 0 = 0\<close> unfolding tick_count_strict_def by simp
+    ultimately have \<open>tick_count r K\<^sub>2 0 = 0\<close> by simp
     hence \<open>\<not>hamlet ((Rep_run r) 0 K\<^sub>2)\<close> unfolding tick_count_def by auto
     with * have \<open>r \<in> ?P'\<close> by simp
   } thus \<open>?P \<subseteq> ?P'\<close> ..
@@ -560,7 +570,7 @@ proof
     assume h:\<open>r \<in> ?P'\<close>
     hence \<open>\<forall>n::nat. (run_tick_count r K\<^sub>2 (Suc n)) \<le> (run_tick_count r K\<^sub>1 n)\<close> by simp
     hence \<open>\<forall>n::nat. (tick_count r K\<^sub>2 (Suc n)) \<le> (tick_count r K\<^sub>1 n)\<close>
-      using tick_count_is_fun[symmetric, of \<open>r\<close>] by metis
+      by (simp add: tick_count_is_fun) 
     hence \<open>\<forall>n::nat. (tick_count r K\<^sub>2 (Suc n)) \<le> (tick_count_strict r K\<^sub>1 (Suc n))\<close>
       using tick_count_strict_suc[symmetric, of \<open>r\<close> \<open>K\<^sub>1\<close>] by simp
     hence *:\<open>\<forall>n. n > 0 \<longrightarrow> (tick_count r K\<^sub>2 n) \<le> (tick_count_strict r K\<^sub>1 n)\<close>
@@ -569,9 +579,9 @@ proof
     moreover from h have \<open>\<not>hamlet ((Rep_run r) 0 K\<^sub>2)\<close> by simp
     hence \<open>tick_count r K\<^sub>2 0 = 0\<close> unfolding tick_count_def by auto
     ultimately have \<open>tick_count r K\<^sub>2 0 \<le> tick_count_strict r K\<^sub>1 0\<close> by simp
-    with * have \<open>\<forall>n. (tick_count r K\<^sub>2 n) \<le> (tick_count_strict r K\<^sub>1 n)\<close> by (metis gr0I)
+    with * have \<open>\<forall>n. (tick_count r K\<^sub>2 n) \<le> (tick_count_strict r K\<^sub>1 n)\<close> using gr0I by metis
     hence \<open>\<forall>n. (run_tick_count r K\<^sub>2 n) \<le> (run_tick_count_strictly r K\<^sub>1 n)\<close>
-      using tick_count_is_fun tick_count_strict_is_fun by metis
+      by (simp add: tick_count_is_fun tick_count_strict_is_fun)
     hence \<open>r \<in> ?P\<close> ..
   } thus \<open>?P' \<subseteq> ?P\<close> ..
 qed

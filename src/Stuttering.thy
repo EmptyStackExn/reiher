@@ -65,7 +65,7 @@ proof -
   thus ?thesis by simp
 qed
 
-theorem strictly_precedes_sub2:
+theorem strictly_precedes_sub:
   assumes \<open>sub \<lless> r\<close>
       and \<open>sub \<in> \<lbrakk>c\<^sub>1 strictly precedes c\<^sub>2\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<close>
     shows \<open>r \<in> \<lbrakk>c\<^sub>1 strictly precedes c\<^sub>2\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<close>
@@ -194,9 +194,11 @@ proof -
             hence \<open>\<nexists>pm\<^sub>0. f pm\<^sub>0 = Suc pm\<close> using \<open>\<nexists>m\<^sub>0. f m\<^sub>0 = m\<close> by simp 
             with *  have \<open>time (Rep_run r (Suc pm) ms) = time (Rep_run r pm ms)\<close>
               using dilating_def dilating_fun_def by blast
-            hence \<open>time (Rep_run r m ms) = time (Rep_run r pm ms)\<close> using mpm by simp
-            with mpm first_time_def have \<open>\<not>(first_time r ms m (time (Rep_run r n ms) + \<delta>\<tau>))\<close>
-              by (metis lessI)
+            hence \<open>time (Rep_run r pm ms) = time (Rep_run r m ms)\<close> using mpm by simp
+            moreover from mpm have \<open>pm < m\<close> by simp
+            ultimately have \<open>\<exists>m' < m. time (Rep_run r m' ms) = time (Rep_run r m ms)\<close> by blast
+            hence \<open>\<not>(first_time r ms m (time (Rep_run r n ms) + \<delta>\<tau>))\<close>
+              by (auto simp add: first_time_def)
             thus ?thesis by simp
           qed
         qed
@@ -238,14 +240,19 @@ proof -
   show ?thesis
   proof (induction n)
     case 0
-    then show ?case
-      by (metis (no_types, lifting) 1 calculation dilating_def dilating_fun_def)
+      from 1 have \<open>R (time ((Rep_run sub) 0 c\<^sub>1), time ((Rep_run sub) 0 c\<^sub>2))\<close> by simp
+      moreover from * have \<open>f 0 = 0\<close> by (simp add: dilating_def dilating_fun_def)
+      moreover from * have \<open>\<forall>c. time ((Rep_run sub) 0 c) = time ((Rep_run r) (f 0) c)\<close>
+        by (simp add: dilating_def)
+      ultimately show ?case by simp
   next
     case (Suc n)
     then show ?case
     proof (cases \<open>\<nexists>n\<^sub>0. f n\<^sub>0 = Suc n\<close>)
       case True
-        thus ?thesis by (metis Suc.IH calculation dilating_def dilating_fun_def)
+      with * have \<open>\<forall>c. time (Rep_run r (Suc n) c) = time (Rep_run r n c)\<close>
+        by (simp add: dilating_def dilating_fun_def) 
+      thus ?thesis using Suc.IH by simp
     next
       case False
       from this obtain n\<^sub>0 where n\<^sub>0prop:\<open>f n\<^sub>0 = Suc n\<close> by blast
@@ -273,13 +280,78 @@ proof -
   from assms(1) is_subrun_def obtain f where *:\<open>dilating f sub r\<close> by blast
   from assms(2) TESL_interpretation_atomic.simps(8) have
     \<open>\<forall>n. hamlet (Rep_run sub n c\<^sub>1) \<longrightarrow> (\<forall>m\<ge>n. \<not> hamlet (Rep_run sub m c\<^sub>2))\<close> by simp
-  hence \<open>\<forall>n. hamlet (Rep_run r (f n) c\<^sub>1) \<longrightarrow> (\<forall>m\<ge>n. \<not> hamlet (Rep_run r (f m) c\<^sub>2))\<close>
+  hence 1:\<open>\<forall>n. hamlet (Rep_run r (f n) c\<^sub>1) \<longrightarrow> (\<forall>m\<ge>n. \<not> hamlet (Rep_run r (f m) c\<^sub>2))\<close>
     using ticks_sub[OF *] by simp
   hence \<open>\<forall>n. hamlet (Rep_run r (f n) c\<^sub>1) \<longrightarrow> (\<forall>m\<ge> (f n). \<not> hamlet (Rep_run r m c\<^sub>2))\<close>
-    by (metis * dilating_def dilating_fun_def strict_mono_less_eq)
+  proof -
+    { fix n assume \<open>hamlet (Rep_run r (f n) c\<^sub>1)\<close>
+      with 1 have 2:\<open>\<forall> m \<ge> n. \<not> hamlet (Rep_run r (f m) c\<^sub>2)\<close> by simp
+      have \<open>\<forall> m\<ge> (f n). \<not> hamlet (Rep_run r m c\<^sub>2)\<close>
+      proof -
+        { fix m assume h:\<open>m \<ge> f n\<close>
+          have \<open>\<not> hamlet (Rep_run r m c\<^sub>2)\<close>
+          proof (cases \<open>\<exists>m\<^sub>0. f m\<^sub>0 = m\<close>)
+            case True
+              from this obtain m\<^sub>0 where fm0:\<open>f m\<^sub>0 = m\<close> by blast
+              hence \<open>m\<^sub>0 \<ge> n\<close>
+                using "*" dilating_def dilating_fun_def h strict_mono_less_eq by fastforce
+              with 2 show ?thesis using fm0 by blast
+          next
+            case False
+              thus ?thesis  using ticks_image_sub'[OF *] by blast
+          qed
+        } thus ?thesis by simp
+      qed
+    } thus ?thesis by simp
+  qed
   hence \<open>\<forall>n. hamlet (Rep_run r n c\<^sub>1) \<longrightarrow> (\<forall>m \<ge> n. \<not> hamlet (Rep_run r m c\<^sub>2))\<close>
     using ticks_imp_ticks_subk[OF *] by blast
   thus ?thesis using TESL_interpretation_atomic.simps(8) by blast
+qed
+
+lemma atomic_sub: 
+  assumes \<open>sub \<lless> r\<close>
+      and \<open>sub \<in> \<lbrakk> \<phi> \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<close>
+    shows \<open>r \<in> \<lbrakk> \<phi> \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<close>
+proof (cases \<phi>)
+  case (SporadicOn)
+    thus ?thesis using assms(2) sporadic_sub[OF assms(1)] by simp
+next
+  case (TagRelation)
+    thus ?thesis using assms(2) tagrel_sub[OF assms(1)] by simp
+next
+  case (Implies)
+    thus ?thesis using assms(2) implies_sub[OF assms(1)] by simp
+next
+  case (ImpliesNot)
+    thus ?thesis using assms(2) implies_not_sub[OF assms(1)] by simp
+next
+  case (TimeDelayedBy)
+    thus ?thesis using assms(2) time_delayed_sub[OF assms(1)] by simp
+next
+  case (WeaklyPrecedes)
+    thus ?thesis using assms(2) weakly_precedes_sub[OF assms(1)] by simp
+next
+  case (StrictlyPrecedes)
+    thus ?thesis using assms(2) strictly_precedes_sub[OF assms(1)] by simp
+next
+  case (Kills)
+    thus ?thesis using assms(2) kill_sub[OF assms(1)] by simp
+qed
+
+theorem TESL_stuttering_invariant:
+  assumes \<open>sub \<lless> r\<close>
+    shows \<open>sub \<in> \<lbrakk>\<lbrakk> S \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L \<Longrightarrow> r \<in> \<lbrakk>\<lbrakk> S \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<close>
+proof (induction S)
+  case Nil
+    thus ?case by simp
+next
+  case (Cons a s)
+    from Cons.prems have sa:\<open>sub \<in> \<lbrakk> a \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<close> and sb:\<open>sub \<in> \<lbrakk>\<lbrakk> s \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<close>
+      using TESL_interpretation_image by simp+
+    from Cons.IH[OF sb] have \<open>r \<in> \<lbrakk>\<lbrakk> s \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<close> .
+    moreover from atomic_sub[OF assms(1) sa] have \<open>r \<in> \<lbrakk> a \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<close> .
+    ultimately show ?case using  TESL_interpretation_image by simp
 qed
 
 end
