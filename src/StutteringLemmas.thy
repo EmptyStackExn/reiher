@@ -538,10 +538,25 @@ next
   finally show ?thesis using * by simp
 qed
 
+lemma cong_suc_collect:
+  assumes \<open>\<And>r K n. P r K n = P' r K n\<close>
+      and \<open>\<And>r K n. Q r K n = Q' r K n\<close>
+      and \<open>\<And>r K n. Q r K (Suc n) = P r K n\<close>
+    shows \<open>\<And>K\<^sub>1 K\<^sub>2 n. {r. P' r K\<^sub>2 n \<le> Q' r K\<^sub>1 n} = {r. Q' r K\<^sub>2 (Suc n) \<le> Q' r K\<^sub>1 n}\<close>
+  using assms by auto
+
 lemma strictly_precedes_alt_def1:
   \<open>{ \<rho>. \<forall>n::nat. (run_tick_count \<rho> K\<^sub>2 n) \<le> (run_tick_count_strictly \<rho> K\<^sub>1 n) }
  = { \<rho>. \<forall>n::nat. (run_tick_count_strictly \<rho> K\<^sub>2 (Suc n)) \<le> (run_tick_count_strictly \<rho> K\<^sub>1 n) }\<close>
-  using tick_count_is_fun tick_count_strict_suc tick_count_strict_is_fun by metis
+  using cong_suc_collect[of tick_count run_tick_count tick_count_strict run_tick_count_strictly,
+                         OF tick_count_is_fun tick_count_strict_is_fun tick_count_strict_suc] 
+  by simp
+
+lemma zero_gt_all:
+  assumes \<open>P (0::nat)\<close>
+      and \<open>\<And>n. n > 0 \<Longrightarrow> P n\<close>
+    shows \<open>P n\<close>
+  using assms neq0_conv by blast
 
 lemma strictly_precedes_alt_def2:
   \<open>{ \<rho>. \<forall>n::nat. (run_tick_count \<rho> K\<^sub>2 n) \<le> (run_tick_count_strictly \<rho> K\<^sub>1 n) }
@@ -579,7 +594,8 @@ proof
     moreover from h have \<open>\<not>hamlet ((Rep_run r) 0 K\<^sub>2)\<close> by simp
     hence \<open>tick_count r K\<^sub>2 0 = 0\<close> unfolding tick_count_def by auto
     ultimately have \<open>tick_count r K\<^sub>2 0 \<le> tick_count_strict r K\<^sub>1 0\<close> by simp
-    with * have \<open>\<forall>n. (tick_count r K\<^sub>2 n) \<le> (tick_count_strict r K\<^sub>1 n)\<close> using gr0I by metis
+    from zero_gt_all[of \<open>\<lambda>n. tick_count r K\<^sub>2 n \<le> tick_count_strict r K\<^sub>1 n\<close>, OF this ] *
+      have \<open>\<forall>n. (tick_count r K\<^sub>2 n) \<le> (tick_count_strict r K\<^sub>1 n)\<close> by simp
     hence \<open>\<forall>n. (run_tick_count r K\<^sub>2 n) \<le> (run_tick_count_strictly r K\<^sub>1 n)\<close>
       by (simp add: tick_count_is_fun tick_count_strict_is_fun)
     hence \<open>r \<in> ?P\<close> ..
@@ -640,41 +656,62 @@ proof -
   from card_Un_disjoint[OF 3 4 1] 2 show ?thesis by simp
 qed
 
+lemma card_mnm':
+  assumes \<open>m < n\<close>
+    shows \<open>card {i::nat. i < n \<and> P i} = card {i. i < m \<and> P i} + card {i. m \<le> i \<and> i < n \<and> P i}\<close>
+proof -
+  have 1:\<open>{i::nat. i < m \<and> P i} \<inter> {i. m \<le> i \<and> i < n \<and> P i} = {}\<close> by auto
+  from assms have \<open>\<forall>i::nat. i < n = (i < m) \<or> (m \<le> i \<and> i < n)\<close>  using less_trans by auto
+  hence 2:
+    \<open>{i::nat. i < n \<and> P i} = {i. i < m \<and> P i} \<union> {i. m \<le> i \<and> i < n \<and> P i}\<close> by blast
+  have 3:\<open>finite {i. i < m \<and> P i}\<close> by simp
+  have 4:\<open>finite {i. m \<le> i \<and> i < n \<and> P i}\<close> by simp
+  from card_Un_disjoint[OF 3 4 1] 2 show ?thesis by simp
+qed
+
 
 lemma nat_interval_union:
   assumes \<open>m \<le> n\<close>
     shows \<open>{i::nat. i \<le> n \<and> P i} = {i::nat. i \<le> m \<and> P i} \<union> {i::nat. m < i \<and> i \<le> n \<and> P i}\<close>
 using assms le_cases nat_less_le by auto
 
+lemma no_tick_before_suc:
+  assumes \<open>dilating f sub r\<close>
+      and \<open>(f n) < k \<and> k < (f (Suc n))\<close>
+    shows \<open>\<not>hamlet ((Rep_run r) k c)\<close>
+proof -
+  from assms(1) have smf:\<open>strict_mono f\<close> by (simp add: dilating_def dilating_fun_def)
+  { fix k assume h:\<open>f n < k \<and> k < f (Suc n) \<and> hamlet ((Rep_run r) k c)\<close>
+    hence \<open>\<exists>k\<^sub>0. f k\<^sub>0 = k\<close> using assms(1) dilating_def dilating_fun_def by blast
+    from this obtain k\<^sub>0 where \<open>f k\<^sub>0 = k\<close> by blast
+    with h have \<open>f n < f k\<^sub>0 \<and> f k\<^sub>0 < f (Suc n)\<close> by simp
+    hence False using smf not_less_eq strict_mono_less by blast
+  } thus ?thesis using assms(2) by blast
+qed
+
 lemma tick_count_fsuc:
   assumes \<open>dilating f sub r\<close>
   shows \<open>tick_count r c (f (Suc n)) = tick_count r c (f n) + card {k. k = f (Suc n) \<and> hamlet ((Rep_run r) k c)}\<close>
 proof -
-  from assms have *:\<open>\<forall>k. n < k \<and> k < (Suc n) \<longrightarrow> \<not>hamlet ((Rep_run r) k c)\<close>
-    using dilating_def dilating_fun_def by linarith
-  have 1:\<open>finite {k. k \<le> f n \<and> hamlet ((Rep_run r) k c)}\<close> by simp
-  have 2:\<open>finite {k. f n < k \<and> k \<le> f (Suc n) \<and> hamlet ((Rep_run r) k c)}\<close> by simp
-  have 3:\<open>{k. k \<le> f n \<and> hamlet ((Rep_run r) k c)} \<inter> {k. f n < k \<and> k \<le> f (Suc n) \<and> hamlet ((Rep_run r) k c)} = {}\<close>
-    using assms dilating_def dilating_fun_def by auto
-  have \<open>strict_mono f\<close> using assms dilating_def dilating_fun_def by blast
-  hence m:\<open>f n < f (Suc n)\<close> by (simp add: strict_monoD)
-  hence m':\<open>f n \<le> f (Suc n)\<close> by simp
-  have 4:\<open>{k. k \<le> f (Suc n) \<and> hamlet ((Rep_run r) k c)}
-          = {k. k \<le> f n \<and> hamlet ((Rep_run r) k c)} \<union> {k. f n < k \<and> k \<le> f (Suc n) \<and> hamlet ((Rep_run r) k c)}\<close>
-    using nat_interval_union[OF m'] . 
-  have 5:\<open>\<forall>k. (f n) < k \<and> k < f (Suc n) \<longrightarrow> \<not>hamlet ((Rep_run r) k c)\<close>
-    using * dilating_def dilating_fun_def by (metis Suc_le_eq assms leD strict_mono_less)
-  have \<open>tick_count r c (f (Suc n)) = card {k. k \<le> f (Suc n) \<and> hamlet ((Rep_run r) k c)}\<close> using tick_count_def .
-  also have \<open>... = card {k. k \<le> f n \<and> hamlet ((Rep_run r) k c)}
-                 + card {k. f n < k \<and> k \<le> f (Suc n) \<and> hamlet ((Rep_run r) k c)}\<close>
-    using card_Un_disjoint[OF 1 2 3] 4 by presburger
-  also have \<open>... = tick_count r c (f n)
-                + card {k. f n < k \<and> k \<le> f (Suc n) \<and> hamlet ((Rep_run r) k c)}\<close>
-    using tick_count_def[of \<open>r\<close> \<open>c\<close> \<open>f n\<close>] by simp
-  also have \<open>... = tick_count r c (f n)
-                  + card {k. k = f (Suc n) \<and> hamlet ((Rep_run r) k c)}\<close>
-    using 5 m by (metis order_le_less)
-  finally show ?thesis .
+  have smf:\<open>strict_mono f\<close> using assms dilating_def dilating_fun_def by blast
+  moreover have \<open>finite {k. k \<le> f n \<and> hamlet ((Rep_run r) k c)}\<close> by simp
+  moreover have *:\<open>finite {k. f n < k \<and> k \<le> f (Suc n) \<and> hamlet ((Rep_run r) k c)}\<close> by simp
+  ultimately have \<open>{k. k \<le> f (Suc n) \<and> hamlet ((Rep_run r) k c)} =
+                        {k. k \<le> f n \<and> hamlet ((Rep_run r) k c)}
+                      \<union> {k. f n < k \<and> k \<le> f (Suc n) \<and> hamlet ((Rep_run r) k c)}\<close>
+    by (simp add: nat_interval_union strict_mono_less_eq)
+  moreover have \<open>{k. k \<le> f n \<and> hamlet ((Rep_run r) k c)}
+                  \<inter> {k. f n < k \<and> k \<le> f (Suc n) \<and> hamlet ((Rep_run r) k c)} = {}\<close>
+     by auto
+  ultimately have \<open>card {k. k \<le> f (Suc n) \<and> hamlet (Rep_run r k c)} =
+                      card {k. k \<le> f n \<and> hamlet (Rep_run r k c)}
+                    + card {k. f n < k \<and> k \<le> f (Suc n) \<and> hamlet (Rep_run r k c)}\<close>
+    by (simp add: * card_Un_disjoint)
+  moreover from no_tick_before_suc[OF assms] have
+    \<open>{k. f n < k \<and> k \<le> f (Suc n) \<and> hamlet ((Rep_run r) k c)} =
+            {k. k = f (Suc n) \<and> hamlet ((Rep_run r) k c)}\<close>
+    using smf strict_mono_less by fastforce
+  ultimately show ?thesis by (simp add: tick_count_def)
 qed
 
 lemma card_sing_prop:\<open>card {i. i = n \<and> P i} = (if P n then 1 else 0)\<close>
@@ -709,7 +746,7 @@ using tick_count_f_suc_suc[OF assms] assms by (simp add: dilating_def)
 
 lemma tick_count_sub:
   assumes \<open>dilating f sub r\<close>
-  shows \<open>tick_count sub c n = tick_count r c (f n)\<close>
+    shows \<open>tick_count sub c n = tick_count r c (f n)\<close>
 proof -
   have \<open>tick_count sub c n = card {i. i \<le> n \<and> hamlet ((Rep_run sub) i c)}\<close>
     using tick_count_def[of \<open>sub\<close> \<open>c\<close> \<open>n\<close>] .
@@ -724,19 +761,22 @@ qed
 
 corollary run_tick_count_sub:
   assumes \<open>dilating f sub r\<close>
-  shows \<open>run_tick_count sub c n = run_tick_count r c (f n)\<close>
-using tick_count_sub[OF assms] tick_count_is_fun by metis
+    shows \<open>run_tick_count sub c n = run_tick_count r c (f n)\<close>
+proof -
+  have \<open>run_tick_count sub c n = tick_count sub c n\<close>
+    using tick_count_is_fun[of \<open>sub\<close> c n, symmetric] .
+  also from tick_count_sub[OF assms] have \<open>... = tick_count r c (f n)\<close> .
+  also have \<open>... = #\<^sub>\<le> r c (f n)\<close> using tick_count_is_fun[of r c \<open>f n\<close>] .
+  finally show ?thesis .
+qed
 
 lemma tick_count_strict_0:
   assumes \<open>dilating f sub r\<close>
     shows \<open>tick_count_strict r c (f 0) = 0\<close>
-by (metis (no_types, lifting) Collect_empty_eq assms card.empty empty_dilated_prefix tick_count_strict_def)
-
-lemma no_tick_before_suc:
-  assumes \<open>dilating f sub r\<close>
-      and \<open>(f n) < k \<and> k < (f (Suc n))\<close>
-    shows \<open>\<not>hamlet ((Rep_run r) k c)\<close>
-by (metis assms dilating_def dilating_fun_def not_less_eq strict_mono_less)
+proof -
+  from assms have \<open>f 0 = 0\<close> by (simp add: dilating_def dilating_fun_def)
+  thus ?thesis unfolding tick_count_strict_def by simp
+qed
 
 lemma tick_count_latest:
   assumes \<open>dilating f sub r\<close>
@@ -757,28 +797,18 @@ qed
 lemma tick_count_strict_stable:
   assumes \<open>dilating f sub r\<close>
   assumes \<open>(f n) < k \<and> k < (f (Suc n))\<close>
-    shows \<open>tick_count_strict r c k = tick_count_strict r c (f (Suc n))\<close>
+  shows \<open>tick_count_strict r c k = tick_count_strict r c (f (Suc n))\<close>
 proof -
-  have \<open>tick_count_strict r c k = card {i. i < k \<and> hamlet ((Rep_run r) i c)}\<close>
-    using tick_count_strict_def[of \<open>r\<close> \<open>c\<close> \<open>k\<close>] .
-  from assms(2) have \<open>(f n) < k\<close> by simp
-  from card_mnm[OF this] have 1:
-    \<open>card {i. i < k \<and> hamlet ((Rep_run r) i c)}
-   = card {i. i \<le> (f n) \<and> hamlet ((Rep_run r) i c)}
-   + card {i. (f n) < i \<and> i < k \<and> hamlet ((Rep_run r) i c)}\<close>
-    by simp
-  from assms(2) have \<open>k < f (Suc n)\<close> by simp
+  from assms(1) have smf:\<open>strict_mono f\<close> by (simp add: dilating_def dilating_fun_def)
+  from assms(2) have \<open>f n < k\<close> by simp
+  hence \<open>\<forall>i. k \<le> i \<longrightarrow> f n < i\<close> by simp
   with no_tick_before_suc[OF assms(1)] have
-    \<open>card {i. (f n) < i \<and> i < k \<and> hamlet ((Rep_run r) i c)} = 0\<close> by fastforce
-  with 1 have
-    \<open>card {i. i < k \<and> hamlet ((Rep_run r) i c)}
-   = card {i. i \<le> (f n) \<and> hamlet ((Rep_run r) i c)}\<close> by linarith
-  hence 
-    \<open>card {i. i < k \<and> hamlet ((Rep_run r) i c)}
-   = card {i. i < (f (Suc n)) \<and> hamlet ((Rep_run r) i c)}\<close>
-    using no_tick_before_suc[OF assms(1)] assms(2) by (metis less_trans not_le order_le_less)
-  thus ?thesis using tick_count_strict_def[symmetric, of \<open>k\<close> \<open>r\<close> \<open>c\<close>]
-                     tick_count_strict_def[symmetric, of \<open>f (Suc n)\<close> \<open>r\<close> \<open>c\<close>] by simp
+    *:\<open>\<forall>i. k \<le> i \<and> i < f (Suc n) \<longrightarrow> \<not>hamlet ((Rep_run r) i c)\<close> by blast
+  from tick_count_strict_def have \<open>tick_count_strict r c (f (Suc n)) = card {i. i < f (Suc n) \<and> hamlet ((Rep_run r) i c)}\<close> .
+  also have \<open>... = card {i. i < k \<and> hamlet ((Rep_run r) i c)} + card {i. k \<le> i \<and> i < f (Suc n) \<and> hamlet ((Rep_run r) i c)}\<close> 
+    using card_mnm' assms(2) by simp
+  also have \<open>... = card {i. i < k \<and> hamlet ((Rep_run r) i c)}\<close> using * by simp
+  finally show ?thesis by (simp add: tick_count_strict_def)
 qed
 
 lemma tick_count_strict_sub:
