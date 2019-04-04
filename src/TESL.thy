@@ -126,24 +126,35 @@ begin
 
   definition less_tag: \<open>(x::'a tag_const) < y \<longleftrightarrow> (x \<le> y) \<and> (x \<noteq> y)\<close>
 
-  instance proof
-    show \<open>\<And>x y :: 'a tag_const. (x < y) = (x \<le> y \<and> \<not> y \<le> x)\<close>
-      using less_eq_tag_const.simps less_tag by auto
-    show \<open>\<And>x  :: 'a tag_const. x \<le> x\<close>
-      by (metis (full_types) Int_less_eq order_refl tag_const.exhaust)
-    show \<open>\<And>x y z  :: 'a tag_const. x \<le> y \<Longrightarrow> y \<le> z \<Longrightarrow> x \<le> z\<close>
-      using less_eq_tag_const.simps by auto
-    show \<open>\<And>x y  :: 'a tag_const. x \<le> y \<Longrightarrow> y \<le> x \<Longrightarrow> x = y\<close>
-      using less_eq_tag_const.simps by auto
-  qed
+instance proof
+  show \<open>\<And>x y :: 'a tag_const. (x < y) = (x \<le> y \<and> \<not> y \<le> x)\<close>
+    using less_eq_tag_const.simps less_tag by auto
+next
+  { fix x::\<open>'a tag_const\<close>
+    from tag_const.exhaust obtain x\<^sub>0::'a where xx0:\<open>x = TConst x\<^sub>0\<close> by blast
+    with Int_less_eq have \<open>x \<le> x\<close> by simp
+  } thus "\<And>x::'a tag_const. x \<le> x" .
+next
+  show \<open>\<And>x y z  :: 'a tag_const. x \<le> y \<Longrightarrow> y \<le> z \<Longrightarrow> x \<le> z\<close>
+    using less_eq_tag_const.simps by auto
+next
+  show \<open>\<And>x y  :: 'a tag_const. x \<le> y \<Longrightarrow> y \<le> x \<Longrightarrow> x = y\<close>
+    using less_eq_tag_const.simps by auto
+qed
+
 end
 
 instantiation tag_const :: (linorder)linorder
 begin
-  instance proof
-    show \<open>\<And>x y. (x::'a tag_const) \<le> y \<or> y \<le> x\<close>
-      by (metis (full_types) Int_less_eq le_cases tag_const.exhaust)
-  qed
+instance proof
+  { fix x::\<open>'a tag_const\<close> and y::\<open>'a tag_const\<close>
+    from tag_const.exhaust obtain x\<^sub>0::'a where \<open>x = TConst x\<^sub>0\<close> by blast
+    moreover from tag_const.exhaust obtain y\<^sub>0::'a where \<open>y = TConst y\<^sub>0\<close> by blast
+    ultimately have \<open>x \<le> y \<or> y \<le> x\<close> using less_eq_tag_const.simps by fastforce
+  }
+  thus \<open>\<And>x y. (x::'a tag_const) \<le> y \<or> y \<le> x\<close> .
+qed
+
 end
 
 end

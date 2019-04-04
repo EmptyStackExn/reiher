@@ -324,7 +324,7 @@ In order to handle tag relations and delays, tag must be in a field.
 \ \ \isacommand{definition}\isamarkupfalse%
 \ less{\isacharunderscore}tag{\isacharcolon}\ {\isacartoucheopen}{\isacharparenleft}x{\isacharcolon}{\isacharcolon}{\isacharprime}a\ tag{\isacharunderscore}const{\isacharparenright}\ {\isacharless}\ y\ {\isasymlongleftrightarrow}\ {\isacharparenleft}x\ {\isasymle}\ y{\isacharparenright}\ {\isasymand}\ {\isacharparenleft}x\ {\isasymnoteq}\ y{\isacharparenright}{\isacartoucheclose}\isanewline
 \isanewline
-\ \ \isacommand{instance}\isamarkupfalse%
+\isacommand{instance}\isamarkupfalse%
 %
 \isadelimproof
 \ %
@@ -333,26 +333,43 @@ In order to handle tag relations and delays, tag must be in a field.
 \isatagproof
 \isacommand{proof}\isamarkupfalse%
 \isanewline
-\ \ \ \ \isacommand{show}\isamarkupfalse%
+\ \ \isacommand{show}\isamarkupfalse%
 \ {\isacartoucheopen}{\isasymAnd}x\ y\ {\isacharcolon}{\isacharcolon}\ {\isacharprime}a\ tag{\isacharunderscore}const{\isachardot}\ {\isacharparenleft}x\ {\isacharless}\ y{\isacharparenright}\ {\isacharequal}\ {\isacharparenleft}x\ {\isasymle}\ y\ {\isasymand}\ {\isasymnot}\ y\ {\isasymle}\ x{\isacharparenright}{\isacartoucheclose}\isanewline
-\ \ \ \ \ \ \isacommand{using}\isamarkupfalse%
+\ \ \ \ \isacommand{using}\isamarkupfalse%
 \ less{\isacharunderscore}eq{\isacharunderscore}tag{\isacharunderscore}const{\isachardot}simps\ less{\isacharunderscore}tag\ \isacommand{by}\isamarkupfalse%
 \ auto\isanewline
-\ \ \ \ \isacommand{show}\isamarkupfalse%
-\ {\isacartoucheopen}{\isasymAnd}x\ \ {\isacharcolon}{\isacharcolon}\ {\isacharprime}a\ tag{\isacharunderscore}const{\isachardot}\ x\ {\isasymle}\ x{\isacartoucheclose}\isanewline
-\ \ \ \ \ \ \isacommand{by}\isamarkupfalse%
-\ {\isacharparenleft}metis\ {\isacharparenleft}full{\isacharunderscore}types{\isacharparenright}\ Int{\isacharunderscore}less{\isacharunderscore}eq\ order{\isacharunderscore}refl\ tag{\isacharunderscore}const{\isachardot}exhaust{\isacharparenright}\isanewline
-\ \ \ \ \isacommand{show}\isamarkupfalse%
+\isacommand{next}\isamarkupfalse%
+\isanewline
+\ \ \isacommand{{\isacharbraceleft}}\isamarkupfalse%
+\ \isacommand{fix}\isamarkupfalse%
+\ x{\isacharcolon}{\isacharcolon}{\isacartoucheopen}{\isacharprime}a\ tag{\isacharunderscore}const{\isacartoucheclose}\isanewline
+\ \ \ \ \isacommand{from}\isamarkupfalse%
+\ tag{\isacharunderscore}const{\isachardot}exhaust\ \isacommand{obtain}\isamarkupfalse%
+\ x\isactrlsub {\isadigit{0}}{\isacharcolon}{\isacharcolon}{\isacharprime}a\ \isakeyword{where}\ xx{\isadigit{0}}{\isacharcolon}{\isacartoucheopen}x\ {\isacharequal}\ TConst\ x\isactrlsub {\isadigit{0}}{\isacartoucheclose}\ \isacommand{by}\isamarkupfalse%
+\ blast\isanewline
+\ \ \ \ \isacommand{with}\isamarkupfalse%
+\ Int{\isacharunderscore}less{\isacharunderscore}eq\ \isacommand{have}\isamarkupfalse%
+\ {\isacartoucheopen}x\ {\isasymle}\ x{\isacartoucheclose}\ \isacommand{by}\isamarkupfalse%
+\ simp\isanewline
+\ \ \isacommand{{\isacharbraceright}}\isamarkupfalse%
+\ \isacommand{thus}\isamarkupfalse%
+\ {\isachardoublequoteopen}{\isasymAnd}x{\isacharcolon}{\isacharcolon}{\isacharprime}a\ tag{\isacharunderscore}const{\isachardot}\ x\ {\isasymle}\ x{\isachardoublequoteclose}\ \isacommand{{\isachardot}}\isamarkupfalse%
+\isanewline
+\isacommand{next}\isamarkupfalse%
+\isanewline
+\ \ \isacommand{show}\isamarkupfalse%
 \ {\isacartoucheopen}{\isasymAnd}x\ y\ z\ \ {\isacharcolon}{\isacharcolon}\ {\isacharprime}a\ tag{\isacharunderscore}const{\isachardot}\ x\ {\isasymle}\ y\ {\isasymLongrightarrow}\ y\ {\isasymle}\ z\ {\isasymLongrightarrow}\ x\ {\isasymle}\ z{\isacartoucheclose}\isanewline
-\ \ \ \ \ \ \isacommand{using}\isamarkupfalse%
+\ \ \ \ \isacommand{using}\isamarkupfalse%
 \ less{\isacharunderscore}eq{\isacharunderscore}tag{\isacharunderscore}const{\isachardot}simps\ \isacommand{by}\isamarkupfalse%
 \ auto\isanewline
-\ \ \ \ \isacommand{show}\isamarkupfalse%
+\isacommand{next}\isamarkupfalse%
+\isanewline
+\ \ \isacommand{show}\isamarkupfalse%
 \ {\isacartoucheopen}{\isasymAnd}x\ y\ \ {\isacharcolon}{\isacharcolon}\ {\isacharprime}a\ tag{\isacharunderscore}const{\isachardot}\ x\ {\isasymle}\ y\ {\isasymLongrightarrow}\ y\ {\isasymle}\ x\ {\isasymLongrightarrow}\ x\ {\isacharequal}\ y{\isacartoucheclose}\isanewline
-\ \ \ \ \ \ \isacommand{using}\isamarkupfalse%
+\ \ \ \ \isacommand{using}\isamarkupfalse%
 \ less{\isacharunderscore}eq{\isacharunderscore}tag{\isacharunderscore}const{\isachardot}simps\ \isacommand{by}\isamarkupfalse%
 \ auto\isanewline
-\ \ \isacommand{qed}\isamarkupfalse%
+\isacommand{qed}\isamarkupfalse%
 %
 \endisatagproof
 {\isafoldproof}%
@@ -360,6 +377,7 @@ In order to handle tag relations and delays, tag must be in a field.
 \isadelimproof
 %
 \endisadelimproof
+\isanewline
 \isanewline
 \isacommand{end}\isamarkupfalse%
 \isanewline
@@ -367,7 +385,7 @@ In order to handle tag relations and delays, tag must be in a field.
 \isacommand{instantiation}\isamarkupfalse%
 \ tag{\isacharunderscore}const\ {\isacharcolon}{\isacharcolon}\ {\isacharparenleft}linorder{\isacharparenright}linorder\isanewline
 \isakeyword{begin}\isanewline
-\ \ \isacommand{instance}\isamarkupfalse%
+\isacommand{instance}\isamarkupfalse%
 %
 \isadelimproof
 \ %
@@ -376,11 +394,29 @@ In order to handle tag relations and delays, tag must be in a field.
 \isatagproof
 \isacommand{proof}\isamarkupfalse%
 \isanewline
-\ \ \ \ \isacommand{show}\isamarkupfalse%
-\ {\isacartoucheopen}{\isasymAnd}x\ y{\isachardot}\ {\isacharparenleft}x{\isacharcolon}{\isacharcolon}{\isacharprime}a\ tag{\isacharunderscore}const{\isacharparenright}\ {\isasymle}\ y\ {\isasymor}\ y\ {\isasymle}\ x{\isacartoucheclose}\isanewline
-\ \ \ \ \ \ \isacommand{by}\isamarkupfalse%
-\ {\isacharparenleft}metis\ {\isacharparenleft}full{\isacharunderscore}types{\isacharparenright}\ Int{\isacharunderscore}less{\isacharunderscore}eq\ le{\isacharunderscore}cases\ tag{\isacharunderscore}const{\isachardot}exhaust{\isacharparenright}\isanewline
-\ \ \isacommand{qed}\isamarkupfalse%
+\ \ \isacommand{{\isacharbraceleft}}\isamarkupfalse%
+\ \isacommand{fix}\isamarkupfalse%
+\ x{\isacharcolon}{\isacharcolon}{\isacartoucheopen}{\isacharprime}a\ tag{\isacharunderscore}const{\isacartoucheclose}\ \isakeyword{and}\ y{\isacharcolon}{\isacharcolon}{\isacartoucheopen}{\isacharprime}a\ tag{\isacharunderscore}const{\isacartoucheclose}\isanewline
+\ \ \ \ \isacommand{from}\isamarkupfalse%
+\ tag{\isacharunderscore}const{\isachardot}exhaust\ \isacommand{obtain}\isamarkupfalse%
+\ x\isactrlsub {\isadigit{0}}{\isacharcolon}{\isacharcolon}{\isacharprime}a\ \isakeyword{where}\ {\isacartoucheopen}x\ {\isacharequal}\ TConst\ x\isactrlsub {\isadigit{0}}{\isacartoucheclose}\ \isacommand{by}\isamarkupfalse%
+\ blast\isanewline
+\ \ \ \ \isacommand{moreover}\isamarkupfalse%
+\ \isacommand{from}\isamarkupfalse%
+\ tag{\isacharunderscore}const{\isachardot}exhaust\ \isacommand{obtain}\isamarkupfalse%
+\ y\isactrlsub {\isadigit{0}}{\isacharcolon}{\isacharcolon}{\isacharprime}a\ \isakeyword{where}\ {\isacartoucheopen}y\ {\isacharequal}\ TConst\ y\isactrlsub {\isadigit{0}}{\isacartoucheclose}\ \isacommand{by}\isamarkupfalse%
+\ blast\isanewline
+\ \ \ \ \isacommand{ultimately}\isamarkupfalse%
+\ \isacommand{have}\isamarkupfalse%
+\ {\isacartoucheopen}x\ {\isasymle}\ y\ {\isasymor}\ y\ {\isasymle}\ x{\isacartoucheclose}\ \isacommand{using}\isamarkupfalse%
+\ less{\isacharunderscore}eq{\isacharunderscore}tag{\isacharunderscore}const{\isachardot}simps\ \isacommand{by}\isamarkupfalse%
+\ fastforce\isanewline
+\ \ \isacommand{{\isacharbraceright}}\isamarkupfalse%
+\isanewline
+\ \ \isacommand{thus}\isamarkupfalse%
+\ {\isacartoucheopen}{\isasymAnd}x\ y{\isachardot}\ {\isacharparenleft}x{\isacharcolon}{\isacharcolon}{\isacharprime}a\ tag{\isacharunderscore}const{\isacharparenright}\ {\isasymle}\ y\ {\isasymor}\ y\ {\isasymle}\ x{\isacartoucheclose}\ \isacommand{{\isachardot}}\isamarkupfalse%
+\isanewline
+\isacommand{qed}\isamarkupfalse%
 %
 \endisatagproof
 {\isafoldproof}%
@@ -388,6 +424,7 @@ In order to handle tag relations and delays, tag must be in a field.
 \isadelimproof
 %
 \endisadelimproof
+\isanewline
 \isanewline
 \isacommand{end}\isamarkupfalse%
 \isanewline
@@ -573,35 +610,72 @@ In order to handle tag relations and delays, tag must be in a field.
 %:%342=132%:%
 %:%343=133%:%
 %:%344=133%:%
-%:%345=134%:%
+%:%345=133%:%
 %:%346=134%:%
-%:%347=135%:%
-%:%348=135%:%
-%:%349=135%:%
-%:%350=136%:%
-%:%351=136%:%
-%:%352=137%:%
-%:%353=137%:%
-%:%354=137%:%
-%:%355=138%:%
-%:%363=138%:%
+%:%347=134%:%
+%:%348=134%:%
+%:%349=134%:%
+%:%350=135%:%
+%:%351=135%:%
+%:%352=135%:%
+%:%353=135%:%
+%:%354=136%:%
+%:%355=136%:%
+%:%356=136%:%
+%:%357=136%:%
+%:%358=137%:%
+%:%359=137%:%
+%:%360=138%:%
+%:%361=138%:%
+%:%362=139%:%
+%:%363=139%:%
 %:%364=139%:%
-%:%365=139%:%
+%:%365=140%:%
 %:%366=140%:%
 %:%367=141%:%
 %:%368=141%:%
 %:%369=142%:%
-%:%370=143%:%
-%:%373=143%:%
-%:%377=143%:%
-%:%378=143%:%
-%:%379=144%:%
-%:%380=144%:%
-%:%381=145%:%
+%:%370=142%:%
+%:%371=142%:%
+%:%372=143%:%
+%:%380=143%:%
+%:%381=144%:%
 %:%382=145%:%
-%:%383=146%:%
-%:%391=146%:%
-%:%392=147%:%
-%:%393=147%:%
-%:%396=148%:%
-%:%401=149%:%
+%:%383=145%:%
+%:%384=146%:%
+%:%385=147%:%
+%:%386=147%:%
+%:%387=148%:%
+%:%388=149%:%
+%:%391=149%:%
+%:%395=149%:%
+%:%396=149%:%
+%:%397=150%:%
+%:%398=150%:%
+%:%399=150%:%
+%:%400=151%:%
+%:%401=151%:%
+%:%402=151%:%
+%:%403=151%:%
+%:%404=152%:%
+%:%405=152%:%
+%:%406=152%:%
+%:%407=152%:%
+%:%408=152%:%
+%:%409=153%:%
+%:%410=153%:%
+%:%411=153%:%
+%:%412=153%:%
+%:%413=153%:%
+%:%414=154%:%
+%:%415=154%:%
+%:%416=155%:%
+%:%417=155%:%
+%:%418=155%:%
+%:%419=156%:%
+%:%427=156%:%
+%:%428=157%:%
+%:%429=158%:%
+%:%430=158%:%
+%:%433=159%:%
+%:%438=160%:%

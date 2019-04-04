@@ -865,8 +865,9 @@ next
     case False
     from Suc.IH[OF this] obtain n\<^sub>p
       where \<open>f n\<^sub>p < n \<and> (\<forall>k. f n\<^sub>p < k \<and> k \<le> n \<longrightarrow> (\<nexists>k\<^sub>0. f k\<^sub>0 = k))\<close> by blast
+    hence \<open>f n\<^sub>p < Suc n \<and> (\<forall>k. f n\<^sub>p < k \<and> k \<le> n \<longrightarrow> (\<nexists>k\<^sub>0. f k\<^sub>0 = k))\<close> by simp
     with Suc(2) have \<open>f n\<^sub>p < (Suc n) \<and> (\<forall>k. f n\<^sub>p < k \<and> k \<le> (Suc n) \<longrightarrow> (\<nexists>k\<^sub>0. f k\<^sub>0 = k))\<close>
-      by (metis le_SucE less_Suc_eq)
+      using le_Suc_eq by auto
     thus ?thesis by blast
   qed
 qed
@@ -875,7 +876,19 @@ lemma strict_mono_suc:
   assumes \<open>strict_mono f\<close>
       and \<open>f sn = Suc (f n)\<close>
     shows \<open>sn = Suc n\<close>
-by (metis Suc_lessI assms lessI not_less_eq strict_mono_def strict_mono_less)
+proof -
+  from assms(2) have \<open>f sn > f n\<close> by simp
+  with strict_mono_less[OF assms(1)] have \<open>sn > n\<close> by simp
+  moreover have \<open>sn \<le> Suc n\<close>
+  proof -
+    { assume \<open>sn > Suc n\<close>
+      from this obtain i where \<open>n < i \<and> i < sn\<close> by blast
+      hence \<open>f n < f i \<and> f i < f sn\<close> using assms(1) by (simp add: strict_mono_def)
+      with assms(2) have False by simp
+    } thus ?thesis using not_less by blast
+  qed
+  ultimately show ?thesis by (simp add: Suc_leI)
+qed
 
 lemma next_non_stuttering:
   assumes \<open>dilating f sub r\<close>
@@ -884,12 +897,19 @@ lemma next_non_stuttering:
     shows \<open>sn\<^sub>0 = Suc n\<^sub>p\<close>
 proof -
   from assms(1) have smf:\<open>strict_mono f\<close> by (simp add: dilating_def dilating_fun_def)
+  from assms(2) have *:\<open>\<forall>k. f n\<^sub>p < k \<and> k < Suc n \<longrightarrow> (\<nexists>k\<^sub>0. f k\<^sub>0 = k)\<close> by simp
   from assms(2) have \<open>f n\<^sub>p < n\<close> by simp
-  with smf assms(3) have *:\<open>sn\<^sub>0 > n\<^sub>p\<close> using strict_mono_less by fastforce
-  from assms(2) have \<open>f (Suc n\<^sub>p) > n\<close> by (metis lessI not_le_imp_less smf strict_mono_less)
-  hence \<open>Suc n \<le> f (Suc n\<^sub>p)\<close> by simp
+  with smf assms(3) have **:\<open>sn\<^sub>0 > n\<^sub>p\<close> using strict_mono_less by fastforce
+  have \<open>Suc n \<le> f (Suc n\<^sub>p)\<close>
+  proof -
+    { assume h:\<open>Suc n > f (Suc n\<^sub>p)\<close>
+      hence \<open>Suc n\<^sub>p < sn\<^sub>0\<close> using ** Suc_lessI assms(3) by fastforce
+      hence \<open>\<exists>k. k > n\<^sub>p \<and> f k < Suc n\<close> using h by blast
+      with * have False using smf strict_mono_less by blast
+    } thus ?thesis using not_less by blast
+  qed
   hence \<open>sn\<^sub>0 \<le> Suc n\<^sub>p\<close> using assms(3) smf using strict_mono_less_eq by fastforce
-  with * show ?thesis by simp
+  with ** show ?thesis by simp
 qed
 
 lemma dil_tick_count:
@@ -976,17 +996,23 @@ proof
     proof (cases \<open>\<exists>m\<^sub>0. f m\<^sub>0 = m\<close>)
       case True
         from this obtain m\<^sub>0 where mm0:\<open>m = f m\<^sub>0\<close> by blast
-        with hyp have m0n:\<open>m\<^sub>0 < n\<close> using assms(1) by (simp add: dilating_def dilating_fun_def strict_mono_less)
+        with hyp have m0n:\<open>m\<^sub>0 < n\<close> using assms(1)
+          by (simp add: dilating_def dilating_fun_def strict_mono_less)
         hence \<open>time ((Rep_run sub) m\<^sub>0 c) < t\<close> using * by blast
         thus ?thesis by (simp add: mm0 m0n **)
     next
       case False
-        hence \<open>\<exists>m\<^sub>p. f m\<^sub>p < m \<and> (\<forall>k. f m\<^sub>p < k \<and> k \<le> m \<longrightarrow> (\<nexists>k\<^sub>0. f k\<^sub>0 = k))\<close> using greatest_prev_image[OF assms] by simp
-        from this obtain m\<^sub>p where mp:\<open>f m\<^sub>p < m \<and> (\<forall>k. f m\<^sub>p < k \<and> k \<le> m \<longrightarrow> (\<nexists>k\<^sub>0. f k\<^sub>0 = k))\<close> by blast
-        hence \<open>time ((Rep_run r) m c) = time ((Rep_run sub) m\<^sub>p c)\<close>  using time_stuttering[OF assms] by blast
-        moreover from mp have \<open>time ((Rep_run sub) m\<^sub>p c) < t\<close> using *
-          by (meson assms dilating_def dilating_fun_def hyp less_trans strict_mono_less)
-        ultimately show ?thesis by simp
+        hence \<open>\<exists>m\<^sub>p. f m\<^sub>p < m \<and> (\<forall>k. f m\<^sub>p < k \<and> k \<le> m \<longrightarrow> (\<nexists>k\<^sub>0. f k\<^sub>0 = k))\<close>
+          using greatest_prev_image[OF assms] by simp
+        from this obtain m\<^sub>p where mp:\<open>f m\<^sub>p < m \<and> (\<forall>k. f m\<^sub>p < k \<and> k \<le> m \<longrightarrow> (\<nexists>k\<^sub>0. f k\<^sub>0 = k))\<close>
+          by blast
+        hence \<open>time ((Rep_run r) m c) = time ((Rep_run sub) m\<^sub>p c)\<close>
+          using time_stuttering[OF assms] by blast
+        also from hyp mp have \<open>f m\<^sub>p < f n\<close> by linarith
+        hence \<open>m\<^sub>p < n\<close> using assms
+          by (simp add:dilating_def dilating_fun_def strict_mono_less)
+        hence \<open>time ((Rep_run sub) m\<^sub>p c) < t\<close> using * by simp
+        finally show ?thesis by simp
       qed
     } thus ?thesis by simp
   qed
@@ -1022,8 +1048,8 @@ proof -
                 and fxge:\<open>\<forall>x. f x \<ge> x\<close>
     by (auto simp add: dilating_def dilating_fun_def)
   have finite_prefix:\<open>finite {i. f i \<le> n}\<close> by (simp add: finite_less_ub fxge)
-  from assms(1) have \<open>{i. f i \<le> n} \<noteq> {}\<close>
-    by (metis dilating_def dilating_fun_def empty_iff le0 mem_Collect_eq)
+  from assms(1) have \<open>f 0 \<le> n\<close> by (simp add: dilating_def dilating_fun_def)
+  hence \<open>{i. f i \<le> n} \<noteq> {}\<close> by blast
   from assms(3) fxge have \<open>f n\<^sub>0 < n\<close> by linarith
   from assms(2) have \<open>\<forall>x > n\<^sub>0. f x > n\<close> using Max.coboundedI[OF finite_prefix]
     using not_le by auto
@@ -1036,34 +1062,27 @@ lemma contracting_inverse:
 proof -
   from assms have smf:\<open>strict_mono f\<close>
     and no_img_tick:\<open>\<forall>k. (\<nexists>k\<^sub>0. f k\<^sub>0 = k) \<longrightarrow> (\<forall>c. \<not>(hamlet ((Rep_run r) k c)))\<close>
-    and no_img_time:\<open>\<And>n. (\<nexists>n\<^sub>0. f n\<^sub>0 = (Suc n)) \<longrightarrow> (\<forall>c. time ((Rep_run r) (Suc n) c) = time ((Rep_run r) n c))\<close>
+    and no_img_time:\<open>\<And>n. (\<nexists>n\<^sub>0. f n\<^sub>0 = (Suc n))
+                          \<longrightarrow> (\<forall>c. time ((Rep_run r) (Suc n) c) = time ((Rep_run r) n c))\<close>
+    and fxge:\<open>\<forall>x. f x \<ge> x\<close> and f0n:\<open>\<And>n. f 0 \<le> n\<close> and f0:\<open>f 0 = 0\<close>
     by (auto simp add: dilating_def dilating_fun_def)
-  have finite_prefix:\<open>\<And>n. finite {i. f i \<le> n}\<close>
-    by (metis assms dilating_def dilating_fun_def finite_less_ub)
-  have prefix_not_empty:\<open>\<And>n. {i. f i \<le> n} \<noteq> {}\<close>
-    by (metis assms dilating_def dilating_fun_def empty_iff le0 mem_Collect_eq)
-                
+  have finite_prefix:\<open>\<And>n. finite {i. f i \<le> n}\<close> by (auto simp add: finite_less_ub fxge)
+  have prefix_not_empty:\<open>\<And>n. {i. f i \<le> n} \<noteq> {}\<close> using f0n by blast                
 
   have 1:\<open>mono (dil_inverse f)\<close>
   proof -
   { fix x::\<open>nat\<close> and y::\<open>nat\<close> assume hyp:\<open>x \<le> y\<close>
-    from smf have finite:\<open>finite {i. f i \<le> y}\<close>
-      by (metis (full_types) assms dilating_def dilating_fun_def finite_less_ub)
-    from assms have "f 0 = 0" by (simp add: dilating_def dilating_fun_def)
-    hence notempty:\<open>{i. f i \<le> x} \<noteq> {}\<close> by (metis empty_Collect_eq le0)
     hence inc:\<open>{i. f i \<le> x} \<subseteq> {i. f i \<le> y}\<close>
       by (simp add: hyp Collect_mono le_trans)
-    from Max_mono[OF inc notempty finite] have "(dil_inverse f) x \<le> (dil_inverse f) y"
-      unfolding dil_inverse_def .
+    from Max_mono[OF inc prefix_not_empty finite_prefix]
+      have "(dil_inverse f) x \<le> (dil_inverse f) y" unfolding dil_inverse_def .
   } thus ?thesis unfolding mono_def by simp
   qed
 
-  from assms have f0:"f 0 = 0" by (simp add: dilating_def dilating_fun_def)
-  from first_dilated_instant[OF smf this] have 2:\<open>(dil_inverse f) 0 = 0\<close>
+  from first_dilated_instant[OF smf f0] have 2:\<open>(dil_inverse f) 0 = 0\<close>
     unfolding dil_inverse_def .
 
-  from assms(1) dilating_def dilating_fun_def have fge:\<open>\<forall>n. f n \<ge> n\<close> by blast
-  hence \<open>\<forall>n i. f i \<le> n \<longrightarrow> i \<le> n\<close> using le_trans by blast
+  from fxge have \<open>\<forall>n i. f i \<le> n \<longrightarrow> i \<le> n\<close> using le_trans by blast
   hence 3:\<open>\<forall>n. (dil_inverse f) n \<le> n\<close> using Max_in[OF finite_prefix prefix_not_empty] 
     unfolding dil_inverse_def by blast
 
@@ -1084,7 +1103,7 @@ proof -
       have \<open>time ((Rep_run r) k c) = time ((Rep_run sub) ((dil_inverse f) n) c)\<close>
       proof (cases \<open>f ((dil_inverse f) n) = k\<close>)
         case True
-          thus ?thesis by (metis assms dilating_def)
+          thus ?thesis using assms dilating_def by metis
       next
         case False
           with h have \<open>f (Max {i. f i \<le> n}) < k \<and> k \<le> n\<close> by (simp add: dil_inverse_def)
