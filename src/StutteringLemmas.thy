@@ -120,10 +120,10 @@ next
   } thus \<open>image f ?SET \<subseteq> ?IMG\<close> ..
 qed
 
-text {*
+text \<open>
   On any clock, the number of ticks in an interval is preserved
   by a dilating function.
-*}
+\<close>
 lemma ticks_as_often_strict:
   assumes \<open>dilating_fun f r\<close>
   shows   \<open>card {p. n < p \<and> p < m \<and> hamlet ((Rep_run r) (f p) c)}
@@ -181,10 +181,10 @@ lemma dilating_injects:
   shows   \<open>inj_on f A\<close>
 using assms by (simp add: dilating_def dilating_fun_def strict_mono_imp_inj_on)
 
-text {*
+text \<open>
   If there is a tick at instant n in a dilated run, n is necessarily the image
   of some instant in the subrun.
-*}
+\<close>
 lemma ticks_image_sub:
   assumes \<open>dilating f sub r\<close>
   and     \<open>hamlet ((Rep_run r) n c)\<close>
@@ -235,10 +235,10 @@ definition opt_lift::\<open>('a \<Rightarrow> 'a) \<Rightarrow> ('a option \<Rig
 where
   \<open>opt_lift f \<equiv> \<lambda>x. case x of None \<Rightarrow> None | Some y \<Rightarrow> Some (f y)\<close>
 
-text {*
+text \<open>
   The set of instants when a clock ticks in a dilated run is the image by the dilation function
   of the set of instants when it ticks in the subrun.
-*}
+\<close>
 lemma tick_set_sub:
   assumes \<open>dilating f sub r\<close>
   shows   \<open>{k. hamlet ((Rep_run r) k c)} = image f {k. hamlet ((Rep_run sub) k c)}\<close>
@@ -259,26 +259,26 @@ next
   thus \<open>image f ?S \<subseteq> ?R\<close> by blast
 qed
 
-text {*
+text \<open>
   Strictly monotonous functions preserve the least element.
-*}
+\<close>
 lemma Least_strict_mono:
   assumes \<open>strict_mono f\<close>
   and     \<open>\<exists>x \<in> S. \<forall>y \<in> S. x \<le> y\<close>
   shows   \<open>(LEAST y. y \<in> f ` S) = f (LEAST x. x \<in> S)\<close>
 using Least_mono[OF strict_mono_mono, OF assms] .
 
-text {*
+text \<open>
   A non empty set of @{typ nat}s has a least element.
-*}
+\<close>
 lemma Least_nat_ex:
   \<open>(n::nat) \<in> S \<Longrightarrow> \<exists>x \<in> S. (\<forall>y \<in> S. x \<le> y)\<close>
 by (induction n rule: nat_less_induct, insert not_le_imp_less, blast)
 
-text {*
+text \<open>  
   The first instant when a clock ticks in a dilated run is the image by the dilation
   function of the first instant when it ticks in the subrun.
-*}
+\<close>
 lemma Least_sub:
   assumes \<open>dilating f sub r\<close>
   and     \<open>\<exists>k::nat. hamlet ((Rep_run sub) k c)\<close>
@@ -294,9 +294,9 @@ proof -
   with tick_set_sub[OF assms(1), of \<open>c\<close>] show ?thesis by auto
 qed
 
-text {*
+text \<open>
   If a clock ticks in a run, it ticks in the subrun.
-*}
+\<close>
 lemma ticks_imp_ticks_sub:
   assumes \<open>dilating f sub r\<close>
   and     \<open>\<exists>k. hamlet ((Rep_run r) k c)\<close>
@@ -306,9 +306,9 @@ proof -
   with ticks_image_sub[OF assms(1)] ticks_sub[OF assms(1)] show ?thesis by blast
 qed
 
-text {*
+text \<open>
   Stronger version: it ticks in the subrun and we know when.
-*}
+\<close>
 lemma ticks_imp_ticks_subk:
   assumes \<open>dilating f sub r\<close>
   and     \<open>hamlet ((Rep_run r) k c)\<close>
@@ -320,9 +320,9 @@ proof -
   ultimately show ?thesis by blast
 qed
 
-text {*
+text \<open>
   A dilating function preserves the tick count on an interval for any clock.
-*}
+\<close>
 lemma dilated_ticks_strict:
   assumes \<open>dilating f sub r\<close>
   shows   \<open>{i. f m < i \<and> i < f n \<and> hamlet ((Rep_run r) i c)}
@@ -987,8 +987,10 @@ proof
   with before_first_time[OF this]
     have *:\<open>time ((Rep_run sub) n c) = t \<and> (\<forall>m < n. time((Rep_run sub) m c) < t)\<close>
       by (simp add: first_time_def)
-  hence **:\<open>time ((Rep_run r) (f n) c) = t \<and> (\<forall>m < n. time((Rep_run r) (f m) c) < t)\<close>
-    using assms(1) dilating_def by metis
+  moreover have \<open>\<forall>n c. time (Rep_run sub n c) = time (Rep_run r (f n) c)\<close>
+      using assms(1) by (simp add: dilating_def)
+  ultimately have **:\<open>time ((Rep_run r) (f n) c) = t \<and> (\<forall>m < n. time((Rep_run r) (f m) c) < t)\<close>
+    by simp
   have \<open>\<forall>m < f n. time ((Rep_run r) m c) < t\<close>
   proof -
   { fix m assume hyp:\<open>m < f n\<close>
@@ -1103,7 +1105,9 @@ proof -
       have \<open>time ((Rep_run r) k c) = time ((Rep_run sub) ((dil_inverse f) n) c)\<close>
       proof (cases \<open>f ((dil_inverse f) n) = k\<close>)
         case True
-          thus ?thesis using assms dilating_def by metis
+          moreover have \<open>\<forall>n c. time (Rep_run sub n c) = time (Rep_run r (f n) c)\<close>
+            using assms by (simp add: dilating_def)
+          ultimately show ?thesis by simp
       next
         case False
           with h have \<open>f (Max {i. f i \<le> n}) < k \<and> k \<le> n\<close> by (simp add: dil_inverse_def)

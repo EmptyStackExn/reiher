@@ -80,7 +80,11 @@ lemma TESL_interp_unfold_stepwise_kills:
 theorem TESL_interp_unfold_stepwise_positive_atoms:
   assumes \<open>positive_atom \<phi>\<close>
   shows \<open>\<lbrakk> \<phi>::'\<tau>::linordered_field TESL_atomic \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<Union> {Y. \<exists>n::nat. Y = \<lbrakk> \<phi> \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup>}\<close>
-  by (metis TESL_interp_unfold_stepwise_sporadicon assms positive_atom.elims(2))
+proof -
+  from positive_atom.elims(2)[OF assms]
+    obtain u v w where \<open>\<phi> = (u sporadic v on w)\<close> by blast
+  with TESL_interp_unfold_stepwise_sporadicon show ?thesis by simp
+qed
 
 theorem TESL_interp_unfold_stepwise_negative_atoms:
   assumes \<open>\<not> positive_atom \<phi>\<close>
@@ -114,17 +118,19 @@ next
 qed
 
 lemma forall_nat_expansion:
-  \<open>(\<forall>n\<^sub>1 \<ge> (n\<^sub>0::nat). P n\<^sub>1) = (P n\<^sub>0 \<and> (\<forall>n\<^sub>1 \<ge> Suc n\<^sub>0. P n\<^sub>1))\<close>
-by (metis Suc_le_eq le_less)
+  \<open>(\<forall>n \<ge> (n\<^sub>0::nat). P n) = (P n\<^sub>0 \<and> (\<forall>n \<ge> Suc n\<^sub>0. P n))\<close>
+proof -
+  have \<open>(\<forall>n \<ge> (n\<^sub>0::nat). P n) = (\<forall>n. (n = n\<^sub>0 \<or> n > n\<^sub>0) \<longrightarrow> P n)\<close> using le_less by blast
+  also have \<open>... = (P n\<^sub>0 \<and> (\<forall>n > n\<^sub>0. P n))\<close> by blast
+  finally show ?thesis using Suc_le_eq by simp
+qed
 
 lemma exists_nat_expansion:
-  \<open>(\<exists>n\<^sub>1 \<ge> (n\<^sub>0::nat). P n\<^sub>1) = (P n\<^sub>0 \<or> (\<exists>n\<^sub>1 \<ge> Suc n\<^sub>0. P n\<^sub>1))\<close>
-proof (cases \<open>P n\<^sub>0\<close>)
-  case True
-  thus ?thesis by auto
-next
-  case False
-  thus ?thesis by (metis Suc_le_eq le_less)
+  \<open>(\<exists>n \<ge> (n\<^sub>0::nat). P n) = (P n\<^sub>0 \<or> (\<exists>n \<ge> Suc n\<^sub>0. P n))\<close>
+proof -
+  have \<open>(\<exists>n \<ge> (n\<^sub>0::nat). P n) = (\<exists>n. (n = n\<^sub>0 \<or> n > n\<^sub>0) \<and> P n)\<close> using le_less by blast
+  also have "... = (\<exists>n. (P n\<^sub>0) \<or> (n > n\<^sub>0 \<and> P n))" by blast
+  finally show ?thesis using Suc_le_eq by simp
 qed
 
 section \<open>Coinduction Unfolding Properties\<close>
@@ -238,27 +244,27 @@ lemma TESL_interp_stepwise_weakly_precedes_coind_unfold:
   shows \<open>\<lbrakk> K\<^sub>1 weakly precedes K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> =
     \<lbrakk> (\<lceil>#\<^sup>\<le> K\<^sub>2 n, #\<^sup>\<le> K\<^sub>1 n\<rceil> \<in> (\<lambda>(x,y). x\<le>y)) \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m
     \<inter> \<lbrakk> K\<^sub>1 weakly precedes K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>\<close>
-  proof -
-    have \<open>{ \<rho>. \<forall>p\<ge>n. (run_tick_count \<rho> K\<^sub>2 p) \<le> (run_tick_count \<rho> K\<^sub>1 p) }
-           = { \<rho>. (run_tick_count \<rho> K\<^sub>2 n) \<le> (run_tick_count \<rho> K\<^sub>1 n) }
-           \<inter> { \<rho>. \<forall>p\<ge>Suc n. (run_tick_count \<rho> K\<^sub>2 p) \<le> (run_tick_count \<rho> K\<^sub>1 p) }\<close>
-      using nat_set_suc[of \<open>n\<close> \<open>\<lambda>\<rho> n. (run_tick_count \<rho> K\<^sub>2 n) \<le> (run_tick_count \<rho> K\<^sub>1 n)\<close>]
-      by simp
-    then show ?thesis by auto
-  qed
+proof -
+  have \<open>{ \<rho>. \<forall>p\<ge>n. (run_tick_count \<rho> K\<^sub>2 p) \<le> (run_tick_count \<rho> K\<^sub>1 p) }
+         = { \<rho>. (run_tick_count \<rho> K\<^sub>2 n) \<le> (run_tick_count \<rho> K\<^sub>1 n) }
+         \<inter> { \<rho>. \<forall>p\<ge>Suc n. (run_tick_count \<rho> K\<^sub>2 p) \<le> (run_tick_count \<rho> K\<^sub>1 p) }\<close>
+    using nat_set_suc[of \<open>n\<close> \<open>\<lambda>\<rho> n. (run_tick_count \<rho> K\<^sub>2 n) \<le> (run_tick_count \<rho> K\<^sub>1 n)\<close>]
+    by simp
+  then show ?thesis by auto
+qed
 
 lemma TESL_interp_stepwise_strictly_precedes_coind_unfold:
   shows \<open>\<lbrakk> K\<^sub>1 strictly precedes K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> =
     \<lbrakk> (\<lceil>#\<^sup>\<le> K\<^sub>2 n, #\<^sup>< K\<^sub>1 n\<rceil> \<in> (\<lambda>(x,y). x\<le>y)) \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m
     \<inter> \<lbrakk> K\<^sub>1 strictly precedes K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>\<close>
-  proof -
-    have \<open>{ \<rho>. \<forall>p\<ge>n. (run_tick_count \<rho> K\<^sub>2 p) \<le> (run_tick_count_strictly \<rho> K\<^sub>1 p) }
-           = { \<rho>. (run_tick_count \<rho> K\<^sub>2 n) \<le> (run_tick_count_strictly \<rho> K\<^sub>1 n) }
-           \<inter> { \<rho>. \<forall>p\<ge>Suc n. (run_tick_count \<rho> K\<^sub>2 p) \<le> (run_tick_count_strictly \<rho> K\<^sub>1 p) }\<close>
-      using nat_set_suc[of \<open>n\<close> \<open>\<lambda>\<rho> n. (run_tick_count \<rho> K\<^sub>2 n) \<le> (run_tick_count_strictly \<rho> K\<^sub>1 n)\<close>]
-      by simp
-    then show ?thesis by auto
-  qed
+proof -
+  have \<open>{ \<rho>. \<forall>p\<ge>n. (run_tick_count \<rho> K\<^sub>2 p) \<le> (run_tick_count_strictly \<rho> K\<^sub>1 p) }
+         = { \<rho>. (run_tick_count \<rho> K\<^sub>2 n) \<le> (run_tick_count_strictly \<rho> K\<^sub>1 n) }
+         \<inter> { \<rho>. \<forall>p\<ge>Suc n. (run_tick_count \<rho> K\<^sub>2 p) \<le> (run_tick_count_strictly \<rho> K\<^sub>1 p) }\<close>
+    using nat_set_suc[of \<open>n\<close> \<open>\<lambda>\<rho> n. (run_tick_count \<rho> K\<^sub>2 n) \<le> (run_tick_count_strictly \<rho> K\<^sub>1 n)\<close>]
+    by simp
+  then show ?thesis by auto
+qed
 
 lemma TESL_interp_stepwise_kills_coind_unfold:
   shows \<open>\<lbrakk> K\<^sub>1 kills K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> =
@@ -289,7 +295,10 @@ proof -
                  \<union> ({\<rho>. ?ticks n \<rho> K\<^sub>1} \<inter> {\<rho>. ?dead n \<rho> K\<^sub>2})\<close>
       hence \<open>\<not> ?ticks n \<rho> K\<^sub>1 \<and> ?kills (Suc n) \<rho>
              \<or> ?ticks n \<rho> K\<^sub>1 \<and> ?dead n \<rho> K\<^sub>2\<close> by blast
-      hence \<open>?kills n \<rho>\<close> by (metis dual_order.trans eq_iff not_less_eq_eq)
+      moreover have \<open>((\<not> ?ticks n \<rho> K\<^sub>1) \<and> (?kills (Suc n) \<rho>)) \<longrightarrow> ?kills n \<rho>\<close>
+        using dual_order.antisym not_less_eq_eq by blast
+      ultimately have \<open>?kills n \<rho> \<or> ?ticks n \<rho> K\<^sub>1 \<and> ?dead n \<rho> K\<^sub>2\<close> by blast
+      hence \<open>?kills n \<rho>\<close> using le_trans by blast
     } thus \<open>({\<rho>. \<not> ?ticks n \<rho> K\<^sub>1}  \<inter> { \<rho>. ?kills (Suc n) \<rho>})
                  \<union> ({\<rho>. ?ticks n \<rho> K\<^sub>1} \<inter> {\<rho>. ?dead n \<rho> K\<^sub>2})
           \<subseteq> {\<rho>. ?kills n \<rho>}\<close> by blast

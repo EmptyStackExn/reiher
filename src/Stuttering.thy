@@ -145,9 +145,9 @@ proof -
   ultimately show ?thesis by (simp add: tick_count_is_fun strictly_precedes_alt_def2) 
 qed
 
-text {*
+text \<open>
   Time delayed relations are preserved in a dilated run.
-*}
+\<close>
 theorem time_delayed_sub:
   assumes \<open>sub \<lless> r\<close>
       and \<open>sub \<in> \<lbrakk> a time-delayed by \<delta>\<tau> on ms implies b \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<close>

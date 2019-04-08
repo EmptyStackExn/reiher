@@ -127,17 +127,9 @@ lemma sound_reduction':
   assumes \<open>\<S>\<^sub>1 \<hookrightarrow> \<S>\<^sub>2\<close>
   shows \<open>\<lbrakk> \<S>\<^sub>1 \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g \<supseteq> \<lbrakk> \<S>\<^sub>2 \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g\<close>
 proof -
-  from assms consider
-    (a) \<open>\<S>\<^sub>1  \<hookrightarrow>\<^sub>i  \<S>\<^sub>2\<close>
-  | (b) \<open>\<S>\<^sub>1  \<hookrightarrow>\<^sub>e  \<S>\<^sub>2\<close>
-    using step_elim by blast
-  thus ?thesis
-  proof (cases)
-    case a thus ?thesis by (rule operational_semantics_intro.cases, simp)
-  next
-    case b thus ?thesis using assms
-      by (metis (full_types) HeronConf_interpretation.cases HeronConf_interpretation.simps sound_reduction)
-  qed
+  have \<open>\<forall>s\<^sub>1 s\<^sub>2. (\<lbrakk> s\<^sub>2 \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g \<subseteq> \<lbrakk> s\<^sub>1 \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g) \<or> \<not>(s\<^sub>1 \<hookrightarrow> s\<^sub>2)\<close>
+    using sound_reduction by fastforce
+  thus ?thesis using assms by blast
 qed
 
 lemma sound_reduction_generalized:
@@ -242,7 +234,11 @@ qed
 lemma branch_existence:
   assumes \<open>\<rho> \<in> \<lbrakk> \<S>\<^sub>1 \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g\<close>
   shows \<open>\<exists>\<S>\<^sub>2. (\<S>\<^sub>1 \<hookrightarrow> \<S>\<^sub>2) \<and> (\<rho> \<in> \<lbrakk> \<S>\<^sub>2 \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g)\<close>
-  by (metis (mono_tags, lifting) UN_iff assms complete_direct_successors' mem_Collect_eq set_rev_mp)
+proof -
+  from assms complete_direct_successors' have \<open>\<rho> \<in> (\<Union>X\<in>\<C>\<^sub>n\<^sub>e\<^sub>x\<^sub>t \<S>\<^sub>1. \<lbrakk> X \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g)\<close> by blast
+  hence \<open>\<exists>s\<in>\<C>\<^sub>n\<^sub>e\<^sub>x\<^sub>t \<S>\<^sub>1. \<rho> \<in> \<lbrakk> s \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g\<close> by simp
+  thus ?thesis by blast
+qed
 
 lemma branch_existence':
   assumes \<open>\<rho> \<in> \<lbrakk> \<S>\<^sub>1 \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g\<close>
@@ -272,67 +268,73 @@ lemma instant_index_increase:
   assumes \<open>\<rho> \<in> \<lbrakk> \<Gamma>, n \<turnstile> \<Psi> \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g\<close>
   shows   \<open>\<exists>\<Gamma>\<^sub>k \<Psi>\<^sub>k \<Phi>\<^sub>k k. ((\<Gamma>, n \<turnstile> \<Psi> \<triangleright> \<Phi>)  \<hookrightarrow>\<^bsup>k\<^esup>  (\<Gamma>\<^sub>k, Suc n \<turnstile> \<Psi>\<^sub>k \<triangleright> \<Phi>\<^sub>k))
                          \<and> \<rho> \<in> \<lbrakk> \<Gamma>\<^sub>k, Suc n \<turnstile> \<Psi>\<^sub>k \<triangleright> \<Phi>\<^sub>k \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g\<close>
-  proof (insert assms, induct \<Psi> arbitrary: \<Gamma> \<Phi>)
-    case (Nil \<Gamma> \<Phi>)
+proof (insert assms, induct \<Psi> arbitrary: \<Gamma> \<Phi>)
+  case (Nil \<Gamma> \<Phi>)
     then show ?case
-      proof -
-        have \<open>(\<Gamma>, n \<turnstile> [] \<triangleright> \<Phi>) \<hookrightarrow>\<^bsup>1\<^esup> (\<Gamma>, Suc n \<turnstile> \<Phi> \<triangleright> [])\<close>
-          using instant_i intro_part
-          by fastforce
-        moreover have \<open>\<lbrakk> \<Gamma>, n \<turnstile> [] \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g = \<lbrakk> \<Gamma>, Suc n \<turnstile> \<Phi> \<triangleright> [] \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g\<close>
-          by auto
-        moreover have \<open>\<rho> \<in> \<lbrakk> \<Gamma>, Suc n \<turnstile> \<Phi> \<triangleright> [] \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g\<close>
-          using assms Nil.prems calculation(2) by blast
-        ultimately show ?thesis by blast
-      qed
-  next
-    case (Cons \<psi> \<Psi>)
-  then show ?case
+    proof -
+      have \<open>(\<Gamma>, n \<turnstile> [] \<triangleright> \<Phi>) \<hookrightarrow>\<^bsup>1\<^esup> (\<Gamma>, Suc n \<turnstile> \<Phi> \<triangleright> [])\<close>
+        using instant_i intro_part by fastforce
+      moreover have \<open>\<lbrakk> \<Gamma>, n \<turnstile> [] \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g = \<lbrakk> \<Gamma>, Suc n \<turnstile> \<Phi> \<triangleright> [] \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g\<close>
+        by auto
+      moreover have \<open>\<rho> \<in> \<lbrakk> \<Gamma>, Suc n \<turnstile> \<Phi> \<triangleright> [] \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g\<close>
+        using assms Nil.prems calculation(2) by blast
+      ultimately show ?thesis by blast
+    qed
+next
+  case (Cons \<psi> \<Psi>)
+    then show ?case
     proof (induct \<psi>)
       case (SporadicOn K\<^sub>1 \<tau> K\<^sub>2)
-      have branches: \<open>\<lbrakk> \<Gamma>, n \<turnstile> ((K\<^sub>1 sporadic \<tau> on K\<^sub>2) # \<Psi>) \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
-                    = \<lbrakk> \<Gamma>, n \<turnstile> \<Psi> \<triangleright> ((K\<^sub>1 sporadic \<tau> on K\<^sub>2) # \<Phi>) \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
-                   \<union> \<lbrakk> ((K\<^sub>1 \<Up> n) # (K\<^sub>2 \<Down> n @ \<tau>) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g\<close>
-            using HeronConf_interp_stepwise_sporadicon_cases by simp
-          have br1: \<open>\<rho> \<in> \<lbrakk> \<Gamma>, n \<turnstile> \<Psi> \<triangleright> ((K\<^sub>1 sporadic \<tau> on K\<^sub>2) # \<Phi>) \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
-                  \<Longrightarrow> \<exists>\<Gamma>\<^sub>k \<Psi>\<^sub>k \<Phi>\<^sub>k k.
-       ((\<Gamma>, n \<turnstile> ((K\<^sub>1 sporadic \<tau> on K\<^sub>2) # \<Psi>) \<triangleright> \<Phi>) \<hookrightarrow>\<^bsup>k\<^esup> (\<Gamma>\<^sub>k, Suc n \<turnstile> \<Psi>\<^sub>k \<triangleright> \<Phi>\<^sub>k)) \<and>
-       \<rho> \<in> \<lbrakk> \<Gamma>\<^sub>k, Suc n \<turnstile> \<Psi>\<^sub>k \<triangleright> \<Phi>\<^sub>k \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g\<close>
-        proof -
-          assume h1: \<open>\<rho> \<in> \<lbrakk> \<Gamma>, n \<turnstile> \<Psi> \<triangleright> ((K\<^sub>1 sporadic \<tau> on K\<^sub>2) # \<Phi>) \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g\<close>
-          then have \<open>\<exists>\<Gamma>\<^sub>k \<Psi>\<^sub>k \<Phi>\<^sub>k k. ((\<Gamma>, n \<turnstile> \<Psi> \<triangleright> ((K\<^sub>1 sporadic \<tau> on K\<^sub>2) # \<Phi>)) \<hookrightarrow>\<^bsup>k\<^esup> (\<Gamma>\<^sub>k, Suc n \<turnstile> \<Psi>\<^sub>k \<triangleright> \<Phi>\<^sub>k)) \<and> (\<rho> \<in> \<lbrakk> \<Gamma>\<^sub>k, Suc n \<turnstile> \<Psi>\<^sub>k \<triangleright> \<Phi>\<^sub>k \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g)\<close>
-            using h1 SporadicOn.prems by simp
-          then show ?thesis
-            by (meson elims_part relpowp_Suc_I2 sporadic_on_e1)
-        qed
-      moreover have br2: \<open>\<rho> \<in> \<lbrakk> ((K\<^sub>1 \<Up> n) # (K\<^sub>2 \<Down> n @ \<tau>) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g \<Longrightarrow> \<exists>\<Gamma>\<^sub>k \<Psi>\<^sub>k \<Phi>\<^sub>k k.
-                       ((\<Gamma>, n \<turnstile> ((K\<^sub>1 sporadic \<tau> on K\<^sub>2) # \<Psi>) \<triangleright> \<Phi>) \<hookrightarrow>\<^bsup>k\<^esup> (\<Gamma>\<^sub>k, Suc n \<turnstile> \<Psi>\<^sub>k \<triangleright> \<Phi>\<^sub>k))
+        have branches: \<open>\<lbrakk> \<Gamma>, n \<turnstile> ((K\<^sub>1 sporadic \<tau> on K\<^sub>2) # \<Psi>) \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
+                      = \<lbrakk> \<Gamma>, n \<turnstile> \<Psi> \<triangleright> ((K\<^sub>1 sporadic \<tau> on K\<^sub>2) # \<Phi>) \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
+                      \<union> \<lbrakk> ((K\<^sub>1 \<Up> n) # (K\<^sub>2 \<Down> n @ \<tau>) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g\<close>
+          using HeronConf_interp_stepwise_sporadicon_cases by simp
+        have br1: \<open>\<rho> \<in> \<lbrakk> \<Gamma>, n \<turnstile> \<Psi> \<triangleright> ((K\<^sub>1 sporadic \<tau> on K\<^sub>2) # \<Phi>) \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
+                    \<Longrightarrow> \<exists>\<Gamma>\<^sub>k \<Psi>\<^sub>k \<Phi>\<^sub>k k.
+                      ((\<Gamma>, n \<turnstile> ((K\<^sub>1 sporadic \<tau> on K\<^sub>2) # \<Psi>) \<triangleright> \<Phi>) \<hookrightarrow>\<^bsup>k\<^esup> (\<Gamma>\<^sub>k, Suc n \<turnstile> \<Psi>\<^sub>k \<triangleright> \<Phi>\<^sub>k))
                       \<and> \<rho> \<in> \<lbrakk> \<Gamma>\<^sub>k, Suc n \<turnstile> \<Psi>\<^sub>k \<triangleright> \<Phi>\<^sub>k \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g\<close>
         proof -
+          assume h1: \<open>\<rho> \<in> \<lbrakk> \<Gamma>, n \<turnstile> \<Psi> \<triangleright> ((K\<^sub>1 sporadic \<tau> on K\<^sub>2) # \<Phi>) \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g\<close>
+          hence \<open>\<exists>\<Gamma>\<^sub>k \<Psi>\<^sub>k \<Phi>\<^sub>k k. ((\<Gamma>, n \<turnstile> \<Psi> \<triangleright> ((K\<^sub>1 sporadic \<tau> on K\<^sub>2) # \<Phi>))
+                                      \<hookrightarrow>\<^bsup>k\<^esup> (\<Gamma>\<^sub>k, Suc n \<turnstile> \<Psi>\<^sub>k \<triangleright> \<Phi>\<^sub>k))
+                                 \<and> (\<rho> \<in> \<lbrakk> \<Gamma>\<^sub>k, Suc n \<turnstile> \<Psi>\<^sub>k \<triangleright> \<Phi>\<^sub>k \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g)\<close>
+          using h1 SporadicOn.prems by simp
+          thus ?thesis by (meson elims_part relpowp_Suc_I2 sporadic_on_e1)
+        qed
+        have br2: \<open>\<rho> \<in> \<lbrakk> ((K\<^sub>1 \<Up> n) # (K\<^sub>2 \<Down> n @ \<tau>) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
+                  \<Longrightarrow> \<exists>\<Gamma>\<^sub>k \<Psi>\<^sub>k \<Phi>\<^sub>k k. ((\<Gamma>, n \<turnstile> ((K\<^sub>1 sporadic \<tau> on K\<^sub>2) # \<Psi>) \<triangleright> \<Phi>)
+                                        \<hookrightarrow>\<^bsup>k\<^esup> (\<Gamma>\<^sub>k, Suc n \<turnstile> \<Psi>\<^sub>k \<triangleright> \<Phi>\<^sub>k))
+                            \<and> \<rho> \<in> \<lbrakk> \<Gamma>\<^sub>k, Suc n \<turnstile> \<Psi>\<^sub>k \<triangleright> \<Phi>\<^sub>k \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g\<close>
+        proof -
           assume h2: \<open>\<rho> \<in> \<lbrakk> ((K\<^sub>1 \<Up> n) # (K\<^sub>2 \<Down> n @ \<tau>) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g\<close>
-          then have \<open>\<exists>\<Gamma>\<^sub>k \<Psi>\<^sub>k \<Phi>\<^sub>k k. ((((K\<^sub>1 \<Up> n) # (K\<^sub>2 \<Down> n @ \<tau>) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> \<Phi>) \<hookrightarrow>\<^bsup>k\<^esup> (\<Gamma>\<^sub>k, Suc n \<turnstile> \<Psi>\<^sub>k \<triangleright> \<Phi>\<^sub>k))
-                  \<and> \<rho> \<in> \<lbrakk> \<Gamma>\<^sub>k, Suc n \<turnstile> \<Psi>\<^sub>k \<triangleright> \<Phi>\<^sub>k \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g\<close>
+          hence \<open>\<exists>\<Gamma>\<^sub>k \<Psi>\<^sub>k \<Phi>\<^sub>k k. ((((K\<^sub>1 \<Up> n) # (K\<^sub>2 \<Down> n @ \<tau>) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> \<Phi>)
+                                    \<hookrightarrow>\<^bsup>k\<^esup> (\<Gamma>\<^sub>k, Suc n \<turnstile> \<Psi>\<^sub>k \<triangleright> \<Phi>\<^sub>k))
+                             \<and> \<rho> \<in> \<lbrakk> \<Gamma>\<^sub>k, Suc n \<turnstile> \<Psi>\<^sub>k \<triangleright> \<Phi>\<^sub>k \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g\<close>
             using h2 SporadicOn.prems by simp
-          then show ?thesis
+          thus ?thesis
             by (meson elims_part relpowp_Suc_I2 sporadic_on_e2)
         qed
-      ultimately show ?case
-        by (metis SporadicOn.prems(2) UnE branches)
-    next
-      case (TagRelation K\<^sub>1 K\<^sub>2 R)
+        from branches SporadicOn.prems(2) have
+          \<open>\<rho> \<in> \<lbrakk> \<Gamma>, n \<turnstile> \<Psi> \<triangleright> ((K\<^sub>1 sporadic \<tau> on K\<^sub>2) # \<Phi>) \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
+             \<union> \<lbrakk> ((K\<^sub>1 \<Up> n) # (K\<^sub>2 \<Down> n @ \<tau>) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g\<close>
+          by simp
+        with br1 br2 show ?case by blast
+  next
+    case (TagRelation K\<^sub>1 K\<^sub>2 R)
       have branches: \<open>\<lbrakk> \<Gamma>, n \<turnstile> ((time-relation \<lfloor>K\<^sub>1, K\<^sub>2\<rfloor> \<in> R) # \<Psi>) \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
           = \<lbrakk> ((\<lfloor>\<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>1, n), \<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>2, n)\<rfloor> \<in> R) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> ((time-relation \<lfloor>K\<^sub>1, K\<^sub>2\<rfloor> \<in> R) # \<Phi>) \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g\<close>
         using HeronConf_interp_stepwise_tagrel_cases by simp
-      then show ?case
-        proof -
-          have \<open>\<exists>\<Gamma>\<^sub>k \<Psi>\<^sub>k \<Phi>\<^sub>k k. ((((\<lfloor>\<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>1, n), \<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>2, n)\<rfloor> \<in> R) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> ((time-relation \<lfloor>K\<^sub>1, K\<^sub>2\<rfloor> \<in> R) # \<Phi>))
+      thus ?case
+      proof -
+        have \<open>\<exists>\<Gamma>\<^sub>k \<Psi>\<^sub>k \<Phi>\<^sub>k k.
+            ((((\<lfloor>\<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>1, n), \<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>2, n)\<rfloor> \<in> R) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> ((time-relation \<lfloor>K\<^sub>1, K\<^sub>2\<rfloor> \<in> R) # \<Phi>))
               \<hookrightarrow>\<^bsup>k\<^esup> (\<Gamma>\<^sub>k, Suc n \<turnstile> \<Psi>\<^sub>k \<triangleright> \<Phi>\<^sub>k)) \<and> \<rho> \<in> \<lbrakk> \<Gamma>\<^sub>k, Suc n \<turnstile> \<Psi>\<^sub>k \<triangleright> \<Phi>\<^sub>k \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g\<close>
-            using TagRelation.prems by simp
-          then show ?thesis
-            by (meson elims_part relpowp_Suc_I2 tagrel_e)
-        qed
-    next
-      case (Implies K\<^sub>1 K\<^sub>2)
+          using TagRelation.prems by simp
+        thus ?thesis
+          by (meson elims_part relpowp_Suc_I2 tagrel_e)
+      qed
+  next
+    case (Implies K\<^sub>1 K\<^sub>2)
       have branches: \<open>\<lbrakk> \<Gamma>, n \<turnstile> ((K\<^sub>1 implies K\<^sub>2) # \<Psi>) \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
           = \<lbrakk> ((K\<^sub>1 \<not>\<Up> n) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> ((K\<^sub>1 implies K\<^sub>2) # \<Phi>) \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
           \<union> \<lbrakk> ((K\<^sub>1 \<Up> n) # (K\<^sub>2 \<Up> n) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> ((K\<^sub>1 implies K\<^sub>2) # \<Phi>) \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g\<close>
@@ -340,83 +342,83 @@ lemma instant_index_increase:
       have br1: \<open>\<rho> \<in> \<lbrakk> ((K\<^sub>1 \<not>\<Up> n) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> ((K\<^sub>1 implies K\<^sub>2) # \<Phi>) \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
                 \<Longrightarrow> \<exists>\<Gamma>\<^sub>k \<Psi>\<^sub>k \<Phi>\<^sub>k k. ((\<Gamma>, n \<turnstile> ((K\<^sub>1 implies K\<^sub>2) # \<Psi>) \<triangleright> \<Phi>) \<hookrightarrow>\<^bsup>k\<^esup> (\<Gamma>\<^sub>k, Suc n \<turnstile> \<Psi>\<^sub>k \<triangleright> \<Phi>\<^sub>k))
                   \<and> \<rho> \<in> \<lbrakk> \<Gamma>\<^sub>k, Suc n \<turnstile> \<Psi>\<^sub>k \<triangleright> \<Phi>\<^sub>k \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g\<close>
-        proof -
-          assume h1: \<open>\<rho> \<in> \<lbrakk> ((K\<^sub>1 \<not>\<Up> n) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> ((K\<^sub>1 implies K\<^sub>2) # \<Phi>) \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g\<close>
-          then have \<open>\<exists>\<Gamma>\<^sub>k \<Psi>\<^sub>k \<Phi>\<^sub>k k.
-                      ((((K\<^sub>1 \<not>\<Up> n) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> ((K\<^sub>1 implies K\<^sub>2) # \<Phi>)) \<hookrightarrow>\<^bsup>k\<^esup> (\<Gamma>\<^sub>k, Suc n \<turnstile> \<Psi>\<^sub>k \<triangleright> \<Phi>\<^sub>k))
-                    \<and> \<rho> \<in> \<lbrakk> \<Gamma>\<^sub>k, Suc n \<turnstile> \<Psi>\<^sub>k \<triangleright> \<Phi>\<^sub>k \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g\<close>
-            using h1 Implies.prems by simp
-          then show ?thesis
-            by (meson elims_part relpowp_Suc_I2 implies_e1)
-        qed
-        moreover have br2: \<open>\<rho> \<in> \<lbrakk> ((K\<^sub>1 \<Up> n) # (K\<^sub>2 \<Up> n) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> ((K\<^sub>1 implies K\<^sub>2) # \<Phi>) \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
-                            \<Longrightarrow> \<exists>\<Gamma>\<^sub>k \<Psi>\<^sub>k \<Phi>\<^sub>k k.
-       ((\<Gamma>, n \<turnstile> ((K\<^sub>1 implies K\<^sub>2) # \<Psi>) \<triangleright> \<Phi>) \<hookrightarrow>\<^bsup>k\<^esup> (\<Gamma>\<^sub>k, Suc n \<turnstile> \<Psi>\<^sub>k \<triangleright> \<Phi>\<^sub>k)) \<and>
-       \<rho> \<in> \<lbrakk> \<Gamma>\<^sub>k, Suc n \<turnstile> \<Psi>\<^sub>k \<triangleright> \<Phi>\<^sub>k \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g\<close>
-        proof -
-          assume h2: \<open>\<rho> \<in> \<lbrakk> ((K\<^sub>1 \<Up> n) # (K\<^sub>2 \<Up> n) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> ((K\<^sub>1 implies K\<^sub>2) # \<Phi>) \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g\<close>
-          then have \<open>\<exists>\<Gamma>\<^sub>k \<Psi>\<^sub>k \<Phi>\<^sub>k k. (
+      proof -
+        assume h1: \<open>\<rho> \<in> \<lbrakk> ((K\<^sub>1 \<not>\<Up> n) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> ((K\<^sub>1 implies K\<^sub>2) # \<Phi>) \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g\<close>
+        then have \<open>\<exists>\<Gamma>\<^sub>k \<Psi>\<^sub>k \<Phi>\<^sub>k k.
+                    ((((K\<^sub>1 \<not>\<Up> n) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> ((K\<^sub>1 implies K\<^sub>2) # \<Phi>)) \<hookrightarrow>\<^bsup>k\<^esup> (\<Gamma>\<^sub>k, Suc n \<turnstile> \<Psi>\<^sub>k \<triangleright> \<Phi>\<^sub>k))
+                  \<and> \<rho> \<in> \<lbrakk> \<Gamma>\<^sub>k, Suc n \<turnstile> \<Psi>\<^sub>k \<triangleright> \<Phi>\<^sub>k \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g\<close>
+          using h1 Implies.prems by simp
+        then show ?thesis
+          by (meson elims_part relpowp_Suc_I2 implies_e1)
+      qed
+      moreover have br2: \<open>\<rho> \<in> \<lbrakk> ((K\<^sub>1 \<Up> n) # (K\<^sub>2 \<Up> n) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> ((K\<^sub>1 implies K\<^sub>2) # \<Phi>) \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
+                            \<Longrightarrow> \<exists>\<Gamma>\<^sub>k \<Psi>\<^sub>k \<Phi>\<^sub>k k. ((\<Gamma>, n \<turnstile> ((K\<^sub>1 implies K\<^sub>2) # \<Psi>) \<triangleright> \<Phi>)
+                                              \<hookrightarrow>\<^bsup>k\<^esup> (\<Gamma>\<^sub>k, Suc n \<turnstile> \<Psi>\<^sub>k \<triangleright> \<Phi>\<^sub>k))
+                                  \<and> \<rho> \<in> \<lbrakk> \<Gamma>\<^sub>k, Suc n \<turnstile> \<Psi>\<^sub>k \<triangleright> \<Phi>\<^sub>k \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g\<close>
+      proof -
+        assume h2: \<open>\<rho> \<in> \<lbrakk> ((K\<^sub>1 \<Up> n) # (K\<^sub>2 \<Up> n) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> ((K\<^sub>1 implies K\<^sub>2) # \<Phi>) \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g\<close>
+        then have \<open>\<exists>\<Gamma>\<^sub>k \<Psi>\<^sub>k \<Phi>\<^sub>k k. (
                         (((K\<^sub>1 \<Up> n) # (K\<^sub>2 \<Up> n) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> ((K\<^sub>1 implies K\<^sub>2) # \<Phi>)) \<hookrightarrow>\<^bsup>k\<^esup> (\<Gamma>\<^sub>k, Suc n \<turnstile> \<Psi>\<^sub>k \<triangleright> \<Phi>\<^sub>k)
-                      ) \<and> \<rho> \<in> \<lbrakk> \<Gamma>\<^sub>k, Suc n \<turnstile> \<Psi>\<^sub>k \<triangleright> \<Phi>\<^sub>k \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g\<close>
-            using h2 Implies.prems by simp
-          then show ?thesis
-            by (meson elims_part relpowp_Suc_I2 implies_e2)
-        qed
+                    ) \<and> \<rho> \<in> \<lbrakk> \<Gamma>\<^sub>k, Suc n \<turnstile> \<Psi>\<^sub>k \<triangleright> \<Phi>\<^sub>k \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g\<close>
+          using h2 Implies.prems by simp
+        thus ?thesis
+          by (meson elims_part relpowp_Suc_I2 implies_e2)
+      qed
       ultimately show ?case
         using Implies.prems(2) by fastforce
-    next
-      case (ImpliesNot K\<^sub>1 K\<^sub>2)
-      then show ?case
-        by (metis (no_types, lifting) HeronConf_interp_stepwise_implies_not_cases Un_iff elims_part implies_not_e1 implies_not_e2 relpowp_Suc_I2)
-    next
-      case (TimeDelayedBy K\<^sub>1 \<delta>\<tau> K\<^sub>2 K\<^sub>3)
+  next
+    case (ImpliesNot K\<^sub>1 K\<^sub>2)
+      thus ?case using HeronConf_interp_stepwise_implies_not_cases Un_iff elims_part implies_not_e1 implies_not_e2 relpowp_Suc_I2
+        by (metis (no_types, lifting)  )
+  next
+    case (TimeDelayedBy K\<^sub>1 \<delta>\<tau> K\<^sub>2 K\<^sub>3)
       have branches: \<open>\<lbrakk> \<Gamma>, n \<turnstile> ((K\<^sub>1 time-delayed by \<delta>\<tau> on K\<^sub>2 implies K\<^sub>3) # \<Psi>) \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
           = \<lbrakk> ((K\<^sub>1 \<not>\<Up> n) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> ((K\<^sub>1 time-delayed by \<delta>\<tau> on K\<^sub>2 implies K\<^sub>3) # \<Phi>) \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
           \<union> \<lbrakk> ((K\<^sub>1 \<Up> n) # (K\<^sub>2 @ n \<oplus> \<delta>\<tau> \<Rightarrow> K\<^sub>3) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> ((K\<^sub>1 time-delayed by \<delta>\<tau> on K\<^sub>2 implies K\<^sub>3) # \<Phi>) \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g\<close>
         using HeronConf_interp_stepwise_timedelayed_cases by simp
       have br1: \<open>\<rho> \<in> \<lbrakk> ((K\<^sub>1 \<not>\<Up> n) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> ((K\<^sub>1 time-delayed by \<delta>\<tau> on K\<^sub>2 implies K\<^sub>3) # \<Phi>) \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
-              \<Longrightarrow> \<exists>\<Gamma>\<^sub>k \<Psi>\<^sub>k \<Phi>\<^sub>k k.
-               ((\<Gamma>, n \<turnstile> ((K\<^sub>1 time-delayed by \<delta>\<tau> on K\<^sub>2 implies K\<^sub>3) # \<Psi>) \<triangleright> \<Phi>) \<hookrightarrow>\<^bsup>k\<^esup> (\<Gamma>\<^sub>k, Suc n \<turnstile> \<Psi>\<^sub>k \<triangleright> \<Phi>\<^sub>k))
-              \<and> \<rho> \<in> \<lbrakk> \<Gamma>\<^sub>k, Suc n \<turnstile> \<Psi>\<^sub>k \<triangleright> \<Phi>\<^sub>k \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g\<close>
-        proof -
-          assume h1: \<open>\<rho> \<in> \<lbrakk> ((K\<^sub>1 \<not>\<Up> n) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> ((K\<^sub>1 time-delayed by \<delta>\<tau> on K\<^sub>2 implies K\<^sub>3) # \<Phi>) \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g\<close>
-          then have \<open>\<exists>\<Gamma>\<^sub>k \<Psi>\<^sub>k \<Phi>\<^sub>k k.
-            ((((K\<^sub>1 \<not>\<Up> n) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> ((K\<^sub>1 time-delayed by \<delta>\<tau> on K\<^sub>2 implies K\<^sub>3) # \<Phi>)) \<hookrightarrow>\<^bsup>k\<^esup> (\<Gamma>\<^sub>k, Suc n \<turnstile> \<Psi>\<^sub>k \<triangleright> \<Phi>\<^sub>k))
+            \<Longrightarrow> \<exists>\<Gamma>\<^sub>k \<Psi>\<^sub>k \<Phi>\<^sub>k k.
+             ((\<Gamma>, n \<turnstile> ((K\<^sub>1 time-delayed by \<delta>\<tau> on K\<^sub>2 implies K\<^sub>3) # \<Psi>) \<triangleright> \<Phi>) \<hookrightarrow>\<^bsup>k\<^esup> (\<Gamma>\<^sub>k, Suc n \<turnstile> \<Psi>\<^sub>k \<triangleright> \<Phi>\<^sub>k))
             \<and> \<rho> \<in> \<lbrakk> \<Gamma>\<^sub>k, Suc n \<turnstile> \<Psi>\<^sub>k \<triangleright> \<Phi>\<^sub>k \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g\<close>
-            using h1 TimeDelayedBy.prems by simp
-          then show ?thesis
-            by (meson elims_part relpowp_Suc_I2 timedelayed_e1)
-        qed
-        moreover have br2: \<open>\<rho> \<in> \<lbrakk> ((K\<^sub>1 \<Up> n) # (K\<^sub>2 @ n \<oplus> \<delta>\<tau> \<Rightarrow> K\<^sub>3) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> ((K\<^sub>1 time-delayed by \<delta>\<tau> on K\<^sub>2 implies K\<^sub>3) # \<Phi>) \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
-          \<Longrightarrow> \<exists>\<Gamma>\<^sub>k \<Psi>\<^sub>k \<Phi>\<^sub>k k.
-            ((\<Gamma>, n \<turnstile> ((K\<^sub>1 time-delayed by \<delta>\<tau> on K\<^sub>2 implies K\<^sub>3) # \<Psi>) \<triangleright> \<Phi>) \<hookrightarrow>\<^bsup>k\<^esup> (\<Gamma>\<^sub>k, Suc n \<turnstile> \<Psi>\<^sub>k \<triangleright> \<Phi>\<^sub>k))
-           \<and> \<rho> \<in> \<lbrakk> \<Gamma>\<^sub>k, Suc n \<turnstile> \<Psi>\<^sub>k \<triangleright> \<Phi>\<^sub>k \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g\<close>
-        proof -
-          assume h2: \<open>\<rho> \<in> \<lbrakk> ((K\<^sub>1 \<Up> n) # (K\<^sub>2 @ n \<oplus> \<delta>\<tau> \<Rightarrow> K\<^sub>3) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> ((K\<^sub>1 time-delayed by \<delta>\<tau> on K\<^sub>2 implies K\<^sub>3) # \<Phi>) \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g\<close>
-          then have \<open>\<exists>\<Gamma>\<^sub>k \<Psi>\<^sub>k \<Phi>\<^sub>k k. ((((K\<^sub>1 \<Up> n) # (K\<^sub>2 @ n \<oplus> \<delta>\<tau> \<Rightarrow> K\<^sub>3) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> ((K\<^sub>1 time-delayed by \<delta>\<tau> on K\<^sub>2 implies K\<^sub>3) # \<Phi>)) \<hookrightarrow>\<^bsup>k\<^esup> (\<Gamma>\<^sub>k, Suc n \<turnstile> \<Psi>\<^sub>k \<triangleright> \<Phi>\<^sub>k)) \<and> \<rho> \<in> \<lbrakk> \<Gamma>\<^sub>k, Suc n \<turnstile> \<Psi>\<^sub>k \<triangleright> \<Phi>\<^sub>k \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g\<close>
-            using h2 TimeDelayedBy.prems by simp
-          then show ?thesis
-            by (meson elims_part relpowp_Suc_I2 timedelayed_e2 sporadic_on_e1)
-        qed
+      proof -
+        assume h1: \<open>\<rho> \<in> \<lbrakk> ((K\<^sub>1 \<not>\<Up> n) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> ((K\<^sub>1 time-delayed by \<delta>\<tau> on K\<^sub>2 implies K\<^sub>3) # \<Phi>) \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g\<close>
+        then have \<open>\<exists>\<Gamma>\<^sub>k \<Psi>\<^sub>k \<Phi>\<^sub>k k.
+          ((((K\<^sub>1 \<not>\<Up> n) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> ((K\<^sub>1 time-delayed by \<delta>\<tau> on K\<^sub>2 implies K\<^sub>3) # \<Phi>)) \<hookrightarrow>\<^bsup>k\<^esup> (\<Gamma>\<^sub>k, Suc n \<turnstile> \<Psi>\<^sub>k \<triangleright> \<Phi>\<^sub>k))
+          \<and> \<rho> \<in> \<lbrakk> \<Gamma>\<^sub>k, Suc n \<turnstile> \<Psi>\<^sub>k \<triangleright> \<Phi>\<^sub>k \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g\<close>
+          using h1 TimeDelayedBy.prems by simp
+        then show ?thesis
+          by (meson elims_part relpowp_Suc_I2 timedelayed_e1)
+      qed
+      moreover have br2: \<open>\<rho> \<in> \<lbrakk> ((K\<^sub>1 \<Up> n) # (K\<^sub>2 @ n \<oplus> \<delta>\<tau> \<Rightarrow> K\<^sub>3) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> ((K\<^sub>1 time-delayed by \<delta>\<tau> on K\<^sub>2 implies K\<^sub>3) # \<Phi>) \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
+        \<Longrightarrow> \<exists>\<Gamma>\<^sub>k \<Psi>\<^sub>k \<Phi>\<^sub>k k.
+          ((\<Gamma>, n \<turnstile> ((K\<^sub>1 time-delayed by \<delta>\<tau> on K\<^sub>2 implies K\<^sub>3) # \<Psi>) \<triangleright> \<Phi>) \<hookrightarrow>\<^bsup>k\<^esup> (\<Gamma>\<^sub>k, Suc n \<turnstile> \<Psi>\<^sub>k \<triangleright> \<Phi>\<^sub>k))
+         \<and> \<rho> \<in> \<lbrakk> \<Gamma>\<^sub>k, Suc n \<turnstile> \<Psi>\<^sub>k \<triangleright> \<Phi>\<^sub>k \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g\<close>
+      proof -
+        assume h2: \<open>\<rho> \<in> \<lbrakk> ((K\<^sub>1 \<Up> n) # (K\<^sub>2 @ n \<oplus> \<delta>\<tau> \<Rightarrow> K\<^sub>3) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> ((K\<^sub>1 time-delayed by \<delta>\<tau> on K\<^sub>2 implies K\<^sub>3) # \<Phi>) \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g\<close>
+        then have \<open>\<exists>\<Gamma>\<^sub>k \<Psi>\<^sub>k \<Phi>\<^sub>k k. ((((K\<^sub>1 \<Up> n) # (K\<^sub>2 @ n \<oplus> \<delta>\<tau> \<Rightarrow> K\<^sub>3) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> ((K\<^sub>1 time-delayed by \<delta>\<tau> on K\<^sub>2 implies K\<^sub>3) # \<Phi>)) \<hookrightarrow>\<^bsup>k\<^esup> (\<Gamma>\<^sub>k, Suc n \<turnstile> \<Psi>\<^sub>k \<triangleright> \<Phi>\<^sub>k)) \<and> \<rho> \<in> \<lbrakk> \<Gamma>\<^sub>k, Suc n \<turnstile> \<Psi>\<^sub>k \<triangleright> \<Phi>\<^sub>k \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g\<close>
+          using h2 TimeDelayedBy.prems by simp
+        then show ?thesis
+          by (meson elims_part relpowp_Suc_I2 timedelayed_e2 sporadic_on_e1)
+      qed
       ultimately show ?case
         using TimeDelayedBy.prems(2) HeronConf_interp_stepwise_timedelayed_cases by blast
-    next
-      case (WeaklyPrecedes K\<^sub>1 K\<^sub>2)
-      then show ?case
-        by (metis (no_types, lifting) HeronConf_interp_stepwise_weakly_precedes_cases elims_part
-            weakly_precedes_e relpowp_Suc_I2)
-    next
-      case (StrictlyPrecedes K\<^sub>1 K\<^sub>2)
-      then show ?case
-        by (metis (no_types, lifting) HeronConf_interp_stepwise_strictly_precedes_cases elims_part
-            strictly_precedes_e relpowp_Suc_I2)
-    next
-      case (Kills K\<^sub>1 K\<^sub>2)
-      then show ?case
-        by (metis (no_types, lifting) HeronConf_interp_stepwise_kills_cases UnE
-            elims_part kills_e1 kills_e2 relpowp_Suc_I2)
-    qed
+  next
+    case (WeaklyPrecedes K\<^sub>1 K\<^sub>2)
+    then show ?case
+      by (metis (no_types, lifting) HeronConf_interp_stepwise_weakly_precedes_cases elims_part
+          weakly_precedes_e relpowp_Suc_I2)
+  next
+    case (StrictlyPrecedes K\<^sub>1 K\<^sub>2)
+    then show ?case
+      by (metis (no_types, lifting) HeronConf_interp_stepwise_strictly_precedes_cases elims_part
+          strictly_precedes_e relpowp_Suc_I2)
+  next
+    case (Kills K\<^sub>1 K\<^sub>2)
+    then show ?case
+      by (metis (no_types, lifting) HeronConf_interp_stepwise_kills_cases UnE
+          elims_part kills_e1 kills_e2 relpowp_Suc_I2)
   qed
+qed
 
 lemma instant_index_increase_generalized:
   assumes \<open>n < n\<^sub>k\<close>
@@ -469,8 +471,19 @@ theorem progress:
   assumes \<open>\<rho> \<in> \<lbrakk>\<lbrakk> \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<close>
   shows   \<open>\<exists>k \<Gamma>\<^sub>k \<Psi>\<^sub>k \<Phi>\<^sub>k. (([], 0 \<turnstile> \<Psi> \<triangleright> [])  \<hookrightarrow>\<^bsup>k\<^esup> (\<Gamma>\<^sub>k, n \<turnstile> \<Psi>\<^sub>k \<triangleright> \<Phi>\<^sub>k))
                          \<and> \<rho> \<in> \<lbrakk> \<Gamma>\<^sub>k, n \<turnstile> \<Psi>\<^sub>k \<triangleright> \<Phi>\<^sub>k \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g\<close>
-  using instant_index_increase_generalized
-  by (metis assms neq0_conv relpowp_0_I solve_start)
+proof -
+  have 1:\<open>\<exists>\<Gamma>\<^sub>k \<Psi>\<^sub>k \<Phi>\<^sub>k k. (([], 0 \<turnstile> \<Psi> \<triangleright> []) \<hookrightarrow>\<^bsup>k\<^esup> (\<Gamma>\<^sub>k, 0 \<turnstile> \<Psi>\<^sub>k \<triangleright> \<Phi>\<^sub>k)) \<and> \<rho> \<in> \<lbrakk> \<Gamma>\<^sub>k, 0 \<turnstile> \<Psi>\<^sub>k \<triangleright> \<Phi>\<^sub>k \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g\<close>
+    using assms relpowp_0_I solve_start by fastforce
+  show ?thesis
+  proof (cases \<open>n = 0\<close>)
+    case True
+      thus ?thesis using assms relpowp_0_I solve_start by fastforce
+  next
+    case False hence pos:\<open>n > 0\<close> by simp
+      from assms solve_start have \<open>\<rho> \<in> \<lbrakk> [], 0 \<turnstile> \<Psi> \<triangleright> [] \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g \<close> by blast
+      from instant_index_increase_generalized[OF pos this] show ?thesis by blast
+  qed
+qed
 
 section \<open>Local termination\<close>
 
@@ -486,18 +499,27 @@ fun measure_interpretation_config :: \<open>'\<tau> :: linordered_field config \
 lemma elimation_rules_strictly_decreasing:
   assumes \<open>(\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1)  \<hookrightarrow>\<^sub>e  (\<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2)\<close>
   shows \<open>\<mu> \<Psi>\<^sub>1 > \<mu> \<Psi>\<^sub>2\<close>
-  by (insert assms, erule operational_semantics_elim.cases, auto)
+by (insert assms, erule operational_semantics_elim.cases, auto)
 
 lemma elimation_rules_strictly_decreasing_meas:
   assumes \<open>(\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1)  \<hookrightarrow>\<^sub>e  (\<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2)\<close>
   shows \<open>(\<Psi>\<^sub>2, \<Psi>\<^sub>1) \<in> measure \<mu>\<close>
-  by (insert assms, erule operational_semantics_elim.cases, auto)
+by (insert assms, erule operational_semantics_elim.cases, auto)
 
 lemma elimation_rules_strictly_decreasing_meas':
   assumes \<open>\<S>\<^sub>1  \<hookrightarrow>\<^sub>e  \<S>\<^sub>2\<close>
   shows \<open>(\<S>\<^sub>2, \<S>\<^sub>1) \<in> measure \<mu>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g\<close>
-  using elimation_rules_strictly_decreasing_meas
-  by (metis assms in_measure measure_interpretation_config.elims)
+proof -
+  from assms obtain \<Gamma>\<^sub>1 n\<^sub>1 \<Psi>\<^sub>1 \<Phi>\<^sub>1 where p1:\<open>\<S>\<^sub>1 = (\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1)\<close>
+    using measure_interpretation_config.cases by blast
+  from assms obtain \<Gamma>\<^sub>2 n\<^sub>2 \<Psi>\<^sub>2 \<Phi>\<^sub>2 where p2:\<open>\<S>\<^sub>2 = (\<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2)\<close>
+    using measure_interpretation_config.cases by blast
+  from elimation_rules_strictly_decreasing_meas assms p1 p2
+    have \<open>(\<Psi>\<^sub>2, \<Psi>\<^sub>1) \<in> measure \<mu>\<close> by blast
+  hence \<open>\<mu> \<Psi>\<^sub>2 < \<mu> \<Psi>\<^sub>1\<close> by simp
+  hence \<open>\<mu>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g (\<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2) < \<mu>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g (\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1)\<close> by simp
+  with p1 p2 show ?thesis by simp
+qed
 
 text \<open>The relation made up of elimination rules is well-founded.\<close>
 theorem instant_computation_termination:
@@ -507,10 +529,10 @@ theorem instant_computation_termination:
     proof (rule wf_subset)
       have \<open>measure \<mu>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g = { (\<S>\<^sub>2, (\<S>\<^sub>1:: 'a :: linordered_field config)). \<mu>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g \<S>\<^sub>2 < \<mu>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g \<S>\<^sub>1 }\<close>
         by (simp add: inv_image_def less_eq measure_def)
-      then show \<open>{((\<S>\<^sub>1:: 'a :: linordered_field config), \<S>\<^sub>2). \<S>\<^sub>1 \<hookrightarrow>\<^sub>e\<^sup>\<leftarrow> \<S>\<^sub>2} \<subseteq> (measure \<mu>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g)\<close>
+      thus \<open>{((\<S>\<^sub>1:: 'a :: linordered_field config), \<S>\<^sub>2). \<S>\<^sub>1 \<hookrightarrow>\<^sub>e\<^sup>\<leftarrow> \<S>\<^sub>2} \<subseteq> (measure \<mu>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g)\<close>
         using elimation_rules_strictly_decreasing_meas' operational_semantics_elim_inv_def by blast
-      show \<open>wf (measure measure_interpretation_config)\<close>
-        by simp
+    next
+      show \<open>wf (measure measure_interpretation_config)\<close> by simp
     qed
   qed
 
