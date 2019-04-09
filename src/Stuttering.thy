@@ -294,7 +294,7 @@ proof -
             case True
               from this obtain m\<^sub>0 where fm0:\<open>f m\<^sub>0 = m\<close> by blast
               hence \<open>m\<^sub>0 \<ge> n\<close>
-                using "*" dilating_def dilating_fun_def h strict_mono_less_eq by fastforce
+                using * dilating_def dilating_fun_def h strict_mono_less_eq by fastforce
               with 2 show ?thesis using fm0 by blast
           next
             case False

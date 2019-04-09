@@ -933,17 +933,17 @@ proof -
         show ?thesis
         proof (cases \<open>hamlet ((Rep_run sub) n\<^sub>0 a)\<close>)
           case True
-            have "run_tick_count r a (f n\<^sub>0) \<le> run_tick_count r b (f n\<^sub>0)"
+            have \<open>run_tick_count r a (f n\<^sub>0) \<le> run_tick_count r b (f n\<^sub>0)\<close>
               using assms(2) run_tick_count_sub[OF *] by simp
             thus ?thesis by (simp add: fn0)
         next
           case False
-            hence \<open>\<not> hamlet ((Rep_run r) (Suc n') a)\<close> using "*" fn0 ticks_sub by fastforce
+            hence \<open>\<not> hamlet ((Rep_run r) (Suc n') a)\<close> using * fn0 ticks_sub by fastforce
             thus ?thesis by (simp add: Suc.IH le_SucI)
         qed
     next
       case False
-        thus ?thesis  using "*" Suc.IH no_tick_sub by fastforce
+        thus ?thesis  using * Suc.IH no_tick_sub by fastforce
     qed
   qed
 qed
@@ -1077,7 +1077,7 @@ proof -
     hence inc:\<open>{i. f i \<le> x} \<subseteq> {i. f i \<le> y}\<close>
       by (simp add: hyp Collect_mono le_trans)
     from Max_mono[OF inc prefix_not_empty finite_prefix]
-      have "(dil_inverse f) x \<le> (dil_inverse f) y" unfolding dil_inverse_def .
+      have \<open>(dil_inverse f) x \<le> (dil_inverse f) y\<close> unfolding dil_inverse_def .
   } thus ?thesis unfolding mono_def by simp
   qed
 

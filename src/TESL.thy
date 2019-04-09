@@ -133,7 +133,7 @@ next
   { fix x::\<open>'a tag_const\<close>
     from tag_const.exhaust obtain x\<^sub>0::'a where xx0:\<open>x = TConst x\<^sub>0\<close> by blast
     with Int_less_eq have \<open>x \<le> x\<close> by simp
-  } thus "\<And>x::'a tag_const. x \<le> x" .
+  } thus \<open>\<And>x::'a tag_const. x \<le> x\<close> .
 next
   show \<open>\<And>x y z  :: 'a tag_const. x \<le> y \<Longrightarrow> y \<le> z \<Longrightarrow> x \<le> z\<close>
     using less_eq_tag_const.simps by auto
