@@ -7,6 +7,10 @@ datatype cnt_expr =
 | TickCountLeq \<open>clock\<close> \<open>instant_index\<close>  ("#\<^sup>\<le>")
 
 subsection\<open> Symbolic Primitives for Runs \<close>
+
+datatype tag_var =
+  TSchematic \<open>clock * instant_index\<close> ("\<tau>\<^sub>v\<^sub>a\<^sub>r")
+
 datatype '\<tau> constr =
   Timestamp     \<open>clock\<close>   \<open>instant_index\<close> \<open>'\<tau> tag_const\<close>         ("_ \<Down> _ @ _")
 | TimeDelay     \<open>clock\<close>   \<open>instant_index\<close> \<open>'\<tau> tag_const\<close> \<open>clock\<close> ("_ @ _ \<oplus> _ \<Rightarrow> _")

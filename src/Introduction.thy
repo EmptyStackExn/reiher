@@ -124,8 +124,8 @@ text\<open>
   \<^item> \<^verbatim>\<open>c sporadic t\<close> means that clock \<^verbatim>\<open>c\<close> must have a tick at time \<^verbatim>\<open>t\<close> on its own time scale.
   \<^item> \<^verbatim>\<open>c1 sporadic t on c2\<close> means that clock \<^verbatim>\<open>c1\<close> must have a tick at an instant where the time 
     on \<^verbatim>\<open>c2\<close> is \<^verbatim>\<open>t\<close>.
-  \<^item> \<^verbatim>\<open>c1 time delayed by d on m implies c2\<close> means every time clock \<^verbatim>\<open>c1\<close> ticks, \<^verbatim>\<open>c2\<close> must have 
-    a tick at an instant where the time on \<^verbatim>\<open>m\<close> is \<^verbatim>\<open>d\<close> later than it was when \<^verbatim>\<open>c1\<close> had ticked.
+  \<^item> \<^verbatim>\<open>c1 time delayed by d on m implies c2\<close> means that every time clock \<^verbatim>\<open>c1\<close> ticks, \<^verbatim>\<open>c2\<close> must have 
+    a tick at the first instant where the time on \<^verbatim>\<open>m\<close> is \<^verbatim>\<open>d\<close> later than it was when \<^verbatim>\<open>c1\<close> had ticked.
     This means that every tick on \<^verbatim>\<open>c1\<close> is followed by a tick on \<^verbatim>\<open>c2\<close> after a delay \<^verbatim>\<open>d\<close> measured
     on the time scale of closk \<^verbatim>\<open>m\<close>.
   \<^item> \<^verbatim>\<open>time relation (c1, c2) in R\<close> means that at every instant, the current times on clocks \<^verbatim>\<open>c1\<close>
