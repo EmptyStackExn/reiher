@@ -2,6 +2,23 @@
 \begin{isabellebody}%
 \setisabellecontext{SymbolicPrimitive}%
 %
+\isadelimdocument
+%
+\endisadelimdocument
+%
+\isatagdocument
+%
+\isamarkupchapter{Symbolic Primitives for Building Runs%
+}
+\isamarkuptrue%
+%
+\endisatagdocument
+{\isafolddocument}%
+%
+\isadelimdocument
+%
+\endisadelimdocument
+%
 \isadelimtheory
 %
 \endisadelimtheory
@@ -16,9 +33,29 @@
 {\isafoldtheory}%
 %
 \isadelimtheory
-\isanewline
 %
 \endisadelimtheory
+%
+\begin{isamarkuptext}%
+We define here the primitive constraints on runs toward which we will translate
+  TESL specifications in the operational semantics.
+  These constraints refer to a specific symbolic run and can therefore access
+  properties of the run at particular instants (for instance, the fact that a clock
+  ticks at instant \isa{n} of the run, or the time on a given clock at 
+  that instant).
+
+  In the previous chapters, we had no reference to particular instants of a run 
+  because the TESL language should be invariant by stuttering in order to allow 
+  the composition of specifications: adding an instant where no clock ticks to 
+  a run that satisfies a formula should yield another satisfying run. However, 
+  when constructing runs that satisfy a formula, we need to be able to refer to 
+  the time or hamlet of a clock at a given instant.%
+\end{isamarkuptext}\isamarkuptrue%
+%
+\begin{isamarkuptext}%
+Counter expressions are used to get the number of ticks of a clock up to 
+  (strictly or not) a given instant index.%
+\end{isamarkuptext}\isamarkuptrue%
 \isacommand{datatype}\isamarkupfalse%
 \ cnt{\isacharunderscore}expr\ {\isacharequal}\isanewline
 \ \ TickCountLess\ {\isacartoucheopen}clock{\isacartoucheclose}\ {\isacartoucheopen}instant{\isacharunderscore}index{\isacartoucheclose}\ {\isacharparenleft}{\isachardoublequoteopen}{\isacharhash}\isactrlsup {\isacharless}{\isachardoublequoteclose}{\isacharparenright}\isanewline
@@ -39,33 +76,84 @@
 \isadelimdocument
 %
 \endisadelimdocument
+%
+\begin{isamarkuptext}%
+Tag variables are used to get the time on a clock at a given instant index.%
+\end{isamarkuptext}\isamarkuptrue%
 \isacommand{datatype}\isamarkupfalse%
 \ tag{\isacharunderscore}var\ {\isacharequal}\isanewline
 \ \ TSchematic\ {\isacartoucheopen}clock\ {\isacharasterisk}\ instant{\isacharunderscore}index{\isacartoucheclose}\ {\isacharparenleft}{\isachardoublequoteopen}{\isasymtau}\isactrlsub v\isactrlsub a\isactrlsub r{\isachardoublequoteclose}{\isacharparenright}\isanewline
 \isanewline
 \isacommand{datatype}\isamarkupfalse%
 \ {\isacharprime}{\isasymtau}\ constr\ {\isacharequal}\isanewline
+%
+\isamarkupcmt{\isa{c\ {\isasymDown}\ n\ {\isacharat}\ {\isasymtau}} constrains clock \isa{c} to have time \isa{{\isasymtau}}
+    at instant \isa{n} of the run.%
+}\isanewline
 \ \ Timestamp\ \ \ \ \ {\isacartoucheopen}clock{\isacartoucheclose}\ \ \ {\isacartoucheopen}instant{\isacharunderscore}index{\isacartoucheclose}\ {\isacartoucheopen}{\isacharprime}{\isasymtau}\ tag{\isacharunderscore}const{\isacartoucheclose}\ \ \ \ \ \ \ \ \ {\isacharparenleft}{\isachardoublequoteopen}{\isacharunderscore}\ {\isasymDown}\ {\isacharunderscore}\ {\isacharat}\ {\isacharunderscore}{\isachardoublequoteclose}{\isacharparenright}\isanewline
+%
+\isamarkupcmt{\isa{m\ {\isacharat}\ n\ {\isasymoplus}\ {\isasymdelta}t\ {\isasymRightarrow}\ s} constrains clock \isa{s} to tick at the
+    first instant at which the time on \isa{m} has increased by \isa{{\isasymdelta}t}
+    from the value it had at instant \isa{n} of the run.%
+}\isanewline
 {\isacharbar}\ TimeDelay\ \ \ \ \ {\isacartoucheopen}clock{\isacartoucheclose}\ \ \ {\isacartoucheopen}instant{\isacharunderscore}index{\isacartoucheclose}\ {\isacartoucheopen}{\isacharprime}{\isasymtau}\ tag{\isacharunderscore}const{\isacartoucheclose}\ {\isacartoucheopen}clock{\isacartoucheclose}\ {\isacharparenleft}{\isachardoublequoteopen}{\isacharunderscore}\ {\isacharat}\ {\isacharunderscore}\ {\isasymoplus}\ {\isacharunderscore}\ {\isasymRightarrow}\ {\isacharunderscore}{\isachardoublequoteclose}{\isacharparenright}\isanewline
+%
+\isamarkupcmt{\isa{c\ {\isasymUp}\ n} constrains clock \isa{c} to tick
+    at instant \isa{n} of the run.%
+}\isanewline
 {\isacharbar}\ Ticks\ \ \ \ \ \ \ \ \ {\isacartoucheopen}clock{\isacartoucheclose}\ \ \ {\isacartoucheopen}instant{\isacharunderscore}index{\isacartoucheclose}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ {\isacharparenleft}{\isachardoublequoteopen}{\isacharunderscore}\ {\isasymUp}\ {\isacharunderscore}{\isachardoublequoteclose}{\isacharparenright}\isanewline
+%
+\isamarkupcmt{\isa{c\ {\isasymnot}{\isasymUp}\ n} constrains clock \isa{c} not to tick
+    at instant \isa{n} of the run.%
+}\isanewline
 {\isacharbar}\ NotTicks\ \ \ \ \ \ {\isacartoucheopen}clock{\isacartoucheclose}\ \ \ {\isacartoucheopen}instant{\isacharunderscore}index{\isacartoucheclose}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ {\isacharparenleft}{\isachardoublequoteopen}{\isacharunderscore}\ {\isasymnot}{\isasymUp}\ {\isacharunderscore}{\isachardoublequoteclose}{\isacharparenright}\isanewline
+%
+\isamarkupcmt{\isa{c\ {\isasymnot}{\isasymUp}\ {\isacharless}\ n} constrains clock \isa{c} not to tick
+    before instant \isa{n} of the run.%
+}\isanewline
 {\isacharbar}\ NotTicksUntil\ {\isacartoucheopen}clock{\isacartoucheclose}\ \ \ {\isacartoucheopen}instant{\isacharunderscore}index{\isacartoucheclose}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ {\isacharparenleft}{\isachardoublequoteopen}{\isacharunderscore}\ {\isasymnot}{\isasymUp}\ {\isacharless}\ {\isacharunderscore}{\isachardoublequoteclose}{\isacharparenright}\isanewline
+%
+\isamarkupcmt{\isa{c\ {\isasymnot}{\isasymUp}\ {\isasymge}\ n} constrains clock \isa{c} not to tick
+    at and after instant \isa{n} of the run.%
+}\isanewline
 {\isacharbar}\ NotTicksFrom\ \ {\isacartoucheopen}clock{\isacartoucheclose}\ \ \ {\isacartoucheopen}instant{\isacharunderscore}index{\isacartoucheclose}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ {\isacharparenleft}{\isachardoublequoteopen}{\isacharunderscore}\ {\isasymnot}{\isasymUp}\ {\isasymge}\ {\isacharunderscore}{\isachardoublequoteclose}{\isacharparenright}\isanewline
+%
+\isamarkupcmt{\isa{{\isasymlfloor}{\isasymtau}\isactrlsub {\isadigit{1}}{\isacharcomma}\ {\isasymtau}\isactrlsub {\isadigit{2}}{\isasymrfloor}\ {\isasymin}\ R} constrains tag variables \isa{{\isasymtau}\isactrlsub {\isadigit{1}}} and  \isa{{\isasymtau}\isactrlsub {\isadigit{2}}} 
+    to be in relation \isa{R}.%
+}\isanewline
 {\isacharbar}\ TagArith\ \ \ \ \ \ {\isacartoucheopen}tag{\isacharunderscore}var{\isacartoucheclose}\ {\isacartoucheopen}tag{\isacharunderscore}var{\isacartoucheclose}\ {\isacartoucheopen}{\isacharparenleft}{\isacharprime}{\isasymtau}\ tag{\isacharunderscore}const\ {\isasymtimes}\ {\isacharprime}{\isasymtau}\ tag{\isacharunderscore}const{\isacharparenright}\ {\isasymRightarrow}\ bool{\isacartoucheclose}\ {\isacharparenleft}{\isachardoublequoteopen}{\isasymlfloor}{\isacharunderscore}{\isacharcomma}\ {\isacharunderscore}{\isasymrfloor}\ {\isasymin}\ {\isacharunderscore}{\isachardoublequoteclose}{\isacharparenright}\isanewline
+%
+\isamarkupcmt{\isa{{\isasymlceil}k\isactrlsub {\isadigit{1}}{\isacharcomma}\ k\isactrlsub {\isadigit{2}}{\isasymrceil}\ {\isasymin}\ R} constrains counter expressions \isa{k\isactrlsub {\isadigit{1}}} and  \isa{k\isactrlsub {\isadigit{2}}} 
+    to be in relation \isa{R}.%
+}\isanewline
 {\isacharbar}\ TickCntArith\ \ {\isacartoucheopen}cnt{\isacharunderscore}expr{\isacartoucheclose}\ {\isacartoucheopen}cnt{\isacharunderscore}expr{\isacartoucheclose}\ {\isacartoucheopen}{\isacharparenleft}nat\ {\isasymtimes}\ nat{\isacharparenright}\ {\isasymRightarrow}\ bool{\isacartoucheclose}\ \ \ \ \ \ {\isacharparenleft}{\isachardoublequoteopen}{\isasymlceil}{\isacharunderscore}{\isacharcomma}\ {\isacharunderscore}{\isasymrceil}\ {\isasymin}\ {\isacharunderscore}{\isachardoublequoteclose}{\isacharparenright}\isanewline
+%
+\isamarkupcmt{\isa{k\isactrlsub {\isadigit{1}}\ {\isasympreceq}\ k\isactrlsub {\isadigit{2}}} constrains counter expression \isa{k\isactrlsub {\isadigit{1}}} to be less or equal 
+    to counter expression \isa{k\isactrlsub {\isadigit{2}}}.%
+}\isanewline
 {\isacharbar}\ TickCntLeq\ \ \ \ {\isacartoucheopen}cnt{\isacharunderscore}expr{\isacartoucheclose}\ {\isacartoucheopen}cnt{\isacharunderscore}expr{\isacartoucheclose}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ {\isacharparenleft}{\isachardoublequoteopen}{\isacharunderscore}\ {\isasympreceq}\ {\isacharunderscore}{\isachardoublequoteclose}{\isacharparenright}\isanewline
 \isanewline
 \isacommand{type{\isacharunderscore}synonym}\isamarkupfalse%
-\ {\isacharprime}{\isasymtau}\ system\ {\isacharequal}\ {\isacartoucheopen}{\isacharprime}{\isasymtau}\ constr\ list{\isacartoucheclose}\isanewline
-\isanewline
-\isanewline
+\ {\isacharprime}{\isasymtau}\ system\ {\isacharequal}\ {\isacartoucheopen}{\isacharprime}{\isasymtau}\ constr\ list{\isacartoucheclose}%
+\begin{isamarkuptext}%
+The abstract machine has configurations composed of:
+
 %
-\isamarkupcmt{The abstract machine follows the intuition: 
-    past [@term\isa{{\isasymGamma}}], current index [n], present [@term\isa{{\isasymPsi}}], future [@term\isa{{\isasymPhi}}]
-   Beware: This type is slightly different from the one originally implemented in Heron%
-}\isanewline
+\begin{itemize}%
+\item the past \isa{{\isasymGamma}}, which captures choices that have already be made as a 
+list of symbolic primitive constraints on the run;
+
+\item the current index \isa{n}, which is the index of the present instant;
+
+\item the present \isa{{\isasymPsi}}, which captures the formulae that must be satisfied
+in the current instant;
+
+\item the future \isa{{\isasymPhi}}, which captures the constraints on the future of the run.%
+\end{itemize}%
+\end{isamarkuptext}\isamarkuptrue%
 \isacommand{type{\isacharunderscore}synonym}\isamarkupfalse%
-\ {\isacharprime}{\isasymtau}\ config\ {\isacharequal}\ {\isacartoucheopen}{\isacharprime}{\isasymtau}\ system\ {\isacharasterisk}\ instant{\isacharunderscore}index\ {\isacharasterisk}\ {\isacharprime}{\isasymtau}\ TESL{\isacharunderscore}formula\ {\isacharasterisk}\ {\isacharprime}{\isasymtau}\ TESL{\isacharunderscore}formula{\isacartoucheclose}%
+\ {\isacharprime}{\isasymtau}\ config\ {\isacharequal}\isanewline
+\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ {\isacartoucheopen}{\isacharprime}{\isasymtau}\ system\ {\isacharasterisk}\ instant{\isacharunderscore}index\ {\isacharasterisk}\ {\isacharprime}{\isasymtau}\ TESL{\isacharunderscore}formula\ {\isacharasterisk}\ {\isacharprime}{\isasymtau}\ TESL{\isacharunderscore}formula{\isacartoucheclose}%
 \isadelimdocument
 %
 \endisadelimdocument
@@ -82,8 +170,14 @@
 \isadelimdocument
 %
 \endisadelimdocument
+%
+\begin{isamarkuptext}%
+The semantics of the primitive constraints is defined in a way similar to
+  the semantics of TESL formulae.%
+\end{isamarkuptext}\isamarkuptrue%
 \isacommand{fun}\isamarkupfalse%
-\ counter{\isacharunderscore}expr{\isacharunderscore}eval\ {\isacharcolon}{\isacharcolon}\ {\isacartoucheopen}{\isacharparenleft}{\isacharprime}{\isasymtau}{\isacharcolon}{\isacharcolon}linordered{\isacharunderscore}field{\isacharparenright}\ run\ {\isasymRightarrow}\ cnt{\isacharunderscore}expr\ {\isasymRightarrow}\ nat{\isacartoucheclose}\ {\isacharparenleft}{\isachardoublequoteopen}{\isasymlbrakk}\ {\isacharunderscore}\ {\isasymturnstile}\ {\isacharunderscore}\ {\isasymrbrakk}\isactrlsub c\isactrlsub n\isactrlsub t\isactrlsub e\isactrlsub x\isactrlsub p\isactrlsub r{\isachardoublequoteclose}{\isacharparenright}\isanewline
+\ counter{\isacharunderscore}expr{\isacharunderscore}eval\ {\isacharcolon}{\isacharcolon}\ {\isacartoucheopen}{\isacharparenleft}{\isacharprime}{\isasymtau}{\isacharcolon}{\isacharcolon}linordered{\isacharunderscore}field{\isacharparenright}\ run\ {\isasymRightarrow}\ cnt{\isacharunderscore}expr\ {\isasymRightarrow}\ nat{\isacartoucheclose}\isanewline
+\ \ {\isacharparenleft}{\isachardoublequoteopen}{\isasymlbrakk}\ {\isacharunderscore}\ {\isasymturnstile}\ {\isacharunderscore}\ {\isasymrbrakk}\isactrlsub c\isactrlsub n\isactrlsub t\isactrlsub e\isactrlsub x\isactrlsub p\isactrlsub r{\isachardoublequoteclose}{\isacharparenright}\isanewline
 \isakeyword{where}\isanewline
 \ \ {\isacartoucheopen}{\isasymlbrakk}\ {\isasymrho}\ {\isasymturnstile}\ {\isacharhash}\isactrlsup {\isacharless}\ clk\ indx\ {\isasymrbrakk}\isactrlsub c\isactrlsub n\isactrlsub t\isactrlsub e\isactrlsub x\isactrlsub p\isactrlsub r\ {\isacharequal}\ run{\isacharunderscore}tick{\isacharunderscore}count{\isacharunderscore}strictly\ {\isasymrho}\ clk\ indx{\isacartoucheclose}\isanewline
 {\isacharbar}\ {\isacartoucheopen}{\isasymlbrakk}\ {\isasymrho}\ {\isasymturnstile}\ {\isacharhash}\isactrlsup {\isasymle}\ clk\ indx\ {\isasymrbrakk}\isactrlsub c\isactrlsub n\isactrlsub t\isactrlsub e\isactrlsub x\isactrlsub p\isactrlsub r\ {\isacharequal}\ run{\isacharunderscore}tick{\isacharunderscore}count\ {\isasymrho}\ clk\ indx{\isacartoucheclose}\isanewline
@@ -94,8 +188,9 @@
 \ \ {\isacharcolon}{\isacharcolon}{\isacartoucheopen}{\isacharparenleft}{\isacharprime}{\isasymtau}{\isacharcolon}{\isacharcolon}linordered{\isacharunderscore}field{\isacharparenright}\ constr\ {\isasymRightarrow}\ {\isacharprime}{\isasymtau}\ run\ set{\isacartoucheclose}\ {\isacharparenleft}{\isachardoublequoteopen}{\isasymlbrakk}\ {\isacharunderscore}\ {\isasymrbrakk}\isactrlsub p\isactrlsub r\isactrlsub i\isactrlsub m{\isachardoublequoteclose}{\isacharparenright}\isanewline
 \isakeyword{where}\isanewline
 \ \ {\isacartoucheopen}{\isasymlbrakk}\ K\ {\isasymUp}\ n\ \ {\isasymrbrakk}\isactrlsub p\isactrlsub r\isactrlsub i\isactrlsub m\ \ \ \ \ {\isacharequal}\ {\isacharbraceleft}{\isasymrho}{\isachardot}\ hamlet\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ n\ K{\isacharparenright}\ {\isacharbraceright}{\isacartoucheclose}\isanewline
-{\isacharbar}\ {\isacartoucheopen}{\isasymlbrakk}\ K\ {\isacharat}\ n\isactrlsub {\isadigit{0}}\ {\isasymoplus}\ {\isasymdelta}t\ {\isasymRightarrow}\ K{\isacharprime}\ {\isasymrbrakk}\isactrlsub p\isactrlsub r\isactrlsub i\isactrlsub m\ {\isacharequal}\ {\isacharbraceleft}{\isasymrho}{\isachardot}\ {\isasymforall}n\ {\isasymge}\ n\isactrlsub {\isadigit{0}}{\isachardot}\ first{\isacharunderscore}time\ {\isasymrho}\ K\ n\ {\isacharparenleft}time\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ n\isactrlsub {\isadigit{0}}\ K{\isacharparenright}\ {\isacharplus}\ {\isasymdelta}t{\isacharparenright}\isanewline
-\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ {\isasymlongrightarrow}\ hamlet\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ n\ K{\isacharprime}{\isacharparenright}{\isacharbraceright}{\isacartoucheclose}\isanewline
+{\isacharbar}\ {\isacartoucheopen}{\isasymlbrakk}\ K\ {\isacharat}\ n\isactrlsub {\isadigit{0}}\ {\isasymoplus}\ {\isasymdelta}t\ {\isasymRightarrow}\ K{\isacharprime}\ {\isasymrbrakk}\isactrlsub p\isactrlsub r\isactrlsub i\isactrlsub m\ {\isacharequal}\isanewline
+\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ {\isacharbraceleft}{\isasymrho}{\isachardot}\ {\isasymforall}n\ {\isasymge}\ n\isactrlsub {\isadigit{0}}{\isachardot}\ first{\isacharunderscore}time\ {\isasymrho}\ K\ n\ {\isacharparenleft}time\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ n\isactrlsub {\isadigit{0}}\ K{\isacharparenright}\ {\isacharplus}\ {\isasymdelta}t{\isacharparenright}\isanewline
+\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ {\isasymlongrightarrow}\ hamlet\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ n\ K{\isacharprime}{\isacharparenright}{\isacharbraceright}{\isacartoucheclose}\isanewline
 {\isacharbar}\ {\isacartoucheopen}{\isasymlbrakk}\ K\ {\isasymnot}{\isasymUp}\ n\ {\isasymrbrakk}\isactrlsub p\isactrlsub r\isactrlsub i\isactrlsub m\ \ \ \ \ {\isacharequal}\ {\isacharbraceleft}{\isasymrho}{\isachardot}\ {\isasymnot}hamlet\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ n\ K{\isacharparenright}\ {\isacharbraceright}{\isacartoucheclose}\isanewline
 {\isacharbar}\ {\isacartoucheopen}{\isasymlbrakk}\ K\ {\isasymnot}{\isasymUp}\ {\isacharless}\ n\ {\isasymrbrakk}\isactrlsub p\isactrlsub r\isactrlsub i\isactrlsub m\ \ \ {\isacharequal}\ {\isacharbraceleft}{\isasymrho}{\isachardot}\ {\isasymforall}i\ {\isacharless}\ n{\isachardot}\ {\isasymnot}\ hamlet\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ i\ K{\isacharparenright}{\isacharbraceright}{\isacartoucheclose}\isanewline
 {\isacharbar}\ {\isacartoucheopen}{\isasymlbrakk}\ K\ {\isasymnot}{\isasymUp}\ {\isasymge}\ n\ {\isasymrbrakk}\isactrlsub p\isactrlsub r\isactrlsub i\isactrlsub m\ \ \ {\isacharequal}\ {\isacharbraceleft}{\isasymrho}{\isachardot}\ {\isasymforall}i\ {\isasymge}\ n{\isachardot}\ {\isasymnot}\ hamlet\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ i\ K{\isacharparenright}\ {\isacharbraceright}{\isacartoucheclose}\isanewline
@@ -103,13 +198,17 @@
 {\isacharbar}\ {\isacartoucheopen}{\isasymlbrakk}\ {\isasymlfloor}{\isasymtau}\isactrlsub v\isactrlsub a\isactrlsub r{\isacharparenleft}K\isactrlsub {\isadigit{1}}{\isacharcomma}\ n\isactrlsub {\isadigit{1}}{\isacharparenright}{\isacharcomma}\ {\isasymtau}\isactrlsub v\isactrlsub a\isactrlsub r{\isacharparenleft}K\isactrlsub {\isadigit{2}}{\isacharcomma}\ n\isactrlsub {\isadigit{2}}{\isacharparenright}{\isasymrfloor}\ {\isasymin}\ R\ {\isasymrbrakk}\isactrlsub p\isactrlsub r\isactrlsub i\isactrlsub m\ {\isacharequal}\isanewline
 \ \ \ \ {\isacharbraceleft}\ {\isasymrho}{\isachardot}\ R\ {\isacharparenleft}time\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ n\isactrlsub {\isadigit{1}}\ K\isactrlsub {\isadigit{1}}{\isacharparenright}{\isacharcomma}\ time\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ n\isactrlsub {\isadigit{2}}\ K\isactrlsub {\isadigit{2}}{\isacharparenright}{\isacharparenright}\ {\isacharbraceright}{\isacartoucheclose}\isanewline
 {\isacharbar}\ {\isacartoucheopen}{\isasymlbrakk}\ {\isasymlceil}e\isactrlsub {\isadigit{1}}{\isacharcomma}\ e\isactrlsub {\isadigit{2}}{\isasymrceil}\ {\isasymin}\ R\ {\isasymrbrakk}\isactrlsub p\isactrlsub r\isactrlsub i\isactrlsub m\ {\isacharequal}\ {\isacharbraceleft}\ {\isasymrho}{\isachardot}\ R\ {\isacharparenleft}{\isasymlbrakk}\ {\isasymrho}\ {\isasymturnstile}\ e\isactrlsub {\isadigit{1}}\ {\isasymrbrakk}\isactrlsub c\isactrlsub n\isactrlsub t\isactrlsub e\isactrlsub x\isactrlsub p\isactrlsub r{\isacharcomma}\ {\isasymlbrakk}\ {\isasymrho}\ {\isasymturnstile}\ e\isactrlsub {\isadigit{2}}\ {\isasymrbrakk}\isactrlsub c\isactrlsub n\isactrlsub t\isactrlsub e\isactrlsub x\isactrlsub p\isactrlsub r{\isacharparenright}\ {\isacharbraceright}{\isacartoucheclose}\isanewline
-{\isacharbar}\ {\isacartoucheopen}{\isasymlbrakk}\ cnt{\isacharunderscore}e\isactrlsub {\isadigit{1}}\ {\isasympreceq}\ cnt{\isacharunderscore}e\isactrlsub {\isadigit{2}}\ {\isasymrbrakk}\isactrlsub p\isactrlsub r\isactrlsub i\isactrlsub m\ {\isacharequal}\ {\isacharbraceleft}\ {\isasymrho}{\isachardot}\ {\isasymlbrakk}\ {\isasymrho}\ {\isasymturnstile}\ cnt{\isacharunderscore}e\isactrlsub {\isadigit{1}}\ {\isasymrbrakk}\isactrlsub c\isactrlsub n\isactrlsub t\isactrlsub e\isactrlsub x\isactrlsub p\isactrlsub r\ {\isasymle}\ {\isasymlbrakk}\ {\isasymrho}\ {\isasymturnstile}\ cnt{\isacharunderscore}e\isactrlsub {\isadigit{2}}\ {\isasymrbrakk}\isactrlsub c\isactrlsub n\isactrlsub t\isactrlsub e\isactrlsub x\isactrlsub p\isactrlsub r\ {\isacharbraceright}{\isacartoucheclose}\isanewline
-\isanewline
+{\isacharbar}\ {\isacartoucheopen}{\isasymlbrakk}\ cnt{\isacharunderscore}e\isactrlsub {\isadigit{1}}\ {\isasympreceq}\ cnt{\isacharunderscore}e\isactrlsub {\isadigit{2}}\ {\isasymrbrakk}\isactrlsub p\isactrlsub r\isactrlsub i\isactrlsub m\ {\isacharequal}\ {\isacharbraceleft}\ {\isasymrho}{\isachardot}\ {\isasymlbrakk}\ {\isasymrho}\ {\isasymturnstile}\ cnt{\isacharunderscore}e\isactrlsub {\isadigit{1}}\ {\isasymrbrakk}\isactrlsub c\isactrlsub n\isactrlsub t\isactrlsub e\isactrlsub x\isactrlsub p\isactrlsub r\ {\isasymle}\ {\isasymlbrakk}\ {\isasymrho}\ {\isasymturnstile}\ cnt{\isacharunderscore}e\isactrlsub {\isadigit{2}}\ {\isasymrbrakk}\isactrlsub c\isactrlsub n\isactrlsub t\isactrlsub e\isactrlsub x\isactrlsub p\isactrlsub r\ {\isacharbraceright}{\isacartoucheclose}%
+\begin{isamarkuptext}%
+The composition of primitive constraints is their conjunction, and we get the
+  set of satisfying runs by intersection.%
+\end{isamarkuptext}\isamarkuptrue%
 \isacommand{fun}\isamarkupfalse%
 \ symbolic{\isacharunderscore}run{\isacharunderscore}interpretation\isanewline
-\ \ {\isacharcolon}{\isacharcolon}{\isacartoucheopen}{\isacharparenleft}{\isacharprime}{\isasymtau}{\isacharcolon}{\isacharcolon}linordered{\isacharunderscore}field{\isacharparenright}\ constr\ list\ {\isasymRightarrow}\ {\isacharparenleft}{\isacharprime}{\isasymtau}{\isacharcolon}{\isacharcolon}linordered{\isacharunderscore}field{\isacharparenright}\ run\ set{\isacartoucheclose}\ {\isacharparenleft}{\isachardoublequoteopen}{\isasymlbrakk}{\isasymlbrakk}\ {\isacharunderscore}\ {\isasymrbrakk}{\isasymrbrakk}\isactrlsub p\isactrlsub r\isactrlsub i\isactrlsub m{\isachardoublequoteclose}{\isacharparenright}\isanewline
+\ \ {\isacharcolon}{\isacharcolon}{\isacartoucheopen}{\isacharparenleft}{\isacharprime}{\isasymtau}{\isacharcolon}{\isacharcolon}linordered{\isacharunderscore}field{\isacharparenright}\ constr\ list\ {\isasymRightarrow}\ {\isacharparenleft}{\isacharprime}{\isasymtau}{\isacharcolon}{\isacharcolon}linordered{\isacharunderscore}field{\isacharparenright}\ run\ set{\isacartoucheclose}\isanewline
+\ \ {\isacharparenleft}{\isachardoublequoteopen}{\isasymlbrakk}{\isasymlbrakk}\ {\isacharunderscore}\ {\isasymrbrakk}{\isasymrbrakk}\isactrlsub p\isactrlsub r\isactrlsub i\isactrlsub m{\isachardoublequoteclose}{\isacharparenright}\isanewline
 \isakeyword{where}\isanewline
-\ \ {\isacartoucheopen}{\isasymlbrakk}{\isasymlbrakk}\ {\isacharbrackleft}{\isacharbrackright}\ {\isasymrbrakk}{\isasymrbrakk}\isactrlsub p\isactrlsub r\isactrlsub i\isactrlsub m\ {\isacharequal}\ {\isacharbraceleft}\ {\isacharunderscore}{\isachardot}\ True\ {\isacharbraceright}{\isacartoucheclose}\isanewline
+\ \ {\isacartoucheopen}{\isasymlbrakk}{\isasymlbrakk}\ {\isacharbrackleft}{\isacharbrackright}\ {\isasymrbrakk}{\isasymrbrakk}\isactrlsub p\isactrlsub r\isactrlsub i\isactrlsub m\ {\isacharequal}\ {\isacharbraceleft}{\isasymrho}{\isachardot}\ True\ {\isacharbraceright}{\isacartoucheclose}\isanewline
 {\isacharbar}\ {\isacartoucheopen}{\isasymlbrakk}{\isasymlbrakk}\ {\isasymgamma}\ {\isacharhash}\ {\isasymGamma}\ {\isasymrbrakk}{\isasymrbrakk}\isactrlsub p\isactrlsub r\isactrlsub i\isactrlsub m\ {\isacharequal}\ {\isasymlbrakk}\ {\isasymgamma}\ {\isasymrbrakk}\isactrlsub p\isactrlsub r\isactrlsub i\isactrlsub m\ {\isasyminter}\ {\isasymlbrakk}{\isasymlbrakk}\ {\isasymGamma}\ {\isasymrbrakk}{\isasymrbrakk}\isactrlsub p\isactrlsub r\isactrlsub i\isactrlsub m{\isacartoucheclose}\isanewline
 \isanewline
 \isacommand{lemma}\isamarkupfalse%
@@ -145,28 +244,32 @@
 }
 \isamarkuptrue%
 %
-\isamarkupcmt{Initial states%
-}%
 \endisatagdocument
 {\isafolddocument}%
 %
 \isadelimdocument
 %
 \endisadelimdocument
-\isanewline
+%
+\begin{isamarkuptext}%
+In order to build a run, we can start from an initial run in which no clock 
+  ticks and the time is always 0 on any clock.%
+\end{isamarkuptext}\isamarkuptrue%
 \isacommand{abbreviation}\isamarkupfalse%
 \ initial{\isacharunderscore}run\ {\isacharcolon}{\isacharcolon}\ {\isacartoucheopen}{\isacharparenleft}{\isacharprime}{\isasymtau}{\isacharcolon}{\isacharcolon}linordered{\isacharunderscore}field{\isacharparenright}\ run{\isacartoucheclose}\ {\isacharparenleft}{\isachardoublequoteopen}{\isasymrho}\isactrlsub {\isasymodot}{\isachardoublequoteclose}{\isacharparenright}\ \isakeyword{where}\isanewline
-\ \ {\isacartoucheopen}{\isasymrho}\isactrlsub {\isasymodot}\ {\isasymequiv}\ Abs{\isacharunderscore}run\ {\isacharparenleft}{\isacharparenleft}{\isasymlambda}{\isacharunderscore}\ {\isacharunderscore}{\isachardot}\ {\isacharparenleft}False{\isacharcomma}\ {\isasymtau}\isactrlsub c\isactrlsub s\isactrlsub t\ {\isadigit{0}}{\isacharparenright}{\isacharparenright}\ {\isacharcolon}{\isacharcolon}nat\ {\isasymRightarrow}\ clock\ {\isasymRightarrow}\ {\isacharparenleft}bool\ {\isasymtimes}\ {\isacharprime}{\isasymtau}\ tag{\isacharunderscore}const{\isacharparenright}{\isacharparenright}{\isacartoucheclose}\isanewline
-\isanewline
-%
-\isamarkupcmt{To ensure monotonicity, time tag is set at a specific instant and forever after (stuttering)%
-}\isanewline
+\ \ {\isacartoucheopen}{\isasymrho}\isactrlsub {\isasymodot}\ {\isasymequiv}\ Abs{\isacharunderscore}run\ {\isacharparenleft}{\isacharparenleft}{\isasymlambda}{\isacharunderscore}\ {\isacharunderscore}{\isachardot}\ {\isacharparenleft}False{\isacharcomma}\ {\isasymtau}\isactrlsub c\isactrlsub s\isactrlsub t\ {\isadigit{0}}{\isacharparenright}{\isacharparenright}\ {\isacharcolon}{\isacharcolon}nat\ {\isasymRightarrow}\ clock\ {\isasymRightarrow}\ {\isacharparenleft}bool\ {\isasymtimes}\ {\isacharprime}{\isasymtau}\ tag{\isacharunderscore}const{\isacharparenright}{\isacharparenright}{\isacartoucheclose}%
+\begin{isamarkuptext}%
+To help avoiding that time flows backward, setting the time on a clock at a given 
+  instant sets it for the future instants too.%
+\end{isamarkuptext}\isamarkuptrue%
 \isacommand{fun}\isamarkupfalse%
 \ time{\isacharunderscore}update\isanewline
-\ \ {\isacharcolon}{\isacharcolon}\ {\isacartoucheopen}nat\ {\isasymRightarrow}\ clock\ {\isasymRightarrow}\ {\isacharparenleft}{\isacharprime}{\isasymtau}{\isacharcolon}{\isacharcolon}linordered{\isacharunderscore}field{\isacharparenright}\ tag{\isacharunderscore}const\ {\isasymRightarrow}\ {\isacharparenleft}nat\ {\isasymRightarrow}\ clock\ {\isasymRightarrow}\ {\isacharparenleft}bool\ {\isasymtimes}\ {\isacharprime}{\isasymtau}\ tag{\isacharunderscore}const{\isacharparenright}{\isacharparenright}\isanewline
-\ \ \ \ \ \ {\isasymRightarrow}\ {\isacharparenleft}nat\ {\isasymRightarrow}\ clock\ {\isasymRightarrow}\ {\isacharparenleft}bool\ {\isasymtimes}\ {\isacharprime}{\isasymtau}\ tag{\isacharunderscore}const{\isacharparenright}{\isacharparenright}{\isacartoucheclose}\isanewline
+\ \ {\isacharcolon}{\isacharcolon}\ {\isacartoucheopen}nat\ {\isasymRightarrow}\ clock\ {\isasymRightarrow}\ {\isacharparenleft}{\isacharprime}{\isasymtau}{\isacharcolon}{\isacharcolon}linordered{\isacharunderscore}field{\isacharparenright}\ tag{\isacharunderscore}const\ {\isasymRightarrow}\ {\isacharparenleft}nat\ {\isasymRightarrow}\ {\isacharprime}{\isasymtau}\ instant{\isacharparenright}\isanewline
+\ \ \ \ \ \ {\isasymRightarrow}\ {\isacharparenleft}nat\ {\isasymRightarrow}\ {\isacharprime}{\isasymtau}\ instant{\isacharparenright}{\isacartoucheclose}\isanewline
 \isakeyword{where}\isanewline
-\ \ {\isacartoucheopen}time{\isacharunderscore}update\ n\ K\ {\isasymtau}\ {\isasymrho}\ {\isacharequal}\ {\isacharparenleft}{\isasymlambda}n{\isacharprime}\ K{\isacharprime}{\isachardot}\ if\ K\ {\isacharequal}\ K{\isacharprime}\ {\isasymand}\ n\ {\isasymle}\ n{\isacharprime}\ then\ {\isacharparenleft}hamlet\ {\isacharparenleft}{\isasymrho}\ n\ K{\isacharparenright}{\isacharcomma}\ {\isasymtau}{\isacharparenright}\ else\ {\isasymrho}\ n{\isacharprime}\ K{\isacharprime}{\isacharparenright}{\isacartoucheclose}%
+\ \ {\isacartoucheopen}time{\isacharunderscore}update\ n\ K\ {\isasymtau}\ {\isasymrho}\ {\isacharequal}\ {\isacharparenleft}{\isasymlambda}n{\isacharprime}\ K{\isacharprime}{\isachardot}\ if\ K\ {\isacharequal}\ K{\isacharprime}\ {\isasymand}\ n\ {\isasymle}\ n{\isacharprime}\isanewline
+\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ then\ {\isacharparenleft}hamlet\ {\isacharparenleft}{\isasymrho}\ n\ K{\isacharparenright}{\isacharcomma}\ {\isasymtau}{\isacharparenright}\isanewline
+\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ else\ {\isasymrho}\ n{\isacharprime}\ K{\isacharprime}{\isacharparenright}{\isacartoucheclose}%
 \isadelimdocument
 %
 \endisadelimdocument
@@ -185,7 +288,7 @@
 \endisadelimdocument
 \isacommand{lemma}\isamarkupfalse%
 \ context{\isacharunderscore}consistency{\isacharunderscore}preservationI{\isacharcolon}\isanewline
-\ \ {\isacartoucheopen}consistent{\isacharunderscore}context\ {\isacharparenleft}{\isacharparenleft}{\isasymgamma}\ {\isacharcolon}{\isacharcolon}\ {\isacharparenleft}{\isacharprime}{\isasymtau}{\isacharcolon}{\isacharcolon}linordered{\isacharunderscore}field{\isacharparenright}\ constr{\isacharparenright}\ {\isacharhash}\ {\isasymGamma}{\isacharparenright}\ {\isasymLongrightarrow}\ consistent{\isacharunderscore}context\ {\isasymGamma}{\isacartoucheclose}\isanewline
+\ \ {\isacartoucheopen}consistent{\isacharunderscore}context\ {\isacharparenleft}{\isacharparenleft}{\isasymgamma}{\isacharcolon}{\isacharcolon}{\isacharparenleft}{\isacharprime}{\isasymtau}{\isacharcolon}{\isacharcolon}linordered{\isacharunderscore}field{\isacharparenright}\ constr{\isacharparenright}{\isacharhash}{\isasymGamma}{\isacharparenright}\ {\isasymLongrightarrow}\ consistent{\isacharunderscore}context\ {\isasymGamma}{\isacartoucheclose}\isanewline
 %
 \isadelimproof
 %
@@ -193,8 +296,7 @@
 %
 \isatagproof
 \isacommand{unfolding}\isamarkupfalse%
-\ consistent{\isacharunderscore}context{\isacharunderscore}def\isanewline
-\isacommand{by}\isamarkupfalse%
+\ consistent{\isacharunderscore}context{\isacharunderscore}def\ \isacommand{by}\isamarkupfalse%
 \ auto\isanewline
 \isanewline
 %
@@ -208,23 +310,15 @@
 %
 \endisadelimproof
 \isacommand{inductive}\isamarkupfalse%
-\ context{\isacharunderscore}independency{\isacharcolon}{\isacharcolon}{\isacartoucheopen}{\isacharparenleft}{\isacharprime}{\isasymtau}{\isacharcolon}{\isacharcolon}linordered{\isacharunderscore}field{\isacharparenright}\ constr\ {\isasymRightarrow}\ {\isacharprime}{\isasymtau}\ constr\ list\ {\isasymRightarrow}\ bool{\isacartoucheclose}\ {\isacharparenleft}{\isachardoublequoteopen}{\isacharunderscore}\ {\isasymbowtie}\ {\isacharunderscore}{\isachardoublequoteclose}{\isacharparenright}\isanewline
+\ context{\isacharunderscore}independency\isanewline
+\ \ {\isacharcolon}{\isacharcolon}{\isacartoucheopen}{\isacharparenleft}{\isacharprime}{\isasymtau}{\isacharcolon}{\isacharcolon}linordered{\isacharunderscore}field{\isacharparenright}\ constr\ {\isasymRightarrow}\ {\isacharprime}{\isasymtau}\ constr\ list\ {\isasymRightarrow}\ bool{\isacartoucheclose}\ {\isacharparenleft}{\isachardoublequoteopen}{\isacharunderscore}\ {\isasymbowtie}\ {\isacharunderscore}{\isachardoublequoteclose}{\isacharparenright}\isanewline
 \isakeyword{where}\isanewline
 \ \ NotTicks{\isacharunderscore}independency{\isacharcolon}\isanewline
 \ \ {\isacartoucheopen}{\isacharparenleft}K\ {\isasymUp}\ n{\isacharparenright}\ {\isasymnotin}\ set\ {\isasymGamma}\ {\isasymLongrightarrow}\ {\isacharparenleft}K\ {\isasymnot}{\isasymUp}\ n{\isacharparenright}\ {\isasymbowtie}\ {\isasymGamma}{\isacartoucheclose}\isanewline
 {\isacharbar}\ Ticks{\isacharunderscore}independency{\isacharcolon}\isanewline
 \ \ {\isacartoucheopen}{\isacharparenleft}K\ {\isasymnot}{\isasymUp}\ n{\isacharparenright}\ {\isasymnotin}\ set\ {\isasymGamma}\ {\isasymLongrightarrow}\ {\isacharparenleft}K\ {\isasymUp}\ n{\isacharparenright}\ {\isasymbowtie}\ {\isasymGamma}{\isacartoucheclose}\isanewline
 {\isacharbar}\ Timestamp{\isacharunderscore}independency{\isacharcolon}\isanewline
-\ \ {\isacartoucheopen}{\isacharparenleft}{\isasymnexists}{\isasymtau}{\isacharprime}{\isachardot}\ {\isasymtau}{\isacharprime}\ {\isacharequal}\ {\isasymtau}\ {\isasymand}\ {\isacharparenleft}K\ {\isasymDown}\ n\ {\isacharat}\ {\isasymtau}{\isacharparenright}\ {\isasymin}\ set\ {\isasymGamma}{\isacharparenright}\ {\isasymLongrightarrow}\ {\isacharparenleft}K\ {\isasymDown}\ n\ {\isacharat}\ {\isasymtau}{\isacharparenright}\ {\isasymbowtie}\ {\isasymGamma}{\isacartoucheclose}\isanewline
-\isanewline
-%
-\isamarkupcancel{\isanewline
-lemma\ context{\isacharunderscore}consistency{\isacharunderscore}preservationE{\isacharcolon}\isanewline
-\ \ assumes\ consist{\isacharcolon}\ {\isasymopen}consistent{\isacharunderscore}context\ {\isasymGamma}{\isasymclose}\isanewline
-\ \ and\ \ \ \ \ indepen{\isacharcolon}\ {\isasymopen}{\isasymgamma}\ {\isasymbowtie}\ {\isasymGamma}{\isasymclose}\isanewline
-\ \ shows\ \ \ {\isasymopen}consistent{\isacharunderscore}context\ {\isacharparenleft}{\isasymgamma}\ {\isacharhash}\ {\isasymGamma}{\isacharparenright}{\isasymclose}\isanewline
-\ \ oops\isanewline
-}%
+\ \ {\isacartoucheopen}{\isacharparenleft}{\isasymnexists}{\isasymtau}{\isacharprime}{\isachardot}\ {\isasymtau}{\isacharprime}\ {\isacharequal}\ {\isasymtau}\ {\isasymand}\ {\isacharparenleft}K\ {\isasymDown}\ n\ {\isacharat}\ {\isasymtau}{\isacharparenright}\ {\isasymin}\ set\ {\isasymGamma}{\isacharparenright}\ {\isasymLongrightarrow}\ {\isacharparenleft}K\ {\isasymDown}\ n\ {\isacharat}\ {\isasymtau}{\isacharparenright}\ {\isasymbowtie}\ {\isasymGamma}{\isacartoucheclose}%
 \isadelimdocument
 %
 \endisadelimdocument
@@ -254,20 +348,8 @@ lemma\ context{\isacharunderscore}consistency{\isacharunderscore}preservationE{\
 \endisadelimproof
 %
 \isatagproof
-\isacommand{proof}\isamarkupfalse%
-\ {\isacharparenleft}induct\ {\isasymGamma}{\isacharparenright}\isanewline
-\ \ \isacommand{case}\isamarkupfalse%
-\ Nil\ \isacommand{thus}\isamarkupfalse%
-\ {\isacharquery}case\ \isacommand{by}\isamarkupfalse%
-\ simp\isanewline
-\isacommand{next}\isamarkupfalse%
-\isanewline
-\ \ \isacommand{case}\isamarkupfalse%
-\ Cons\ \isacommand{thus}\isamarkupfalse%
-\ {\isacharquery}case\ \isacommand{by}\isamarkupfalse%
-\ auto\isanewline
-\isacommand{qed}\isamarkupfalse%
-%
+\isacommand{by}\isamarkupfalse%
+\ {\isacharparenleft}induction\ {\isasymGamma}{\isacharcomma}\ simp{\isacharplus}{\isacharparenright}%
 \endisatagproof
 {\isafoldproof}%
 %
@@ -305,7 +387,7 @@ Similar to the expansion laws of lattices%
 %
 \isatagproof
 \isacommand{by}\isamarkupfalse%
-\ {\isacharparenleft}induction\ {\isasymGamma}\isactrlsub {\isadigit{1}}{\isacharcomma}\ auto{\isacharparenright}%
+\ {\isacharparenleft}induction\ {\isasymGamma}\isactrlsub {\isadigit{1}}{\isacharcomma}\ simp{\isacharcomma}\ auto{\isacharparenright}%
 \endisatagproof
 {\isafoldproof}%
 %
@@ -319,7 +401,7 @@ Similar to the expansion laws of lattices%
 %
 \isatagdocument
 %
-\isamarkupsection{Equational laws for TESL formulae denotationally interpreted%
+\isamarkupsection{Equational laws for the interpretation of symbolic primitives%
 }
 \isamarkuptrue%
 %
@@ -503,7 +585,7 @@ Similar to the expansion laws of lattices%
 %
 \isatagdocument
 %
-\isamarkupsubsection{Decreasing interpretation of TESL formulae%
+\isamarkupsubsection{Decreasing interpretation of symbolic primitives%
 }
 \isamarkuptrue%
 %
@@ -567,7 +649,8 @@ Similar to the expansion laws of lattices%
 \ {\isacartoucheopen}{\isasymgamma}\ {\isacharhash}\ {\isasymGamma}\ {\isacharequal}\ {\isacharbrackleft}{\isasymgamma}{\isacharbrackright}\ {\isacharat}\ {\isasymGamma}{\isacartoucheclose}\ \isacommand{by}\isamarkupfalse%
 \ simp\isanewline
 \ \ \isacommand{hence}\isamarkupfalse%
-\ {\isacartoucheopen}{\isasymlbrakk}{\isasymlbrakk}\ {\isasymgamma}\ {\isacharhash}\ {\isasymGamma}\ {\isasymrbrakk}{\isasymrbrakk}\isactrlsub p\isactrlsub r\isactrlsub i\isactrlsub m\ {\isacharequal}\ {\isasymlbrakk}{\isasymlbrakk}\ {\isacharbrackleft}{\isasymgamma}{\isacharbrackright}\ {\isasymrbrakk}{\isasymrbrakk}\isactrlsub p\isactrlsub r\isactrlsub i\isactrlsub m\ {\isasyminter}\ {\isasymlbrakk}{\isasymlbrakk}\ {\isasymGamma}\ {\isasymrbrakk}{\isasymrbrakk}\isactrlsub p\isactrlsub r\isactrlsub i\isactrlsub m{\isacartoucheclose}\ \isacommand{using}\isamarkupfalse%
+\ {\isacartoucheopen}{\isasymlbrakk}{\isasymlbrakk}\ {\isasymgamma}\ {\isacharhash}\ {\isasymGamma}\ {\isasymrbrakk}{\isasymrbrakk}\isactrlsub p\isactrlsub r\isactrlsub i\isactrlsub m\ {\isacharequal}\ {\isasymlbrakk}{\isasymlbrakk}\ {\isacharbrackleft}{\isasymgamma}{\isacharbrackright}\ {\isasymrbrakk}{\isasymrbrakk}\isactrlsub p\isactrlsub r\isactrlsub i\isactrlsub m\ {\isasyminter}\ {\isasymlbrakk}{\isasymlbrakk}\ {\isasymGamma}\ {\isasymrbrakk}{\isasymrbrakk}\isactrlsub p\isactrlsub r\isactrlsub i\isactrlsub m{\isacartoucheclose}\isanewline
+\ \ \ \ \isacommand{using}\isamarkupfalse%
 \ symrun{\isacharunderscore}interp{\isacharunderscore}expansion\ \isacommand{by}\isamarkupfalse%
 \ simp\isanewline
 \ \ \isacommand{thus}\isamarkupfalse%
@@ -576,25 +659,6 @@ Similar to the expansion laws of lattices%
 \ fastforce\isanewline
 \isacommand{qed}\isamarkupfalse%
 %
-\endisatagproof
-{\isafoldproof}%
-%
-\isadelimproof
-\isanewline
-%
-\endisadelimproof
-\isanewline
-\isacommand{lemma}\isamarkupfalse%
-\ symrun{\isacharunderscore}interp{\isacharunderscore}decreases{\isacharcolon}\isanewline
-\ \ {\isacartoucheopen}{\isasymlbrakk}{\isasymlbrakk}\ {\isasymGamma}\ {\isasymrbrakk}{\isasymrbrakk}\isactrlsub p\isactrlsub r\isactrlsub i\isactrlsub m\ {\isasymsupseteq}\ {\isasymlbrakk}{\isasymlbrakk}\ {\isasymgamma}\ {\isacharhash}\ {\isasymGamma}\ {\isasymrbrakk}{\isasymrbrakk}\isactrlsub p\isactrlsub r\isactrlsub i\isactrlsub m{\isacartoucheclose}\isanewline
-%
-\isadelimproof
-%
-\endisadelimproof
-%
-\isatagproof
-\isacommand{by}\isamarkupfalse%
-\ {\isacharparenleft}rule\ TESL{\isacharunderscore}sem{\isacharunderscore}decreases{\isacharunderscore}head{\isacharparenright}%
 \endisatagproof
 {\isafoldproof}%
 %
@@ -613,13 +677,7 @@ Similar to the expansion laws of lattices%
 %
 \isatagproof
 \isacommand{proof}\isamarkupfalse%
-\ {\isacharparenleft}induct\ {\isasymGamma}{\isacharparenright}\isanewline
-\ \ \isacommand{case}\isamarkupfalse%
-\ Nil\ \isacommand{thus}\isamarkupfalse%
-\ {\isacharquery}case\ \isacommand{by}\isamarkupfalse%
-\ simp\isanewline
-\isacommand{next}\isamarkupfalse%
-\isanewline
+\ {\isacharparenleft}induction\ {\isasymGamma}{\isacharparenright}\isanewline
 \ \ \isacommand{case}\isamarkupfalse%
 \ Cons\isanewline
 \ \ \ \ \isacommand{thus}\isamarkupfalse%
@@ -627,7 +685,7 @@ Similar to the expansion laws of lattices%
 \ symrun{\isacharunderscore}interp{\isacharunderscore}formula{\isacharunderscore}stuttering\ \isacommand{by}\isamarkupfalse%
 \ auto\isanewline
 \isacommand{qed}\isamarkupfalse%
-%
+\ simp%
 \endisatagproof
 {\isafoldproof}%
 %
@@ -698,9 +756,9 @@ Similar to the expansion laws of lattices%
 \ {\isasymGamma}\isactrlsub r\ \isakeyword{where}\ decompose{\isacharcolon}\ {\isacartoucheopen}set\ {\isacharparenleft}{\isasymGamma}\ {\isacharat}\ {\isasymGamma}\isactrlsub r{\isacharparenright}\ {\isacharequal}\ set\ {\isasymGamma}{\isacharprime}{\isacartoucheclose}\ \isacommand{using}\isamarkupfalse%
 \ assms\ \isacommand{by}\isamarkupfalse%
 \ auto\isanewline
-\ \ \isacommand{have}\isamarkupfalse%
+\ \ \isacommand{hence}\isamarkupfalse%
 \ {\isacartoucheopen}set\ {\isacharparenleft}{\isasymGamma}\ {\isacharat}\ {\isasymGamma}\isactrlsub r{\isacharparenright}\ {\isacharequal}\ set\ {\isasymGamma}{\isacharprime}{\isacartoucheclose}\ \isacommand{using}\isamarkupfalse%
-\ assms\ decompose\ \isacommand{by}\isamarkupfalse%
+\ assms\ \isacommand{by}\isamarkupfalse%
 \ blast\isanewline
 \ \ \isacommand{moreover}\isamarkupfalse%
 \ \isacommand{have}\isamarkupfalse%
@@ -709,12 +767,14 @@ Similar to the expansion laws of lattices%
 \ auto\isanewline
 \ \ \isacommand{moreover}\isamarkupfalse%
 \ \isacommand{have}\isamarkupfalse%
-\ {\isacartoucheopen}{\isasymlbrakk}{\isasymlbrakk}\ {\isasymGamma}{\isacharprime}\ {\isasymrbrakk}{\isasymrbrakk}\isactrlsub p\isactrlsub r\isactrlsub i\isactrlsub m\ {\isacharequal}\ {\isasymlbrakk}{\isasymlbrakk}\ {\isasymGamma}\ {\isacharat}\ {\isasymGamma}\isactrlsub r\ {\isasymrbrakk}{\isasymrbrakk}\isactrlsub p\isactrlsub r\isactrlsub i\isactrlsub m{\isacartoucheclose}\ \isacommand{using}\isamarkupfalse%
+\ {\isacartoucheopen}{\isasymlbrakk}{\isasymlbrakk}\ {\isasymGamma}{\isacharprime}\ {\isasymrbrakk}{\isasymrbrakk}\isactrlsub p\isactrlsub r\isactrlsub i\isactrlsub m\ {\isacharequal}\ {\isasymlbrakk}{\isasymlbrakk}\ {\isasymGamma}\ {\isacharat}\ {\isasymGamma}\isactrlsub r\ {\isasymrbrakk}{\isasymrbrakk}\isactrlsub p\isactrlsub r\isactrlsub i\isactrlsub m{\isacartoucheclose}\isanewline
+\ \ \ \ \isacommand{using}\isamarkupfalse%
 \ symrun{\isacharunderscore}interp{\isacharunderscore}set{\isacharunderscore}lifting\ decompose\ \isacommand{by}\isamarkupfalse%
 \ blast\isanewline
 \ \ \isacommand{moreover}\isamarkupfalse%
 \ \isacommand{have}\isamarkupfalse%
-\ {\isacartoucheopen}{\isasymlbrakk}{\isasymlbrakk}\ {\isasymGamma}\ {\isacharat}\ {\isasymGamma}\isactrlsub r\ {\isasymrbrakk}{\isasymrbrakk}\isactrlsub p\isactrlsub r\isactrlsub i\isactrlsub m\ {\isacharequal}\ {\isasymlbrakk}{\isasymlbrakk}\ {\isasymGamma}\ {\isasymrbrakk}{\isasymrbrakk}\isactrlsub p\isactrlsub r\isactrlsub i\isactrlsub m\ {\isasyminter}\ {\isasymlbrakk}{\isasymlbrakk}\ {\isasymGamma}\isactrlsub r\ {\isasymrbrakk}{\isasymrbrakk}\isactrlsub p\isactrlsub r\isactrlsub i\isactrlsub m{\isacartoucheclose}\ \isacommand{by}\isamarkupfalse%
+\ {\isacartoucheopen}{\isasymlbrakk}{\isasymlbrakk}\ {\isasymGamma}\ {\isacharat}\ {\isasymGamma}\isactrlsub r\ {\isasymrbrakk}{\isasymrbrakk}\isactrlsub p\isactrlsub r\isactrlsub i\isactrlsub m\ {\isacharequal}\ {\isasymlbrakk}{\isasymlbrakk}\ {\isasymGamma}\ {\isasymrbrakk}{\isasymrbrakk}\isactrlsub p\isactrlsub r\isactrlsub i\isactrlsub m\ {\isasyminter}\ {\isasymlbrakk}{\isasymlbrakk}\ {\isasymGamma}\isactrlsub r\ {\isasymrbrakk}{\isasymrbrakk}\isactrlsub p\isactrlsub r\isactrlsub i\isactrlsub m{\isacartoucheclose}\isanewline
+\ \ \ \ \isacommand{by}\isamarkupfalse%
 \ {\isacharparenleft}simp\ add{\isacharcolon}\ symrun{\isacharunderscore}interp{\isacharunderscore}expansion{\isacharparenright}\isanewline
 \ \ \isacommand{moreover}\isamarkupfalse%
 \ \isacommand{have}\isamarkupfalse%
@@ -795,7 +855,8 @@ Similar to the expansion laws of lattices%
 %
 \isatagproof
 \isacommand{by}\isamarkupfalse%
-\ {\isacharparenleft}simp\ add{\isacharcolon}\ Int{\isacharunderscore}absorb{\isadigit{1}}\ symrun{\isacharunderscore}interp{\isacharunderscore}decreases{\isacharunderscore}setinc\ symrun{\isacharunderscore}interp{\isacharunderscore}expansion\ assms{\isacharparenright}%
+\ {\isacharparenleft}simp\ add{\isacharcolon}\ Int{\isacharunderscore}absorb{\isadigit{1}}\ symrun{\isacharunderscore}interp{\isacharunderscore}decreases{\isacharunderscore}setinc\isanewline
+\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ symrun{\isacharunderscore}interp{\isacharunderscore}expansion\ assms{\isacharparenright}%
 \endisatagproof
 {\isafoldproof}%
 %
@@ -843,389 +904,418 @@ Similar to the expansion laws of lattices%
 \end{isabellebody}%
 \endinput
 %:%file=~/Documents/Recherche/Thesards/2014_Hai_NGUYEN_VAN/Heron_git/reiher2/reiher/src/SymbolicPrimitive.thy%:%
-%:%10=1%:%
 %:%11=1%:%
-%:%12=2%:%
-%:%13=3%:%
-%:%14=4%:%
-%:%19=4%:%
-%:%22=5%:%
-%:%23=5%:%
-%:%24=6%:%
-%:%25=7%:%
-%:%32=9%:%
+%:%27=3%:%
+%:%28=3%:%
+%:%29=4%:%
+%:%30=5%:%
+%:%31=6%:%
+%:%40=9%:%
+%:%41=10%:%
 %:%42=11%:%
-%:%43=11%:%
-%:%44=12%:%
-%:%45=13%:%
-%:%46=14%:%
-%:%47=14%:%
-%:%48=15%:%
-%:%49=16%:%
-%:%50=17%:%
-%:%51=18%:%
-%:%52=19%:%
-%:%53=20%:%
-%:%54=21%:%
-%:%55=22%:%
-%:%56=23%:%
-%:%57=24%:%
-%:%58=25%:%
-%:%59=25%:%
-%:%60=26%:%
-%:%61=27%:%
-%:%63=29%:%
-%:%64=30%:%
-%:%65=31%:%
-%:%66=32%:%
-%:%67=33%:%
-%:%68=33%:%
-%:%75=36%:%
+%:%43=12%:%
+%:%44=13%:%
+%:%45=14%:%
+%:%46=15%:%
+%:%47=16%:%
+%:%48=17%:%
+%:%49=18%:%
+%:%50=19%:%
+%:%51=20%:%
+%:%52=21%:%
+%:%56=25%:%
+%:%57=26%:%
+%:%59=28%:%
+%:%60=28%:%
+%:%61=29%:%
+%:%62=30%:%
+%:%69=32%:%
+%:%81=35%:%
+%:%83=37%:%
+%:%84=37%:%
 %:%85=38%:%
-%:%86=38%:%
-%:%87=39%:%
+%:%86=39%:%
+%:%87=40%:%
 %:%88=40%:%
-%:%89=41%:%
-%:%90=42%:%
-%:%91=43%:%
-%:%92=44%:%
-%:%93=44%:%
-%:%94=45%:%
-%:%95=46%:%
-%:%96=47%:%
-%:%97=48%:%
-%:%98=49%:%
-%:%99=50%:%
-%:%100=51%:%
-%:%101=52%:%
-%:%102=53%:%
-%:%103=54%:%
-%:%104=55%:%
-%:%105=56%:%
-%:%106=57%:%
-%:%107=58%:%
-%:%108=59%:%
-%:%109=59%:%
-%:%110=60%:%
-%:%111=61%:%
-%:%112=62%:%
-%:%113=63%:%
-%:%114=64%:%
-%:%115=65%:%
-%:%116=65%:%
-%:%117=66%:%
-%:%124=67%:%
-%:%125=67%:%
-%:%130=67%:%
-%:%133=68%:%
-%:%134=69%:%
+%:%90=41%:%
+%:%91=42%:%
+%:%92=42%:%
+%:%93=43%:%
+%:%95=44%:%
+%:%96=45%:%
+%:%97=46%:%
+%:%98=46%:%
+%:%99=47%:%
+%:%101=48%:%
+%:%102=49%:%
+%:%103=49%:%
+%:%104=50%:%
+%:%106=51%:%
+%:%107=52%:%
+%:%108=52%:%
+%:%109=53%:%
+%:%111=54%:%
+%:%112=55%:%
+%:%113=55%:%
+%:%114=56%:%
+%:%116=57%:%
+%:%117=58%:%
+%:%118=58%:%
+%:%119=59%:%
+%:%121=60%:%
+%:%122=61%:%
+%:%123=61%:%
+%:%124=62%:%
+%:%126=63%:%
+%:%127=64%:%
+%:%128=64%:%
+%:%129=65%:%
+%:%131=66%:%
+%:%132=67%:%
+%:%133=67%:%
+%:%134=68%:%
 %:%135=69%:%
 %:%136=70%:%
-%:%137=71%:%
-%:%144=73%:%
-%:%148=75%:%
-%:%156=75%:%
-%:%157=76%:%
-%:%158=76%:%
-%:%159=77%:%
-%:%160=78%:%
-%:%162=79%:%
-%:%163=79%:%
-%:%164=80%:%
-%:%165=80%:%
-%:%166=81%:%
-%:%167=82%:%
-%:%168=83%:%
-%:%169=84%:%
-%:%176=87%:%
-%:%186=91%:%
-%:%187=91%:%
-%:%188=92%:%
-%:%195=93%:%
-%:%196=93%:%
-%:%197=94%:%
-%:%198=94%:%
-%:%199=95%:%
-%:%201=96%:%
-%:%207=96%:%
-%:%210=97%:%
-%:%211=97%:%
-%:%212=98%:%
-%:%213=99%:%
-%:%214=100%:%
-%:%215=101%:%
-%:%216=102%:%
-%:%217=103%:%
-%:%218=104%:%
-%:%219=105%:%
-%:%221=106%:%
-%:%234=114%:%
-%:%238=115%:%
-%:%248=117%:%
-%:%249=117%:%
-%:%250=118%:%
-%:%257=119%:%
-%:%258=119%:%
-%:%259=120%:%
-%:%260=120%:%
-%:%261=120%:%
-%:%262=120%:%
-%:%263=121%:%
-%:%264=121%:%
-%:%265=122%:%
-%:%266=122%:%
-%:%267=122%:%
-%:%268=122%:%
-%:%269=123%:%
-%:%284=125%:%
-%:%296=126%:%
-%:%298=128%:%
-%:%299=128%:%
-%:%300=129%:%
-%:%307=130%:%
-%:%308=130%:%
-%:%322=132%:%
-%:%326=133%:%
-%:%336=135%:%
-%:%337=135%:%
-%:%338=136%:%
-%:%345=137%:%
-%:%346=137%:%
-%:%351=137%:%
-%:%354=138%:%
-%:%355=139%:%
-%:%356=139%:%
-%:%357=140%:%
-%:%364=141%:%
-%:%365=141%:%
-%:%370=141%:%
-%:%373=142%:%
-%:%374=143%:%
-%:%375=143%:%
-%:%376=144%:%
-%:%383=145%:%
-%:%384=145%:%
-%:%385=145%:%
-%:%390=145%:%
-%:%393=146%:%
-%:%394=147%:%
-%:%395=147%:%
-%:%396=148%:%
-%:%403=149%:%
-%:%404=149%:%
-%:%405=149%:%
-%:%410=149%:%
-%:%413=150%:%
-%:%414=151%:%
-%:%415=151%:%
-%:%416=152%:%
-%:%423=153%:%
-%:%424=153%:%
-%:%425=153%:%
-%:%430=153%:%
-%:%433=154%:%
-%:%434=155%:%
-%:%435=155%:%
-%:%436=156%:%
-%:%443=157%:%
-%:%444=157%:%
-%:%445=157%:%
-%:%450=157%:%
-%:%453=158%:%
-%:%454=159%:%
-%:%455=159%:%
-%:%456=160%:%
-%:%457=161%:%
-%:%458=162%:%
-%:%459=163%:%
-%:%461=164%:%
-%:%462=164%:%
-%:%463=165%:%
-%:%464=165%:%
-%:%465=166%:%
-%:%472=167%:%
-%:%473=167%:%
-%:%478=167%:%
-%:%481=168%:%
-%:%482=169%:%
-%:%483=169%:%
-%:%484=170%:%
-%:%491=171%:%
-%:%492=171%:%
-%:%506=173%:%
-%:%516=175%:%
-%:%517=175%:%
-%:%518=176%:%
-%:%525=177%:%
-%:%526=177%:%
-%:%531=177%:%
-%:%534=178%:%
-%:%535=179%:%
-%:%536=179%:%
-%:%537=180%:%
-%:%544=181%:%
-%:%545=181%:%
-%:%550=181%:%
-%:%553=182%:%
-%:%554=183%:%
-%:%555=183%:%
-%:%556=184%:%
-%:%557=185%:%
-%:%564=186%:%
-%:%565=186%:%
-%:%566=187%:%
-%:%567=187%:%
-%:%568=187%:%
-%:%569=188%:%
-%:%570=188%:%
-%:%571=188%:%
-%:%572=188%:%
-%:%573=189%:%
-%:%574=189%:%
-%:%575=189%:%
-%:%576=189%:%
-%:%577=190%:%
-%:%583=190%:%
-%:%586=191%:%
-%:%587=192%:%
-%:%588=192%:%
-%:%589=193%:%
-%:%596=194%:%
-%:%597=194%:%
-%:%602=194%:%
-%:%605=195%:%
-%:%606=196%:%
-%:%607=196%:%
-%:%608=197%:%
-%:%615=198%:%
-%:%616=198%:%
-%:%617=199%:%
-%:%618=199%:%
-%:%619=199%:%
-%:%620=199%:%
-%:%621=200%:%
-%:%622=200%:%
-%:%623=201%:%
-%:%624=201%:%
-%:%625=202%:%
-%:%626=202%:%
-%:%627=202%:%
-%:%628=202%:%
-%:%629=203%:%
-%:%635=203%:%
-%:%638=204%:%
-%:%639=205%:%
-%:%640=205%:%
-%:%641=206%:%
-%:%642=207%:%
-%:%649=208%:%
-%:%650=208%:%
-%:%651=209%:%
-%:%652=209%:%
-%:%653=210%:%
-%:%654=210%:%
-%:%655=211%:%
-%:%656=211%:%
-%:%657=211%:%
-%:%658=212%:%
-%:%659=212%:%
-%:%660=213%:%
-%:%661=213%:%
-%:%662=213%:%
-%:%663=214%:%
-%:%664=214%:%
-%:%665=215%:%
-%:%666=215%:%
-%:%667=215%:%
-%:%668=216%:%
-%:%669=216%:%
-%:%670=217%:%
-%:%671=217%:%
-%:%672=217%:%
-%:%673=217%:%
-%:%674=217%:%
-%:%675=218%:%
-%:%681=218%:%
-%:%684=219%:%
-%:%685=220%:%
-%:%686=220%:%
-%:%687=221%:%
-%:%688=222%:%
-%:%695=223%:%
-%:%696=223%:%
-%:%697=224%:%
-%:%698=224%:%
-%:%699=224%:%
-%:%700=224%:%
-%:%701=225%:%
-%:%702=225%:%
-%:%703=225%:%
-%:%704=225%:%
-%:%705=226%:%
-%:%706=226%:%
-%:%707=226%:%
-%:%708=226%:%
-%:%709=226%:%
-%:%710=227%:%
-%:%711=227%:%
-%:%712=227%:%
-%:%713=227%:%
-%:%714=227%:%
-%:%715=228%:%
-%:%716=228%:%
-%:%717=228%:%
-%:%718=228%:%
-%:%719=229%:%
-%:%720=229%:%
-%:%721=229%:%
-%:%722=229%:%
-%:%723=230%:%
-%:%724=230%:%
-%:%725=230%:%
-%:%726=230%:%
-%:%727=231%:%
-%:%733=231%:%
-%:%736=232%:%
-%:%737=233%:%
-%:%738=233%:%
-%:%739=234%:%
-%:%740=235%:%
-%:%747=236%:%
-%:%748=236%:%
-%:%749=236%:%
-%:%754=236%:%
-%:%757=237%:%
-%:%758=238%:%
-%:%759=238%:%
-%:%760=239%:%
-%:%761=240%:%
-%:%768=241%:%
-%:%769=241%:%
-%:%770=242%:%
-%:%771=242%:%
-%:%772=242%:%
-%:%773=242%:%
-%:%774=243%:%
-%:%775=243%:%
-%:%776=243%:%
-%:%777=244%:%
-%:%783=244%:%
-%:%786=245%:%
-%:%787=246%:%
-%:%788=246%:%
-%:%789=247%:%
-%:%790=248%:%
-%:%797=249%:%
-%:%798=249%:%
-%:%803=249%:%
-%:%806=250%:%
-%:%807=251%:%
-%:%808=251%:%
-%:%809=252%:%
-%:%810=253%:%
-%:%817=254%:%
-%:%818=254%:%
-%:%819=254%:%
-%:%824=254%:%
-%:%829=255%:%
-%:%834=256%:%
+%:%137=70%:%
+%:%139=74%:%
+%:%143=75%:%
+%:%144=76%:%
+%:%146=77%:%
+%:%148=78%:%
+%:%149=79%:%
+%:%151=80%:%
+%:%154=82%:%
+%:%155=82%:%
+%:%156=83%:%
+%:%163=86%:%
+%:%175=89%:%
+%:%176=90%:%
+%:%178=92%:%
+%:%179=92%:%
+%:%180=93%:%
+%:%181=94%:%
+%:%182=95%:%
+%:%183=96%:%
+%:%184=97%:%
+%:%185=98%:%
+%:%186=99%:%
+%:%187=99%:%
+%:%188=100%:%
+%:%189=101%:%
+%:%190=102%:%
+%:%191=103%:%
+%:%193=105%:%
+%:%194=106%:%
+%:%195=107%:%
+%:%196=108%:%
+%:%197=109%:%
+%:%198=110%:%
+%:%199=111%:%
+%:%200=112%:%
+%:%201=113%:%
+%:%203=116%:%
+%:%204=117%:%
+%:%206=119%:%
+%:%207=119%:%
+%:%208=120%:%
+%:%209=121%:%
+%:%210=122%:%
+%:%211=123%:%
+%:%212=124%:%
+%:%213=125%:%
+%:%214=126%:%
+%:%215=126%:%
+%:%216=127%:%
+%:%223=128%:%
+%:%224=128%:%
+%:%229=128%:%
+%:%232=129%:%
+%:%233=130%:%
+%:%234=130%:%
+%:%235=131%:%
+%:%236=132%:%
+%:%243=134%:%
+%:%255=137%:%
+%:%256=138%:%
+%:%258=140%:%
+%:%259=140%:%
+%:%260=141%:%
+%:%262=144%:%
+%:%263=145%:%
+%:%265=147%:%
+%:%266=147%:%
+%:%267=148%:%
+%:%268=149%:%
+%:%269=150%:%
+%:%270=151%:%
+%:%279=156%:%
+%:%289=158%:%
+%:%290=158%:%
+%:%291=159%:%
+%:%298=160%:%
+%:%299=160%:%
+%:%300=160%:%
+%:%301=161%:%
+%:%303=162%:%
+%:%309=162%:%
+%:%312=163%:%
+%:%313=163%:%
+%:%314=164%:%
+%:%315=165%:%
+%:%316=166%:%
+%:%317=167%:%
+%:%318=168%:%
+%:%319=169%:%
+%:%320=170%:%
+%:%321=171%:%
+%:%328=174%:%
+%:%332=175%:%
+%:%342=177%:%
+%:%343=177%:%
+%:%344=178%:%
+%:%351=179%:%
+%:%352=179%:%
+%:%366=181%:%
+%:%378=182%:%
+%:%380=184%:%
+%:%381=184%:%
+%:%382=185%:%
+%:%389=186%:%
+%:%390=186%:%
+%:%404=188%:%
+%:%408=189%:%
+%:%418=191%:%
+%:%419=191%:%
+%:%420=192%:%
+%:%427=193%:%
+%:%428=193%:%
+%:%433=193%:%
+%:%436=194%:%
+%:%437=195%:%
+%:%438=195%:%
+%:%439=196%:%
+%:%446=197%:%
+%:%447=197%:%
+%:%452=197%:%
+%:%455=198%:%
+%:%456=199%:%
+%:%457=199%:%
+%:%458=200%:%
+%:%465=201%:%
+%:%466=201%:%
+%:%467=201%:%
+%:%472=201%:%
+%:%475=202%:%
+%:%476=203%:%
+%:%477=203%:%
+%:%478=204%:%
+%:%485=205%:%
+%:%486=205%:%
+%:%487=205%:%
+%:%492=205%:%
+%:%495=206%:%
+%:%496=207%:%
+%:%497=207%:%
+%:%498=208%:%
+%:%505=209%:%
+%:%506=209%:%
+%:%507=209%:%
+%:%512=209%:%
+%:%515=210%:%
+%:%516=211%:%
+%:%517=211%:%
+%:%518=212%:%
+%:%525=213%:%
+%:%526=213%:%
+%:%527=213%:%
+%:%532=213%:%
+%:%535=214%:%
+%:%536=215%:%
+%:%537=215%:%
+%:%538=216%:%
+%:%539=217%:%
+%:%540=218%:%
+%:%541=219%:%
+%:%543=220%:%
+%:%544=220%:%
+%:%545=221%:%
+%:%546=221%:%
+%:%547=222%:%
+%:%554=223%:%
+%:%555=223%:%
+%:%560=223%:%
+%:%563=224%:%
+%:%564=225%:%
+%:%565=225%:%
+%:%566=226%:%
+%:%573=227%:%
+%:%574=227%:%
+%:%588=229%:%
+%:%598=231%:%
+%:%599=231%:%
+%:%600=232%:%
+%:%607=233%:%
+%:%608=233%:%
+%:%613=233%:%
+%:%616=234%:%
+%:%617=235%:%
+%:%618=235%:%
+%:%619=236%:%
+%:%626=237%:%
+%:%627=237%:%
+%:%632=237%:%
+%:%635=238%:%
+%:%636=239%:%
+%:%637=239%:%
+%:%638=240%:%
+%:%639=241%:%
+%:%646=242%:%
+%:%647=242%:%
+%:%648=243%:%
+%:%649=243%:%
+%:%650=243%:%
+%:%651=244%:%
+%:%652=244%:%
+%:%653=245%:%
+%:%654=245%:%
+%:%655=245%:%
+%:%656=246%:%
+%:%657=246%:%
+%:%658=246%:%
+%:%659=246%:%
+%:%660=247%:%
+%:%666=247%:%
+%:%669=248%:%
+%:%670=249%:%
+%:%671=249%:%
+%:%672=250%:%
+%:%679=251%:%
+%:%680=251%:%
+%:%681=252%:%
+%:%682=252%:%
+%:%683=253%:%
+%:%684=253%:%
+%:%685=253%:%
+%:%686=253%:%
+%:%687=254%:%
+%:%688=254%:%
+%:%693=254%:%
+%:%696=255%:%
+%:%697=256%:%
+%:%698=256%:%
+%:%699=257%:%
+%:%700=258%:%
+%:%707=259%:%
+%:%708=259%:%
+%:%709=260%:%
+%:%710=260%:%
+%:%711=261%:%
+%:%712=261%:%
+%:%713=262%:%
+%:%714=262%:%
+%:%715=262%:%
+%:%716=263%:%
+%:%717=263%:%
+%:%718=264%:%
+%:%719=264%:%
+%:%720=264%:%
+%:%721=265%:%
+%:%722=265%:%
+%:%723=266%:%
+%:%724=266%:%
+%:%725=266%:%
+%:%726=267%:%
+%:%727=267%:%
+%:%728=268%:%
+%:%729=268%:%
+%:%730=268%:%
+%:%731=268%:%
+%:%732=268%:%
+%:%733=269%:%
+%:%739=269%:%
+%:%742=270%:%
+%:%743=271%:%
+%:%744=271%:%
+%:%745=272%:%
+%:%746=273%:%
+%:%753=274%:%
+%:%754=274%:%
+%:%755=275%:%
+%:%756=275%:%
+%:%757=275%:%
+%:%758=275%:%
+%:%759=276%:%
+%:%760=276%:%
+%:%761=276%:%
+%:%762=276%:%
+%:%763=277%:%
+%:%764=277%:%
+%:%765=277%:%
+%:%766=277%:%
+%:%767=277%:%
+%:%768=278%:%
+%:%769=278%:%
+%:%770=278%:%
+%:%771=279%:%
+%:%772=279%:%
+%:%773=279%:%
+%:%774=280%:%
+%:%775=280%:%
+%:%776=280%:%
+%:%777=281%:%
+%:%778=281%:%
+%:%779=282%:%
+%:%780=282%:%
+%:%781=282%:%
+%:%782=282%:%
+%:%783=283%:%
+%:%784=283%:%
+%:%785=283%:%
+%:%786=283%:%
+%:%787=284%:%
+%:%793=284%:%
+%:%796=285%:%
+%:%797=286%:%
+%:%798=286%:%
+%:%799=287%:%
+%:%800=288%:%
+%:%807=289%:%
+%:%808=289%:%
+%:%809=289%:%
+%:%814=289%:%
+%:%817=290%:%
+%:%818=291%:%
+%:%819=291%:%
+%:%820=292%:%
+%:%821=293%:%
+%:%828=294%:%
+%:%829=294%:%
+%:%830=295%:%
+%:%831=295%:%
+%:%832=295%:%
+%:%833=295%:%
+%:%834=296%:%
+%:%835=296%:%
+%:%836=296%:%
+%:%837=297%:%
+%:%843=297%:%
+%:%846=298%:%
+%:%847=299%:%
+%:%848=299%:%
+%:%849=300%:%
+%:%850=301%:%
+%:%857=302%:%
+%:%858=302%:%
+%:%859=303%:%
+%:%864=303%:%
+%:%867=304%:%
+%:%868=305%:%
+%:%869=305%:%
+%:%870=306%:%
+%:%871=307%:%
+%:%878=308%:%
+%:%879=308%:%
+%:%880=308%:%
+%:%885=308%:%
+%:%890=309%:%
+%:%895=310%:%

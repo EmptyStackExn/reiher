@@ -29,18 +29,20 @@ text\<open>
   The type of atomic TESL constraints, which can be combined to form specifications.
 \<close>
 datatype '\<tau> TESL_atomic =
-    SporadicOn       \<open>clock\<close> \<open>'\<tau> tag_const\<close>  \<open>clock\<close>         ("_ sporadic _ on _" 55)
+    SporadicOn       \<open>clock\<close> \<open>'\<tau> tag_const\<close>  \<open>clock\<close>  ("_ sporadic _ on _" 55)
   | TagRelation      \<open>clock\<close> \<open>clock\<close> \<open>('\<tau> tag_const \<times> '\<tau> tag_const) \<Rightarrow> bool\<close> 
-                                                            ("time-relation \<lfloor>_, _\<rfloor> \<in> _" 55)
-  | Implies          \<open>clock\<close> \<open>clock\<close>                        (infixr "implies" 55)
-  | ImpliesNot       \<open>clock\<close> \<open>clock\<close>                        (infixr "implies not" 55)
-  | TimeDelayedBy    \<open>clock\<close> \<open>'\<tau> tag_const\<close> \<open>clock\<close> \<open>clock\<close> ("_ time-delayed by _ on _ implies _" 55)
-  | WeaklyPrecedes   \<open>clock\<close> \<open>clock\<close>                        (infixr "weakly precedes" 55)
-  | StrictlyPrecedes \<open>clock\<close> \<open>clock\<close>                        (infixr "strictly precedes" 55)
-  | Kills            \<open>clock\<close> \<open>clock\<close>                        (infixr "kills" 55)
+                                                      ("time-relation \<lfloor>_, _\<rfloor> \<in> _" 55)
+  | Implies          \<open>clock\<close> \<open>clock\<close>                  (infixr "implies" 55)
+  | ImpliesNot       \<open>clock\<close> \<open>clock\<close>                  (infixr "implies not" 55)
+  | TimeDelayedBy    \<open>clock\<close> \<open>'\<tau> tag_const\<close> \<open>clock\<close> \<open>clock\<close> 
+                                            ("_ time-delayed by _ on _ implies _" 55)
+  | WeaklyPrecedes   \<open>clock\<close> \<open>clock\<close>                  (infixr "weakly precedes" 55)
+  | StrictlyPrecedes \<open>clock\<close> \<open>clock\<close>                  (infixr "strictly precedes" 55)
+  | Kills            \<open>clock\<close> \<open>clock\<close>                  (infixr "kills" 55)
 
 text\<open>
-  A TESL formula is just a list of atomic constraints, with implicit conjunction for the semantics.
+  A TESL formula is just a list of atomic constraints, with implicit conjunction
+  for the semantics.
 \<close>
 type_synonym '\<tau> TESL_formula = \<open>'\<tau> TESL_atomic list\<close>
 
@@ -93,7 +95,8 @@ fun plus_tag_const
 
 instance proof
   text\<open>Multiplication is associative.\<close>
-  fix a::\<open>'\<tau>::field tag_const\<close> and b::\<open>'\<tau>::field tag_const\<close> and c::\<open>'\<tau>::field tag_const\<close>
+  fix a::\<open>'\<tau>::field tag_const\<close> and b::\<open>'\<tau>::field tag_const\<close>
+                               and c::\<open>'\<tau>::field tag_const\<close>
   obtain u v w where \<open>a = \<tau>\<^sub>c\<^sub>s\<^sub>t u\<close> and \<open>b = \<tau>\<^sub>c\<^sub>s\<^sub>t v\<close> and \<open>c = \<tau>\<^sub>c\<^sub>s\<^sub>t w\<close>
     using tag_const.exhaust by metis
   thus \<open>a * b * c = a * (b * c)\<close>
@@ -112,7 +115,8 @@ next
     by (simp add: TESL.times_tag_const.simps one_tag_const_def)
 next
   text\<open>Addition is associative.\<close>
-  fix a::\<open>'\<tau>::field tag_const\<close> and b::\<open>'\<tau>::field tag_const\<close> and c::\<open>'\<tau>::field tag_const\<close>
+  fix a::\<open>'\<tau>::field tag_const\<close> and b::\<open>'\<tau>::field tag_const\<close>
+                               and c::\<open>'\<tau>::field tag_const\<close>
   obtain u v w where \<open>a = \<tau>\<^sub>c\<^sub>s\<^sub>t u\<close> and \<open>b = \<tau>\<^sub>c\<^sub>s\<^sub>t v\<close> and \<open>c = \<tau>\<^sub>c\<^sub>s\<^sub>t w\<close>
     using tag_const.exhaust by metis
   thus \<open>a + b + c = a + (b + c)\<close>
@@ -142,10 +146,13 @@ next
   fix a::\<open>'\<tau>::field tag_const\<close> and b::\<open>'\<tau>::field tag_const\<close>
   obtain u v where \<open>a = \<tau>\<^sub>c\<^sub>s\<^sub>t u\<close> and \<open>b = \<tau>\<^sub>c\<^sub>s\<^sub>t v\<close> using tag_const.exhaust by metis
   thus \<open>a - b = a + -b\<close>
-    by (simp add: TESL.minus_tag_const.simps TESL.plus_tag_const.simps TESL.uminus_tag_const.simps)
+    by (simp add: TESL.minus_tag_const.simps
+                  TESL.plus_tag_const.simps
+                  TESL.uminus_tag_const.simps)
 next
   text\<open>Distributive property of multiplication over addition.\<close>
-  fix a::\<open>'\<tau>::field tag_const\<close> and b::\<open>'\<tau>::field tag_const\<close> and c::\<open>'\<tau>::field tag_const\<close>
+  fix a::\<open>'\<tau>::field tag_const\<close> and b::\<open>'\<tau>::field tag_const\<close>
+                               and c::\<open>'\<tau>::field tag_const\<close>
   obtain u v w where \<open>a = \<tau>\<^sub>c\<^sub>s\<^sub>t u\<close> and \<open>b = \<tau>\<^sub>c\<^sub>s\<^sub>t v\<close> and \<open>c = \<tau>\<^sub>c\<^sub>s\<^sub>t w\<close>
     using tag_const.exhaust by metis
   thus \<open>(a + b) * c = a * c + b * c\<close>
@@ -162,7 +169,9 @@ next
   obtain u where \<open>a = \<tau>\<^sub>c\<^sub>s\<^sub>t u\<close> using tag_const.exhaust by blast
   moreover with h have \<open>u \<noteq> 0\<close> by (simp add: zero_tag_const_def)
   ultimately show \<open>inverse a * a = 1\<close>
-    by (simp add: TESL.inverse_tag_const.simps TESL.times_tag_const.simps one_tag_const_def)
+    by (simp add: TESL.inverse_tag_const.simps
+                  TESL.times_tag_const.simps
+                  one_tag_const_def)
 next
   text\<open>Dividing is multiplying by the inverse.\<close>
   fix a::\<open>'\<tau>::field tag_const\<close> and b::\<open>'\<tau>::field tag_const\<close>

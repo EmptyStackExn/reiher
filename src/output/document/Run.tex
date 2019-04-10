@@ -37,10 +37,10 @@
 \endisadelimtheory
 %
 \begin{isamarkuptext}%
-Runs are sequences of instants, each instant mapping a clock to a pair that whether the clock 
-  ticks or not and what is the current time on this clock. The first element of the pair is
-  called the \emph{hamlet} of the clock (to tick or not to tick), the second element is called the 
-  \emph{time}.%
+Runs are sequences of instants, and each instant maps a clock to a pair that 
+  tells whether the clock ticks or not, and what is the current time on this clock.
+  The first element of the pair is called the \emph{hamlet} of the clock (to tick or 
+  not to tick), the second element is called the \emph{time}.%
 \end{isamarkuptext}\isamarkuptrue%
 \isacommand{abbreviation}\isamarkupfalse%
 \ hamlet\ \isakeyword{where}\ {\isacartoucheopen}hamlet\ {\isasymequiv}\ fst{\isacartoucheclose}\isanewline
@@ -50,8 +50,9 @@ Runs are sequences of instants, each instant mapping a clock to a pair that whet
 \isacommand{type{\isacharunderscore}synonym}\isamarkupfalse%
 \ {\isacharprime}{\isasymtau}\ instant\ {\isacharequal}\ {\isacartoucheopen}clock\ {\isasymRightarrow}\ {\isacharparenleft}bool\ {\isasymtimes}\ {\isacharprime}{\isasymtau}\ tag{\isacharunderscore}const{\isacharparenright}{\isacartoucheclose}%
 \begin{isamarkuptext}%
-Runs have the additional constraint that time cannot go backwards on any clock in the sequence 
-  of instants. Therefore, for any clock, the time projection of a run is monotonous.%
+Runs have the additional constraint that time cannot go backwards on any clock
+  in the sequence of instants.
+Therefore, for any clock, the time projection of a run is monotonous.%
 \end{isamarkuptext}\isamarkuptrue%
 \isacommand{typedef}\isamarkupfalse%
 \ {\isacharparenleft}\isakeyword{overloaded}{\isacharparenright}\ {\isacharprime}{\isasymtau}{\isacharcolon}{\isacharcolon}linordered{\isacharunderscore}field\ run\ {\isacharequal}\isanewline
@@ -84,7 +85,7 @@ Runs have the additional constraint that time cannot go backwards on any clock i
 \ \ {\isacartoucheopen}{\isasymforall}c{\isachardot}\ mono\ {\isacharparenleft}{\isasymlambda}n{\isachardot}\ time\ {\isacharparenleft}{\isasymrho}\ n\ c{\isacharparenright}{\isacharparenright}\ {\isasymLongrightarrow}\ Rep{\isacharunderscore}run\ {\isacharparenleft}Abs{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ {\isacharequal}\ {\isasymrho}{\isacartoucheclose}\isanewline
 %
 \isadelimproof
-\ \ %
+%
 \endisadelimproof
 %
 \isatagproof
@@ -102,28 +103,39 @@ Runs have the additional constraint that time cannot go backwards on any clock i
   in the interval \isatt{[0{\char`\,}\ n]} of run \isa{{\isasymrho}}.%
 \end{isamarkuptext}\isamarkuptrue%
 \isacommand{fun}\isamarkupfalse%
-\ run{\isacharunderscore}tick{\isacharunderscore}count\ {\isacharcolon}{\isacharcolon}\ {\isacartoucheopen}{\isacharparenleft}{\isacharprime}{\isasymtau}{\isacharcolon}{\isacharcolon}linordered{\isacharunderscore}field{\isacharparenright}\ run\ {\isasymRightarrow}\ clock\ {\isasymRightarrow}\ nat\ {\isasymRightarrow}\ nat{\isacartoucheclose}\ {\isacharparenleft}{\isachardoublequoteopen}{\isacharhash}\isactrlsub {\isasymle}\ {\isacharunderscore}\ {\isacharunderscore}\ {\isacharunderscore}{\isachardoublequoteclose}{\isacharparenright}\ \isakeyword{where}\isanewline
-\ \ \ \ {\isacartoucheopen}{\isacharparenleft}{\isacharhash}\isactrlsub {\isasymle}\ {\isasymrho}\ K\ {\isadigit{0}}{\isacharparenright}\ \ \ \ \ \ \ {\isacharequal}\ {\isacharparenleft}if\ hamlet\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ {\isadigit{0}}\ K{\isacharparenright}\isanewline
-\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ then\ {\isadigit{1}}\isanewline
-\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ else\ {\isadigit{0}}{\isacharparenright}{\isacartoucheclose}\isanewline
-\ \ {\isacharbar}\ {\isacartoucheopen}{\isacharparenleft}{\isacharhash}\isactrlsub {\isasymle}\ {\isasymrho}\ K\ {\isacharparenleft}Suc\ n{\isacharparenright}{\isacharparenright}\ {\isacharequal}\ {\isacharparenleft}if\ hamlet\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ {\isacharparenleft}Suc\ n{\isacharparenright}\ K{\isacharparenright}\isanewline
-\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ then\ {\isadigit{1}}\ {\isacharplus}\ {\isacharparenleft}{\isacharhash}\isactrlsub {\isasymle}\ {\isasymrho}\ K\ n{\isacharparenright}\isanewline
-\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ else\ {\isacharparenleft}{\isacharhash}\isactrlsub {\isasymle}\ {\isasymrho}\ K\ n{\isacharparenright}{\isacharparenright}{\isacartoucheclose}%
+\ run{\isacharunderscore}tick{\isacharunderscore}count\ {\isacharcolon}{\isacharcolon}\ {\isacartoucheopen}{\isacharparenleft}{\isacharprime}{\isasymtau}{\isacharcolon}{\isacharcolon}linordered{\isacharunderscore}field{\isacharparenright}\ run\ {\isasymRightarrow}\ clock\ {\isasymRightarrow}\ nat\ {\isasymRightarrow}\ nat{\isacartoucheclose}\isanewline
+\ \ {\isacharparenleft}{\isachardoublequoteopen}{\isacharhash}\isactrlsub {\isasymle}\ {\isacharunderscore}\ {\isacharunderscore}\ {\isacharunderscore}{\isachardoublequoteclose}{\isacharparenright}\isanewline
+\isakeyword{where}\isanewline
+\ \ {\isacartoucheopen}{\isacharparenleft}{\isacharhash}\isactrlsub {\isasymle}\ {\isasymrho}\ K\ {\isadigit{0}}{\isacharparenright}\ \ \ \ \ \ \ {\isacharequal}\ {\isacharparenleft}if\ hamlet\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ {\isadigit{0}}\ K{\isacharparenright}\isanewline
+\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ then\ {\isadigit{1}}\isanewline
+\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ else\ {\isadigit{0}}{\isacharparenright}{\isacartoucheclose}\isanewline
+{\isacharbar}\ {\isacartoucheopen}{\isacharparenleft}{\isacharhash}\isactrlsub {\isasymle}\ {\isasymrho}\ K\ {\isacharparenleft}Suc\ n{\isacharparenright}{\isacharparenright}\ {\isacharequal}\ {\isacharparenleft}if\ hamlet\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ {\isacharparenleft}Suc\ n{\isacharparenright}\ K{\isacharparenright}\isanewline
+\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ then\ {\isadigit{1}}\ {\isacharplus}\ {\isacharparenleft}{\isacharhash}\isactrlsub {\isasymle}\ {\isasymrho}\ K\ n{\isacharparenright}\isanewline
+\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ else\ {\isacharparenleft}{\isacharhash}\isactrlsub {\isasymle}\ {\isasymrho}\ K\ n{\isacharparenright}{\isacharparenright}{\isacartoucheclose}%
 \begin{isamarkuptext}%
-\isa{run{\isacharunderscore}tick{\isacharunderscore}count{\isacharunderscore}strictly\ {\isasymrho}\ K\ n} counts the number of ticks on clock \isa{K} 
-  in the interval \isatt{[0{\char`\,}\ n[} of run \isa{{\isasymrho}}.%
+\isa{run{\isacharunderscore}tick{\isacharunderscore}count{\isacharunderscore}strictly\ {\isasymrho}\ K\ n} counts the number of ticks on
+  clock \isa{K} in the interval \isatt{[0{\char`\,}\ n[} of run \isa{{\isasymrho}}.%
 \end{isamarkuptext}\isamarkuptrue%
 \isacommand{fun}\isamarkupfalse%
-\ run{\isacharunderscore}tick{\isacharunderscore}count{\isacharunderscore}strictly\ {\isacharcolon}{\isacharcolon}\ {\isacartoucheopen}{\isacharparenleft}{\isacharprime}{\isasymtau}{\isacharcolon}{\isacharcolon}linordered{\isacharunderscore}field{\isacharparenright}\ run\ {\isasymRightarrow}\ clock\ {\isasymRightarrow}\ nat\ {\isasymRightarrow}\ nat{\isacartoucheclose}\ {\isacharparenleft}{\isachardoublequoteopen}{\isacharhash}\isactrlsub {\isacharless}\ {\isacharunderscore}\ {\isacharunderscore}\ {\isacharunderscore}{\isachardoublequoteclose}{\isacharparenright}\isanewline
+\ run{\isacharunderscore}tick{\isacharunderscore}count{\isacharunderscore}strictly\ {\isacharcolon}{\isacharcolon}\ {\isacartoucheopen}{\isacharparenleft}{\isacharprime}{\isasymtau}{\isacharcolon}{\isacharcolon}linordered{\isacharunderscore}field{\isacharparenright}\ run\ {\isasymRightarrow}\ clock\ {\isasymRightarrow}\ nat\ {\isasymRightarrow}\ nat{\isacartoucheclose}\isanewline
+\ \ {\isacharparenleft}{\isachardoublequoteopen}{\isacharhash}\isactrlsub {\isacharless}\ {\isacharunderscore}\ {\isacharunderscore}\ {\isacharunderscore}{\isachardoublequoteclose}{\isacharparenright}\isanewline
 \isakeyword{where}\isanewline
-\ \ \ \ {\isacartoucheopen}{\isacharparenleft}{\isacharhash}\isactrlsub {\isacharless}\ {\isasymrho}\ K\ {\isadigit{0}}{\isacharparenright}\ \ \ \ \ \ \ {\isacharequal}\ {\isadigit{0}}{\isacartoucheclose}\isanewline
-\ \ {\isacharbar}\ {\isacartoucheopen}{\isacharparenleft}{\isacharhash}\isactrlsub {\isacharless}\ {\isasymrho}\ K\ {\isacharparenleft}Suc\ n{\isacharparenright}{\isacharparenright}\ {\isacharequal}\ {\isacharhash}\isactrlsub {\isasymle}\ {\isasymrho}\ K\ n{\isacartoucheclose}\isanewline
-\isanewline
+\ \ {\isacartoucheopen}{\isacharparenleft}{\isacharhash}\isactrlsub {\isacharless}\ {\isasymrho}\ K\ {\isadigit{0}}{\isacharparenright}\ \ \ \ \ \ \ {\isacharequal}\ {\isadigit{0}}{\isacartoucheclose}\isanewline
+{\isacharbar}\ {\isacartoucheopen}{\isacharparenleft}{\isacharhash}\isactrlsub {\isacharless}\ {\isasymrho}\ K\ {\isacharparenleft}Suc\ n{\isacharparenright}{\isacharparenright}\ {\isacharequal}\ {\isacharhash}\isactrlsub {\isasymle}\ {\isasymrho}\ K\ n{\isacartoucheclose}%
+\begin{isamarkuptext}%
+\isa{first{\isacharunderscore}time\ {\isasymrho}\ K\ n\ {\isasymtau}} tells whether instant \isa{n} in run \isa{{\isasymrho}}
+  is the first one where the time on clock \isa{K} reaches \isa{{\isasymtau}}.%
+\end{isamarkuptext}\isamarkuptrue%
 \isacommand{definition}\isamarkupfalse%
-\ first{\isacharunderscore}time\ {\isacharcolon}{\isacharcolon}\ {\isacartoucheopen}{\isacharprime}a{\isacharcolon}{\isacharcolon}linordered{\isacharunderscore}field\ run\ {\isasymRightarrow}\ clock\ {\isasymRightarrow}\ nat\ {\isasymRightarrow}\ {\isacharprime}a\ tag{\isacharunderscore}const\ {\isasymRightarrow}\ bool{\isacartoucheclose}\isanewline
+\ first{\isacharunderscore}time\ {\isacharcolon}{\isacharcolon}\ {\isacartoucheopen}{\isacharprime}a{\isacharcolon}{\isacharcolon}linordered{\isacharunderscore}field\ run\ {\isasymRightarrow}\ clock\ {\isasymRightarrow}\ nat\ {\isasymRightarrow}\ {\isacharprime}a\ tag{\isacharunderscore}const\isanewline
+\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ {\isasymRightarrow}\ bool{\isacartoucheclose}\isanewline
 \isakeyword{where}\isanewline
-\ \ {\isacartoucheopen}first{\isacharunderscore}time\ {\isasymrho}\ K\ n\ {\isasymtau}\ {\isasymequiv}\ {\isacharparenleft}time\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ n\ K{\isacharparenright}\ {\isacharequal}\ {\isasymtau}{\isacharparenright}\ {\isasymand}\ {\isacharparenleft}{\isasymnexists}n{\isacharprime}{\isachardot}\ n{\isacharprime}\ {\isacharless}\ n\ {\isasymand}\ time\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ n{\isacharprime}\ K{\isacharparenright}\ {\isacharequal}\ {\isasymtau}{\isacharparenright}{\isacartoucheclose}\isanewline
-\isanewline
+\ \ {\isacartoucheopen}first{\isacharunderscore}time\ {\isasymrho}\ K\ n\ {\isasymtau}\ {\isasymequiv}\ {\isacharparenleft}time\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ n\ K{\isacharparenright}\ {\isacharequal}\ {\isasymtau}{\isacharparenright}\isanewline
+\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ {\isasymand}\ {\isacharparenleft}{\isasymnexists}n{\isacharprime}{\isachardot}\ n{\isacharprime}\ {\isacharless}\ n\ {\isasymand}\ time\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ n{\isacharprime}\ K{\isacharparenright}\ {\isacharequal}\ {\isasymtau}{\isacharparenright}{\isacartoucheclose}%
+\begin{isamarkuptext}%
+The time on a clock is necessarily less than \isa{{\isasymtau}} before the first instant
+  at which it reaches \isa{{\isasymtau}}.%
+\end{isamarkuptext}\isamarkuptrue%
 \isacommand{lemma}\isamarkupfalse%
 \ before{\isacharunderscore}first{\isacharunderscore}time{\isacharcolon}\isanewline
 \ \ \isakeyword{assumes}\ {\isacartoucheopen}first{\isacharunderscore}time\ {\isasymrho}\ K\ n\ {\isasymtau}{\isacartoucheclose}\isanewline
@@ -154,18 +166,21 @@ Runs have the additional constraint that time cannot go backwards on any clock i
 \ blast\isanewline
 \ \ \isacommand{ultimately}\isamarkupfalse%
 \ \isacommand{have}\isamarkupfalse%
-\ \ {\isacartoucheopen}time\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ m\ K{\isacharparenright}\ {\isasymle}\ time\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ n\ K{\isacharparenright}{\isacartoucheclose}\ \isacommand{by}\isamarkupfalse%
+\ \ {\isacartoucheopen}time\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ m\ K{\isacharparenright}\ {\isasymle}\ time\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ n\ K{\isacharparenright}{\isacartoucheclose}\isanewline
+\ \ \ \ \isacommand{by}\isamarkupfalse%
 \ {\isacharparenleft}simp\ add{\isacharcolon}mono{\isacharunderscore}def{\isacharparenright}\isanewline
 \ \ \isacommand{moreover}\isamarkupfalse%
 \ \isacommand{from}\isamarkupfalse%
 \ assms{\isacharparenleft}{\isadigit{1}}{\isacharparenright}\ \isacommand{have}\isamarkupfalse%
-\ {\isacartoucheopen}time\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ n\ K{\isacharparenright}\ {\isacharequal}\ {\isasymtau}{\isacartoucheclose}\ \isacommand{using}\isamarkupfalse%
+\ {\isacartoucheopen}time\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ n\ K{\isacharparenright}\ {\isacharequal}\ {\isasymtau}{\isacartoucheclose}\isanewline
+\ \ \ \ \isacommand{using}\isamarkupfalse%
 \ first{\isacharunderscore}time{\isacharunderscore}def\ \isacommand{by}\isamarkupfalse%
 \ blast\isanewline
 \ \ \isacommand{moreover}\isamarkupfalse%
 \ \isacommand{from}\isamarkupfalse%
 \ assms\ \isacommand{have}\isamarkupfalse%
-\ {\isacartoucheopen}time\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ m\ K{\isacharparenright}\ {\isasymnoteq}\ {\isasymtau}{\isacartoucheclose}\ \isacommand{using}\isamarkupfalse%
+\ {\isacartoucheopen}time\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ m\ K{\isacharparenright}\ {\isasymnoteq}\ {\isasymtau}{\isacartoucheclose}\isanewline
+\ \ \ \ \isacommand{using}\isamarkupfalse%
 \ first{\isacharunderscore}time{\isacharunderscore}def\ \isacommand{by}\isamarkupfalse%
 \ blast\isanewline
 \ \ \isacommand{ultimately}\isamarkupfalse%
@@ -178,10 +193,12 @@ Runs have the additional constraint that time cannot go backwards on any clock i
 {\isafoldproof}%
 %
 \isadelimproof
-\isanewline
 %
 \endisadelimproof
-\isanewline
+%
+\begin{isamarkuptext}%
+This leads to an alternate definition of \isa{first{\isacharunderscore}time}:%
+\end{isamarkuptext}\isamarkuptrue%
 \isacommand{lemma}\isamarkupfalse%
 \ alt{\isacharunderscore}first{\isacharunderscore}time{\isacharunderscore}def{\isacharcolon}\isanewline
 \ \ \isakeyword{assumes}\ {\isacartoucheopen}{\isasymforall}m\ {\isacharless}\ n{\isachardot}\ time\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ m\ K{\isacharparenright}\ {\isacharless}\ {\isasymtau}{\isacartoucheclose}\isanewline
@@ -197,7 +214,8 @@ Runs have the additional constraint that time cannot go backwards on any clock i
 \ {\isacharminus}\isanewline
 \ \ \isacommand{from}\isamarkupfalse%
 \ assms{\isacharparenleft}{\isadigit{1}}{\isacharparenright}\ \isacommand{have}\isamarkupfalse%
-\ {\isacartoucheopen}{\isasymforall}m\ {\isacharless}\ n{\isachardot}\ time\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ m\ K{\isacharparenright}\ {\isasymnoteq}\ {\isasymtau}{\isacartoucheclose}\ \isacommand{by}\isamarkupfalse%
+\ {\isacartoucheopen}{\isasymforall}m\ {\isacharless}\ n{\isachardot}\ time\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ m\ K{\isacharparenright}\ {\isasymnoteq}\ {\isasymtau}{\isacartoucheclose}\isanewline
+\ \ \ \ \isacommand{by}\isamarkupfalse%
 \ {\isacharparenleft}simp\ add{\isacharcolon}\ less{\isacharunderscore}le{\isacharparenright}\isanewline
 \ \ \isacommand{with}\isamarkupfalse%
 \ assms{\isacharparenleft}{\isadigit{2}}{\isacharparenright}\ \isacommand{show}\isamarkupfalse%
@@ -250,106 +268,115 @@ Runs have the additional constraint that time cannot go backwards on any clock i
 %:%51=17%:%
 %:%53=20%:%
 %:%54=21%:%
-%:%56=23%:%
-%:%57=23%:%
+%:%55=22%:%
+%:%57=24%:%
 %:%58=24%:%
-%:%65=25%:%
-%:%66=25%:%
+%:%59=25%:%
+%:%66=26%:%
 %:%67=26%:%
-%:%68=26%:%
+%:%68=27%:%
 %:%69=27%:%
-%:%70=27%:%
-%:%71=27%:%
+%:%70=28%:%
+%:%71=28%:%
 %:%72=28%:%
-%:%78=28%:%
-%:%81=29%:%
+%:%73=29%:%
+%:%79=29%:%
 %:%82=30%:%
-%:%83=30%:%
+%:%83=31%:%
 %:%84=31%:%
-%:%87=32%:%
-%:%91=32%:%
-%:%92=32%:%
-%:%101=35%:%
+%:%85=32%:%
+%:%92=33%:%
+%:%93=33%:%
 %:%102=36%:%
-%:%104=38%:%
-%:%105=38%:%
+%:%103=37%:%
+%:%105=39%:%
 %:%106=39%:%
+%:%107=40%:%
 %:%108=41%:%
 %:%109=42%:%
-%:%113=47%:%
-%:%114=48%:%
+%:%111=44%:%
+%:%112=45%:%
 %:%116=50%:%
-%:%117=50%:%
-%:%118=51%:%
-%:%119=52%:%
+%:%117=51%:%
+%:%119=53%:%
 %:%120=53%:%
 %:%121=54%:%
 %:%122=55%:%
-%:%123=55%:%
-%:%124=56%:%
-%:%125=57%:%
-%:%126=58%:%
-%:%127=59%:%
-%:%128=59%:%
-%:%129=60%:%
-%:%130=61%:%
-%:%131=62%:%
-%:%138=63%:%
-%:%139=63%:%
-%:%140=64%:%
-%:%141=64%:%
-%:%142=64%:%
-%:%143=64%:%
-%:%144=65%:%
-%:%145=65%:%
-%:%146=65%:%
-%:%147=65%:%
-%:%148=65%:%
-%:%149=65%:%
-%:%150=66%:%
-%:%151=66%:%
-%:%152=66%:%
-%:%153=66%:%
-%:%154=66%:%
-%:%155=67%:%
-%:%156=67%:%
-%:%157=67%:%
-%:%158=67%:%
-%:%159=68%:%
-%:%160=68%:%
-%:%161=68%:%
-%:%162=68%:%
-%:%163=68%:%
-%:%164=68%:%
-%:%165=69%:%
-%:%166=69%:%
-%:%167=69%:%
-%:%168=69%:%
-%:%169=69%:%
-%:%170=69%:%
-%:%171=70%:%
-%:%172=70%:%
-%:%173=70%:%
-%:%174=70%:%
-%:%175=71%:%
-%:%181=71%:%
-%:%184=72%:%
-%:%185=73%:%
-%:%186=73%:%
-%:%187=74%:%
-%:%188=75%:%
-%:%189=76%:%
-%:%196=77%:%
-%:%197=77%:%
-%:%198=78%:%
-%:%199=78%:%
-%:%200=78%:%
-%:%201=78%:%
-%:%202=79%:%
-%:%203=79%:%
-%:%204=79%:%
-%:%205=79%:%
-%:%206=80%:%
-%:%212=80%:%
-%:%217=81%:%
-%:%222=82%:%
+%:%123=56%:%
+%:%124=57%:%
+%:%126=60%:%
+%:%127=61%:%
+%:%129=63%:%
+%:%130=63%:%
+%:%131=64%:%
+%:%132=65%:%
+%:%133=66%:%
+%:%136=70%:%
+%:%137=71%:%
+%:%139=73%:%
+%:%140=73%:%
+%:%141=74%:%
+%:%142=75%:%
+%:%143=76%:%
+%:%150=77%:%
+%:%151=77%:%
+%:%152=78%:%
+%:%153=78%:%
+%:%154=78%:%
+%:%155=78%:%
+%:%156=79%:%
+%:%157=79%:%
+%:%158=79%:%
+%:%159=79%:%
+%:%160=79%:%
+%:%161=79%:%
+%:%162=80%:%
+%:%163=80%:%
+%:%164=80%:%
+%:%165=80%:%
+%:%166=80%:%
+%:%167=81%:%
+%:%168=81%:%
+%:%169=81%:%
+%:%170=82%:%
+%:%171=82%:%
+%:%172=83%:%
+%:%173=83%:%
+%:%174=83%:%
+%:%175=83%:%
+%:%176=84%:%
+%:%177=84%:%
+%:%178=84%:%
+%:%179=85%:%
+%:%180=85%:%
+%:%181=85%:%
+%:%182=85%:%
+%:%183=86%:%
+%:%184=86%:%
+%:%185=86%:%
+%:%186=87%:%
+%:%187=87%:%
+%:%188=87%:%
+%:%189=87%:%
+%:%190=88%:%
+%:%200=91%:%
+%:%202=93%:%
+%:%203=93%:%
+%:%204=94%:%
+%:%205=95%:%
+%:%206=96%:%
+%:%213=97%:%
+%:%214=97%:%
+%:%215=98%:%
+%:%216=98%:%
+%:%217=98%:%
+%:%218=99%:%
+%:%219=99%:%
+%:%220=100%:%
+%:%221=100%:%
+%:%222=100%:%
+%:%223=100%:%
+%:%224=101%:%
+%:%230=101%:%
+%:%235=102%:%
+%:%240=103%:%

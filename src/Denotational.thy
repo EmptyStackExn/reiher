@@ -6,7 +6,13 @@ imports
     Run
 
 begin
-
+text\<open>
+  The denotational semantics maps TESL formulae to sets of satisfying runs.
+  Firstly, we define the semantics of atomic formulae (basic constructs of the 
+  TESL language), then we define the semantics of compound formulae as the
+  intersection of the semantics of their components: a run must satisfy all
+  the individual formulae of a compound formula.
+\<close>
 section \<open>Denotational interpretation for atomic TESL formulae\<close>
 (*<*)
 consts dummyT0 ::\<open>'\<tau> tag_const\<close>
@@ -17,19 +23,33 @@ notation dummyDeltaT ("\<delta>t")
 (*>*)
 
 fun TESL_interpretation_atomic
-    :: \<open>('\<tau>::linordered_field) TESL_atomic \<Rightarrow> '\<tau> run set\<close> ("\<lbrakk> _ \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L") where
+    :: \<open>('\<tau>::linordered_field) TESL_atomic \<Rightarrow> '\<tau> run set\<close> ("\<lbrakk> _ \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L")
+where
+  \<comment> \<open>@{term \<open>K\<^sub>1 sporadic \<tau> on K\<^sub>2\<close>} means that @{term \<open>K\<^sub>1\<close>} should tick at an 
+      instant where the time on @{term \<open>K\<^sub>2\<close>} is @{term \<open>\<tau>\<close>}.\<close>
     \<open>\<lbrakk> K\<^sub>1 sporadic \<tau> on K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
         { \<rho>. \<exists>n::nat. hamlet ((Rep_run \<rho>) n K\<^sub>1) \<and> time ((Rep_run \<rho>) n K\<^sub>2) = \<tau> }\<close>
+  \<comment> \<open>@{term \<open>time-relation \<lfloor>K\<^sub>1, K\<^sub>2\<rfloor> \<in> R\<close>} means that at each instant, the time 
+      on @{term \<open>K\<^sub>1\<close>} and the time on @{term \<open>K\<^sub>2\<close>} are in relation @{term \<open>R\<close>}.\<close>
   | \<open>\<lbrakk> time-relation \<lfloor>K\<^sub>1, K\<^sub>2\<rfloor> \<in> R \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
         { \<rho>. \<forall>n::nat. R (time ((Rep_run \<rho>) n K\<^sub>1), time ((Rep_run \<rho>) n K\<^sub>2)) }\<close>
+  \<comment> \<open>@{term \<open>master implies slave\<close>} means that at each instant at which 
+      @{term \<open>master\<close>} ticks, @{term \<open>slave\<close>} also ticks.\<close>
   | \<open>\<lbrakk> master implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
         { \<rho>. \<forall>n::nat. hamlet ((Rep_run \<rho>) n master) \<longrightarrow> hamlet ((Rep_run \<rho>) n slave) }\<close>
+  \<comment> \<open>@{term \<open>master implies not slave\<close>} means that at each instant at which 
+      @{term \<open>master\<close>} ticks, @{term \<open>slave\<close>} does not tick.\<close>
   | \<open>\<lbrakk> master implies not slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
         { \<rho>. \<forall>n::nat. hamlet ((Rep_run \<rho>) n master) \<longrightarrow> \<not> hamlet ((Rep_run \<rho>) n slave) }\<close>
+  \<comment> \<open>@{term \<open>master time-delayed by \<delta>\<tau> on measuring implies slave\<close>} means that 
+      at each instant at which  @{term \<open>master\<close>} ticks, @{term \<open>slave\<close>} will
+      ticks after a delay @{term \<open>\<delta>\<tau>\<close>} measured on the time scale 
+      of @{term \<open>measuring\<close>}.\<close>
   | \<open>\<lbrakk> master time-delayed by \<delta>\<tau> on measuring implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
     \<comment> \<open>
-      When master ticks, let's call @term\<open>t\<^sub>0\<close> the current date on measuring. Then, at the first
-      instant when the date on measuring is @term\<open>t\<^sub>0+\<delta>t\<close>, slave has to tick.
+      When master ticks, let's call @term\<open>t\<^sub>0\<close> the current date on measuring. Then, 
+      at the first instant when the date on measuring is @term\<open>t\<^sub>0+\<delta>t\<close>, 
+      slave has to tick.
     \<close>
         { \<rho>. \<forall>n. hamlet ((Rep_run \<rho>) n master) \<longrightarrow>
                  (let measured_time = time ((Rep_run \<rho>) n measuring) in
@@ -37,54 +57,60 @@ fun TESL_interpretation_atomic
                             \<longrightarrow> hamlet ((Rep_run \<rho>) m slave)
                  )
         }\<close>
+  \<comment> \<open>@{term \<open>K\<^sub>1 weakly precedes K\<^sub>2\<close>} means that each tick on @{term \<open>K\<^sub>2\<close>}
+        must be preceded by or coincide with at least one tick on @{term \<open>K\<^sub>1\<close>}.
+        Therefore, at each instant @{term \<open>n\<close>}, the number of ticks on @{term \<open>K\<^sub>2\<close>} 
+        must be less or equal to the number of ticks on @{term \<open>K\<^sub>1\<close>}.\<close>
   | \<open>\<lbrakk> K\<^sub>1 weakly precedes K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
         { \<rho>. \<forall>n::nat. (run_tick_count \<rho> K\<^sub>2 n) \<le> (run_tick_count \<rho> K\<^sub>1 n) }\<close>
+  \<comment> \<open>@{term \<open>K\<^sub>1 strictly precedes K\<^sub>2\<close>} means that each tick on @{term \<open>K\<^sub>2\<close>}
+        must be preceded by at least one tick on @{term \<open>K\<^sub>1\<close>} at a previous instant.
+        Therefore, at each instant @{term \<open>n\<close>}, the number of ticks on @{term \<open>K\<^sub>2\<close>}
+        must be less or equal to the number of ticks on @{term \<open>K\<^sub>1\<close>} 
+        at instant @{term \<open>n - 1\<close>}.\<close>
   | \<open>\<lbrakk> K\<^sub>1 strictly precedes K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
         { \<rho>. \<forall>n::nat. (run_tick_count \<rho> K\<^sub>2 n) \<le> (run_tick_count_strictly \<rho> K\<^sub>1 n) }\<close>
+  \<comment> \<open>@{term \<open>K\<^sub>1 kills K\<^sub>2\<close>} means that when @{term \<open>K\<^sub>1\<close>} ticks, @{term \<open>K\<^sub>2\<close>}
+        cannot tick and is not allowed to tick at any further instant.\<close>
   | \<open>\<lbrakk> K\<^sub>1 kills K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
-        { \<rho>. \<forall>n::nat. hamlet ((Rep_run \<rho>) n K\<^sub>1) \<longrightarrow> (\<forall>m\<ge>n. \<not> hamlet ((Rep_run \<rho>) m K\<^sub>2)) }\<close>
+        { \<rho>. \<forall>n::nat. hamlet ((Rep_run \<rho>) n K\<^sub>1)
+                        \<longrightarrow> (\<forall>m\<ge>n. \<not> hamlet ((Rep_run \<rho>) m K\<^sub>2)) }\<close>
 
 section \<open>Denotational interpretation for TESL formulae\<close>
 
-fun TESL_interpretation :: \<open>('\<tau>::linordered_field) TESL_formula \<Rightarrow> '\<tau> run set\<close> ("\<lbrakk>\<lbrakk> _ \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L") where
-    \<open>\<lbrakk>\<lbrakk> [] \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = { _. True }\<close>
-  | \<open>\<lbrakk>\<lbrakk> \<phi> # \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<lbrakk> \<phi> \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L \<inter> \<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<close>
+text\<open>
+  To satisfy a formula, a run has to satisfy the conjunction of its atomic 
+  formulae, therefore, the interpretation of a formula is the intersection
+  of the interpretations of its components.
+\<close>
+fun TESL_interpretation :: \<open>('\<tau>::linordered_field) TESL_formula \<Rightarrow> '\<tau> run set\<close>
+  ("\<lbrakk>\<lbrakk> _ \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L")
+where
+  \<open>\<lbrakk>\<lbrakk> [] \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = { _. True }\<close>
+| \<open>\<lbrakk>\<lbrakk> \<phi> # \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<lbrakk> \<phi> \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L \<inter> \<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<close>
 
 lemma TESL_interpretation_homo:
   \<open>\<lbrakk> \<phi> \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L \<inter> \<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<lbrakk>\<lbrakk> \<phi> # \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<close>
-by auto
+by simp
 
 subsection \<open>Image interpretation lemma\<close>
 
 theorem TESL_interpretation_image:
   \<open>\<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<Inter> ((\<lambda>\<phi>. \<lbrakk> \<phi> \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L) ` set \<Phi>)\<close>
-proof (induct \<Phi>)
-  case Nil
-  then show ?case by simp
-next
-  case (Cons a \<Phi>)
-  then show ?case by auto
-qed
+by (induction \<Phi>, simp+)
 
 subsection \<open>Expansion law\<close>
-text \<open>Similar to the expansion laws of lattices\<close>
+text \<open>Similar to the expansion laws of lattices.\<close>
 
 theorem TESL_interp_homo_append:
   \<open>\<lbrakk>\<lbrakk> \<Phi>\<^sub>1 @ \<Phi>\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<lbrakk>\<lbrakk> \<Phi>\<^sub>1 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L \<inter> \<lbrakk>\<lbrakk> \<Phi>\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<close>
-proof (induct \<Phi>\<^sub>1)
-  case Nil
-  then show ?case by simp
-next
-  case (Cons a \<Phi>\<^sub>1)
-  then show ?case by auto
-qed
+by (induction \<Phi>\<^sub>1, simp, auto)
 
-
-section \<open>Equational laws for TESL formulae denotationally interpreted\<close>
+section \<open>Equational laws for the denotational interpretation of TESL formulae\<close>
 
 lemma TESL_interp_assoc:
   \<open>\<lbrakk>\<lbrakk> (\<Phi>\<^sub>1 @ \<Phi>\<^sub>2) @ \<Phi>\<^sub>3 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<lbrakk>\<lbrakk> \<Phi>\<^sub>1 @ (\<Phi>\<^sub>2 @ \<Phi>\<^sub>3) \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<close>
-  by auto
+by auto
 
 lemma TESL_interp_commute:
   shows \<open>\<lbrakk>\<lbrakk> \<Phi>\<^sub>1 @ \<Phi>\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<lbrakk>\<lbrakk> \<Phi>\<^sub>2 @ \<Phi>\<^sub>1 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<close>
@@ -108,7 +134,7 @@ unfolding TESL_interp_homo_append by auto
 
 lemmas TESL_interp_aci = TESL_interp_commute TESL_interp_assoc TESL_interp_left_commute TESL_interp_left_idem
 
-(* Identity element *)
+text \<open>The empty formula is the identity element\<close>
 lemma TESL_interp_neutral1:
   \<open>\<lbrakk>\<lbrakk> [] @ \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<close>
 by simp
@@ -118,7 +144,9 @@ lemma TESL_interp_neutral2:
 by simp
 
 section \<open>Decreasing interpretation of TESL formulae\<close>
-
+text\<open>
+  Adding constraints to a TESL formula reduces the number of satisfying runs.
+\<close>
 lemma TESL_sem_decreases_head:
   \<open>\<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L \<supseteq> \<lbrakk>\<lbrakk> \<phi> # \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<close>
 by simp
@@ -127,31 +155,22 @@ lemma TESL_sem_decreases_tail:
   \<open>\<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L \<supseteq> \<lbrakk>\<lbrakk> \<Phi> @ [\<phi>] \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<close>
 by (simp add: TESL_interp_homo_append)
 
-lemma \<open>\<phi>#\<Phi> = [\<phi>]@\<Phi>\<close> by simp
-
 lemma TESL_interp_formula_stuttering:
   assumes \<open>\<phi> \<in> set \<Phi>\<close>
     shows \<open>\<lbrakk>\<lbrakk> \<phi> # \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<close>
 proof -
   have \<open>\<phi> # \<Phi> = [\<phi>] @ \<Phi>\<close> by simp
-  hence \<open>\<lbrakk>\<lbrakk> \<phi> # \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<lbrakk>\<lbrakk> [\<phi>] \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L \<inter> \<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<close> using TESL_interp_homo_append by simp
+  hence \<open>\<lbrakk>\<lbrakk> \<phi> # \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<lbrakk>\<lbrakk> [\<phi>] \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L \<inter> \<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<close>
+    using TESL_interp_homo_append by simp
   thus ?thesis using assms TESL_interpretation_image by fastforce
 qed
 
-lemma TESL_interp_decreases:
-  \<open>\<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L \<supseteq> \<lbrakk>\<lbrakk> \<phi> # \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<close>
-by (rule TESL_sem_decreases_head)
-
 lemma TESL_interp_remdups_absorb:
   \<open>\<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<lbrakk>\<lbrakk> remdups \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<close>
-proof (induct \<Phi>)
-  case Nil
-  then show ?case by simp
-next
-  case (Cons a \<Phi>)
-  then show ?case
-    using TESL_interp_formula_stuttering by auto
-qed
+proof (induction \<Phi>)
+  case Cons
+    thus ?case using TESL_interp_formula_stuttering by auto
+qed simp
 
 lemma TESL_interp_set_lifting:
   assumes \<open>set \<Phi> = set \<Phi>'\<close>
@@ -173,10 +192,13 @@ theorem TESL_interp_decreases_setinc:
     shows \<open>\<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L \<supseteq> \<lbrakk>\<lbrakk> \<Phi>' \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<close>
 proof -
   obtain \<Phi>\<^sub>r where decompose: \<open>set (\<Phi> @ \<Phi>\<^sub>r) = set \<Phi>'\<close> using assms by auto
-  have \<open>set (\<Phi> @ \<Phi>\<^sub>r) = set \<Phi>'\<close> using assms decompose by blast
-  moreover have \<open>(set \<Phi>) \<union> (set \<Phi>\<^sub>r) = set \<Phi>'\<close> using assms decompose by auto
-  moreover have \<open>\<lbrakk>\<lbrakk> \<Phi>' \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<lbrakk>\<lbrakk> \<Phi> @ \<Phi>\<^sub>r \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<close> using TESL_interp_set_lifting decompose by blast
-  moreover have \<open>\<lbrakk>\<lbrakk> \<Phi> @ \<Phi>\<^sub>r \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L \<inter> \<lbrakk>\<lbrakk> \<Phi>\<^sub>r \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<close> by (simp add: TESL_interp_homo_append)
+  hence \<open>set (\<Phi> @ \<Phi>\<^sub>r) = set \<Phi>'\<close> using assms by blast
+  moreover have \<open>(set \<Phi>) \<union> (set \<Phi>\<^sub>r) = set \<Phi>'\<close>
+    using assms decompose by auto
+  moreover have \<open>\<lbrakk>\<lbrakk> \<Phi>' \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<lbrakk>\<lbrakk> \<Phi> @ \<Phi>\<^sub>r \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<close>
+    using TESL_interp_set_lifting decompose by blast
+  moreover have \<open>\<lbrakk>\<lbrakk> \<Phi> @ \<Phi>\<^sub>r \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L \<inter> \<lbrakk>\<lbrakk> \<Phi>\<^sub>r \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<close>
+    by (simp add: TESL_interp_homo_append)
   moreover have \<open>\<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L \<supseteq> \<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L \<inter> \<lbrakk>\<lbrakk> \<Phi>\<^sub>r \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<close> by simp
   ultimately show ?thesis by simp
 qed
@@ -195,7 +217,8 @@ using TESL_interp_decreases_setinc[OF assms]
 lemma TESL_interp_absorb1:
   assumes \<open>set \<Phi>\<^sub>1 \<subseteq> set \<Phi>\<^sub>2\<close>
     shows \<open>\<lbrakk>\<lbrakk> \<Phi>\<^sub>1 @ \<Phi>\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<lbrakk>\<lbrakk> \<Phi>\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<close>
-by (simp add: Int_absorb1 TESL_interp_decreases_setinc TESL_interp_homo_append assms)
+by (simp add: Int_absorb1 TESL_interp_decreases_setinc
+                          TESL_interp_homo_append assms)
 
 lemma TESL_interp_absorb2:
   assumes \<open>set \<Phi>\<^sub>2 \<subseteq> set \<Phi>\<^sub>1\<close>
