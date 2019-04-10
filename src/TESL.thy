@@ -92,123 +92,96 @@ fun plus_tag_const
   where \<open>plus (\<tau>\<^sub>c\<^sub>s\<^sub>t t\<^sub>1) (\<tau>\<^sub>c\<^sub>s\<^sub>t t\<^sub>2) = \<tau>\<^sub>c\<^sub>s\<^sub>t (plus t\<^sub>1 t\<^sub>2)\<close>
 
 instance proof
-  show \<open>\<And>(a::('\<tau>::field tag_const)) b c. a * b * c = a * (b * c)\<close> 
-    by (metis (mono_tags, hide_lams) TESL.inverse_tag_const.cases TESL.times_tag_const.simps semiring_normalization_rules(18))
-  show \<open>\<And>(a::('\<tau>::field tag_const)) b. a * b = b * a\<close>
-    by (metis (full_types) TESL.inverse_tag_const.cases TESL.times_tag_const.simps semiring_normalization_rules(7))
-  show \<open>\<And>(a::('\<tau>::field tag_const)). 1 * a = a\<close>
-    by (metis (mono_tags) TESL.inverse_tag_const.cases TESL.times_tag_const.simps comm_monoid_mult_class.mult_1 one_tag_const_def)
-  show \<open>\<And>(a::('\<tau>::field tag_const)) b c. a + b + c = a + (b + c)\<close>
-    by (metis (mono_tags, hide_lams) TESL.inverse_tag_const.cases TESL.plus_tag_const.simps semiring_normalization_rules(25))
-  show \<open>\<And>(a::('\<tau>::field tag_const)) b. a + b = b + a\<close>
-    by (metis (full_types) TESL.inverse_tag_const.cases TESL.plus_tag_const.simps semiring_normalization_rules(24))
-  show \<open>\<And>(a::('\<tau>::field tag_const)). 0 + a = a\<close>
-    by (metis (mono_tags) TESL.plus_tag_const.simps semiring_normalization_rules(5) tag_const.exhaust zero_tag_const_def)
-  show \<open>\<And>(a::('\<tau>::field tag_const)). - a + a = 0\<close>
-    by (metis (mono_tags) TESL.plus_tag_const.simps TESL.uminus_tag_const.elims ab_group_add_class.ab_left_minus zero_tag_const_def)
-  show \<open>\<And>(a::('\<tau>::field tag_const)) b. a - b = a + - b\<close>
-    by (metis (mono_tags, hide_lams) TESL.minus_tag_const.elims TESL.plus_tag_const.simps TESL.uminus_tag_const.simps add.commute uminus_add_conv_diff)
-  show \<open>\<And>(a::('\<tau>::field tag_const)) b c. (a + b) * c = a * c + b * c\<close>
-  proof -
-    fix a :: "'\<tau> tag_const" and b :: "'\<tau> tag_const" and c :: "'\<tau> tag_const"
-  obtain tt :: "'\<tau> tag_const \<Rightarrow> '\<tau>" where
-    f1: "\<forall>t. t = \<tau>\<^sub>c\<^sub>s\<^sub>t (tt t)"
-    by (meson TESL.inverse_tag_const.cases)
-    then have f2: "\<forall>t ta. \<tau>\<^sub>c\<^sub>s\<^sub>t (ta * tt t) = \<tau>\<^sub>c\<^sub>s\<^sub>t ta * t"
-      by (metis TESL.times_tag_const.simps)
-    have "\<forall>t ta. \<tau>\<^sub>c\<^sub>s\<^sub>t (tt ta * t) = ta * \<tau>\<^sub>c\<^sub>s\<^sub>t t"
-  using f1 by (metis (no_types) TESL.times_tag_const.simps)
-    then have f3: "\<forall>t ta tb. \<tau>\<^sub>c\<^sub>s\<^sub>t (tb::'\<tau>) * t + t * \<tau>\<^sub>c\<^sub>s\<^sub>t ta = t * \<tau>\<^sub>c\<^sub>s\<^sub>t (tb + ta)"
-      using f2 by (metis TESL.plus_tag_const.simps distrib_left semiring_normalization_rules(7))
-  have f4: "\<forall>t ta. (ta::'\<tau> tag_const) * t = t * ta"
-    using f2 f1 by (metis semiring_normalization_rules(7))
-    have "\<forall>t ta tb. (tb::'\<tau> tag_const) * ta + ta * t = ta * (tb + t)"
-      using f3 f1 by (metis TESL.plus_tag_const.simps)
-    then have "c * a + c * b = c * (a + b)"
-      using f4 by force
-  then show "(a + b) * c = a * c + b * c"
-    using f4 by auto
-  qed
+  text\<open>Multiplication is associative.\<close>
+  fix a::\<open>'\<tau>::field tag_const\<close> and b::\<open>'\<tau>::field tag_const\<close> and c::\<open>'\<tau>::field tag_const\<close>
+  obtain u v w where \<open>a = \<tau>\<^sub>c\<^sub>s\<^sub>t u\<close> and \<open>b = \<tau>\<^sub>c\<^sub>s\<^sub>t v\<close> and \<open>c = \<tau>\<^sub>c\<^sub>s\<^sub>t w\<close>
+    using tag_const.exhaust by metis
+  thus \<open>a * b * c = a * (b * c)\<close>
+    by (simp add: TESL.times_tag_const.simps)
+next
+  text\<open>Multiplication is commutative.\<close>
+  fix a::\<open>'\<tau>::field tag_const\<close> and b::\<open>'\<tau>::field tag_const\<close>
+  obtain u v where \<open>a = \<tau>\<^sub>c\<^sub>s\<^sub>t u\<close> and \<open>b = \<tau>\<^sub>c\<^sub>s\<^sub>t v\<close> using tag_const.exhaust by metis
+  thus \<open> a * b = b * a\<close>
+    by (simp add: TESL.times_tag_const.simps)
+next
+  text\<open>One is neutral for multiplication.\<close>
+  fix a::\<open>'\<tau>::field tag_const\<close>
+  obtain u where \<open>a = \<tau>\<^sub>c\<^sub>s\<^sub>t u\<close> using tag_const.exhaust by blast
+  thus \<open>1 * a = a\<close>
+    by (simp add: TESL.times_tag_const.simps one_tag_const_def)
+next
+  text\<open>Addition is associative.\<close>
+  fix a::\<open>'\<tau>::field tag_const\<close> and b::\<open>'\<tau>::field tag_const\<close> and c::\<open>'\<tau>::field tag_const\<close>
+  obtain u v w where \<open>a = \<tau>\<^sub>c\<^sub>s\<^sub>t u\<close> and \<open>b = \<tau>\<^sub>c\<^sub>s\<^sub>t v\<close> and \<open>c = \<tau>\<^sub>c\<^sub>s\<^sub>t w\<close>
+    using tag_const.exhaust by metis
+  thus \<open>a + b + c = a + (b + c)\<close>
+    by (simp add: TESL.plus_tag_const.simps)
+next
+  text\<open>Addition is commutative.\<close>
+  fix a::\<open>'\<tau>::field tag_const\<close> and b::\<open>'\<tau>::field tag_const\<close>
+  obtain u v where \<open>a = \<tau>\<^sub>c\<^sub>s\<^sub>t u\<close> and \<open>b = \<tau>\<^sub>c\<^sub>s\<^sub>t v\<close> using tag_const.exhaust by metis
+  thus \<open>a + b = b + a\<close>
+    by (simp add: TESL.plus_tag_const.simps)
+next
+  text\<open>Zero is neutral for addition.\<close>
+  fix a::\<open>'\<tau>::field tag_const\<close>
+  obtain u where \<open>a = \<tau>\<^sub>c\<^sub>s\<^sub>t u\<close> using tag_const.exhaust by blast
+  thus \<open>0 + a = a\<close>
+    by (simp add: TESL.plus_tag_const.simps zero_tag_const_def)
+next
+  text\<open>The sum of an element and its opposite is zero.\<close>
+  fix a::\<open>'\<tau>::field tag_const\<close>
+  obtain u where \<open>a = \<tau>\<^sub>c\<^sub>s\<^sub>t u\<close> using tag_const.exhaust by blast
+  thus \<open>-a + a = 0\<close>
+    by (simp add: TESL.plus_tag_const.simps
+                  TESL.uminus_tag_const.simps
+                  zero_tag_const_def)
+next
+  text\<open>Subtraction is adding the opposite.\<close>
+  fix a::\<open>'\<tau>::field tag_const\<close> and b::\<open>'\<tau>::field tag_const\<close>
+  obtain u v where \<open>a = \<tau>\<^sub>c\<^sub>s\<^sub>t u\<close> and \<open>b = \<tau>\<^sub>c\<^sub>s\<^sub>t v\<close> using tag_const.exhaust by metis
+  thus \<open>a - b = a + -b\<close>
+    by (simp add: TESL.minus_tag_const.simps TESL.plus_tag_const.simps TESL.uminus_tag_const.simps)
+next
+  text\<open>Distributive property of multiplication over addition.\<close>
+  fix a::\<open>'\<tau>::field tag_const\<close> and b::\<open>'\<tau>::field tag_const\<close> and c::\<open>'\<tau>::field tag_const\<close>
+  obtain u v w where \<open>a = \<tau>\<^sub>c\<^sub>s\<^sub>t u\<close> and \<open>b = \<tau>\<^sub>c\<^sub>s\<^sub>t v\<close> and \<open>c = \<tau>\<^sub>c\<^sub>s\<^sub>t w\<close>
+    using tag_const.exhaust by metis
+  thus \<open>(a + b) * c = a * c + b * c\<close>
+    by (simp add: TESL.plus_tag_const.simps
+                  TESL.times_tag_const.simps
+                  ring_class.ring_distribs(2))
+next
+  text\<open>The neutral elements are distinct.\<close>
   show \<open>(0::('\<tau>::field tag_const)) \<noteq> 1\<close>
     by (simp add: one_tag_const_def zero_tag_const_def)
-  show \<open>\<And>(a::('\<tau>::field tag_const)). a \<noteq> 0 \<Longrightarrow> inverse a * a = 1\<close>
-  proof -
-    { fix a::\<open>('\<tau>::field tag_const)\<close> assume \<open>a \<noteq> 0\<close>
-      hence \<open>\<exists>t. t\<noteq>0 \<and> a = \<tau>\<^sub>c\<^sub>s\<^sub>t t\<close>
-        by (metis (mono_tags, hide_lams) tag_const.exhaust zero_tag_const_def)
-      from this obtain t where \<open>t \<noteq> 0\<close> and \<open>a = \<tau>\<^sub>c\<^sub>s\<^sub>t t\<close> by blast
-      hence \<open>inverse a = \<tau>\<^sub>c\<^sub>s\<^sub>t (inverse t)\<close>
-        by (simp add: TESL.inverse_tag_const.simps)
-      hence \<open>inverse a * a = 1\<close> sledgehammer
-        by (simp add: TESL.times_tag_const.simps \<open>a = \<tau>\<^sub>c\<^sub>s\<^sub>t t\<close> \<open>t \<noteq> 0\<close> one_tag_const_def)
-    } thus \<open>\<And>(a::('\<tau>::field tag_const)). a \<noteq> 0 \<Longrightarrow> inverse a * a = 1\<close> by simp
-  qed
-  show \<open>\<And>(a::('\<tau>::field tag_const)) b. a div b = a * inverse b\<close>
-  proof -
-    { fix a b::\<open>('\<tau>::field tag_const)\<close>
-      have \<open>\<exists>u. a = \<tau>\<^sub>c\<^sub>s\<^sub>t u\<close> using TESL.inverse_tag_const.cases by auto
-      from this obtain u where au:\<open>a = \<tau>\<^sub>c\<^sub>s\<^sub>t u\<close> by blast
-      have \<open>\<exists>v. b = \<tau>\<^sub>c\<^sub>s\<^sub>t v\<close> using TESL.inverse_tag_const.cases by auto
-      from this obtain v where bv:\<open>b = \<tau>\<^sub>c\<^sub>s\<^sub>t v\<close> by blast
-      from au bv have \<open>divide a b = \<tau>\<^sub>c\<^sub>s\<^sub>t (divide u v)\<close>
-        by (simp add: TESL.divide_tag_const.simps)
-      also have \<open>... = \<tau>\<^sub>c\<^sub>s\<^sub>t (times u (inverse v))\<close>
-        by (simp add: divide_inverse)
-      finally have \<open>divide a b = times a (inverse b)\<close>
-        by (simp add: TESL.inverse_tag_const.simps TESL.times_tag_const.simps au bv)
-    } thus \<open>\<And>(a::('\<tau>::field tag_const)) b. a div b = a * inverse b\<close> by simp
-  qed
+next
+  text\<open>The product of an element and its inverse is 1.\<close>
+  fix a::\<open>'\<tau>::field tag_const\<close> assume h:\<open>a \<noteq> 0\<close>
+  obtain u where \<open>a = \<tau>\<^sub>c\<^sub>s\<^sub>t u\<close> using tag_const.exhaust by blast
+  moreover with h have \<open>u \<noteq> 0\<close> by (simp add: zero_tag_const_def)
+  ultimately show \<open>inverse a * a = 1\<close>
+    by (simp add: TESL.inverse_tag_const.simps TESL.times_tag_const.simps one_tag_const_def)
+next
+  text\<open>Dividing is multiplying by the inverse.\<close>
+  fix a::\<open>'\<tau>::field tag_const\<close> and b::\<open>'\<tau>::field tag_const\<close>
+  obtain u v where \<open>a = \<tau>\<^sub>c\<^sub>s\<^sub>t u\<close> and \<open>b = \<tau>\<^sub>c\<^sub>s\<^sub>t v\<close> using tag_const.exhaust by metis
+  thus \<open>a div b = a * inverse b\<close>
+    by (simp add: TESL.divide_tag_const.simps
+                  TESL.inverse_tag_const.simps
+                  TESL.times_tag_const.simps
+                  divide_inverse)
+next
+  text\<open>Zero is its own inverse.\<close>
   show \<open>inverse (0::('\<tau>::field tag_const)) = 0\<close>
     by (simp add: TESL.inverse_tag_const.simps zero_tag_const_def)
 qed
 
 end
 
-\<^cancel>\<open>
-instantiation tag_const :: (plus)plus
-begin
-  fun plus_tag_const :: \<open>'a tag_const \<Rightarrow> 'a tag_const \<Rightarrow> 'a tag_const\<close>
-  where
-      TConst_plus: \<open>(TConst n) + (TConst p) = (TConst (n + p))\<close>
-
-  instance by (rule Groups.class.Groups.plus.of_class.intro)
-end
-
-instantiation tag_const :: (minus)minus
-begin
-  fun minus_tag_const :: \<open>'a tag_const \<Rightarrow> 'a tag_const \<Rightarrow> 'a tag_const\<close>
-  where
-      TConst_minus: \<open>(TConst n) - (TConst p) = (TConst (n - p))\<close>
-
-  instance by (rule Groups.class.Groups.minus.of_class.intro)
-end
-
-instantiation tag_const :: (times)times
-begin
-  fun times_tag_const :: \<open>'a tag_const \<Rightarrow> 'a tag_const \<Rightarrow> 'a tag_const\<close> 
-  where
-      TConst_times: \<open>(TConst n) * (TConst p) = (TConst (n * p))\<close>
-
-  instance by (rule Groups.class.Groups.times.of_class.intro)
-end
-
-instantiation tag_const :: (divide)divide
-begin
-  fun divide_tag_const :: \<open>'a tag_const \<Rightarrow> 'a tag_const \<Rightarrow> 'a tag_const\<close> 
-  where
-      TConst_divide: \<open>divide (TConst n) (TConst p) = (TConst (divide n p))\<close>
-
-  instance by (rule Rings.class.Rings.divide.of_class.intro)
-end
-
-instantiation tag_const :: (inverse)inverse
-begin
-  fun inverse_tag_const :: \<open>'a tag_const \<Rightarrow> 'a tag_const\<close>
-  where
-      TConst_inverse: \<open>inverse (TConst n) = (TConst (inverse n))\<close>
-
-  instance by (rule Fields.class.Fields.inverse.of_class.intro)
-end
+text\<open>
+  For comparing dates on clocks, we need an order on tags.
 \<close>
 
 instantiation tag_const :: (order)order
@@ -223,10 +196,9 @@ begin
     show \<open>\<And>x y :: 'a tag_const. (x < y) = (x \<le> y \<and> \<not> y \<le> x)\<close>
       using less_eq_tag_const.simps less_tag by auto
   next
-    { fix x::\<open>'a tag_const\<close>
-      from tag_const.exhaust obtain x\<^sub>0::'a where xx0:\<open>x = TConst x\<^sub>0\<close> by blast
-      with Int_less_eq have \<open>x \<le> x\<close> by simp
-    } thus \<open>\<And>x::'a tag_const. x \<le> x\<close> .
+    fix x::\<open>'a tag_const\<close>
+    from tag_const.exhaust obtain x\<^sub>0::'a where \<open>x = TConst x\<^sub>0\<close> by blast
+    with Int_less_eq show \<open>x \<le> x\<close> by simp
   next
     show \<open>\<And>x y z  :: 'a tag_const. x \<le> y \<Longrightarrow> y \<le> z \<Longrightarrow> x \<le> z\<close>
       using less_eq_tag_const.simps by auto
@@ -237,15 +209,16 @@ begin
 
 end
 
+text\<open>
+  For ensuring that time does never flow backwards, we need a total order on tags.
+\<close>
 instantiation tag_const :: (linorder)linorder
 begin
   instance proof
-    { fix x::\<open>'a tag_const\<close> and y::\<open>'a tag_const\<close>
-      from tag_const.exhaust obtain x\<^sub>0::'a where \<open>x = TConst x\<^sub>0\<close> by blast
-      moreover from tag_const.exhaust obtain y\<^sub>0::'a where \<open>y = TConst y\<^sub>0\<close> by blast
-      ultimately have \<open>x \<le> y \<or> y \<le> x\<close> using less_eq_tag_const.simps by fastforce
-    }
-    thus \<open>\<And>x y. (x::'a tag_const) \<le> y \<or> y \<le> x\<close> .
+    fix x::\<open>'a tag_const\<close> and y::\<open>'a tag_const\<close>
+    from tag_const.exhaust obtain x\<^sub>0::'a where \<open>x = TConst x\<^sub>0\<close> by blast
+    moreover from tag_const.exhaust obtain y\<^sub>0::'a where \<open>y = TConst y\<^sub>0\<close> by blast
+    ultimately show \<open>x \<le> y \<or> y \<le> x\<close> using less_eq_tag_const.simps by fastforce
   qed
 
 end
