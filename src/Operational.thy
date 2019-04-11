@@ -68,7 +68,7 @@ where
      \<hookrightarrow>\<^sub>e  (((K\<^sub>1 \<Up> n) # (K\<^sub>2 \<not>\<Up> \<ge> n) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> ((K\<^sub>1 kills K\<^sub>2) # \<Phi>))\<close>
 
 inductive operational_semantics_step
-  ::\<open>('\<tau>::linordered_field) config \<Rightarrow> '\<tau> config \<Rightarrow> bool\<close>                ("_ \<hookrightarrow> _" 70)
+  ::\<open>('\<tau>::linordered_field) config \<Rightarrow> '\<tau> config \<Rightarrow> bool\<close>              ("_ \<hookrightarrow> _" 70)
 where
   intro_part:
   \<open>(\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1)  \<hookrightarrow>\<^sub>i  (\<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2)
@@ -78,27 +78,27 @@ where
     \<Longrightarrow> (\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1)  \<hookrightarrow>  (\<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2)\<close>
 
 abbreviation operational_semantics_step_rtranclp
-  ::\<open>('\<tau>::linordered_field) config \<Rightarrow> '\<tau> config \<Rightarrow> bool\<close>                ("_ \<hookrightarrow>\<^sup>*\<^sup>* _" 70)
+  ::\<open>('\<tau>::linordered_field) config \<Rightarrow> '\<tau> config \<Rightarrow> bool\<close>              ("_ \<hookrightarrow>\<^sup>*\<^sup>* _" 70)
 where
   \<open>\<C>\<^sub>1 \<hookrightarrow>\<^sup>*\<^sup>* \<C>\<^sub>2 \<equiv> operational_semantics_step\<^sup>*\<^sup>* \<C>\<^sub>1 \<C>\<^sub>2\<close>
 
 abbreviation operational_semantics_step_tranclp
-  ::\<open>('\<tau>::linordered_field) config \<Rightarrow> '\<tau> config \<Rightarrow> bool\<close>                ("_ \<hookrightarrow>\<^sup>+\<^sup>+ _" 70)
+  ::\<open>('\<tau>::linordered_field) config \<Rightarrow> '\<tau> config \<Rightarrow> bool\<close>              ("_ \<hookrightarrow>\<^sup>+\<^sup>+ _" 70)
 where
   \<open>\<C>\<^sub>1 \<hookrightarrow>\<^sup>+\<^sup>+ \<C>\<^sub>2 \<equiv> operational_semantics_step\<^sup>+\<^sup>+ \<C>\<^sub>1 \<C>\<^sub>2\<close>
 
 abbreviation operational_semantics_step_reflclp
-  ::\<open>('\<tau>::linordered_field) config \<Rightarrow> '\<tau> config \<Rightarrow> bool\<close>                ("_ \<hookrightarrow>\<^sup>=\<^sup>= _" 70)
+  ::\<open>('\<tau>::linordered_field) config \<Rightarrow> '\<tau> config \<Rightarrow> bool\<close>              ("_ \<hookrightarrow>\<^sup>=\<^sup>= _" 70)
 where
   \<open>\<C>\<^sub>1 \<hookrightarrow>\<^sup>=\<^sup>= \<C>\<^sub>2 \<equiv> operational_semantics_step\<^sup>=\<^sup>= \<C>\<^sub>1 \<C>\<^sub>2\<close>
 
 abbreviation operational_semantics_step_relpowp
-  ::\<open>('\<tau>::linordered_field) config \<Rightarrow> nat \<Rightarrow> '\<tau> config \<Rightarrow> bool\<close>         ("_ \<hookrightarrow>\<^bsup>_\<^esup> _" 70)
+  ::\<open>('\<tau>::linordered_field) config \<Rightarrow> nat \<Rightarrow> '\<tau> config \<Rightarrow> bool\<close>       ("_ \<hookrightarrow>\<^bsup>_\<^esup> _" 70)
 where
   \<open>\<C>\<^sub>1 \<hookrightarrow>\<^bsup>n\<^esup> \<C>\<^sub>2 \<equiv> (operational_semantics_step ^^ n) \<C>\<^sub>1 \<C>\<^sub>2\<close>
 
 definition operational_semantics_elim_inv
-  ::\<open>('\<tau>::linordered_field) config \<Rightarrow> '\<tau> config \<Rightarrow> bool\<close>                ("_ \<hookrightarrow>\<^sub>e\<^sup>\<leftarrow> _" 70)
+  ::\<open>('\<tau>::linordered_field) config \<Rightarrow> '\<tau> config \<Rightarrow> bool\<close>              ("_ \<hookrightarrow>\<^sub>e\<^sup>\<leftarrow> _" 70)
 where
   \<open>\<C>\<^sub>1 \<hookrightarrow>\<^sub>e\<^sup>\<leftarrow> \<C>\<^sub>2 \<equiv> \<C>\<^sub>2 \<hookrightarrow>\<^sub>e \<C>\<^sub>1\<close>
 
@@ -124,13 +124,15 @@ by (simp add: operational_semantics_step.simps operational_semantics_intro.insta
 
 lemma Cnext_solve_sporadicon:
   \<open>(\<C>\<^sub>n\<^sub>e\<^sub>x\<^sub>t (\<Gamma>, n \<turnstile> ((K\<^sub>1 sporadic \<tau> on K\<^sub>2) # \<Psi>) \<triangleright> \<Phi>))
-    \<supseteq> { \<Gamma>, n \<turnstile> \<Psi> \<triangleright> ((K\<^sub>1 sporadic \<tau> on K\<^sub>2) # \<Phi>), ((K\<^sub>1 \<Up> n) # (K\<^sub>2 \<Down> n @ \<tau>) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> \<Phi> }\<close>
+    \<supseteq> { \<Gamma>, n \<turnstile> \<Psi> \<triangleright> ((K\<^sub>1 sporadic \<tau> on K\<^sub>2) # \<Phi>),
+        ((K\<^sub>1 \<Up> n) # (K\<^sub>2 \<Down> n @ \<tau>) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> \<Phi> }\<close>
 by (simp add: operational_semantics_step.simps operational_semantics_elim.sporadic_on_e1
               operational_semantics_elim.sporadic_on_e2)
 
 lemma Cnext_solve_tagrel:
   \<open>(\<C>\<^sub>n\<^sub>e\<^sub>x\<^sub>t (\<Gamma>, n \<turnstile> ((time-relation \<lfloor>K\<^sub>1, K\<^sub>2\<rfloor> \<in> R) # \<Psi>) \<triangleright> \<Phi>))
-    \<supseteq> { ((\<lfloor>\<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>1, n), \<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>2, n)\<rfloor> \<in> R) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> ((time-relation \<lfloor>K\<^sub>1, K\<^sub>2\<rfloor> \<in> R) # \<Phi>) }\<close>
+    \<supseteq> { ((\<lfloor>\<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>1, n), \<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>2, n)\<rfloor> \<in> R) # \<Gamma>),n
+          \<turnstile> \<Psi> \<triangleright> ((time-relation \<lfloor>K\<^sub>1, K\<^sub>2\<rfloor> \<in> R) # \<Phi>) }\<close>
 by (simp add: operational_semantics_step.simps operational_semantics_elim.tagrel_e)
 
 lemma Cnext_solve_implies:
@@ -157,13 +159,17 @@ by (simp add: operational_semantics_step.simps operational_semantics_elim.timede
 
 lemma Cnext_solve_weakly_precedes:
   \<open>(\<C>\<^sub>n\<^sub>e\<^sub>x\<^sub>t (\<Gamma>, n \<turnstile> ((K\<^sub>1 weakly precedes K\<^sub>2) # \<Psi>) \<triangleright> \<Phi>))
-    \<supseteq> { ((\<lceil>#\<^sup>\<le> K\<^sub>2 n, #\<^sup>\<le> K\<^sub>1 n\<rceil> \<in> (\<lambda>(x,y). x\<le>y)) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> ((K\<^sub>1 weakly precedes K\<^sub>2) # \<Phi>) }\<close>
-by (simp add: operational_semantics_step.simps operational_semantics_elim.weakly_precedes_e)
+    \<supseteq> { ((\<lceil>#\<^sup>\<le> K\<^sub>2 n, #\<^sup>\<le> K\<^sub>1 n\<rceil> \<in> (\<lambda>(x,y). x\<le>y)) # \<Gamma>), n
+          \<turnstile> \<Psi> \<triangleright> ((K\<^sub>1 weakly precedes K\<^sub>2) # \<Phi>) }\<close>
+by (simp add: operational_semantics_step.simps
+              operational_semantics_elim.weakly_precedes_e)
 
 lemma Cnext_solve_strictly_precedes:
   \<open>(\<C>\<^sub>n\<^sub>e\<^sub>x\<^sub>t (\<Gamma>, n \<turnstile> ((K\<^sub>1 strictly precedes K\<^sub>2) # \<Psi>) \<triangleright> \<Phi>))
-    \<supseteq> { ((\<lceil>#\<^sup>\<le> K\<^sub>2 n, #\<^sup>< K\<^sub>1 n\<rceil> \<in> (\<lambda>(x,y). x\<le>y)) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> ((K\<^sub>1 strictly precedes K\<^sub>2) # \<Phi>) }\<close>
-by (simp add: operational_semantics_step.simps operational_semantics_elim.strictly_precedes_e)
+    \<supseteq> { ((\<lceil>#\<^sup>\<le> K\<^sub>2 n, #\<^sup>< K\<^sub>1 n\<rceil> \<in> (\<lambda>(x,y). x\<le>y)) # \<Gamma>), n
+          \<turnstile> \<Psi> \<triangleright> ((K\<^sub>1 strictly precedes K\<^sub>2) # \<Phi>) }\<close>
+by (simp add: operational_semantics_step.simps
+              operational_semantics_elim.strictly_precedes_e)
 
 lemma Cnext_solve_kills:
   \<open>(\<C>\<^sub>n\<^sub>e\<^sub>x\<^sub>t (\<Gamma>, n \<turnstile> ((K\<^sub>1 kills K\<^sub>2) # \<Psi>) \<triangleright> \<Phi>))

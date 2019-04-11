@@ -72,25 +72,25 @@ The denotational semantics maps TESL formulae to sets of satisfying runs.
       instant where the time on \isa{K\isactrlsub {\isadigit{2}}} is \isa{{\isasymtau}}.%
 }\isanewline
 \ \ \ \ {\isacartoucheopen}{\isasymlbrakk}\ K\isactrlsub {\isadigit{1}}\ sporadic\ {\isasymtau}\ on\ K\isactrlsub {\isadigit{2}}\ {\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L\ {\isacharequal}\isanewline
-\ \ \ \ \ \ \ \ {\isacharbraceleft}\ {\isasymrho}{\isachardot}\ {\isasymexists}n{\isacharcolon}{\isacharcolon}nat{\isachardot}\ hamlet\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ n\ K\isactrlsub {\isadigit{1}}{\isacharparenright}\ {\isasymand}\ time\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ n\ K\isactrlsub {\isadigit{2}}{\isacharparenright}\ {\isacharequal}\ {\isasymtau}\ {\isacharbraceright}{\isacartoucheclose}\isanewline
+\ \ \ \ \ \ \ \ {\isacharbraceleft}{\isasymrho}{\isachardot}\ {\isasymexists}n{\isacharcolon}{\isacharcolon}nat{\isachardot}\ hamlet\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ n\ K\isactrlsub {\isadigit{1}}{\isacharparenright}\ {\isasymand}\ time\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ n\ K\isactrlsub {\isadigit{2}}{\isacharparenright}\ {\isacharequal}\ {\isasymtau}{\isacharbraceright}{\isacartoucheclose}\isanewline
 \ \ %
 \isamarkupcmt{\isa{time{\isacharminus}relation\ {\isasymlfloor}K\isactrlsub {\isadigit{1}}{\isacharcomma}\ K\isactrlsub {\isadigit{2}}{\isasymrfloor}\ {\isasymin}\ R} means that at each instant, the time 
       on \isa{K\isactrlsub {\isadigit{1}}} and the time on \isa{K\isactrlsub {\isadigit{2}}} are in relation \isa{R}.%
 }\isanewline
 \ \ {\isacharbar}\ {\isacartoucheopen}{\isasymlbrakk}\ time{\isacharminus}relation\ {\isasymlfloor}K\isactrlsub {\isadigit{1}}{\isacharcomma}\ K\isactrlsub {\isadigit{2}}{\isasymrfloor}\ {\isasymin}\ R\ {\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L\ {\isacharequal}\isanewline
-\ \ \ \ \ \ \ \ {\isacharbraceleft}\ {\isasymrho}{\isachardot}\ {\isasymforall}n{\isacharcolon}{\isacharcolon}nat{\isachardot}\ R\ {\isacharparenleft}time\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ n\ K\isactrlsub {\isadigit{1}}{\isacharparenright}{\isacharcomma}\ time\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ n\ K\isactrlsub {\isadigit{2}}{\isacharparenright}{\isacharparenright}\ {\isacharbraceright}{\isacartoucheclose}\isanewline
+\ \ \ \ \ \ \ \ {\isacharbraceleft}{\isasymrho}{\isachardot}\ {\isasymforall}n{\isacharcolon}{\isacharcolon}nat{\isachardot}\ R\ {\isacharparenleft}time\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ n\ K\isactrlsub {\isadigit{1}}{\isacharparenright}{\isacharcomma}\ time\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ n\ K\isactrlsub {\isadigit{2}}{\isacharparenright}{\isacharparenright}{\isacharbraceright}{\isacartoucheclose}\isanewline
 \ \ %
 \isamarkupcmt{\isa{master\ implies\ slave} means that at each instant at which 
       \isa{master} ticks, \isa{slave} also ticks.%
 }\isanewline
 \ \ {\isacharbar}\ {\isacartoucheopen}{\isasymlbrakk}\ master\ implies\ slave\ {\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L\ {\isacharequal}\isanewline
-\ \ \ \ \ \ \ \ {\isacharbraceleft}\ {\isasymrho}{\isachardot}\ {\isasymforall}n{\isacharcolon}{\isacharcolon}nat{\isachardot}\ hamlet\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ n\ master{\isacharparenright}\ {\isasymlongrightarrow}\ hamlet\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ n\ slave{\isacharparenright}\ {\isacharbraceright}{\isacartoucheclose}\isanewline
+\ \ \ \ \ \ \ \ {\isacharbraceleft}{\isasymrho}{\isachardot}\ {\isasymforall}n{\isacharcolon}{\isacharcolon}nat{\isachardot}\ hamlet\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ n\ master{\isacharparenright}\ {\isasymlongrightarrow}\ hamlet\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ n\ slave{\isacharparenright}{\isacharbraceright}{\isacartoucheclose}\isanewline
 \ \ %
 \isamarkupcmt{\isa{master\ implies\ not\ slave} means that at each instant at which 
       \isa{master} ticks, \isa{slave} does not tick.%
 }\isanewline
 \ \ {\isacharbar}\ {\isacartoucheopen}{\isasymlbrakk}\ master\ implies\ not\ slave\ {\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L\ {\isacharequal}\isanewline
-\ \ \ \ \ \ \ \ {\isacharbraceleft}\ {\isasymrho}{\isachardot}\ {\isasymforall}n{\isacharcolon}{\isacharcolon}nat{\isachardot}\ hamlet\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ n\ master{\isacharparenright}\ {\isasymlongrightarrow}\ {\isasymnot}\ hamlet\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ n\ slave{\isacharparenright}\ {\isacharbraceright}{\isacartoucheclose}\isanewline
+\ \ \ \ \ \ \ \ {\isacharbraceleft}{\isasymrho}{\isachardot}\ {\isasymforall}n{\isacharcolon}{\isacharcolon}nat{\isachardot}\ hamlet\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ n\ master{\isacharparenright}\ {\isasymlongrightarrow}\ {\isasymnot}hamlet\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ n\ slave{\isacharparenright}{\isacharbraceright}{\isacartoucheclose}\isanewline
 \ \ %
 \isamarkupcmt{\isa{master\ time{\isacharminus}delayed\ by\ {\isasymdelta}{\isasymtau}\ on\ measuring\ implies\ slave} means that 
       at each instant at which  \isa{master} ticks, \isa{slave} will
@@ -103,7 +103,7 @@ The denotational semantics maps TESL formulae to sets of satisfying runs.
       at the first instant when the date on measuring is @term\isa{t\isactrlsub {\isadigit{0}}{\isacharplus}{\isasymdelta}t}, 
       slave has to tick.%
 }\isanewline
-\ \ \ \ \ \ \ \ {\isacharbraceleft}\ {\isasymrho}{\isachardot}\ {\isasymforall}n{\isachardot}\ hamlet\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ n\ master{\isacharparenright}\ {\isasymlongrightarrow}\isanewline
+\ \ \ \ \ \ \ \ {\isacharbraceleft}{\isasymrho}{\isachardot}\ {\isasymforall}n{\isachardot}\ hamlet\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ n\ master{\isacharparenright}\ {\isasymlongrightarrow}\isanewline
 \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ {\isacharparenleft}let\ measured{\isacharunderscore}time\ {\isacharequal}\ time\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ n\ measuring{\isacharparenright}\ in\isanewline
 \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ {\isasymforall}m\ {\isasymge}\ n{\isachardot}\ \ first{\isacharunderscore}time\ {\isasymrho}\ measuring\ m\ {\isacharparenleft}measured{\isacharunderscore}time\ {\isacharplus}\ {\isasymdelta}{\isasymtau}{\isacharparenright}\isanewline
 \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ {\isasymlongrightarrow}\ hamlet\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ m\ slave{\isacharparenright}\isanewline
@@ -116,7 +116,7 @@ The denotational semantics maps TESL formulae to sets of satisfying runs.
         must be less or equal to the number of ticks on \isa{K\isactrlsub {\isadigit{1}}}.%
 }\isanewline
 \ \ {\isacharbar}\ {\isacartoucheopen}{\isasymlbrakk}\ K\isactrlsub {\isadigit{1}}\ weakly\ precedes\ K\isactrlsub {\isadigit{2}}\ {\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L\ {\isacharequal}\isanewline
-\ \ \ \ \ \ \ \ {\isacharbraceleft}\ {\isasymrho}{\isachardot}\ {\isasymforall}n{\isacharcolon}{\isacharcolon}nat{\isachardot}\ {\isacharparenleft}run{\isacharunderscore}tick{\isacharunderscore}count\ {\isasymrho}\ K\isactrlsub {\isadigit{2}}\ n{\isacharparenright}\ {\isasymle}\ {\isacharparenleft}run{\isacharunderscore}tick{\isacharunderscore}count\ {\isasymrho}\ K\isactrlsub {\isadigit{1}}\ n{\isacharparenright}\ {\isacharbraceright}{\isacartoucheclose}\isanewline
+\ \ \ \ \ \ \ \ {\isacharbraceleft}{\isasymrho}{\isachardot}\ {\isasymforall}n{\isacharcolon}{\isacharcolon}nat{\isachardot}\ {\isacharparenleft}run{\isacharunderscore}tick{\isacharunderscore}count\ {\isasymrho}\ K\isactrlsub {\isadigit{2}}\ n{\isacharparenright}\ {\isasymle}\ {\isacharparenleft}run{\isacharunderscore}tick{\isacharunderscore}count\ {\isasymrho}\ K\isactrlsub {\isadigit{1}}\ n{\isacharparenright}{\isacharbraceright}{\isacartoucheclose}\isanewline
 \ \ %
 \isamarkupcmt{\isa{K\isactrlsub {\isadigit{1}}\ strictly\ precedes\ K\isactrlsub {\isadigit{2}}} means that each tick on \isa{K\isactrlsub {\isadigit{2}}}
         must be preceded by at least one tick on \isa{K\isactrlsub {\isadigit{1}}} at a previous instant.
@@ -125,14 +125,14 @@ The denotational semantics maps TESL formulae to sets of satisfying runs.
         at instant \isa{n\ {\isacharminus}\ {\isacharparenleft}{\isadigit{1}}{\isacharcolon}{\isacharcolon}{\isacharprime}a{\isacharparenright}}.%
 }\isanewline
 \ \ {\isacharbar}\ {\isacartoucheopen}{\isasymlbrakk}\ K\isactrlsub {\isadigit{1}}\ strictly\ precedes\ K\isactrlsub {\isadigit{2}}\ {\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L\ {\isacharequal}\isanewline
-\ \ \ \ \ \ \ \ {\isacharbraceleft}\ {\isasymrho}{\isachardot}\ {\isasymforall}n{\isacharcolon}{\isacharcolon}nat{\isachardot}\ {\isacharparenleft}run{\isacharunderscore}tick{\isacharunderscore}count\ {\isasymrho}\ K\isactrlsub {\isadigit{2}}\ n{\isacharparenright}\ {\isasymle}\ {\isacharparenleft}run{\isacharunderscore}tick{\isacharunderscore}count{\isacharunderscore}strictly\ {\isasymrho}\ K\isactrlsub {\isadigit{1}}\ n{\isacharparenright}\ {\isacharbraceright}{\isacartoucheclose}\isanewline
+\ \ \ \ \ \ \ \ {\isacharbraceleft}{\isasymrho}{\isachardot}\ {\isasymforall}n{\isacharcolon}{\isacharcolon}nat{\isachardot}\ {\isacharparenleft}run{\isacharunderscore}tick{\isacharunderscore}count\ {\isasymrho}\ K\isactrlsub {\isadigit{2}}\ n{\isacharparenright}\ {\isasymle}\ {\isacharparenleft}run{\isacharunderscore}tick{\isacharunderscore}count{\isacharunderscore}strictly\ {\isasymrho}\ K\isactrlsub {\isadigit{1}}\ n{\isacharparenright}{\isacharbraceright}{\isacartoucheclose}\isanewline
 \ \ %
 \isamarkupcmt{\isa{K\isactrlsub {\isadigit{1}}\ kills\ K\isactrlsub {\isadigit{2}}} means that when \isa{K\isactrlsub {\isadigit{1}}} ticks, \isa{K\isactrlsub {\isadigit{2}}}
         cannot tick and is not allowed to tick at any further instant.%
 }\isanewline
 \ \ {\isacharbar}\ {\isacartoucheopen}{\isasymlbrakk}\ K\isactrlsub {\isadigit{1}}\ kills\ K\isactrlsub {\isadigit{2}}\ {\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L\ {\isacharequal}\isanewline
-\ \ \ \ \ \ \ \ {\isacharbraceleft}\ {\isasymrho}{\isachardot}\ {\isasymforall}n{\isacharcolon}{\isacharcolon}nat{\isachardot}\ hamlet\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ n\ K\isactrlsub {\isadigit{1}}{\isacharparenright}\isanewline
-\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ {\isasymlongrightarrow}\ {\isacharparenleft}{\isasymforall}m{\isasymge}n{\isachardot}\ {\isasymnot}\ hamlet\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ m\ K\isactrlsub {\isadigit{2}}{\isacharparenright}{\isacharparenright}\ {\isacharbraceright}{\isacartoucheclose}%
+\ \ \ \ \ \ \ \ {\isacharbraceleft}{\isasymrho}{\isachardot}\ {\isasymforall}n{\isacharcolon}{\isacharcolon}nat{\isachardot}\ hamlet\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ n\ K\isactrlsub {\isadigit{1}}{\isacharparenright}\isanewline
+\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ {\isasymlongrightarrow}\ {\isacharparenleft}{\isasymforall}m{\isasymge}n{\isachardot}\ {\isasymnot}\ hamlet\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ m\ K\isactrlsub {\isadigit{2}}{\isacharparenright}{\isacharparenright}{\isacharbraceright}{\isacartoucheclose}%
 \isadelimdocument
 %
 \endisadelimdocument
@@ -159,7 +159,7 @@ To satisfy a formula, a run has to satisfy the conjunction of its atomic
 \ TESL{\isacharunderscore}interpretation\ {\isacharcolon}{\isacharcolon}\ {\isacartoucheopen}{\isacharparenleft}{\isacharprime}{\isasymtau}{\isacharcolon}{\isacharcolon}linordered{\isacharunderscore}field{\isacharparenright}\ TESL{\isacharunderscore}formula\ {\isasymRightarrow}\ {\isacharprime}{\isasymtau}\ run\ set{\isacartoucheclose}\isanewline
 \ \ {\isacharparenleft}{\isachardoublequoteopen}{\isasymlbrakk}{\isasymlbrakk}\ {\isacharunderscore}\ {\isasymrbrakk}{\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L{\isachardoublequoteclose}{\isacharparenright}\isanewline
 \isakeyword{where}\isanewline
-\ \ {\isacartoucheopen}{\isasymlbrakk}{\isasymlbrakk}\ {\isacharbrackleft}{\isacharbrackright}\ {\isasymrbrakk}{\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L\ {\isacharequal}\ {\isacharbraceleft}\ {\isacharunderscore}{\isachardot}\ True\ {\isacharbraceright}{\isacartoucheclose}\isanewline
+\ \ {\isacartoucheopen}{\isasymlbrakk}{\isasymlbrakk}\ {\isacharbrackleft}{\isacharbrackright}\ {\isasymrbrakk}{\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L\ {\isacharequal}\ {\isacharbraceleft}{\isacharunderscore}{\isachardot}\ True{\isacharbraceright}{\isacartoucheclose}\isanewline
 {\isacharbar}\ {\isacartoucheopen}{\isasymlbrakk}{\isasymlbrakk}\ {\isasymphi}\ {\isacharhash}\ {\isasymPhi}\ {\isasymrbrakk}{\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L\ {\isacharequal}\ {\isasymlbrakk}\ {\isasymphi}\ {\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L\ {\isasyminter}\ {\isasymlbrakk}{\isasymlbrakk}\ {\isasymPhi}\ {\isasymrbrakk}{\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L{\isacartoucheclose}\isanewline
 \isanewline
 \isacommand{lemma}\isamarkupfalse%
@@ -258,7 +258,7 @@ Similar to the expansion laws of lattices.%
 %
 \isatagdocument
 %
-\isamarkupsection{Equational laws for the denotational interpretation of TESL formulae%
+\isamarkupsection{Equational laws for the denotation of TESL formulae%
 }
 \isamarkuptrue%
 %
@@ -387,7 +387,10 @@ Similar to the expansion laws of lattices.%
 \endisadelimproof
 \isanewline
 \isacommand{lemmas}\isamarkupfalse%
-\ TESL{\isacharunderscore}interp{\isacharunderscore}aci\ {\isacharequal}\ TESL{\isacharunderscore}interp{\isacharunderscore}commute\ TESL{\isacharunderscore}interp{\isacharunderscore}assoc\ TESL{\isacharunderscore}interp{\isacharunderscore}left{\isacharunderscore}commute\ TESL{\isacharunderscore}interp{\isacharunderscore}left{\isacharunderscore}idem%
+\ TESL{\isacharunderscore}interp{\isacharunderscore}aci\ {\isacharequal}\ TESL{\isacharunderscore}interp{\isacharunderscore}commute\isanewline
+\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ TESL{\isacharunderscore}interp{\isacharunderscore}assoc\isanewline
+\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ TESL{\isacharunderscore}interp{\isacharunderscore}left{\isacharunderscore}commute\isanewline
+\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ TESL{\isacharunderscore}interp{\isacharunderscore}left{\isacharunderscore}idem%
 \begin{isamarkuptext}%
 The empty formula is the identity element%
 \end{isamarkuptext}\isamarkuptrue%
@@ -989,210 +992,213 @@ Adding constraints to a TESL formula reduces the number of satisfying runs.%
 %:%388=134%:%
 %:%389=135%:%
 %:%390=135%:%
+%:%391=136%:%
 %:%392=137%:%
-%:%394=138%:%
-%:%395=138%:%
-%:%396=139%:%
-%:%403=140%:%
-%:%404=140%:%
-%:%409=140%:%
-%:%412=141%:%
-%:%413=142%:%
-%:%414=142%:%
-%:%415=143%:%
-%:%422=144%:%
-%:%423=144%:%
-%:%437=146%:%
-%:%449=148%:%
-%:%451=150%:%
-%:%452=150%:%
-%:%453=151%:%
-%:%460=152%:%
-%:%461=152%:%
-%:%466=152%:%
-%:%469=153%:%
-%:%470=154%:%
-%:%471=154%:%
-%:%472=155%:%
-%:%479=156%:%
-%:%480=156%:%
-%:%485=156%:%
-%:%488=157%:%
-%:%489=158%:%
-%:%490=158%:%
-%:%491=159%:%
-%:%492=160%:%
-%:%499=161%:%
-%:%500=161%:%
-%:%501=162%:%
-%:%502=162%:%
-%:%503=162%:%
-%:%504=163%:%
-%:%505=163%:%
-%:%506=164%:%
-%:%507=164%:%
-%:%508=164%:%
-%:%509=165%:%
-%:%510=165%:%
-%:%511=165%:%
-%:%512=165%:%
-%:%513=166%:%
-%:%519=166%:%
-%:%522=167%:%
-%:%523=168%:%
-%:%524=168%:%
-%:%525=169%:%
-%:%532=170%:%
-%:%533=170%:%
-%:%534=171%:%
-%:%535=171%:%
-%:%536=172%:%
-%:%537=172%:%
-%:%538=172%:%
-%:%539=172%:%
-%:%540=173%:%
-%:%541=173%:%
-%:%546=173%:%
-%:%549=174%:%
-%:%550=175%:%
-%:%551=175%:%
-%:%552=176%:%
-%:%553=177%:%
-%:%560=178%:%
-%:%561=178%:%
-%:%562=179%:%
-%:%563=179%:%
-%:%564=180%:%
-%:%565=180%:%
-%:%566=181%:%
-%:%567=181%:%
-%:%568=181%:%
-%:%569=182%:%
-%:%570=182%:%
-%:%571=183%:%
-%:%572=183%:%
-%:%573=183%:%
-%:%574=184%:%
-%:%575=184%:%
-%:%576=185%:%
-%:%577=185%:%
-%:%578=185%:%
-%:%579=186%:%
-%:%580=186%:%
-%:%581=187%:%
-%:%582=187%:%
-%:%583=187%:%
-%:%584=187%:%
-%:%585=187%:%
-%:%586=188%:%
-%:%592=188%:%
-%:%595=189%:%
-%:%596=190%:%
-%:%597=190%:%
-%:%598=191%:%
-%:%599=192%:%
-%:%606=193%:%
-%:%607=193%:%
-%:%608=194%:%
-%:%609=194%:%
-%:%610=194%:%
-%:%611=194%:%
-%:%612=195%:%
-%:%613=195%:%
-%:%614=195%:%
-%:%615=195%:%
-%:%616=196%:%
-%:%617=196%:%
-%:%618=196%:%
-%:%619=197%:%
-%:%620=197%:%
-%:%621=197%:%
-%:%622=198%:%
-%:%623=198%:%
-%:%624=198%:%
-%:%625=199%:%
-%:%626=199%:%
-%:%627=199%:%
-%:%628=200%:%
-%:%629=200%:%
-%:%630=200%:%
-%:%631=201%:%
-%:%632=201%:%
-%:%633=202%:%
-%:%634=202%:%
-%:%635=202%:%
-%:%636=202%:%
-%:%637=203%:%
-%:%638=203%:%
-%:%639=203%:%
-%:%640=203%:%
-%:%641=204%:%
-%:%647=204%:%
-%:%650=205%:%
-%:%651=206%:%
-%:%652=206%:%
-%:%653=207%:%
-%:%654=208%:%
-%:%661=209%:%
-%:%662=209%:%
-%:%663=209%:%
-%:%668=209%:%
-%:%671=210%:%
-%:%672=211%:%
-%:%673=211%:%
-%:%674=212%:%
-%:%675=213%:%
-%:%682=214%:%
-%:%683=214%:%
-%:%684=215%:%
-%:%685=215%:%
-%:%690=215%:%
-%:%693=216%:%
-%:%694=217%:%
-%:%695=217%:%
-%:%696=218%:%
-%:%697=219%:%
-%:%704=220%:%
-%:%705=220%:%
-%:%706=221%:%
-%:%711=221%:%
-%:%714=222%:%
-%:%715=223%:%
-%:%716=223%:%
-%:%717=224%:%
-%:%718=225%:%
-%:%725=226%:%
-%:%726=226%:%
-%:%727=226%:%
-%:%741=228%:%
-%:%751=230%:%
-%:%752=230%:%
-%:%753=231%:%
-%:%760=232%:%
-%:%761=232%:%
-%:%762=233%:%
-%:%763=233%:%
-%:%764=233%:%
-%:%765=233%:%
-%:%766=234%:%
-%:%767=234%:%
-%:%768=234%:%
-%:%769=234%:%
-%:%770=235%:%
-%:%776=235%:%
-%:%779=236%:%
-%:%780=237%:%
-%:%781=237%:%
-%:%782=238%:%
-%:%789=239%:%
-%:%790=239%:%
-%:%791=239%:%
-%:%796=239%:%
-%:%799=240%:%
-%:%800=241%:%
-%:%801=241%:%
-%:%802=242%:%
-%:%809=243%:%
-%:%810=243%:%
-%:%818=249%:%
-%:%825=250%:%
+%:%393=138%:%
+%:%395=140%:%
+%:%397=141%:%
+%:%398=141%:%
+%:%399=142%:%
+%:%406=143%:%
+%:%407=143%:%
+%:%412=143%:%
+%:%415=144%:%
+%:%416=145%:%
+%:%417=145%:%
+%:%418=146%:%
+%:%425=147%:%
+%:%426=147%:%
+%:%440=149%:%
+%:%452=151%:%
+%:%454=153%:%
+%:%455=153%:%
+%:%456=154%:%
+%:%463=155%:%
+%:%464=155%:%
+%:%469=155%:%
+%:%472=156%:%
+%:%473=157%:%
+%:%474=157%:%
+%:%475=158%:%
+%:%482=159%:%
+%:%483=159%:%
+%:%488=159%:%
+%:%491=160%:%
+%:%492=161%:%
+%:%493=161%:%
+%:%494=162%:%
+%:%495=163%:%
+%:%502=164%:%
+%:%503=164%:%
+%:%504=165%:%
+%:%505=165%:%
+%:%506=165%:%
+%:%507=166%:%
+%:%508=166%:%
+%:%509=167%:%
+%:%510=167%:%
+%:%511=167%:%
+%:%512=168%:%
+%:%513=168%:%
+%:%514=168%:%
+%:%515=168%:%
+%:%516=169%:%
+%:%522=169%:%
+%:%525=170%:%
+%:%526=171%:%
+%:%527=171%:%
+%:%528=172%:%
+%:%535=173%:%
+%:%536=173%:%
+%:%537=174%:%
+%:%538=174%:%
+%:%539=175%:%
+%:%540=175%:%
+%:%541=175%:%
+%:%542=175%:%
+%:%543=176%:%
+%:%544=176%:%
+%:%549=176%:%
+%:%552=177%:%
+%:%553=178%:%
+%:%554=178%:%
+%:%555=179%:%
+%:%556=180%:%
+%:%563=181%:%
+%:%564=181%:%
+%:%565=182%:%
+%:%566=182%:%
+%:%567=183%:%
+%:%568=183%:%
+%:%569=184%:%
+%:%570=184%:%
+%:%571=184%:%
+%:%572=185%:%
+%:%573=185%:%
+%:%574=186%:%
+%:%575=186%:%
+%:%576=186%:%
+%:%577=187%:%
+%:%578=187%:%
+%:%579=188%:%
+%:%580=188%:%
+%:%581=188%:%
+%:%582=189%:%
+%:%583=189%:%
+%:%584=190%:%
+%:%585=190%:%
+%:%586=190%:%
+%:%587=190%:%
+%:%588=190%:%
+%:%589=191%:%
+%:%595=191%:%
+%:%598=192%:%
+%:%599=193%:%
+%:%600=193%:%
+%:%601=194%:%
+%:%602=195%:%
+%:%609=196%:%
+%:%610=196%:%
+%:%611=197%:%
+%:%612=197%:%
+%:%613=197%:%
+%:%614=197%:%
+%:%615=198%:%
+%:%616=198%:%
+%:%617=198%:%
+%:%618=198%:%
+%:%619=199%:%
+%:%620=199%:%
+%:%621=199%:%
+%:%622=200%:%
+%:%623=200%:%
+%:%624=200%:%
+%:%625=201%:%
+%:%626=201%:%
+%:%627=201%:%
+%:%628=202%:%
+%:%629=202%:%
+%:%630=202%:%
+%:%631=203%:%
+%:%632=203%:%
+%:%633=203%:%
+%:%634=204%:%
+%:%635=204%:%
+%:%636=205%:%
+%:%637=205%:%
+%:%638=205%:%
+%:%639=205%:%
+%:%640=206%:%
+%:%641=206%:%
+%:%642=206%:%
+%:%643=206%:%
+%:%644=207%:%
+%:%650=207%:%
+%:%653=208%:%
+%:%654=209%:%
+%:%655=209%:%
+%:%656=210%:%
+%:%657=211%:%
+%:%664=212%:%
+%:%665=212%:%
+%:%666=212%:%
+%:%671=212%:%
+%:%674=213%:%
+%:%675=214%:%
+%:%676=214%:%
+%:%677=215%:%
+%:%678=216%:%
+%:%685=217%:%
+%:%686=217%:%
+%:%687=218%:%
+%:%688=218%:%
+%:%693=218%:%
+%:%696=219%:%
+%:%697=220%:%
+%:%698=220%:%
+%:%699=221%:%
+%:%700=222%:%
+%:%707=223%:%
+%:%708=223%:%
+%:%709=224%:%
+%:%714=224%:%
+%:%717=225%:%
+%:%718=226%:%
+%:%719=226%:%
+%:%720=227%:%
+%:%721=228%:%
+%:%728=229%:%
+%:%729=229%:%
+%:%730=229%:%
+%:%744=231%:%
+%:%754=233%:%
+%:%755=233%:%
+%:%756=234%:%
+%:%763=235%:%
+%:%764=235%:%
+%:%765=236%:%
+%:%766=236%:%
+%:%767=236%:%
+%:%768=236%:%
+%:%769=237%:%
+%:%770=237%:%
+%:%771=237%:%
+%:%772=237%:%
+%:%773=238%:%
+%:%779=238%:%
+%:%782=239%:%
+%:%783=240%:%
+%:%784=240%:%
+%:%785=241%:%
+%:%792=242%:%
+%:%793=242%:%
+%:%794=242%:%
+%:%799=242%:%
+%:%802=243%:%
+%:%803=244%:%
+%:%804=244%:%
+%:%805=245%:%
+%:%812=246%:%
+%:%813=246%:%
+%:%821=252%:%
+%:%828=253%:%

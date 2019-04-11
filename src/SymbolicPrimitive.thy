@@ -185,7 +185,7 @@ theorem symrun_interp_expansion:
   \<open>\<lbrakk>\<lbrakk> \<Gamma>\<^sub>1 @ \<Gamma>\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m = \<lbrakk>\<lbrakk> \<Gamma>\<^sub>1 \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk>\<lbrakk> \<Gamma>\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m\<close>
 by (induction \<Gamma>\<^sub>1, simp, auto)
 
-section \<open>Equational laws for the interpretation of symbolic primitives\<close> 
+section \<open>Equations for the interpretation of symbolic primitives\<close> 
 subsection \<open>General laws\<close>
 
 lemma symrun_interp_assoc:

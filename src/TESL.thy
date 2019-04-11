@@ -1,4 +1,5 @@
-chapter\<open>The Core of the TESL Language: Syntax and Basics\<close>
+(*chapter\<open>The Core of the TESL Language: Syntax and Basics\<close>*)
+text\<open>\chapter[Core TESL: Syntax and Basics]{The Core of the TESL Language: Syntax and Basics}\<close>
 
 theory TESL
 imports Main

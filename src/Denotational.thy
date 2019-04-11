@@ -28,19 +28,19 @@ where
   \<comment> \<open>@{term \<open>K\<^sub>1 sporadic \<tau> on K\<^sub>2\<close>} means that @{term \<open>K\<^sub>1\<close>} should tick at an 
       instant where the time on @{term \<open>K\<^sub>2\<close>} is @{term \<open>\<tau>\<close>}.\<close>
     \<open>\<lbrakk> K\<^sub>1 sporadic \<tau> on K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
-        { \<rho>. \<exists>n::nat. hamlet ((Rep_run \<rho>) n K\<^sub>1) \<and> time ((Rep_run \<rho>) n K\<^sub>2) = \<tau> }\<close>
+        {\<rho>. \<exists>n::nat. hamlet ((Rep_run \<rho>) n K\<^sub>1) \<and> time ((Rep_run \<rho>) n K\<^sub>2) = \<tau>}\<close>
   \<comment> \<open>@{term \<open>time-relation \<lfloor>K\<^sub>1, K\<^sub>2\<rfloor> \<in> R\<close>} means that at each instant, the time 
       on @{term \<open>K\<^sub>1\<close>} and the time on @{term \<open>K\<^sub>2\<close>} are in relation @{term \<open>R\<close>}.\<close>
   | \<open>\<lbrakk> time-relation \<lfloor>K\<^sub>1, K\<^sub>2\<rfloor> \<in> R \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
-        { \<rho>. \<forall>n::nat. R (time ((Rep_run \<rho>) n K\<^sub>1), time ((Rep_run \<rho>) n K\<^sub>2)) }\<close>
+        {\<rho>. \<forall>n::nat. R (time ((Rep_run \<rho>) n K\<^sub>1), time ((Rep_run \<rho>) n K\<^sub>2))}\<close>
   \<comment> \<open>@{term \<open>master implies slave\<close>} means that at each instant at which 
       @{term \<open>master\<close>} ticks, @{term \<open>slave\<close>} also ticks.\<close>
   | \<open>\<lbrakk> master implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
-        { \<rho>. \<forall>n::nat. hamlet ((Rep_run \<rho>) n master) \<longrightarrow> hamlet ((Rep_run \<rho>) n slave) }\<close>
+        {\<rho>. \<forall>n::nat. hamlet ((Rep_run \<rho>) n master) \<longrightarrow> hamlet ((Rep_run \<rho>) n slave)}\<close>
   \<comment> \<open>@{term \<open>master implies not slave\<close>} means that at each instant at which 
       @{term \<open>master\<close>} ticks, @{term \<open>slave\<close>} does not tick.\<close>
   | \<open>\<lbrakk> master implies not slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
-        { \<rho>. \<forall>n::nat. hamlet ((Rep_run \<rho>) n master) \<longrightarrow> \<not> hamlet ((Rep_run \<rho>) n slave) }\<close>
+        {\<rho>. \<forall>n::nat. hamlet ((Rep_run \<rho>) n master) \<longrightarrow> \<not>hamlet ((Rep_run \<rho>) n slave)}\<close>
   \<comment> \<open>@{term \<open>master time-delayed by \<delta>\<tau> on measuring implies slave\<close>} means that 
       at each instant at which  @{term \<open>master\<close>} ticks, @{term \<open>slave\<close>} will
       ticks after a delay @{term \<open>\<delta>\<tau>\<close>} measured on the time scale 
@@ -51,7 +51,7 @@ where
       at the first instant when the date on measuring is @term\<open>t\<^sub>0+\<delta>t\<close>, 
       slave has to tick.
     \<close>
-        { \<rho>. \<forall>n. hamlet ((Rep_run \<rho>) n master) \<longrightarrow>
+        {\<rho>. \<forall>n. hamlet ((Rep_run \<rho>) n master) \<longrightarrow>
                  (let measured_time = time ((Rep_run \<rho>) n measuring) in
                   \<forall>m \<ge> n.  first_time \<rho> measuring m (measured_time + \<delta>\<tau>)
                             \<longrightarrow> hamlet ((Rep_run \<rho>) m slave)
@@ -62,19 +62,19 @@ where
         Therefore, at each instant @{term \<open>n\<close>}, the number of ticks on @{term \<open>K\<^sub>2\<close>} 
         must be less or equal to the number of ticks on @{term \<open>K\<^sub>1\<close>}.\<close>
   | \<open>\<lbrakk> K\<^sub>1 weakly precedes K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
-        { \<rho>. \<forall>n::nat. (run_tick_count \<rho> K\<^sub>2 n) \<le> (run_tick_count \<rho> K\<^sub>1 n) }\<close>
+        {\<rho>. \<forall>n::nat. (run_tick_count \<rho> K\<^sub>2 n) \<le> (run_tick_count \<rho> K\<^sub>1 n)}\<close>
   \<comment> \<open>@{term \<open>K\<^sub>1 strictly precedes K\<^sub>2\<close>} means that each tick on @{term \<open>K\<^sub>2\<close>}
         must be preceded by at least one tick on @{term \<open>K\<^sub>1\<close>} at a previous instant.
         Therefore, at each instant @{term \<open>n\<close>}, the number of ticks on @{term \<open>K\<^sub>2\<close>}
         must be less or equal to the number of ticks on @{term \<open>K\<^sub>1\<close>} 
         at instant @{term \<open>n - 1\<close>}.\<close>
   | \<open>\<lbrakk> K\<^sub>1 strictly precedes K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
-        { \<rho>. \<forall>n::nat. (run_tick_count \<rho> K\<^sub>2 n) \<le> (run_tick_count_strictly \<rho> K\<^sub>1 n) }\<close>
+        {\<rho>. \<forall>n::nat. (run_tick_count \<rho> K\<^sub>2 n) \<le> (run_tick_count_strictly \<rho> K\<^sub>1 n)}\<close>
   \<comment> \<open>@{term \<open>K\<^sub>1 kills K\<^sub>2\<close>} means that when @{term \<open>K\<^sub>1\<close>} ticks, @{term \<open>K\<^sub>2\<close>}
         cannot tick and is not allowed to tick at any further instant.\<close>
   | \<open>\<lbrakk> K\<^sub>1 kills K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
-        { \<rho>. \<forall>n::nat. hamlet ((Rep_run \<rho>) n K\<^sub>1)
-                        \<longrightarrow> (\<forall>m\<ge>n. \<not> hamlet ((Rep_run \<rho>) m K\<^sub>2)) }\<close>
+        {\<rho>. \<forall>n::nat. hamlet ((Rep_run \<rho>) n K\<^sub>1)
+                        \<longrightarrow> (\<forall>m\<ge>n. \<not> hamlet ((Rep_run \<rho>) m K\<^sub>2))}\<close>
 
 section \<open>Denotational interpretation for TESL formulae\<close>
 
@@ -86,7 +86,7 @@ text\<open>
 fun TESL_interpretation :: \<open>('\<tau>::linordered_field) TESL_formula \<Rightarrow> '\<tau> run set\<close>
   ("\<lbrakk>\<lbrakk> _ \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L")
 where
-  \<open>\<lbrakk>\<lbrakk> [] \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = { _. True }\<close>
+  \<open>\<lbrakk>\<lbrakk> [] \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = {_. True}\<close>
 | \<open>\<lbrakk>\<lbrakk> \<phi> # \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<lbrakk> \<phi> \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L \<inter> \<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<close>
 
 lemma TESL_interpretation_homo:
@@ -106,7 +106,7 @@ theorem TESL_interp_homo_append:
   \<open>\<lbrakk>\<lbrakk> \<Phi>\<^sub>1 @ \<Phi>\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<lbrakk>\<lbrakk> \<Phi>\<^sub>1 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L \<inter> \<lbrakk>\<lbrakk> \<Phi>\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<close>
 by (induction \<Phi>\<^sub>1, simp, auto)
 
-section \<open>Equational laws for the denotational interpretation of TESL formulae\<close>
+section \<open>Equational laws for the denotation of TESL formulae\<close>
 
 lemma TESL_interp_assoc:
   \<open>\<lbrakk>\<lbrakk> (\<Phi>\<^sub>1 @ \<Phi>\<^sub>2) @ \<Phi>\<^sub>3 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<lbrakk>\<lbrakk> \<Phi>\<^sub>1 @ (\<Phi>\<^sub>2 @ \<Phi>\<^sub>3) \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<close>
@@ -132,7 +132,10 @@ lemma TESL_interp_right_idem:
   \<open>\<lbrakk>\<lbrakk> (\<Phi>\<^sub>1 @ \<Phi>\<^sub>2) @ \<Phi>\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<lbrakk>\<lbrakk> \<Phi>\<^sub>1 @ \<Phi>\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<close>
 unfolding TESL_interp_homo_append by auto
 
-lemmas TESL_interp_aci = TESL_interp_commute TESL_interp_assoc TESL_interp_left_commute TESL_interp_left_idem
+lemmas TESL_interp_aci = TESL_interp_commute
+                         TESL_interp_assoc
+                         TESL_interp_left_commute
+                         TESL_interp_left_idem
 
 text \<open>The empty formula is the identity element\<close>
 lemma TESL_interp_neutral1:

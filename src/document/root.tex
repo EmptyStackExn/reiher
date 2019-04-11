@@ -35,6 +35,18 @@
 
 
 \begin{document}
+\newcommand{\isafontsize}{\fontsize{8}{10}\selectfont}
+\newcommand{\isascriptsize}{\fontsize{6}{8}\selectfont}
+
+\renewcommand{\isabellestylett}{%
+	\def\isastyle{\isafontsize\normalfont\ttfamily}%
+	\def\isastylett{\isafontsize\normalfont\ttfamily}%
+	\def\isastyleminor{\isafontsize\normalfont\ttfamily}%
+	\def\isastyleminortt{\isafontsize\normalfont\ttfamily}%
+	\def\isastylescript{\isascriptsize\normalfont\ttfamily}%
+	\isachardefaults%
+}
+\isabellestylett
 
 \title{A Formal Development of a Polychronous Polytimed Coordination Language}
 \author{Hai NGuyen Van \and Frederic Boulanger \and Burkhart Wolff}
