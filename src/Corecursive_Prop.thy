@@ -1,5 +1,5 @@
 (*chapter\<open>Equivalence of Operational and Denotational Semantics\<close>*)
-text\<open>\chapter[Semantics Equivalence]{Equivalence of Operational and Denotational Semantics}\<close>
+text\<open>\chapter[Semantics Equivalence]{Equivalence of the Operational and Denotational Semantics}\<close>
 
 theory Corecursive_Prop
   imports
@@ -12,11 +12,18 @@ begin
 section \<open>Stepwise denotational interpretation of TESL atoms\<close>
 
 text \<open> Denotational interpretation of TESL bounded by index\<close>
+text \<open>
+  In order to prove the equivalence of the denotational and operational semantics, 
+  we need to be able to ignore the past (for which the constraints are encoded 
+  in the context) and consider only the satisfaction of the constraints from
+  a given instant index.
+  For this, we define an interpretation of TESL formulae for a suffix of a run. 
+\<close>
 fun TESL_interpretation_atomic_stepwise
     :: \<open>('\<tau>::linordered_field) TESL_atomic \<Rightarrow> nat \<Rightarrow> '\<tau> run set\<close> ("\<lbrakk> _ \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> _\<^esup>")
 where
   \<open>\<lbrakk> K\<^sub>1 sporadic \<tau> on K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> i\<^esup> =
-      {\<rho>. \<exists>n\<ge>i. hamlet ((Rep_run \<rho>) n K\<^sub>1) = True \<and> time ((Rep_run \<rho>) n K\<^sub>2) = \<tau>}\<close>
+      {\<rho>. \<exists>n\<ge>i. hamlet ((Rep_run \<rho>) n K\<^sub>1) \<and> time ((Rep_run \<rho>) n K\<^sub>2) = \<tau>}\<close>
 | \<open>\<lbrakk> time-relation \<lfloor>K\<^sub>1, K\<^sub>2\<rfloor> \<in> R \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> i\<^esup> =
       {\<rho>. \<forall>n\<ge>i. R (time ((Rep_run \<rho>) n K\<^sub>1), time ((Rep_run \<rho>) n K\<^sub>2))}\<close>
 | \<open>\<lbrakk> master implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> i\<^esup> =
@@ -37,15 +44,10 @@ where
 | \<open>\<lbrakk> K\<^sub>1 kills K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> i\<^esup> =
       {\<rho>. \<forall>n\<ge>i. hamlet ((Rep_run \<rho>) n K\<^sub>1) \<longrightarrow> (\<forall>m\<ge>n. \<not> hamlet ((Rep_run \<rho>) m K\<^sub>2))}\<close>
 
-
-theorem predicate_Inter_unfold:
-  \<open>{\<rho>. \<forall>n. P \<rho> n} = \<Inter> {Y. \<exists>n. Y = {\<rho>. P \<rho> n}}\<close>
-by (simp add: Collect_all_eq full_SetCompr_eq)
-
-theorem predicate_Union_unfold:
-  \<open>{\<rho>. \<exists>n. P \<rho> n} = \<Union> {Y. \<exists>n. Y = {\<rho>. P \<rho> n}}\<close>
-by auto
-
+text \<open>
+  The denotational interpretation of TESL formulae can be unfolded into the 
+  stepwise interpretation.
+\<close>
 lemma TESL_interp_unfold_stepwise_sporadicon:
   \<open>\<lbrakk> K\<^sub>1 sporadic \<tau> on K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<Union> {Y. \<exists>n::nat. Y = \<lbrakk> K\<^sub>1 sporadic \<tau> on K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup>}\<close>
 by auto
@@ -67,7 +69,8 @@ by auto
 
 lemma TESL_interp_unfold_stepwise_timedelayed:
   \<open>\<lbrakk> master time-delayed by \<delta>\<tau> on measuring implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L
-    = \<Inter> {Y. \<exists>n::nat. Y = \<lbrakk> master time-delayed by \<delta>\<tau> on measuring implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup>}\<close>
+    = \<Inter> {Y. \<exists>n::nat.
+          Y = \<lbrakk> master time-delayed by \<delta>\<tau> on measuring implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup>}\<close>
 by auto
 
 lemma TESL_interp_unfold_stepwise_weakly_precedes:
@@ -84,19 +87,27 @@ lemma TESL_interp_unfold_stepwise_kills:
   \<open>\<lbrakk> master kills slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<Inter> {Y. \<exists>n::nat. Y = \<lbrakk> master kills slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup>}\<close>
 by auto
 
+text \<open>
+  Positive atomic formulae (the ones that create ticks from nothing) are unfolded
+  as the union of the stepwise interpretations.
+\<close>
 theorem TESL_interp_unfold_stepwise_positive_atoms:
   assumes \<open>positive_atom \<phi>\<close>
-  shows \<open>\<lbrakk> \<phi>::'\<tau>::linordered_field TESL_atomic \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L
-          = \<Union> {Y. \<exists>n::nat. Y = \<lbrakk> \<phi> \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup>}\<close>
+    shows \<open>\<lbrakk> \<phi>::'\<tau>::linordered_field TESL_atomic \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L
+            = \<Union> {Y. \<exists>n::nat. Y = \<lbrakk> \<phi> \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup>}\<close>
 proof -
   from positive_atom.elims(2)[OF assms]
     obtain u v w where \<open>\<phi> = (u sporadic v on w)\<close> by blast
   with TESL_interp_unfold_stepwise_sporadicon show ?thesis by simp
 qed
 
+text \<open>
+  Negative atomic formulae are unfolded
+  as the intersection of the stepwise interpretations.
+\<close>
 theorem TESL_interp_unfold_stepwise_negative_atoms:
   assumes \<open>\<not> positive_atom \<phi>\<close>
-  shows \<open>\<lbrakk> \<phi> \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<Inter> {Y. \<exists>n::nat. Y = \<lbrakk> \<phi> \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup>}\<close>
+    shows \<open>\<lbrakk> \<phi> \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<Inter> {Y. \<exists>n::nat. Y = \<lbrakk> \<phi> \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup>}\<close>
 proof (cases \<phi>)
   case SporadicOn thus ?thesis using assms by simp
 next
@@ -125,6 +136,9 @@ next
       using TESL_interp_unfold_stepwise_kills by simp
 qed
 
+text \<open>
+  Some useful lemmas for reasoning on properties of sequences.
+\<close>
 lemma forall_nat_expansion:
   \<open>(\<forall>n \<ge> (n\<^sub>0::nat). P n) = (P n\<^sub>0 \<and> (\<forall>n \<ge> Suc n\<^sub>0. P n))\<close>
 proof -
@@ -143,28 +157,9 @@ proof -
   finally show ?thesis using Suc_le_eq by simp
 qed
 
-section \<open>Coinduction Unfolding Properties\<close>
-
-lemma TESL_interp_stepwise_sporadicon_coind_unfold:
-  \<open>\<lbrakk> K\<^sub>1 sporadic \<tau> on K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> =
-    \<lbrakk> K\<^sub>1 \<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk> K\<^sub>2 \<Down> n @ \<tau> \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m
-    \<union> \<lbrakk> K\<^sub>1 sporadic \<tau> on K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>\<close>
-proof -
-  have \<open>{\<rho>. \<exists>m\<ge>n. hamlet ((Rep_run \<rho>) m K\<^sub>1) = True \<and> time ((Rep_run \<rho>) m K\<^sub>2) = \<tau>}
-    = {\<rho>. hamlet ((Rep_run \<rho>) n K\<^sub>1) = True \<and> time ((Rep_run \<rho>) n K\<^sub>2) = \<tau>
-      \<or> (\<exists>m\<ge>Suc n. hamlet ((Rep_run \<rho>) m K\<^sub>1) = True \<and> time ((Rep_run \<rho>) m K\<^sub>2) = \<tau>)}\<close>
-    using Suc_leD not_less_eq_eq by fastforce
-  moreover have
-    \<open>{\<rho>. hamlet ((Rep_run \<rho>) n K\<^sub>1) \<and> time ((Rep_run \<rho>) n K\<^sub>2) = \<tau>
-       \<or> (\<exists>m\<ge>Suc n. hamlet ((Rep_run \<rho>) m K\<^sub>1) \<and> time ((Rep_run \<rho>) m K\<^sub>2) = \<tau>)}
-    = \<lbrakk> K\<^sub>1 \<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk> K\<^sub>2 \<Down> n @ \<tau> \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<union> \<lbrakk> K\<^sub>1 sporadic \<tau> on K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>\<close>
-    by (simp add: Collect_conj_eq Collect_disj_eq)
-  ultimately show ?thesis by auto
-qed
-
-lemma nat_set_suc:\<open>{x. \<forall>m \<ge> n. P x m} = {x. P x n} \<inter> {x. \<forall>m \<ge> Suc n. P x m}\<close>
+lemma forall_nat_set_suc:\<open>{x. \<forall>m \<ge> n. P x m} = {x. P x n} \<inter> {x. \<forall>m \<ge> Suc n. P x m}\<close>
 proof
-    { fix x assume h:\<open>x \<in> {x. \<forall>m \<ge> n. P x m}\<close>
+  { fix x assume h:\<open>x \<in> {x. \<forall>m \<ge> n. P x m}\<close>
     hence \<open>P x n\<close> by simp
     moreover from h have \<open>x \<in> {x. \<forall>m \<ge> Suc n. P x m}\<close> by simp
     ultimately have \<open>x \<in> {x. P x n} \<inter> {x. \<forall>m \<ge> Suc n. P x m}\<close> by simp
@@ -178,6 +173,32 @@ next
   } thus \<open>{x. P x n} \<inter> {x. \<forall>m \<ge> Suc n. P x m} \<subseteq> {x. \<forall>m \<ge> n. P x m}\<close> ..
 qed
 
+lemma exists_nat_set_suc:\<open>{x. \<exists>m \<ge> n. P x m} = {x. P x n} \<union> {x. \<exists>m \<ge> Suc n. P x m}\<close>
+proof
+  { fix x assume h:\<open>x \<in> {x. \<exists>m \<ge> n. P x m}\<close>
+    hence \<open>x \<in> {x. \<exists>m. (m = n \<or> m \<ge> Suc n) \<and> P x m}\<close>
+      using Suc_le_eq antisym_conv2 by fastforce
+    hence \<open>x \<in> {x. P x n} \<union> {x. \<exists>m \<ge> Suc n. P x m}\<close> by blast
+  } thus \<open>{x. \<exists>m \<ge> n. P x m} \<subseteq> {x. P x n} \<union> {x. \<exists>m \<ge> Suc n. P x m}\<close> ..
+next
+  { fix x  assume h:\<open>x \<in> {x. P x n} \<union> {x. \<exists>m \<ge> Suc n. P x m}\<close>
+    hence \<open>x \<in> {x. \<exists>m \<ge> n. P x m}\<close> using Suc_leD by blast
+  } thus \<open>{x. P x n} \<union> {x. \<exists>m \<ge> Suc n. P x m} \<subseteq> {x. \<exists>m \<ge> n. P x m}\<close> ..
+qed
+
+section \<open>Coinduction Unfolding Properties\<close>
+
+lemma TESL_interp_stepwise_sporadicon_coind_unfold:
+  \<open>\<lbrakk> K\<^sub>1 sporadic \<tau> on K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> =
+    \<lbrakk> K\<^sub>1 \<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk> K\<^sub>2 \<Down> n @ \<tau> \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m
+    \<union> \<lbrakk> K\<^sub>1 sporadic \<tau> on K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>\<close>
+unfolding TESL_interpretation_atomic_stepwise.simps(1)
+          symbolic_run_interpretation_primitive.simps(1,6)
+using exists_nat_set_suc[of \<open>n\<close> \<open>\<lambda>\<rho> n. hamlet (Rep_run \<rho> n K\<^sub>1)
+                                     \<and> time (Rep_run \<rho> n K\<^sub>2) = \<tau>\<close>]
+by (simp add: Collect_conj_eq)
+
+
 lemma TESL_interp_stepwise_tagrel_coind_unfold:
   \<open>\<lbrakk> time-relation \<lfloor>K\<^sub>1, K\<^sub>2\<rfloor> \<in> R \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> =
      \<lbrakk> \<lfloor>\<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>1, n), \<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>2, n)\<rfloor> \<in> R \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m
@@ -186,7 +207,7 @@ proof -
   have \<open>{\<rho>. \<forall>m\<ge>n. R (time ((Rep_run \<rho>) m K\<^sub>1), time ((Rep_run \<rho>) m K\<^sub>2))}
        = {\<rho>. R (time ((Rep_run \<rho>) n K\<^sub>1), time ((Rep_run \<rho>) n K\<^sub>2))}
        \<inter> {\<rho>. \<forall>m\<ge>Suc n. R (time ((Rep_run \<rho>) m K\<^sub>1), time ((Rep_run \<rho>) m K\<^sub>2))}\<close>
-    using nat_set_suc[of \<open>n\<close> \<open>\<lambda>x y. R (time ((Rep_run x) y K\<^sub>1),
+    using forall_nat_set_suc[of \<open>n\<close> \<open>\<lambda>x y. R (time ((Rep_run x) y K\<^sub>1),
                                        time ((Rep_run x) y K\<^sub>2))\<close>] by simp
   thus ?thesis by auto
 qed
@@ -200,7 +221,7 @@ proof -
         = {\<rho>. hamlet ((Rep_run \<rho>) n master) \<longrightarrow> hamlet ((Rep_run \<rho>) n slave)}
         \<inter> {\<rho>. \<forall>m\<ge>Suc n. hamlet ((Rep_run \<rho>) m master)
                      \<longrightarrow> hamlet ((Rep_run \<rho>) m slave)}\<close>
-    using nat_set_suc[of \<open>n\<close> \<open>\<lambda>x y. hamlet ((Rep_run x) y master)
+    using forall_nat_set_suc[of \<open>n\<close> \<open>\<lambda>x y. hamlet ((Rep_run x) y master)
                                 \<longrightarrow> hamlet ((Rep_run x) y slave)\<close>] by simp
   thus ?thesis by auto
 qed
@@ -214,7 +235,7 @@ proof -
        = {\<rho>. hamlet ((Rep_run \<rho>) n master) \<longrightarrow> \<not> hamlet ((Rep_run \<rho>) n slave)}
           \<inter> {\<rho>. \<forall>m\<ge>Suc n. hamlet ((Rep_run \<rho>) m master)
                      \<longrightarrow> \<not> hamlet ((Rep_run \<rho>) m slave)}\<close>
-    using nat_set_suc[of \<open>n\<close> \<open>\<lambda>x y. hamlet ((Rep_run x) y master)
+    using forall_nat_set_suc[of \<open>n\<close> \<open>\<lambda>x y. hamlet ((Rep_run x) y master)
                                \<longrightarrow> \<not>hamlet ((Rep_run x) y slave)\<close>] by simp
   thus ?thesis by auto
 qed
@@ -229,7 +250,7 @@ proof -
                   \<forall>p \<ge> m. first_time \<rho> measuring p (measured_time + \<delta>\<tau>)
                            \<longrightarrow> hamlet ((Rep_run \<rho>) p slave))\<close>
   have \<open>{\<rho>. \<forall>m \<ge> n. ?prop \<rho> m} = {\<rho>. ?prop \<rho> n} \<inter> {\<rho>. \<forall>m \<ge> Suc n. ?prop \<rho> m}\<close>
-    using nat_set_suc[of \<open>n\<close> ?prop] by blast
+    using forall_nat_set_suc[of \<open>n\<close> ?prop] by blast
   also have \<open>... = {\<rho>. ?prop \<rho> n}
               \<inter> \<lbrakk> master time-delayed by \<delta>\<tau> on measuring implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>\<close>
     by simp
@@ -244,7 +265,7 @@ proof -
   have \<open>{\<rho>. \<forall>p\<ge>n. (run_tick_count \<rho> K\<^sub>2 p) \<le> (run_tick_count \<rho> K\<^sub>1 p)}
          = {\<rho>. (run_tick_count \<rho> K\<^sub>2 n) \<le> (run_tick_count \<rho> K\<^sub>1 n)}
          \<inter> {\<rho>. \<forall>p\<ge>Suc n. (run_tick_count \<rho> K\<^sub>2 p) \<le> (run_tick_count \<rho> K\<^sub>1 p)}\<close>
-    using nat_set_suc[of \<open>n\<close> \<open>\<lambda>\<rho> n. (run_tick_count \<rho> K\<^sub>2 n)
+    using forall_nat_set_suc[of \<open>n\<close> \<open>\<lambda>\<rho> n. (run_tick_count \<rho> K\<^sub>2 n)
                                   \<le> (run_tick_count \<rho> K\<^sub>1 n)\<close>]
     by simp
   thus ?thesis by auto
@@ -258,7 +279,7 @@ proof -
   have \<open>{\<rho>. \<forall>p\<ge>n. (run_tick_count \<rho> K\<^sub>2 p) \<le> (run_tick_count_strictly \<rho> K\<^sub>1 p)}
          = {\<rho>. (run_tick_count \<rho> K\<^sub>2 n) \<le> (run_tick_count_strictly \<rho> K\<^sub>1 n)}
          \<inter> {\<rho>. \<forall>p\<ge>Suc n. (run_tick_count \<rho> K\<^sub>2 p) \<le> (run_tick_count_strictly \<rho> K\<^sub>1 p)}\<close>
-    using nat_set_suc[of \<open>n\<close> \<open>\<lambda>\<rho> n. (run_tick_count \<rho> K\<^sub>2 n)
+    using forall_nat_set_suc[of \<open>n\<close> \<open>\<lambda>\<rho> n. (run_tick_count \<rho> K\<^sub>2 n)
                                   \<le> (run_tick_count_strictly \<rho> K\<^sub>1 n)\<close>]
     by simp
   thus ?thesis by auto

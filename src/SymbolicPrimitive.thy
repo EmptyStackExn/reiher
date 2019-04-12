@@ -172,8 +172,12 @@ where
 
 
 section\<open>Major Theorems\<close>
-subsection \<open>Fixpoint lemma\<close>
+subsection \<open>Interpretation of a context\<close>
 
+text\<open>
+  The interpretation of a context is the intersection of the interpretation 
+  of its components.
+\<close>
 theorem symrun_interp_fixpoint:
   \<open>\<Inter> ((\<lambda>\<gamma>. \<lbrakk> \<gamma> \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m) ` set \<Gamma>) = \<lbrakk>\<lbrakk> \<Gamma> \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m\<close>
 by (induction \<Gamma>, simp+)
@@ -228,6 +232,9 @@ by simp
 
 subsection \<open>Decreasing interpretation of symbolic primitives\<close>
 
+text\<open>
+  Adding constraints to a context reduces the number of satisfying runs.
+\<close>
 lemma TESL_sem_decreases_head:
   \<open>\<lbrakk>\<lbrakk> \<Gamma> \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<supseteq> \<lbrakk>\<lbrakk> \<gamma> # \<Gamma> \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m\<close>
 by simp
@@ -236,6 +243,10 @@ lemma TESL_sem_decreases_tail:
   \<open>\<lbrakk>\<lbrakk> \<Gamma> \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<supseteq> \<lbrakk>\<lbrakk> \<Gamma> @ [\<gamma>] \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m\<close>
 by (simp add: symrun_interp_expansion)
 
+text\<open>
+  Adding a constraint that is already in the context does not change the
+  interpretation of the context.
+\<close>
 lemma symrun_interp_formula_stuttering:
   assumes \<open>\<gamma> \<in> set \<Gamma>\<close>
     shows \<open>\<lbrakk>\<lbrakk> \<gamma> # \<Gamma> \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m = \<lbrakk>\<lbrakk> \<Gamma> \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m\<close>
@@ -246,6 +257,11 @@ proof -
   thus ?thesis using assms symrun_interp_fixpoint by fastforce
 qed
 
+
+text\<open>
+  Removing duplicate constraints from a context does not change the
+  interpretation of the context.
+\<close>
 lemma symrun_interp_remdups_absorb:
   \<open>\<lbrakk>\<lbrakk> \<Gamma> \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m = \<lbrakk>\<lbrakk> remdups \<Gamma> \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m\<close>
 proof (induction \<Gamma>)
@@ -253,6 +269,10 @@ proof (induction \<Gamma>)
     thus ?case using symrun_interp_formula_stuttering by auto
 qed simp
 
+text\<open>
+  Two identical sets of constraints have the same interpretation,
+  the order in the context does not matter.
+\<close>
 lemma symrun_interp_set_lifting:
   assumes \<open>set \<Gamma> = set \<Gamma>'\<close>
     shows \<open>\<lbrakk>\<lbrakk> \<Gamma> \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m = \<lbrakk>\<lbrakk> \<Gamma>' \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m\<close>
@@ -268,6 +288,9 @@ proof -
   ultimately show ?thesis using symrun_interp_remdups_absorb by auto
 qed
 
+text\<open>
+  The interpretation of contexts is contravariant with regard to set inclusion.
+\<close>
 theorem symrun_interp_decreases_setinc:
   assumes \<open>set \<Gamma> \<subseteq> set \<Gamma>'\<close>
     shows \<open>\<lbrakk>\<lbrakk> \<Gamma> \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<supseteq> \<lbrakk>\<lbrakk> \<Gamma>' \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m\<close>
