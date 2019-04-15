@@ -11,7 +11,6 @@ begin
 
 section \<open>Stepwise denotational interpretation of TESL atoms\<close>
 
-text \<open> Denotational interpretation of TESL bounded by index\<close>
 text \<open>
   In order to prove the equivalence of the denotational and operational semantics, 
   we need to be able to ignore the past (for which the constraints are encoded 
@@ -188,10 +187,15 @@ qed
 
 section \<open>Coinduction Unfolding Properties\<close>
 
+text \<open>
+  The following lemmas show how  to shorten a suffix, i.e. to unfold one instant 
+  in the construction of a run. They correspond to the rules of the operational 
+  semantics.
+\<close>
 lemma TESL_interp_stepwise_sporadicon_coind_unfold:
   \<open>\<lbrakk> K\<^sub>1 sporadic \<tau> on K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> =
-    \<lbrakk> K\<^sub>1 \<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk> K\<^sub>2 \<Down> n @ \<tau> \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m
-    \<union> \<lbrakk> K\<^sub>1 sporadic \<tau> on K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>\<close>
+    \<lbrakk> K\<^sub>1 \<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk> K\<^sub>2 \<Down> n @ \<tau> \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m        \<comment> \<open>rule @{thm sporadic_on_e2}\<close>
+    \<union> \<lbrakk> K\<^sub>1 sporadic \<tau> on K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>\<close>   \<comment> \<open>rule @{thm sporadic_on_e1}\<close>
 unfolding TESL_interpretation_atomic_stepwise.simps(1)
           symbolic_run_interpretation_primitive.simps(1,6)
 using exists_nat_set_suc[of \<open>n\<close> \<open>\<lambda>\<rho> n. hamlet (Rep_run \<rho> n K\<^sub>1)
@@ -200,7 +204,7 @@ by (simp add: Collect_conj_eq)
 
 
 lemma TESL_interp_stepwise_tagrel_coind_unfold:
-  \<open>\<lbrakk> time-relation \<lfloor>K\<^sub>1, K\<^sub>2\<rfloor> \<in> R \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> =
+  \<open>\<lbrakk> time-relation \<lfloor>K\<^sub>1, K\<^sub>2\<rfloor> \<in> R \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> =        \<comment> \<open>rule @{thm tagrel_e}\<close>
      \<lbrakk> \<lfloor>\<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>1, n), \<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>2, n)\<rfloor> \<in> R \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m
      \<inter> \<lbrakk> time-relation \<lfloor>K\<^sub>1, K\<^sub>2\<rfloor> \<in> R \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>\<close>
 proof -
@@ -214,7 +218,8 @@ qed
 
 lemma TESL_interp_stepwise_implies_coind_unfold:
   \<open>\<lbrakk> master implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> =
-     (\<lbrakk> master \<not>\<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<union> \<lbrakk> master \<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk> slave \<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m)
+     (   \<lbrakk> master \<not>\<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m                     \<comment> \<open>rule @{thm implies_e1}\<close>
+       \<union> \<lbrakk> master \<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk> slave \<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m)  \<comment> \<open>rule @{thm implies_e2}\<close>
      \<inter> \<lbrakk> master implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>\<close>
 proof -
   have \<open>{\<rho>. \<forall>m\<ge>n. hamlet ((Rep_run \<rho>) m master) \<longrightarrow> hamlet ((Rep_run \<rho>) m slave)}
@@ -228,7 +233,8 @@ qed
 
 lemma TESL_interp_stepwise_implies_not_coind_unfold:
   \<open>\<lbrakk> master implies not slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> =
-     (\<lbrakk> master \<not>\<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<union> \<lbrakk> master \<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk> slave \<not>\<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m)
+     (    \<lbrakk> master \<not>\<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m                       \<comment> \<open>rule @{thm implies_not_e1}\<close>
+        \<union> \<lbrakk> master \<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk> slave \<not>\<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m)  \<comment> \<open>rule @{thm implies_not_e2}\<close>
      \<inter> \<lbrakk> master implies not slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>\<close>
 proof -
   have \<open>{\<rho>. \<forall>m\<ge>n. hamlet ((Rep_run \<rho>) m master) \<longrightarrow> \<not> hamlet ((Rep_run \<rho>) m slave)}
@@ -242,7 +248,9 @@ qed
 
 lemma TESL_interp_stepwise_timedelayed_coind_unfold:
   \<open>\<lbrakk> master time-delayed by \<delta>\<tau> on measuring implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> =
-     (\<lbrakk> master \<not>\<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<union> (\<lbrakk> master \<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk> measuring @ n \<oplus> \<delta>\<tau> \<Rightarrow> slave \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m))
+     (     \<lbrakk> master \<not>\<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m               \<comment> \<open>rule @{thm timedelayed_e1}\<close>
+        \<union> (\<lbrakk> master \<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk> measuring @ n \<oplus> \<delta>\<tau> \<Rightarrow> slave \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m))
+                                             \<comment> \<open>rule @{thm timedelayed_e2}\<close>
      \<inter> \<lbrakk> master time-delayed by \<delta>\<tau> on measuring implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>\<close>
 proof -
   let ?prop = \<open>\<lambda>\<rho> m. hamlet ((Rep_run \<rho>) m master) \<longrightarrow>
@@ -258,8 +266,8 @@ proof -
 qed
 
 lemma TESL_interp_stepwise_weakly_precedes_coind_unfold:
-   \<open>\<lbrakk> K\<^sub>1 weakly precedes K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> =
-      \<lbrakk> (\<lceil>#\<^sup>\<le> K\<^sub>2 n, #\<^sup>\<le> K\<^sub>1 n\<rceil> \<in> (\<lambda>(x,y). x\<le>y)) \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m
+   \<open>\<lbrakk> K\<^sub>1 weakly precedes K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> =                 \<comment> \<open>rule @{thm weakly_precedes_e}\<close>
+      \<lbrakk> (\<lceil>#\<^sup>\<le> K\<^sub>2 n, #\<^sup>\<le> K\<^sub>1 n\<rceil> \<in> (\<lambda>(x,y). x\<le>y)) \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m 
       \<inter> \<lbrakk> K\<^sub>1 weakly precedes K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>\<close>
 proof -
   have \<open>{\<rho>. \<forall>p\<ge>n. (run_tick_count \<rho> K\<^sub>2 p) \<le> (run_tick_count \<rho> K\<^sub>1 p)}
@@ -272,7 +280,7 @@ proof -
 qed
 
 lemma TESL_interp_stepwise_strictly_precedes_coind_unfold:
-   \<open>\<lbrakk> K\<^sub>1 strictly precedes K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> =
+   \<open>\<lbrakk> K\<^sub>1 strictly precedes K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> =               \<comment> \<open>rule @{thm strictly_precedes_e}\<close>
       \<lbrakk> (\<lceil>#\<^sup>\<le> K\<^sub>2 n, #\<^sup>< K\<^sub>1 n\<rceil> \<in> (\<lambda>(x,y). x\<le>y)) \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m
       \<inter> \<lbrakk> K\<^sub>1 strictly precedes K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>\<close>
 proof -
@@ -287,7 +295,8 @@ qed
 
 lemma TESL_interp_stepwise_kills_coind_unfold:
    \<open>\<lbrakk> K\<^sub>1 kills K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> =
-      (\<lbrakk> K\<^sub>1 \<not>\<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<union> \<lbrakk> K\<^sub>1 \<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk> K\<^sub>2 \<not>\<Up> \<ge> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m)
+      (   \<lbrakk> K\<^sub>1 \<not>\<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m                        \<comment> \<open>rule @{thm kills_e1}\<close>
+        \<union> \<lbrakk> K\<^sub>1 \<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk> K\<^sub>2 \<not>\<Up> \<ge> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m)    \<comment> \<open>rule @{thm kills_e2}\<close>
       \<inter> \<lbrakk> K\<^sub>1 kills K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>\<close>
 proof -
   let ?kills = \<open>\<lambda>n \<rho>. \<forall>p\<ge>n. hamlet ((Rep_run \<rho>) p K\<^sub>1)
@@ -332,6 +341,10 @@ proof -
   finally show ?thesis by blast
 qed
 
+text \<open>
+  The stepwise interpretation of a TESL formula is the intersection of the
+  interpretation of its atomic components.
+\<close>
 fun TESL_interpretation_stepwise
   ::\<open>'\<tau>::linordered_field TESL_formula \<Rightarrow> nat \<Rightarrow> '\<tau> run set\<close>
   ("\<lbrakk>\<lbrakk> _ \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> _\<^esup>")
@@ -343,6 +356,10 @@ lemma TESL_interpretation_stepwise_fixpoint:
   \<open>\<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> = \<Inter> ((\<lambda>\<phi>. \<lbrakk> \<phi> \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup>) ` set \<Phi>)\<close>
 by (induction \<Phi>, simp, auto)
 
+text \<open>
+  The global interpretation of a TESL formula is its interpretation starting
+  at the first instant.
+\<close>
 lemma TESL_interpretation_stepwise_zero:
   \<open>\<lbrakk> \<phi> \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<lbrakk> \<phi> \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> 0\<^esup>\<close>
 by (induction \<phi>, simp+)
@@ -361,6 +378,13 @@ by (induction \<Phi>\<^sub>1, simp, auto)
 
 section \<open>Interpretation of configurations\<close>
 
+text \<open>
+  The interpretation of a configuration of the operational semantics abstract 
+  machine is the intersection of:
+  \<^item> the interpretation of its context (the past),
+  \<^item> the interpretation of its present from the current instant,
+  \<^item> the interpretation of its future from the next instant.
+\<close>
 fun HeronConf_interpretation
   ::\<open>'\<tau>::linordered_field config \<Rightarrow> '\<tau> run set\<close>          ("\<lbrakk> _ \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g" 71)
 where
@@ -373,6 +397,11 @@ lemma HeronConf_interp_composition:
 by (simp add: TESL_interp_stepwise_composition
               symrun_interp_expansion inf_assoc inf_left_commute)
 
+text \<open>
+  When there are no constraints on the present left, the interpretation of
+  a configuration is the same as the configuration at the next instant of its future.
+  This corresponds to the introduction rule of the operational semantics.
+\<close>
 lemma HeronConf_interp_stepwise_instant_cases:
    \<open>\<lbrakk> \<Gamma>, n \<turnstile> [] \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g = \<lbrakk> \<Gamma>, Suc n \<turnstile> \<Phi> \<triangleright> [] \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g\<close>
 proof -
@@ -387,6 +416,11 @@ proof -
   ultimately show ?thesis by blast
 qed
 
+text \<open>
+  The following lemmas use the unfolding properties of the stepwise denotational 
+  semantics to give rewriting rules for the interpretation of configurations that
+  match the elimination rules of the operational semantics.
+\<close>
 lemma HeronConf_interp_stepwise_sporadicon_cases:
    \<open>\<lbrakk> \<Gamma>, n \<turnstile> ((K\<^sub>1 sporadic \<tau> on K\<^sub>2) # \<Psi>) \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
     = \<lbrakk> \<Gamma>, n \<turnstile> \<Psi> \<triangleright> ((K\<^sub>1 sporadic \<tau> on K\<^sub>2) # \<Phi>) \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
