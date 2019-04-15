@@ -1,0 +1,1204 @@
+%
+\begin{isabellebody}%
+\setisabellecontext{Denotational}%
+%
+\isadelimdocument
+%
+\endisadelimdocument
+%
+\isatagdocument
+%
+\isamarkupchapter{Denotational Semantics%
+}
+\isamarkuptrue%
+%
+\endisatagdocument
+{\isafolddocument}%
+%
+\isadelimdocument
+%
+\endisadelimdocument
+%
+\isadelimtheory
+%
+\endisadelimtheory
+%
+\isatagtheory
+\isacommand{theory}\isamarkupfalse%
+\ Denotational\isanewline
+\isakeyword{imports}\isanewline
+\ \ \ \ TESL\isanewline
+\ \ \ \ Run\isanewline
+\isanewline
+\isakeyword{begin}%
+\endisatagtheory
+{\isafoldtheory}%
+%
+\isadelimtheory
+%
+\endisadelimtheory
+%
+\begin{isamarkuptext}%
+The denotational semantics maps TESL formulae to sets of satisfying runs.
+  Firstly, we define the semantics of atomic formulae (basic constructs of the 
+  TESL language), then we define the semantics of compound formulae as the
+  intersection of the semantics of their components: a run must satisfy all
+  the individual formulae of a compound formula.%
+\end{isamarkuptext}\isamarkuptrue%
+%
+\isadelimdocument
+%
+\endisadelimdocument
+%
+\isatagdocument
+%
+\isamarkupsection{Denotational interpretation for atomic TESL formulae%
+}
+\isamarkuptrue%
+%
+\endisatagdocument
+{\isafolddocument}%
+%
+\isadelimdocument
+%
+\endisadelimdocument
+\isanewline
+\isacommand{fun}\isamarkupfalse%
+\ TESL{\isacharunderscore}interpretation{\isacharunderscore}atomic\isanewline
+\ \ \ \ {\isacharcolon}{\isacharcolon}\ {\isacartoucheopen}{\isacharparenleft}{\isacharprime}{\isasymtau}{\isacharcolon}{\isacharcolon}linordered{\isacharunderscore}field{\isacharparenright}\ TESL{\isacharunderscore}atomic\ {\isasymRightarrow}\ {\isacharprime}{\isasymtau}\ run\ set{\isacartoucheclose}\ {\isacharparenleft}{\isachardoublequoteopen}{\isasymlbrakk}\ {\isacharunderscore}\ {\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L{\isachardoublequoteclose}{\isacharparenright}\isanewline
+\isakeyword{where}\isanewline
+\ \ %
+\isamarkupcmt{\isa{K\isactrlsub {\isadigit{1}}\ sporadic\ {\isasymtau}\ on\ K\isactrlsub {\isadigit{2}}} means that \isa{K\isactrlsub {\isadigit{1}}} should tick at an 
+      instant where the time on \isa{K\isactrlsub {\isadigit{2}}} is \isa{{\isasymtau}}.%
+}\isanewline
+\ \ \ \ {\isacartoucheopen}{\isasymlbrakk}\ K\isactrlsub {\isadigit{1}}\ sporadic\ {\isasymtau}\ on\ K\isactrlsub {\isadigit{2}}\ {\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L\ {\isacharequal}\isanewline
+\ \ \ \ \ \ \ \ {\isacharbraceleft}{\isasymrho}{\isachardot}\ {\isasymexists}n{\isacharcolon}{\isacharcolon}nat{\isachardot}\ hamlet\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ n\ K\isactrlsub {\isadigit{1}}{\isacharparenright}\ {\isasymand}\ time\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ n\ K\isactrlsub {\isadigit{2}}{\isacharparenright}\ {\isacharequal}\ {\isasymtau}{\isacharbraceright}{\isacartoucheclose}\isanewline
+\ \ %
+\isamarkupcmt{\isa{time{\isacharminus}relation\ {\isasymlfloor}K\isactrlsub {\isadigit{1}}{\isacharcomma}\ K\isactrlsub {\isadigit{2}}{\isasymrfloor}\ {\isasymin}\ R} means that at each instant, the time 
+      on \isa{K\isactrlsub {\isadigit{1}}} and the time on \isa{K\isactrlsub {\isadigit{2}}} are in relation \isa{R}.%
+}\isanewline
+\ \ {\isacharbar}\ {\isacartoucheopen}{\isasymlbrakk}\ time{\isacharminus}relation\ {\isasymlfloor}K\isactrlsub {\isadigit{1}}{\isacharcomma}\ K\isactrlsub {\isadigit{2}}{\isasymrfloor}\ {\isasymin}\ R\ {\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L\ {\isacharequal}\isanewline
+\ \ \ \ \ \ \ \ {\isacharbraceleft}{\isasymrho}{\isachardot}\ {\isasymforall}n{\isacharcolon}{\isacharcolon}nat{\isachardot}\ R\ {\isacharparenleft}time\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ n\ K\isactrlsub {\isadigit{1}}{\isacharparenright}{\isacharcomma}\ time\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ n\ K\isactrlsub {\isadigit{2}}{\isacharparenright}{\isacharparenright}{\isacharbraceright}{\isacartoucheclose}\isanewline
+\ \ %
+\isamarkupcmt{\isa{master\ implies\ slave} means that at each instant at which 
+      \isa{master} ticks, \isa{slave} also ticks.%
+}\isanewline
+\ \ {\isacharbar}\ {\isacartoucheopen}{\isasymlbrakk}\ master\ implies\ slave\ {\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L\ {\isacharequal}\isanewline
+\ \ \ \ \ \ \ \ {\isacharbraceleft}{\isasymrho}{\isachardot}\ {\isasymforall}n{\isacharcolon}{\isacharcolon}nat{\isachardot}\ hamlet\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ n\ master{\isacharparenright}\ {\isasymlongrightarrow}\ hamlet\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ n\ slave{\isacharparenright}{\isacharbraceright}{\isacartoucheclose}\isanewline
+\ \ %
+\isamarkupcmt{\isa{master\ implies\ not\ slave} means that at each instant at which 
+      \isa{master} ticks, \isa{slave} does not tick.%
+}\isanewline
+\ \ {\isacharbar}\ {\isacartoucheopen}{\isasymlbrakk}\ master\ implies\ not\ slave\ {\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L\ {\isacharequal}\isanewline
+\ \ \ \ \ \ \ \ {\isacharbraceleft}{\isasymrho}{\isachardot}\ {\isasymforall}n{\isacharcolon}{\isacharcolon}nat{\isachardot}\ hamlet\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ n\ master{\isacharparenright}\ {\isasymlongrightarrow}\ {\isasymnot}hamlet\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ n\ slave{\isacharparenright}{\isacharbraceright}{\isacartoucheclose}\isanewline
+\ \ %
+\isamarkupcmt{\isa{master\ time{\isacharminus}delayed\ by\ {\isasymdelta}{\isasymtau}\ on\ measuring\ implies\ slave} means that 
+      at each instant at which  \isa{master} ticks, \isa{slave} will
+      ticks after a delay \isa{{\isasymdelta}{\isasymtau}} measured on the time scale 
+      of \isa{measuring}.%
+}\isanewline
+\ \ {\isacharbar}\ {\isacartoucheopen}{\isasymlbrakk}\ master\ time{\isacharminus}delayed\ by\ {\isasymdelta}{\isasymtau}\ on\ measuring\ implies\ slave\ {\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L\ {\isacharequal}\isanewline
+\ \ \ \ %
+\isamarkupcmt{When master ticks, let's call @term\isa{t\isactrlsub {\isadigit{0}}} the current date on measuring. Then, 
+      at the first instant when the date on measuring is @term\isa{t\isactrlsub {\isadigit{0}}{\isacharplus}{\isasymdelta}t}, 
+      slave has to tick.%
+}\isanewline
+\ \ \ \ \ \ \ \ {\isacharbraceleft}{\isasymrho}{\isachardot}\ {\isasymforall}n{\isachardot}\ hamlet\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ n\ master{\isacharparenright}\ {\isasymlongrightarrow}\isanewline
+\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ {\isacharparenleft}let\ measured{\isacharunderscore}time\ {\isacharequal}\ time\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ n\ measuring{\isacharparenright}\ in\isanewline
+\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ {\isasymforall}m\ {\isasymge}\ n{\isachardot}\ \ first{\isacharunderscore}time\ {\isasymrho}\ measuring\ m\ {\isacharparenleft}measured{\isacharunderscore}time\ {\isacharplus}\ {\isasymdelta}{\isasymtau}{\isacharparenright}\isanewline
+\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ {\isasymlongrightarrow}\ hamlet\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ m\ slave{\isacharparenright}\isanewline
+\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ {\isacharparenright}\isanewline
+\ \ \ \ \ \ \ \ {\isacharbraceright}{\isacartoucheclose}\isanewline
+\ \ %
+\isamarkupcmt{\isa{K\isactrlsub {\isadigit{1}}\ weakly\ precedes\ K\isactrlsub {\isadigit{2}}} means that each tick on \isa{K\isactrlsub {\isadigit{2}}}
+        must be preceded by or coincide with at least one tick on \isa{K\isactrlsub {\isadigit{1}}}.
+        Therefore, at each instant \isa{n}, the number of ticks on \isa{K\isactrlsub {\isadigit{2}}} 
+        must be less or equal to the number of ticks on \isa{K\isactrlsub {\isadigit{1}}}.%
+}\isanewline
+\ \ {\isacharbar}\ {\isacartoucheopen}{\isasymlbrakk}\ K\isactrlsub {\isadigit{1}}\ weakly\ precedes\ K\isactrlsub {\isadigit{2}}\ {\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L\ {\isacharequal}\isanewline
+\ \ \ \ \ \ \ \ {\isacharbraceleft}{\isasymrho}{\isachardot}\ {\isasymforall}n{\isacharcolon}{\isacharcolon}nat{\isachardot}\ {\isacharparenleft}run{\isacharunderscore}tick{\isacharunderscore}count\ {\isasymrho}\ K\isactrlsub {\isadigit{2}}\ n{\isacharparenright}\ {\isasymle}\ {\isacharparenleft}run{\isacharunderscore}tick{\isacharunderscore}count\ {\isasymrho}\ K\isactrlsub {\isadigit{1}}\ n{\isacharparenright}{\isacharbraceright}{\isacartoucheclose}\isanewline
+\ \ %
+\isamarkupcmt{\isa{K\isactrlsub {\isadigit{1}}\ strictly\ precedes\ K\isactrlsub {\isadigit{2}}} means that each tick on \isa{K\isactrlsub {\isadigit{2}}}
+        must be preceded by at least one tick on \isa{K\isactrlsub {\isadigit{1}}} at a previous instant.
+        Therefore, at each instant \isa{n}, the number of ticks on \isa{K\isactrlsub {\isadigit{2}}}
+        must be less or equal to the number of ticks on \isa{K\isactrlsub {\isadigit{1}}} 
+        at instant \isa{n\ {\isacharminus}\ {\isacharparenleft}{\isadigit{1}}{\isacharcolon}{\isacharcolon}{\isacharprime}a{\isacharparenright}}.%
+}\isanewline
+\ \ {\isacharbar}\ {\isacartoucheopen}{\isasymlbrakk}\ K\isactrlsub {\isadigit{1}}\ strictly\ precedes\ K\isactrlsub {\isadigit{2}}\ {\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L\ {\isacharequal}\isanewline
+\ \ \ \ \ \ \ \ {\isacharbraceleft}{\isasymrho}{\isachardot}\ {\isasymforall}n{\isacharcolon}{\isacharcolon}nat{\isachardot}\ {\isacharparenleft}run{\isacharunderscore}tick{\isacharunderscore}count\ {\isasymrho}\ K\isactrlsub {\isadigit{2}}\ n{\isacharparenright}\ {\isasymle}\ {\isacharparenleft}run{\isacharunderscore}tick{\isacharunderscore}count{\isacharunderscore}strictly\ {\isasymrho}\ K\isactrlsub {\isadigit{1}}\ n{\isacharparenright}{\isacharbraceright}{\isacartoucheclose}\isanewline
+\ \ %
+\isamarkupcmt{\isa{K\isactrlsub {\isadigit{1}}\ kills\ K\isactrlsub {\isadigit{2}}} means that when \isa{K\isactrlsub {\isadigit{1}}} ticks, \isa{K\isactrlsub {\isadigit{2}}}
+        cannot tick and is not allowed to tick at any further instant.%
+}\isanewline
+\ \ {\isacharbar}\ {\isacartoucheopen}{\isasymlbrakk}\ K\isactrlsub {\isadigit{1}}\ kills\ K\isactrlsub {\isadigit{2}}\ {\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L\ {\isacharequal}\isanewline
+\ \ \ \ \ \ \ \ {\isacharbraceleft}{\isasymrho}{\isachardot}\ {\isasymforall}n{\isacharcolon}{\isacharcolon}nat{\isachardot}\ hamlet\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ n\ K\isactrlsub {\isadigit{1}}{\isacharparenright}\isanewline
+\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ {\isasymlongrightarrow}\ {\isacharparenleft}{\isasymforall}m{\isasymge}n{\isachardot}\ {\isasymnot}\ hamlet\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ m\ K\isactrlsub {\isadigit{2}}{\isacharparenright}{\isacharparenright}{\isacharbraceright}{\isacartoucheclose}%
+\isadelimdocument
+%
+\endisadelimdocument
+%
+\isatagdocument
+%
+\isamarkupsection{Denotational interpretation for TESL formulae%
+}
+\isamarkuptrue%
+%
+\endisatagdocument
+{\isafolddocument}%
+%
+\isadelimdocument
+%
+\endisadelimdocument
+%
+\begin{isamarkuptext}%
+To satisfy a formula, a run has to satisfy the conjunction of its atomic 
+  formulae, therefore, the interpretation of a formula is the intersection
+  of the interpretations of its components.%
+\end{isamarkuptext}\isamarkuptrue%
+\isacommand{fun}\isamarkupfalse%
+\ TESL{\isacharunderscore}interpretation\ {\isacharcolon}{\isacharcolon}\ {\isacartoucheopen}{\isacharparenleft}{\isacharprime}{\isasymtau}{\isacharcolon}{\isacharcolon}linordered{\isacharunderscore}field{\isacharparenright}\ TESL{\isacharunderscore}formula\ {\isasymRightarrow}\ {\isacharprime}{\isasymtau}\ run\ set{\isacartoucheclose}\isanewline
+\ \ {\isacharparenleft}{\isachardoublequoteopen}{\isasymlbrakk}{\isasymlbrakk}\ {\isacharunderscore}\ {\isasymrbrakk}{\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L{\isachardoublequoteclose}{\isacharparenright}\isanewline
+\isakeyword{where}\isanewline
+\ \ {\isacartoucheopen}{\isasymlbrakk}{\isasymlbrakk}\ {\isacharbrackleft}{\isacharbrackright}\ {\isasymrbrakk}{\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L\ {\isacharequal}\ {\isacharbraceleft}{\isacharunderscore}{\isachardot}\ True{\isacharbraceright}{\isacartoucheclose}\isanewline
+{\isacharbar}\ {\isacartoucheopen}{\isasymlbrakk}{\isasymlbrakk}\ {\isasymphi}\ {\isacharhash}\ {\isasymPhi}\ {\isasymrbrakk}{\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L\ {\isacharequal}\ {\isasymlbrakk}\ {\isasymphi}\ {\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L\ {\isasyminter}\ {\isasymlbrakk}{\isasymlbrakk}\ {\isasymPhi}\ {\isasymrbrakk}{\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L{\isacartoucheclose}\isanewline
+\isanewline
+\isacommand{lemma}\isamarkupfalse%
+\ TESL{\isacharunderscore}interpretation{\isacharunderscore}homo{\isacharcolon}\isanewline
+\ \ {\isacartoucheopen}{\isasymlbrakk}\ {\isasymphi}\ {\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L\ {\isasyminter}\ {\isasymlbrakk}{\isasymlbrakk}\ {\isasymPhi}\ {\isasymrbrakk}{\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L\ {\isacharequal}\ {\isasymlbrakk}{\isasymlbrakk}\ {\isasymphi}\ {\isacharhash}\ {\isasymPhi}\ {\isasymrbrakk}{\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L{\isacartoucheclose}\isanewline
+%
+\isadelimproof
+%
+\endisadelimproof
+%
+\isatagproof
+\isacommand{by}\isamarkupfalse%
+\ simp%
+\endisatagproof
+{\isafoldproof}%
+%
+\isadelimproof
+%
+\endisadelimproof
+%
+\isadelimdocument
+%
+\endisadelimdocument
+%
+\isatagdocument
+%
+\isamarkupsubsection{Image interpretation lemma%
+}
+\isamarkuptrue%
+%
+\endisatagdocument
+{\isafolddocument}%
+%
+\isadelimdocument
+%
+\endisadelimdocument
+\isacommand{theorem}\isamarkupfalse%
+\ TESL{\isacharunderscore}interpretation{\isacharunderscore}image{\isacharcolon}\isanewline
+\ \ {\isacartoucheopen}{\isasymlbrakk}{\isasymlbrakk}\ {\isasymPhi}\ {\isasymrbrakk}{\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L\ {\isacharequal}\ {\isasymInter}\ {\isacharparenleft}{\isacharparenleft}{\isasymlambda}{\isasymphi}{\isachardot}\ {\isasymlbrakk}\ {\isasymphi}\ {\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L{\isacharparenright}\ {\isacharbackquote}\ set\ {\isasymPhi}{\isacharparenright}{\isacartoucheclose}\isanewline
+%
+\isadelimproof
+%
+\endisadelimproof
+%
+\isatagproof
+\isacommand{by}\isamarkupfalse%
+\ {\isacharparenleft}induction\ {\isasymPhi}{\isacharcomma}\ simp{\isacharplus}{\isacharparenright}%
+\endisatagproof
+{\isafoldproof}%
+%
+\isadelimproof
+%
+\endisadelimproof
+%
+\isadelimdocument
+%
+\endisadelimdocument
+%
+\isatagdocument
+%
+\isamarkupsubsection{Expansion law%
+}
+\isamarkuptrue%
+%
+\endisatagdocument
+{\isafolddocument}%
+%
+\isadelimdocument
+%
+\endisadelimdocument
+%
+\begin{isamarkuptext}%
+Similar to the expansion laws of lattices.%
+\end{isamarkuptext}\isamarkuptrue%
+\isacommand{theorem}\isamarkupfalse%
+\ TESL{\isacharunderscore}interp{\isacharunderscore}homo{\isacharunderscore}append{\isacharcolon}\isanewline
+\ \ {\isacartoucheopen}{\isasymlbrakk}{\isasymlbrakk}\ {\isasymPhi}\isactrlsub {\isadigit{1}}\ {\isacharat}\ {\isasymPhi}\isactrlsub {\isadigit{2}}\ {\isasymrbrakk}{\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L\ {\isacharequal}\ {\isasymlbrakk}{\isasymlbrakk}\ {\isasymPhi}\isactrlsub {\isadigit{1}}\ {\isasymrbrakk}{\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L\ {\isasyminter}\ {\isasymlbrakk}{\isasymlbrakk}\ {\isasymPhi}\isactrlsub {\isadigit{2}}\ {\isasymrbrakk}{\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L{\isacartoucheclose}\isanewline
+%
+\isadelimproof
+%
+\endisadelimproof
+%
+\isatagproof
+\isacommand{by}\isamarkupfalse%
+\ {\isacharparenleft}induction\ {\isasymPhi}\isactrlsub {\isadigit{1}}{\isacharcomma}\ simp{\isacharcomma}\ auto{\isacharparenright}%
+\endisatagproof
+{\isafoldproof}%
+%
+\isadelimproof
+%
+\endisadelimproof
+%
+\isadelimdocument
+%
+\endisadelimdocument
+%
+\isatagdocument
+%
+\isamarkupsection{Equational laws for the denotation of TESL formulae%
+}
+\isamarkuptrue%
+%
+\endisatagdocument
+{\isafolddocument}%
+%
+\isadelimdocument
+%
+\endisadelimdocument
+\isacommand{lemma}\isamarkupfalse%
+\ TESL{\isacharunderscore}interp{\isacharunderscore}assoc{\isacharcolon}\isanewline
+\ \ {\isacartoucheopen}{\isasymlbrakk}{\isasymlbrakk}\ {\isacharparenleft}{\isasymPhi}\isactrlsub {\isadigit{1}}\ {\isacharat}\ {\isasymPhi}\isactrlsub {\isadigit{2}}{\isacharparenright}\ {\isacharat}\ {\isasymPhi}\isactrlsub {\isadigit{3}}\ {\isasymrbrakk}{\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L\ {\isacharequal}\ {\isasymlbrakk}{\isasymlbrakk}\ {\isasymPhi}\isactrlsub {\isadigit{1}}\ {\isacharat}\ {\isacharparenleft}{\isasymPhi}\isactrlsub {\isadigit{2}}\ {\isacharat}\ {\isasymPhi}\isactrlsub {\isadigit{3}}{\isacharparenright}\ {\isasymrbrakk}{\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L{\isacartoucheclose}\isanewline
+%
+\isadelimproof
+%
+\endisadelimproof
+%
+\isatagproof
+\isacommand{by}\isamarkupfalse%
+\ auto%
+\endisatagproof
+{\isafoldproof}%
+%
+\isadelimproof
+\isanewline
+%
+\endisadelimproof
+\isanewline
+\isacommand{lemma}\isamarkupfalse%
+\ TESL{\isacharunderscore}interp{\isacharunderscore}commute{\isacharcolon}\isanewline
+\ \ \isakeyword{shows}\ {\isacartoucheopen}{\isasymlbrakk}{\isasymlbrakk}\ {\isasymPhi}\isactrlsub {\isadigit{1}}\ {\isacharat}\ {\isasymPhi}\isactrlsub {\isadigit{2}}\ {\isasymrbrakk}{\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L\ {\isacharequal}\ {\isasymlbrakk}{\isasymlbrakk}\ {\isasymPhi}\isactrlsub {\isadigit{2}}\ {\isacharat}\ {\isasymPhi}\isactrlsub {\isadigit{1}}\ {\isasymrbrakk}{\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L{\isacartoucheclose}\isanewline
+%
+\isadelimproof
+%
+\endisadelimproof
+%
+\isatagproof
+\isacommand{by}\isamarkupfalse%
+\ {\isacharparenleft}simp\ add{\isacharcolon}\ TESL{\isacharunderscore}interp{\isacharunderscore}homo{\isacharunderscore}append\ inf{\isacharunderscore}sup{\isacharunderscore}aci{\isacharparenleft}{\isadigit{1}}{\isacharparenright}{\isacharparenright}%
+\endisatagproof
+{\isafoldproof}%
+%
+\isadelimproof
+\isanewline
+%
+\endisadelimproof
+\isanewline
+\isacommand{lemma}\isamarkupfalse%
+\ TESL{\isacharunderscore}interp{\isacharunderscore}left{\isacharunderscore}commute{\isacharcolon}\isanewline
+\ \ {\isacartoucheopen}{\isasymlbrakk}{\isasymlbrakk}\ {\isasymPhi}\isactrlsub {\isadigit{1}}\ {\isacharat}\ {\isacharparenleft}{\isasymPhi}\isactrlsub {\isadigit{2}}\ {\isacharat}\ {\isasymPhi}\isactrlsub {\isadigit{3}}{\isacharparenright}\ {\isasymrbrakk}{\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L\ {\isacharequal}\ {\isasymlbrakk}{\isasymlbrakk}\ {\isasymPhi}\isactrlsub {\isadigit{2}}\ {\isacharat}\ {\isacharparenleft}{\isasymPhi}\isactrlsub {\isadigit{1}}\ {\isacharat}\ {\isasymPhi}\isactrlsub {\isadigit{3}}{\isacharparenright}\ {\isasymrbrakk}{\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L{\isacartoucheclose}\isanewline
+%
+\isadelimproof
+%
+\endisadelimproof
+%
+\isatagproof
+\isacommand{unfolding}\isamarkupfalse%
+\ TESL{\isacharunderscore}interp{\isacharunderscore}homo{\isacharunderscore}append\ \isacommand{by}\isamarkupfalse%
+\ auto%
+\endisatagproof
+{\isafoldproof}%
+%
+\isadelimproof
+\isanewline
+%
+\endisadelimproof
+\isanewline
+\isacommand{lemma}\isamarkupfalse%
+\ TESL{\isacharunderscore}interp{\isacharunderscore}idem{\isacharcolon}\isanewline
+\ \ {\isacartoucheopen}{\isasymlbrakk}{\isasymlbrakk}\ {\isasymPhi}\ {\isacharat}\ {\isasymPhi}\ {\isasymrbrakk}{\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L\ {\isacharequal}\ {\isasymlbrakk}{\isasymlbrakk}\ {\isasymPhi}\ {\isasymrbrakk}{\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L{\isacartoucheclose}\isanewline
+%
+\isadelimproof
+%
+\endisadelimproof
+%
+\isatagproof
+\isacommand{using}\isamarkupfalse%
+\ TESL{\isacharunderscore}interp{\isacharunderscore}homo{\isacharunderscore}append\ \isacommand{by}\isamarkupfalse%
+\ auto%
+\endisatagproof
+{\isafoldproof}%
+%
+\isadelimproof
+\isanewline
+%
+\endisadelimproof
+\isanewline
+\isacommand{lemma}\isamarkupfalse%
+\ TESL{\isacharunderscore}interp{\isacharunderscore}left{\isacharunderscore}idem{\isacharcolon}\isanewline
+\ \ {\isacartoucheopen}{\isasymlbrakk}{\isasymlbrakk}\ {\isasymPhi}\isactrlsub {\isadigit{1}}\ {\isacharat}\ {\isacharparenleft}{\isasymPhi}\isactrlsub {\isadigit{1}}\ {\isacharat}\ {\isasymPhi}\isactrlsub {\isadigit{2}}{\isacharparenright}\ {\isasymrbrakk}{\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L\ {\isacharequal}\ {\isasymlbrakk}{\isasymlbrakk}\ {\isasymPhi}\isactrlsub {\isadigit{1}}\ {\isacharat}\ {\isasymPhi}\isactrlsub {\isadigit{2}}\ {\isasymrbrakk}{\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L{\isacartoucheclose}\isanewline
+%
+\isadelimproof
+%
+\endisadelimproof
+%
+\isatagproof
+\isacommand{using}\isamarkupfalse%
+\ TESL{\isacharunderscore}interp{\isacharunderscore}homo{\isacharunderscore}append\ \isacommand{by}\isamarkupfalse%
+\ auto%
+\endisatagproof
+{\isafoldproof}%
+%
+\isadelimproof
+\isanewline
+%
+\endisadelimproof
+\isanewline
+\isacommand{lemma}\isamarkupfalse%
+\ TESL{\isacharunderscore}interp{\isacharunderscore}right{\isacharunderscore}idem{\isacharcolon}\isanewline
+\ \ {\isacartoucheopen}{\isasymlbrakk}{\isasymlbrakk}\ {\isacharparenleft}{\isasymPhi}\isactrlsub {\isadigit{1}}\ {\isacharat}\ {\isasymPhi}\isactrlsub {\isadigit{2}}{\isacharparenright}\ {\isacharat}\ {\isasymPhi}\isactrlsub {\isadigit{2}}\ {\isasymrbrakk}{\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L\ {\isacharequal}\ {\isasymlbrakk}{\isasymlbrakk}\ {\isasymPhi}\isactrlsub {\isadigit{1}}\ {\isacharat}\ {\isasymPhi}\isactrlsub {\isadigit{2}}\ {\isasymrbrakk}{\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L{\isacartoucheclose}\isanewline
+%
+\isadelimproof
+%
+\endisadelimproof
+%
+\isatagproof
+\isacommand{unfolding}\isamarkupfalse%
+\ TESL{\isacharunderscore}interp{\isacharunderscore}homo{\isacharunderscore}append\ \isacommand{by}\isamarkupfalse%
+\ auto%
+\endisatagproof
+{\isafoldproof}%
+%
+\isadelimproof
+\isanewline
+%
+\endisadelimproof
+\isanewline
+\isacommand{lemmas}\isamarkupfalse%
+\ TESL{\isacharunderscore}interp{\isacharunderscore}aci\ {\isacharequal}\ TESL{\isacharunderscore}interp{\isacharunderscore}commute\isanewline
+\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ TESL{\isacharunderscore}interp{\isacharunderscore}assoc\isanewline
+\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ TESL{\isacharunderscore}interp{\isacharunderscore}left{\isacharunderscore}commute\isanewline
+\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ TESL{\isacharunderscore}interp{\isacharunderscore}left{\isacharunderscore}idem%
+\begin{isamarkuptext}%
+The empty formula is the identity element%
+\end{isamarkuptext}\isamarkuptrue%
+\isacommand{lemma}\isamarkupfalse%
+\ TESL{\isacharunderscore}interp{\isacharunderscore}neutral{\isadigit{1}}{\isacharcolon}\isanewline
+\ \ {\isacartoucheopen}{\isasymlbrakk}{\isasymlbrakk}\ {\isacharbrackleft}{\isacharbrackright}\ {\isacharat}\ {\isasymPhi}\ {\isasymrbrakk}{\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L\ {\isacharequal}\ {\isasymlbrakk}{\isasymlbrakk}\ {\isasymPhi}\ {\isasymrbrakk}{\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L{\isacartoucheclose}\isanewline
+%
+\isadelimproof
+%
+\endisadelimproof
+%
+\isatagproof
+\isacommand{by}\isamarkupfalse%
+\ simp%
+\endisatagproof
+{\isafoldproof}%
+%
+\isadelimproof
+\isanewline
+%
+\endisadelimproof
+\isanewline
+\isacommand{lemma}\isamarkupfalse%
+\ TESL{\isacharunderscore}interp{\isacharunderscore}neutral{\isadigit{2}}{\isacharcolon}\isanewline
+\ \ {\isacartoucheopen}{\isasymlbrakk}{\isasymlbrakk}\ {\isasymPhi}\ {\isacharat}\ {\isacharbrackleft}{\isacharbrackright}\ {\isasymrbrakk}{\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L\ {\isacharequal}\ {\isasymlbrakk}{\isasymlbrakk}\ {\isasymPhi}\ {\isasymrbrakk}{\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L{\isacartoucheclose}\isanewline
+%
+\isadelimproof
+%
+\endisadelimproof
+%
+\isatagproof
+\isacommand{by}\isamarkupfalse%
+\ simp%
+\endisatagproof
+{\isafoldproof}%
+%
+\isadelimproof
+%
+\endisadelimproof
+%
+\isadelimdocument
+%
+\endisadelimdocument
+%
+\isatagdocument
+%
+\isamarkupsection{Decreasing interpretation of TESL formulae%
+}
+\isamarkuptrue%
+%
+\endisatagdocument
+{\isafolddocument}%
+%
+\isadelimdocument
+%
+\endisadelimdocument
+%
+\begin{isamarkuptext}%
+Adding constraints to a TESL formula reduces the number of satisfying runs.%
+\end{isamarkuptext}\isamarkuptrue%
+\isacommand{lemma}\isamarkupfalse%
+\ TESL{\isacharunderscore}sem{\isacharunderscore}decreases{\isacharunderscore}head{\isacharcolon}\isanewline
+\ \ {\isacartoucheopen}{\isasymlbrakk}{\isasymlbrakk}\ {\isasymPhi}\ {\isasymrbrakk}{\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L\ {\isasymsupseteq}\ {\isasymlbrakk}{\isasymlbrakk}\ {\isasymphi}\ {\isacharhash}\ {\isasymPhi}\ {\isasymrbrakk}{\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L{\isacartoucheclose}\isanewline
+%
+\isadelimproof
+%
+\endisadelimproof
+%
+\isatagproof
+\isacommand{by}\isamarkupfalse%
+\ simp%
+\endisatagproof
+{\isafoldproof}%
+%
+\isadelimproof
+\isanewline
+%
+\endisadelimproof
+\isanewline
+\isacommand{lemma}\isamarkupfalse%
+\ TESL{\isacharunderscore}sem{\isacharunderscore}decreases{\isacharunderscore}tail{\isacharcolon}\isanewline
+\ \ {\isacartoucheopen}{\isasymlbrakk}{\isasymlbrakk}\ {\isasymPhi}\ {\isasymrbrakk}{\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L\ {\isasymsupseteq}\ {\isasymlbrakk}{\isasymlbrakk}\ {\isasymPhi}\ {\isacharat}\ {\isacharbrackleft}{\isasymphi}{\isacharbrackright}\ {\isasymrbrakk}{\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L{\isacartoucheclose}\isanewline
+%
+\isadelimproof
+%
+\endisadelimproof
+%
+\isatagproof
+\isacommand{by}\isamarkupfalse%
+\ {\isacharparenleft}simp\ add{\isacharcolon}\ TESL{\isacharunderscore}interp{\isacharunderscore}homo{\isacharunderscore}append{\isacharparenright}%
+\endisatagproof
+{\isafoldproof}%
+%
+\isadelimproof
+\isanewline
+%
+\endisadelimproof
+\isanewline
+\isacommand{lemma}\isamarkupfalse%
+\ TESL{\isacharunderscore}interp{\isacharunderscore}formula{\isacharunderscore}stuttering{\isacharcolon}\isanewline
+\ \ \isakeyword{assumes}\ {\isacartoucheopen}{\isasymphi}\ {\isasymin}\ set\ {\isasymPhi}{\isacartoucheclose}\isanewline
+\ \ \ \ \isakeyword{shows}\ {\isacartoucheopen}{\isasymlbrakk}{\isasymlbrakk}\ {\isasymphi}\ {\isacharhash}\ {\isasymPhi}\ {\isasymrbrakk}{\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L\ {\isacharequal}\ {\isasymlbrakk}{\isasymlbrakk}\ {\isasymPhi}\ {\isasymrbrakk}{\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L{\isacartoucheclose}\isanewline
+%
+\isadelimproof
+%
+\endisadelimproof
+%
+\isatagproof
+\isacommand{proof}\isamarkupfalse%
+\ {\isacharminus}\isanewline
+\ \ \isacommand{have}\isamarkupfalse%
+\ {\isacartoucheopen}{\isasymphi}\ {\isacharhash}\ {\isasymPhi}\ {\isacharequal}\ {\isacharbrackleft}{\isasymphi}{\isacharbrackright}\ {\isacharat}\ {\isasymPhi}{\isacartoucheclose}\ \isacommand{by}\isamarkupfalse%
+\ simp\isanewline
+\ \ \isacommand{hence}\isamarkupfalse%
+\ {\isacartoucheopen}{\isasymlbrakk}{\isasymlbrakk}\ {\isasymphi}\ {\isacharhash}\ {\isasymPhi}\ {\isasymrbrakk}{\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L\ {\isacharequal}\ {\isasymlbrakk}{\isasymlbrakk}\ {\isacharbrackleft}{\isasymphi}{\isacharbrackright}\ {\isasymrbrakk}{\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L\ {\isasyminter}\ {\isasymlbrakk}{\isasymlbrakk}\ {\isasymPhi}\ {\isasymrbrakk}{\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L{\isacartoucheclose}\isanewline
+\ \ \ \ \isacommand{using}\isamarkupfalse%
+\ TESL{\isacharunderscore}interp{\isacharunderscore}homo{\isacharunderscore}append\ \isacommand{by}\isamarkupfalse%
+\ simp\isanewline
+\ \ \isacommand{thus}\isamarkupfalse%
+\ {\isacharquery}thesis\ \isacommand{using}\isamarkupfalse%
+\ assms\ TESL{\isacharunderscore}interpretation{\isacharunderscore}image\ \isacommand{by}\isamarkupfalse%
+\ fastforce\isanewline
+\isacommand{qed}\isamarkupfalse%
+%
+\endisatagproof
+{\isafoldproof}%
+%
+\isadelimproof
+\isanewline
+%
+\endisadelimproof
+\isanewline
+\isacommand{lemma}\isamarkupfalse%
+\ TESL{\isacharunderscore}interp{\isacharunderscore}remdups{\isacharunderscore}absorb{\isacharcolon}\isanewline
+\ \ {\isacartoucheopen}{\isasymlbrakk}{\isasymlbrakk}\ {\isasymPhi}\ {\isasymrbrakk}{\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L\ {\isacharequal}\ {\isasymlbrakk}{\isasymlbrakk}\ remdups\ {\isasymPhi}\ {\isasymrbrakk}{\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L{\isacartoucheclose}\isanewline
+%
+\isadelimproof
+%
+\endisadelimproof
+%
+\isatagproof
+\isacommand{proof}\isamarkupfalse%
+\ {\isacharparenleft}induction\ {\isasymPhi}{\isacharparenright}\isanewline
+\ \ \isacommand{case}\isamarkupfalse%
+\ Cons\isanewline
+\ \ \ \ \isacommand{thus}\isamarkupfalse%
+\ {\isacharquery}case\ \isacommand{using}\isamarkupfalse%
+\ TESL{\isacharunderscore}interp{\isacharunderscore}formula{\isacharunderscore}stuttering\ \isacommand{by}\isamarkupfalse%
+\ auto\isanewline
+\isacommand{qed}\isamarkupfalse%
+\ simp%
+\endisatagproof
+{\isafoldproof}%
+%
+\isadelimproof
+\isanewline
+%
+\endisadelimproof
+\isanewline
+\isacommand{lemma}\isamarkupfalse%
+\ TESL{\isacharunderscore}interp{\isacharunderscore}set{\isacharunderscore}lifting{\isacharcolon}\isanewline
+\ \ \isakeyword{assumes}\ {\isacartoucheopen}set\ {\isasymPhi}\ {\isacharequal}\ set\ {\isasymPhi}{\isacharprime}{\isacartoucheclose}\isanewline
+\ \ \ \ \isakeyword{shows}\ {\isacartoucheopen}{\isasymlbrakk}{\isasymlbrakk}\ {\isasymPhi}\ {\isasymrbrakk}{\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L\ {\isacharequal}\ {\isasymlbrakk}{\isasymlbrakk}\ {\isasymPhi}{\isacharprime}\ {\isasymrbrakk}{\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L{\isacartoucheclose}\isanewline
+%
+\isadelimproof
+%
+\endisadelimproof
+%
+\isatagproof
+\isacommand{proof}\isamarkupfalse%
+\ {\isacharminus}\ \ \ \ \ \isanewline
+\ \ \isacommand{have}\isamarkupfalse%
+\ {\isacartoucheopen}set\ {\isacharparenleft}remdups\ {\isasymPhi}{\isacharparenright}\ {\isacharequal}\ set\ {\isacharparenleft}remdups\ {\isasymPhi}{\isacharprime}{\isacharparenright}{\isacartoucheclose}\isanewline
+\ \ \ \ \isacommand{by}\isamarkupfalse%
+\ {\isacharparenleft}simp\ add{\isacharcolon}\ assms{\isacharparenright}\isanewline
+\ \ \isacommand{moreover}\isamarkupfalse%
+\ \isacommand{have}\isamarkupfalse%
+\ fxpnt{\isasymPhi}{\isacharcolon}\ {\isacartoucheopen}{\isasymInter}\ {\isacharparenleft}{\isacharparenleft}{\isasymlambda}{\isasymphi}{\isachardot}\ {\isasymlbrakk}\ {\isasymphi}\ {\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L{\isacharparenright}\ {\isacharbackquote}\ set\ {\isasymPhi}{\isacharparenright}\ {\isacharequal}\ {\isasymlbrakk}{\isasymlbrakk}\ {\isasymPhi}\ {\isasymrbrakk}{\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L{\isacartoucheclose}\isanewline
+\ \ \ \ \isacommand{by}\isamarkupfalse%
+\ {\isacharparenleft}simp\ add{\isacharcolon}\ TESL{\isacharunderscore}interpretation{\isacharunderscore}image{\isacharparenright}\isanewline
+\ \ \isacommand{moreover}\isamarkupfalse%
+\ \isacommand{have}\isamarkupfalse%
+\ fxpnt{\isasymPhi}{\isacharprime}{\isacharcolon}\ {\isacartoucheopen}{\isasymInter}\ {\isacharparenleft}{\isacharparenleft}{\isasymlambda}{\isasymphi}{\isachardot}\ {\isasymlbrakk}\ {\isasymphi}\ {\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L{\isacharparenright}\ {\isacharbackquote}\ set\ {\isasymPhi}{\isacharprime}{\isacharparenright}\ {\isacharequal}\ {\isasymlbrakk}{\isasymlbrakk}\ {\isasymPhi}{\isacharprime}\ {\isasymrbrakk}{\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L{\isacartoucheclose}\isanewline
+\ \ \ \ \isacommand{by}\isamarkupfalse%
+\ {\isacharparenleft}simp\ add{\isacharcolon}\ TESL{\isacharunderscore}interpretation{\isacharunderscore}image{\isacharparenright}\isanewline
+\ \ \isacommand{moreover}\isamarkupfalse%
+\ \isacommand{have}\isamarkupfalse%
+\ {\isacartoucheopen}{\isasymInter}\ {\isacharparenleft}{\isacharparenleft}{\isasymlambda}{\isasymphi}{\isachardot}\ {\isasymlbrakk}\ {\isasymphi}\ {\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L{\isacharparenright}\ {\isacharbackquote}\ set\ {\isasymPhi}{\isacharparenright}\ {\isacharequal}\ {\isasymInter}\ {\isacharparenleft}{\isacharparenleft}{\isasymlambda}{\isasymphi}{\isachardot}\ {\isasymlbrakk}\ {\isasymphi}\ {\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L{\isacharparenright}\ {\isacharbackquote}\ set\ {\isasymPhi}{\isacharprime}{\isacharparenright}{\isacartoucheclose}\isanewline
+\ \ \ \ \isacommand{by}\isamarkupfalse%
+\ {\isacharparenleft}simp\ add{\isacharcolon}\ assms{\isacharparenright}\isanewline
+\ \ \isacommand{ultimately}\isamarkupfalse%
+\ \isacommand{show}\isamarkupfalse%
+\ {\isacharquery}thesis\ \isacommand{using}\isamarkupfalse%
+\ TESL{\isacharunderscore}interp{\isacharunderscore}remdups{\isacharunderscore}absorb\ \isacommand{by}\isamarkupfalse%
+\ auto\isanewline
+\isacommand{qed}\isamarkupfalse%
+%
+\endisatagproof
+{\isafoldproof}%
+%
+\isadelimproof
+\isanewline
+%
+\endisadelimproof
+\isanewline
+\isacommand{theorem}\isamarkupfalse%
+\ TESL{\isacharunderscore}interp{\isacharunderscore}decreases{\isacharunderscore}setinc{\isacharcolon}\isanewline
+\ \ \isakeyword{assumes}\ {\isacartoucheopen}set\ {\isasymPhi}\ {\isasymsubseteq}\ set\ {\isasymPhi}{\isacharprime}{\isacartoucheclose}\isanewline
+\ \ \ \ \isakeyword{shows}\ {\isacartoucheopen}{\isasymlbrakk}{\isasymlbrakk}\ {\isasymPhi}\ {\isasymrbrakk}{\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L\ {\isasymsupseteq}\ {\isasymlbrakk}{\isasymlbrakk}\ {\isasymPhi}{\isacharprime}\ {\isasymrbrakk}{\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L{\isacartoucheclose}\isanewline
+%
+\isadelimproof
+%
+\endisadelimproof
+%
+\isatagproof
+\isacommand{proof}\isamarkupfalse%
+\ {\isacharminus}\isanewline
+\ \ \isacommand{obtain}\isamarkupfalse%
+\ {\isasymPhi}\isactrlsub r\ \isakeyword{where}\ decompose{\isacharcolon}\ {\isacartoucheopen}set\ {\isacharparenleft}{\isasymPhi}\ {\isacharat}\ {\isasymPhi}\isactrlsub r{\isacharparenright}\ {\isacharequal}\ set\ {\isasymPhi}{\isacharprime}{\isacartoucheclose}\ \isacommand{using}\isamarkupfalse%
+\ assms\ \isacommand{by}\isamarkupfalse%
+\ auto\isanewline
+\ \ \isacommand{hence}\isamarkupfalse%
+\ {\isacartoucheopen}set\ {\isacharparenleft}{\isasymPhi}\ {\isacharat}\ {\isasymPhi}\isactrlsub r{\isacharparenright}\ {\isacharequal}\ set\ {\isasymPhi}{\isacharprime}{\isacartoucheclose}\ \isacommand{using}\isamarkupfalse%
+\ assms\ \isacommand{by}\isamarkupfalse%
+\ blast\isanewline
+\ \ \isacommand{moreover}\isamarkupfalse%
+\ \isacommand{have}\isamarkupfalse%
+\ {\isacartoucheopen}{\isacharparenleft}set\ {\isasymPhi}{\isacharparenright}\ {\isasymunion}\ {\isacharparenleft}set\ {\isasymPhi}\isactrlsub r{\isacharparenright}\ {\isacharequal}\ set\ {\isasymPhi}{\isacharprime}{\isacartoucheclose}\isanewline
+\ \ \ \ \isacommand{using}\isamarkupfalse%
+\ assms\ decompose\ \isacommand{by}\isamarkupfalse%
+\ auto\isanewline
+\ \ \isacommand{moreover}\isamarkupfalse%
+\ \isacommand{have}\isamarkupfalse%
+\ {\isacartoucheopen}{\isasymlbrakk}{\isasymlbrakk}\ {\isasymPhi}{\isacharprime}\ {\isasymrbrakk}{\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L\ {\isacharequal}\ {\isasymlbrakk}{\isasymlbrakk}\ {\isasymPhi}\ {\isacharat}\ {\isasymPhi}\isactrlsub r\ {\isasymrbrakk}{\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L{\isacartoucheclose}\isanewline
+\ \ \ \ \isacommand{using}\isamarkupfalse%
+\ TESL{\isacharunderscore}interp{\isacharunderscore}set{\isacharunderscore}lifting\ decompose\ \isacommand{by}\isamarkupfalse%
+\ blast\isanewline
+\ \ \isacommand{moreover}\isamarkupfalse%
+\ \isacommand{have}\isamarkupfalse%
+\ {\isacartoucheopen}{\isasymlbrakk}{\isasymlbrakk}\ {\isasymPhi}\ {\isacharat}\ {\isasymPhi}\isactrlsub r\ {\isasymrbrakk}{\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L\ {\isacharequal}\ {\isasymlbrakk}{\isasymlbrakk}\ {\isasymPhi}\ {\isasymrbrakk}{\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L\ {\isasyminter}\ {\isasymlbrakk}{\isasymlbrakk}\ {\isasymPhi}\isactrlsub r\ {\isasymrbrakk}{\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L{\isacartoucheclose}\isanewline
+\ \ \ \ \isacommand{by}\isamarkupfalse%
+\ {\isacharparenleft}simp\ add{\isacharcolon}\ TESL{\isacharunderscore}interp{\isacharunderscore}homo{\isacharunderscore}append{\isacharparenright}\isanewline
+\ \ \isacommand{moreover}\isamarkupfalse%
+\ \isacommand{have}\isamarkupfalse%
+\ {\isacartoucheopen}{\isasymlbrakk}{\isasymlbrakk}\ {\isasymPhi}\ {\isasymrbrakk}{\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L\ {\isasymsupseteq}\ {\isasymlbrakk}{\isasymlbrakk}\ {\isasymPhi}\ {\isasymrbrakk}{\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L\ {\isasyminter}\ {\isasymlbrakk}{\isasymlbrakk}\ {\isasymPhi}\isactrlsub r\ {\isasymrbrakk}{\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L{\isacartoucheclose}\ \isacommand{by}\isamarkupfalse%
+\ simp\isanewline
+\ \ \isacommand{ultimately}\isamarkupfalse%
+\ \isacommand{show}\isamarkupfalse%
+\ {\isacharquery}thesis\ \isacommand{by}\isamarkupfalse%
+\ simp\isanewline
+\isacommand{qed}\isamarkupfalse%
+%
+\endisatagproof
+{\isafoldproof}%
+%
+\isadelimproof
+\isanewline
+%
+\endisadelimproof
+\isanewline
+\isacommand{lemma}\isamarkupfalse%
+\ TESL{\isacharunderscore}interp{\isacharunderscore}decreases{\isacharunderscore}add{\isacharunderscore}head{\isacharcolon}\isanewline
+\ \ \isakeyword{assumes}\ {\isacartoucheopen}set\ {\isasymPhi}\ {\isasymsubseteq}\ set\ {\isasymPhi}{\isacharprime}{\isacartoucheclose}\isanewline
+\ \ \ \ \isakeyword{shows}\ {\isacartoucheopen}{\isasymlbrakk}{\isasymlbrakk}\ {\isasymphi}\ {\isacharhash}\ {\isasymPhi}\ {\isasymrbrakk}{\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L\ {\isasymsupseteq}\ {\isasymlbrakk}{\isasymlbrakk}\ {\isasymphi}\ {\isacharhash}\ {\isasymPhi}{\isacharprime}\ {\isasymrbrakk}{\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L{\isacartoucheclose}\isanewline
+%
+\isadelimproof
+%
+\endisadelimproof
+%
+\isatagproof
+\isacommand{using}\isamarkupfalse%
+\ assms\ TESL{\isacharunderscore}interp{\isacharunderscore}decreases{\isacharunderscore}setinc\ \isacommand{by}\isamarkupfalse%
+\ auto%
+\endisatagproof
+{\isafoldproof}%
+%
+\isadelimproof
+\isanewline
+%
+\endisadelimproof
+\isanewline
+\isacommand{lemma}\isamarkupfalse%
+\ TESL{\isacharunderscore}interp{\isacharunderscore}decreases{\isacharunderscore}add{\isacharunderscore}tail{\isacharcolon}\isanewline
+\ \ \isakeyword{assumes}\ {\isacartoucheopen}set\ {\isasymPhi}\ {\isasymsubseteq}\ set\ {\isasymPhi}{\isacharprime}{\isacartoucheclose}\isanewline
+\ \ \ \ \isakeyword{shows}\ {\isacartoucheopen}{\isasymlbrakk}{\isasymlbrakk}\ {\isasymPhi}\ {\isacharat}\ {\isacharbrackleft}{\isasymphi}{\isacharbrackright}\ {\isasymrbrakk}{\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L\ {\isasymsupseteq}\ {\isasymlbrakk}{\isasymlbrakk}\ {\isasymPhi}{\isacharprime}\ {\isacharat}\ {\isacharbrackleft}{\isasymphi}{\isacharbrackright}\ {\isasymrbrakk}{\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L{\isacartoucheclose}\isanewline
+%
+\isadelimproof
+%
+\endisadelimproof
+%
+\isatagproof
+\isacommand{using}\isamarkupfalse%
+\ TESL{\isacharunderscore}interp{\isacharunderscore}decreases{\isacharunderscore}setinc{\isacharbrackleft}OF\ assms{\isacharbrackright}\ \isanewline
+\ \ \isacommand{by}\isamarkupfalse%
+\ {\isacharparenleft}simp\ add{\isacharcolon}\ TESL{\isacharunderscore}interpretation{\isacharunderscore}image\ dual{\isacharunderscore}order{\isachardot}trans{\isacharparenright}%
+\endisatagproof
+{\isafoldproof}%
+%
+\isadelimproof
+\isanewline
+%
+\endisadelimproof
+\isanewline
+\isacommand{lemma}\isamarkupfalse%
+\ TESL{\isacharunderscore}interp{\isacharunderscore}absorb{\isadigit{1}}{\isacharcolon}\isanewline
+\ \ \isakeyword{assumes}\ {\isacartoucheopen}set\ {\isasymPhi}\isactrlsub {\isadigit{1}}\ {\isasymsubseteq}\ set\ {\isasymPhi}\isactrlsub {\isadigit{2}}{\isacartoucheclose}\isanewline
+\ \ \ \ \isakeyword{shows}\ {\isacartoucheopen}{\isasymlbrakk}{\isasymlbrakk}\ {\isasymPhi}\isactrlsub {\isadigit{1}}\ {\isacharat}\ {\isasymPhi}\isactrlsub {\isadigit{2}}\ {\isasymrbrakk}{\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L\ {\isacharequal}\ {\isasymlbrakk}{\isasymlbrakk}\ {\isasymPhi}\isactrlsub {\isadigit{2}}\ {\isasymrbrakk}{\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L{\isacartoucheclose}\isanewline
+%
+\isadelimproof
+%
+\endisadelimproof
+%
+\isatagproof
+\isacommand{by}\isamarkupfalse%
+\ {\isacharparenleft}simp\ add{\isacharcolon}\ Int{\isacharunderscore}absorb{\isadigit{1}}\ TESL{\isacharunderscore}interp{\isacharunderscore}decreases{\isacharunderscore}setinc\isanewline
+\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ TESL{\isacharunderscore}interp{\isacharunderscore}homo{\isacharunderscore}append\ assms{\isacharparenright}%
+\endisatagproof
+{\isafoldproof}%
+%
+\isadelimproof
+\isanewline
+%
+\endisadelimproof
+\isanewline
+\isacommand{lemma}\isamarkupfalse%
+\ TESL{\isacharunderscore}interp{\isacharunderscore}absorb{\isadigit{2}}{\isacharcolon}\isanewline
+\ \ \isakeyword{assumes}\ {\isacartoucheopen}set\ {\isasymPhi}\isactrlsub {\isadigit{2}}\ {\isasymsubseteq}\ set\ {\isasymPhi}\isactrlsub {\isadigit{1}}{\isacartoucheclose}\isanewline
+\ \ \ \ \isakeyword{shows}\ {\isacartoucheopen}{\isasymlbrakk}{\isasymlbrakk}\ {\isasymPhi}\isactrlsub {\isadigit{1}}\ {\isacharat}\ {\isasymPhi}\isactrlsub {\isadigit{2}}\ {\isasymrbrakk}{\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L\ {\isacharequal}\ {\isasymlbrakk}{\isasymlbrakk}\ {\isasymPhi}\isactrlsub {\isadigit{1}}\ {\isasymrbrakk}{\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L{\isacartoucheclose}\isanewline
+%
+\isadelimproof
+%
+\endisadelimproof
+%
+\isatagproof
+\isacommand{using}\isamarkupfalse%
+\ TESL{\isacharunderscore}interp{\isacharunderscore}absorb{\isadigit{1}}\ TESL{\isacharunderscore}interp{\isacharunderscore}commute\ assms\ \isacommand{by}\isamarkupfalse%
+\ blast%
+\endisatagproof
+{\isafoldproof}%
+%
+\isadelimproof
+%
+\endisadelimproof
+%
+\isadelimdocument
+%
+\endisadelimdocument
+%
+\isatagdocument
+%
+\isamarkupsection{Some special cases%
+}
+\isamarkuptrue%
+%
+\endisatagdocument
+{\isafolddocument}%
+%
+\isadelimdocument
+%
+\endisadelimdocument
+\isacommand{lemma}\isamarkupfalse%
+\ NoSporadic{\isacharunderscore}stable\ {\isacharbrackleft}simp{\isacharbrackright}{\isacharcolon}\isanewline
+\ \ {\isacartoucheopen}{\isasymlbrakk}{\isasymlbrakk}\ {\isasymPhi}\ {\isasymrbrakk}{\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L\ {\isasymsubseteq}\ {\isasymlbrakk}{\isasymlbrakk}\ NoSporadic\ {\isasymPhi}\ {\isasymrbrakk}{\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L{\isacartoucheclose}\isanewline
+%
+\isadelimproof
+%
+\endisadelimproof
+%
+\isatagproof
+\isacommand{proof}\isamarkupfalse%
+\ {\isacharminus}\isanewline
+\ \ \isacommand{from}\isamarkupfalse%
+\ filter{\isacharunderscore}is{\isacharunderscore}subset\ \isacommand{have}\isamarkupfalse%
+\ {\isacartoucheopen}set\ {\isacharparenleft}NoSporadic\ {\isasymPhi}{\isacharparenright}\ {\isasymsubseteq}\ set\ {\isasymPhi}{\isacartoucheclose}\ \isacommand{{\isachardot}}\isamarkupfalse%
+\isanewline
+\ \ \isacommand{from}\isamarkupfalse%
+\ TESL{\isacharunderscore}interp{\isacharunderscore}decreases{\isacharunderscore}setinc{\isacharbrackleft}OF\ this{\isacharbrackright}\ \isacommand{show}\isamarkupfalse%
+\ {\isacharquery}thesis\ \isacommand{{\isachardot}}\isamarkupfalse%
+\isanewline
+\isacommand{qed}\isamarkupfalse%
+%
+\endisatagproof
+{\isafoldproof}%
+%
+\isadelimproof
+\isanewline
+%
+\endisadelimproof
+\isanewline
+\isacommand{lemma}\isamarkupfalse%
+\ NoSporadic{\isacharunderscore}idem\ {\isacharbrackleft}simp{\isacharbrackright}{\isacharcolon}\isanewline
+\ \ {\isacartoucheopen}{\isasymlbrakk}{\isasymlbrakk}\ {\isasymPhi}\ {\isasymrbrakk}{\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L\ {\isasyminter}\ {\isasymlbrakk}{\isasymlbrakk}\ NoSporadic\ {\isasymPhi}\ {\isasymrbrakk}{\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L\ {\isacharequal}\ {\isasymlbrakk}{\isasymlbrakk}\ {\isasymPhi}\ {\isasymrbrakk}{\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L{\isacartoucheclose}\isanewline
+%
+\isadelimproof
+%
+\endisadelimproof
+%
+\isatagproof
+\isacommand{using}\isamarkupfalse%
+\ NoSporadic{\isacharunderscore}stable\ \isacommand{by}\isamarkupfalse%
+\ blast%
+\endisatagproof
+{\isafoldproof}%
+%
+\isadelimproof
+\isanewline
+%
+\endisadelimproof
+\isanewline
+\isacommand{lemma}\isamarkupfalse%
+\ NoSporadic{\isacharunderscore}setinc{\isacharcolon}\isanewline
+\ \ {\isacartoucheopen}set\ {\isacharparenleft}NoSporadic\ {\isasymPhi}{\isacharparenright}\ {\isasymsubseteq}\ set\ {\isasymPhi}{\isacartoucheclose}\isanewline
+%
+\isadelimproof
+%
+\endisadelimproof
+%
+\isatagproof
+\isacommand{by}\isamarkupfalse%
+\ {\isacharparenleft}rule\ filter{\isacharunderscore}is{\isacharunderscore}subset{\isacharparenright}\isanewline
+%
+\endisatagproof
+{\isafoldproof}%
+%
+\isadelimproof
+%
+\endisadelimproof
+\isanewline
+%
+\isadelimtheory
+%
+\endisadelimtheory
+%
+\isatagtheory
+\isacommand{end}\isamarkupfalse%
+%
+\endisatagtheory
+{\isafoldtheory}%
+%
+\isadelimtheory
+%
+\endisadelimtheory
+%
+\end{isabellebody}%
+\endinput
+%:%file=~/Documents/Recherche/Thesards/2014_Hai_NGUYEN_VAN/Heron_git/reiher2/reiher/src/Denotational.thy%:%
+%:%11=1%:%
+%:%27=3%:%
+%:%28=3%:%
+%:%29=4%:%
+%:%30=5%:%
+%:%31=6%:%
+%:%32=7%:%
+%:%33=8%:%
+%:%42=10%:%
+%:%43=11%:%
+%:%44=12%:%
+%:%45=13%:%
+%:%46=14%:%
+%:%55=16%:%
+%:%65=24%:%
+%:%66=25%:%
+%:%67=25%:%
+%:%68=26%:%
+%:%69=27%:%
+%:%70=28%:%
+%:%71=28%:%
+%:%72=29%:%
+%:%73=29%:%
+%:%74=30%:%
+%:%75=31%:%
+%:%76=32%:%
+%:%77=32%:%
+%:%78=33%:%
+%:%79=33%:%
+%:%80=34%:%
+%:%81=35%:%
+%:%82=36%:%
+%:%83=36%:%
+%:%84=37%:%
+%:%85=37%:%
+%:%86=38%:%
+%:%87=39%:%
+%:%88=40%:%
+%:%89=40%:%
+%:%90=41%:%
+%:%91=41%:%
+%:%92=42%:%
+%:%93=43%:%
+%:%94=44%:%
+%:%95=44%:%
+%:%96=45%:%
+%:%97=46%:%
+%:%98=47%:%
+%:%99=47%:%
+%:%100=48%:%
+%:%102=50%:%
+%:%103=51%:%
+%:%104=52%:%
+%:%105=53%:%
+%:%111=59%:%
+%:%112=60%:%
+%:%113=60%:%
+%:%114=61%:%
+%:%115=62%:%
+%:%116=63%:%
+%:%117=63%:%
+%:%118=64%:%
+%:%119=65%:%
+%:%120=66%:%
+%:%121=66%:%
+%:%122=67%:%
+%:%123=68%:%
+%:%124=69%:%
+%:%125=70%:%
+%:%126=70%:%
+%:%127=71%:%
+%:%128=72%:%
+%:%129=73%:%
+%:%130=73%:%
+%:%131=74%:%
+%:%132=74%:%
+%:%133=75%:%
+%:%142=79%:%
+%:%154=82%:%
+%:%155=83%:%
+%:%156=84%:%
+%:%158=86%:%
+%:%159=86%:%
+%:%160=87%:%
+%:%161=88%:%
+%:%162=89%:%
+%:%163=90%:%
+%:%164=91%:%
+%:%165=92%:%
+%:%166=92%:%
+%:%167=93%:%
+%:%174=94%:%
+%:%175=94%:%
+%:%189=96%:%
+%:%199=98%:%
+%:%200=98%:%
+%:%201=99%:%
+%:%208=100%:%
+%:%209=100%:%
+%:%223=102%:%
+%:%235=103%:%
+%:%237=105%:%
+%:%238=105%:%
+%:%239=106%:%
+%:%246=107%:%
+%:%247=107%:%
+%:%261=109%:%
+%:%271=111%:%
+%:%272=111%:%
+%:%273=112%:%
+%:%280=113%:%
+%:%281=113%:%
+%:%286=113%:%
+%:%289=114%:%
+%:%290=115%:%
+%:%291=115%:%
+%:%292=116%:%
+%:%299=117%:%
+%:%300=117%:%
+%:%305=117%:%
+%:%308=118%:%
+%:%309=119%:%
+%:%310=119%:%
+%:%311=120%:%
+%:%318=121%:%
+%:%319=121%:%
+%:%320=121%:%
+%:%325=121%:%
+%:%328=122%:%
+%:%329=123%:%
+%:%330=123%:%
+%:%331=124%:%
+%:%338=125%:%
+%:%339=125%:%
+%:%340=125%:%
+%:%345=125%:%
+%:%348=126%:%
+%:%349=127%:%
+%:%350=127%:%
+%:%351=128%:%
+%:%358=129%:%
+%:%359=129%:%
+%:%360=129%:%
+%:%365=129%:%
+%:%368=130%:%
+%:%369=131%:%
+%:%370=131%:%
+%:%371=132%:%
+%:%378=133%:%
+%:%379=133%:%
+%:%380=133%:%
+%:%385=133%:%
+%:%388=134%:%
+%:%389=135%:%
+%:%390=135%:%
+%:%391=136%:%
+%:%392=137%:%
+%:%393=138%:%
+%:%395=140%:%
+%:%397=141%:%
+%:%398=141%:%
+%:%399=142%:%
+%:%406=143%:%
+%:%407=143%:%
+%:%412=143%:%
+%:%415=144%:%
+%:%416=145%:%
+%:%417=145%:%
+%:%418=146%:%
+%:%425=147%:%
+%:%426=147%:%
+%:%440=149%:%
+%:%452=151%:%
+%:%454=153%:%
+%:%455=153%:%
+%:%456=154%:%
+%:%463=155%:%
+%:%464=155%:%
+%:%469=155%:%
+%:%472=156%:%
+%:%473=157%:%
+%:%474=157%:%
+%:%475=158%:%
+%:%482=159%:%
+%:%483=159%:%
+%:%488=159%:%
+%:%491=160%:%
+%:%492=161%:%
+%:%493=161%:%
+%:%494=162%:%
+%:%495=163%:%
+%:%502=164%:%
+%:%503=164%:%
+%:%504=165%:%
+%:%505=165%:%
+%:%506=165%:%
+%:%507=166%:%
+%:%508=166%:%
+%:%509=167%:%
+%:%510=167%:%
+%:%511=167%:%
+%:%512=168%:%
+%:%513=168%:%
+%:%514=168%:%
+%:%515=168%:%
+%:%516=169%:%
+%:%522=169%:%
+%:%525=170%:%
+%:%526=171%:%
+%:%527=171%:%
+%:%528=172%:%
+%:%535=173%:%
+%:%536=173%:%
+%:%537=174%:%
+%:%538=174%:%
+%:%539=175%:%
+%:%540=175%:%
+%:%541=175%:%
+%:%542=175%:%
+%:%543=176%:%
+%:%544=176%:%
+%:%549=176%:%
+%:%552=177%:%
+%:%553=178%:%
+%:%554=178%:%
+%:%555=179%:%
+%:%556=180%:%
+%:%563=181%:%
+%:%564=181%:%
+%:%565=182%:%
+%:%566=182%:%
+%:%567=183%:%
+%:%568=183%:%
+%:%569=184%:%
+%:%570=184%:%
+%:%571=184%:%
+%:%572=185%:%
+%:%573=185%:%
+%:%574=186%:%
+%:%575=186%:%
+%:%576=186%:%
+%:%577=187%:%
+%:%578=187%:%
+%:%579=188%:%
+%:%580=188%:%
+%:%581=188%:%
+%:%582=189%:%
+%:%583=189%:%
+%:%584=190%:%
+%:%585=190%:%
+%:%586=190%:%
+%:%587=190%:%
+%:%588=190%:%
+%:%589=191%:%
+%:%595=191%:%
+%:%598=192%:%
+%:%599=193%:%
+%:%600=193%:%
+%:%601=194%:%
+%:%602=195%:%
+%:%609=196%:%
+%:%610=196%:%
+%:%611=197%:%
+%:%612=197%:%
+%:%613=197%:%
+%:%614=197%:%
+%:%615=198%:%
+%:%616=198%:%
+%:%617=198%:%
+%:%618=198%:%
+%:%619=199%:%
+%:%620=199%:%
+%:%621=199%:%
+%:%622=200%:%
+%:%623=200%:%
+%:%624=200%:%
+%:%625=201%:%
+%:%626=201%:%
+%:%627=201%:%
+%:%628=202%:%
+%:%629=202%:%
+%:%630=202%:%
+%:%631=203%:%
+%:%632=203%:%
+%:%633=203%:%
+%:%634=204%:%
+%:%635=204%:%
+%:%636=205%:%
+%:%637=205%:%
+%:%638=205%:%
+%:%639=205%:%
+%:%640=206%:%
+%:%641=206%:%
+%:%642=206%:%
+%:%643=206%:%
+%:%644=207%:%
+%:%650=207%:%
+%:%653=208%:%
+%:%654=209%:%
+%:%655=209%:%
+%:%656=210%:%
+%:%657=211%:%
+%:%664=212%:%
+%:%665=212%:%
+%:%666=212%:%
+%:%671=212%:%
+%:%674=213%:%
+%:%675=214%:%
+%:%676=214%:%
+%:%677=215%:%
+%:%678=216%:%
+%:%685=217%:%
+%:%686=217%:%
+%:%687=218%:%
+%:%688=218%:%
+%:%693=218%:%
+%:%696=219%:%
+%:%697=220%:%
+%:%698=220%:%
+%:%699=221%:%
+%:%700=222%:%
+%:%707=223%:%
+%:%708=223%:%
+%:%709=224%:%
+%:%714=224%:%
+%:%717=225%:%
+%:%718=226%:%
+%:%719=226%:%
+%:%720=227%:%
+%:%721=228%:%
+%:%728=229%:%
+%:%729=229%:%
+%:%730=229%:%
+%:%744=231%:%
+%:%754=233%:%
+%:%755=233%:%
+%:%756=234%:%
+%:%763=235%:%
+%:%764=235%:%
+%:%765=236%:%
+%:%766=236%:%
+%:%767=236%:%
+%:%768=236%:%
+%:%769=237%:%
+%:%770=237%:%
+%:%771=237%:%
+%:%772=237%:%
+%:%773=238%:%
+%:%779=238%:%
+%:%782=239%:%
+%:%783=240%:%
+%:%784=240%:%
+%:%785=241%:%
+%:%792=242%:%
+%:%793=242%:%
+%:%794=242%:%
+%:%799=242%:%
+%:%802=243%:%
+%:%803=244%:%
+%:%804=244%:%
+%:%805=245%:%
+%:%812=246%:%
+%:%813=246%:%
+%:%821=252%:%
+%:%828=253%:%
