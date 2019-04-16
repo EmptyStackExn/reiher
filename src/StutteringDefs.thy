@@ -89,6 +89,45 @@ text \<open>
 definition contracting_fun
   where \<open>contracting_fun g \<equiv> mono g \<and> g 0 = 0 \<and> (\<forall>n. g n \<le> n)\<close>
 
+text \<open>
+  \autoref{fig:dilating-run} illustrates the relations between the instants of 
+  a run and the instants of a dilated run, with the mappings by the dilating 
+  function @{term \<open>f\<close>} and the contracting function @{term \<open>g\<close>}:
+  \begin{figure}
+    \centering
+    \includegraphics{dilating.pdf}
+    \caption{Dilating and contracting functions}\label{fig:dilating-run}
+  \end{figure}
+\<close>
+(*<*)
+\<comment> \<open>Constants and notation to be able to write what we want as Isabelle terms, not as LaTeX maths\<close>
+consts dummyf    :: \<open>nat \<Rightarrow> nat\<close>
+consts dummyg    :: \<open>nat \<Rightarrow> nat\<close>
+consts dummytwo  :: \<open>nat\<close>
+notation dummyf    ("f") 
+notation dummyg    ("g")
+notation dummytwo  ("2")
+(*>*)
+text \<open>
+  A function @{term \<open>g\<close>} is contracting with respect to the dilation of run
+  @{term \<open>sub\<close>} into run @{term \<open>r\<close>} by the dilating function @{term \<open>f\<close>} if:
+  \<^item> it is a contracting function ;
+  \<^item> @{term \<open>(f \<circ> g) n\<close>} is the index of the last original instant before instant 
+    @{term \<open>n\<close>} in run @{term \<open>r\<close>}, therefore:
+    \<^item> the time does not change on any clock between instants @{term \<open>(f \<circ> g) n\<close>}
+      and @{term \<open>n\<close>} of run @{term \<open>r\<close>};
+    \<^item> no clock ticks before @{term \<open>n\<close>} strictly after @{term \<open>(f \<circ> g) n\<close>} 
+      in run @{term \<open>r\<close>}.
+  See \autoref{fig:dilating-run} for a better understanding. Notice that in this 
+  example, @{term \<open>2\<close>} is equal to @{term \<open>(f \<circ> g) 2\<close>}, @{term \<open>(f \<circ> g) 3\<close>}, 
+  and @{term \<open>(f \<circ> g) 4\<close>}. 
+\<close>
+(*<*)
+no_notation dummyf      ("f") 
+no_notation dummyg      ("g") 
+no_notation dummytwo    ("2")
+(*>*)
+
 definition contracting
 where 
   \<open>contracting g r sub f \<equiv>  contracting_fun g
@@ -97,6 +136,10 @@ where
                           \<and> (\<forall>n c k. f (g n) < k \<and> k \<le> n
                               \<longrightarrow> \<not> hamlet ((Rep_run r) k c))\<close>
 
+text \<open>
+  For any dilating function, we can build its \<^emph>\<open>inverse\<close>, as illustrated on
+  \autoref{fig:dilating-run}, which is a contracting function:
+\<close>
 definition \<open>dil_inverse f::(nat \<Rightarrow> nat) \<equiv> (\<lambda>n. Max {i. f i \<le> n})\<close>
 
 end

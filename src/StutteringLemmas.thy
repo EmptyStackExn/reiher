@@ -6,6 +6,13 @@ imports StutteringDefs
 
 begin
 
+text \<open>
+  In this section, we proof several lemmas that will be used to prove that TESL 
+  specifications are invariant by stuttering.
+
+  The following one will be useful in proving properties over a sequence of 
+  stuttering instants.
+\<close>
 lemma bounded_suc_ind:
   assumes \<open>\<And>k. k < m \<Longrightarrow> P (Suc (z + k)) = P (z + k)\<close>
     shows \<open>k < m \<Longrightarrow> P (Suc (z + k)) = P z\<close>
@@ -17,15 +24,19 @@ next
     with assms[of \<open>Suc k'\<close>] show ?case by force
 qed
 
-
 subsection \<open>Lemmas used to prove the invariance by stuttering\<close>
 
-text \<open>A dilating function is injective.\<close>
+text \<open>Since a dilating function is strictly monotonous, it is injective.\<close>
 
 lemma dilating_fun_injects:
   assumes \<open>dilating_fun f r\<close>
   shows   \<open>inj_on f A\<close>
 using assms dilating_fun_def strict_mono_imp_inj_on by blast
+
+lemma dilating_injects:
+  assumes \<open>dilating f sub r\<close>
+  shows   \<open>inj_on f A\<close>
+using assms dilating_def dilating_fun_injects by blast
 
 text \<open>
   If a clock ticks at an instant in a dilated run, that instant is the image
@@ -37,10 +48,24 @@ lemma ticks_image:
   shows   \<open>\<exists>n\<^sub>0. f n\<^sub>0 = n\<close>
 using dilating_fun_def assms by blast
 
+lemma ticks_image_sub:
+  assumes \<open>dilating f sub r\<close>
+  and     \<open>hamlet ((Rep_run r) n c)\<close>
+  shows   \<open>\<exists>n\<^sub>0. f n\<^sub>0 = n\<close>
+using assms dilating_def ticks_image by blast
+
+lemma ticks_image_sub':
+  assumes \<open>dilating f sub r\<close>
+  and     \<open>\<exists>c. hamlet ((Rep_run r) n c)\<close>
+  shows   \<open>\<exists>n\<^sub>0. f n\<^sub>0 = n\<close>
+using ticks_image_sub[OF assms(1)] assms(2) by blast
+
+
 text \<open> 
-  The image of the ticks in a interval by a dilating function is the interval 
-  bounded by the image of the bound of the original interval.
-  This is proven for all 4 kinds of intervals:  \<^verbatim>\<open>]m, n[\<close>, \<^verbatim>\<open>[m, n[\<close>, \<^verbatim>\<open>]m, n]\<close> and \<^verbatim>\<open>[m, n]\<close>.
+  The image of the ticks in an interval by a dilating function is the interval 
+  bounded by the image of the bounds of the original interval.
+  This is proven for all 4 kinds of intervals:  \<^verbatim>\<open>]m, n[\<close>, \<^verbatim>\<open>[m, n[\<close>, \<^verbatim>\<open>]m, n]\<close>
+  and \<^verbatim>\<open>[m, n]\<close>.
 \<close>
 
 lemma dilating_fun_image_strict:
@@ -52,7 +77,8 @@ proof
   { fix k assume h:\<open>k \<in> ?IMG\<close>
     from h obtain k\<^sub>0 where k0prop:\<open>f k\<^sub>0 = k \<and> hamlet ((Rep_run r) (f k\<^sub>0) c)\<close>
       using ticks_image[OF assms] by blast
-    with h have \<open>k \<in> image f ?SET\<close> using assms dilating_fun_def strict_mono_less by blast
+    with h have \<open>k \<in> image f ?SET\<close>
+      using assms dilating_fun_def strict_mono_less by blast
   } thus \<open>?IMG \<subseteq> image f ?SET\<close> ..
 next
   { fix k assume h:\<open>k \<in> image f ?SET\<close>
@@ -132,7 +158,8 @@ lemma ticks_as_often_strict:
 proof -
   from dilating_fun_injects[OF assms] have \<open>inj_on f ?SET\<close> .
   moreover have \<open>finite ?SET\<close> by simp
-  from inj_on_iff_eq_card[OF this] calculation have \<open>card (image f ?SET) = card ?SET\<close> by blast
+  from inj_on_iff_eq_card[OF this] calculation
+    have \<open>card (image f ?SET) = card ?SET\<close> by blast
   moreover from dilating_fun_image_strict[OF assms] have \<open>?IMG = image f ?SET\<close> .
   ultimately show ?thesis by auto
 qed
@@ -145,7 +172,8 @@ lemma ticks_as_often_left:
 proof -
   from dilating_fun_injects[OF assms] have \<open>inj_on f ?SET\<close> .
   moreover have \<open>finite ?SET\<close> by simp
-  from inj_on_iff_eq_card[OF this] calculation have \<open>card (image f ?SET) = card ?SET\<close> by blast
+  from inj_on_iff_eq_card[OF this] calculation
+    have \<open>card (image f ?SET) = card ?SET\<close> by blast
   moreover from dilating_fun_image_left[OF assms] have \<open>?IMG = image f ?SET\<close> .
   ultimately show ?thesis by auto
 qed
@@ -158,7 +186,8 @@ lemma ticks_as_often_right:
 proof -
   from dilating_fun_injects[OF assms] have \<open>inj_on f ?SET\<close> .
   moreover have \<open>finite ?SET\<close> by simp
-  from inj_on_iff_eq_card[OF this] calculation have \<open>card (image f ?SET) = card ?SET\<close> by blast
+  from inj_on_iff_eq_card[OF this] calculation
+    have \<open>card (image f ?SET) = card ?SET\<close> by blast
   moreover from dilating_fun_image_right[OF assms] have \<open>?IMG = image f ?SET\<close> .
   ultimately show ?thesis by auto
 qed
@@ -171,39 +200,13 @@ lemma ticks_as_often:
 proof -
   from dilating_fun_injects[OF assms] have \<open>inj_on f ?SET\<close> .
   moreover have \<open>finite ?SET\<close> by simp
-  from inj_on_iff_eq_card[OF this] calculation have \<open>card (image f ?SET) = card ?SET\<close> by blast
+  from inj_on_iff_eq_card[OF this] calculation
+    have \<open>card (image f ?SET) = card ?SET\<close> by blast
   moreover from dilating_fun_image[OF assms] have \<open>?IMG = image f ?SET\<close> .
   ultimately show ?thesis by auto
 qed
 
-lemma dilating_injects:
-  assumes \<open>dilating f sub r\<close>
-  shows   \<open>inj_on f A\<close>
-using assms by (simp add: dilating_def dilating_fun_def strict_mono_imp_inj_on)
-
-text \<open>
-  If there is a tick at instant n in a dilated run, n is necessarily the image
-  of some instant in the subrun.
-\<close>
-lemma ticks_image_sub:
-  assumes \<open>dilating f sub r\<close>
-  and     \<open>hamlet ((Rep_run r) n c)\<close>
-  shows   \<open>\<exists>n\<^sub>0. f n\<^sub>0 = n\<close>
-proof -
-  from assms(1) have \<open>dilating_fun f r\<close> by (simp add: dilating_def)
-  from ticks_image[OF this assms(2)] show ?thesis .
-qed
-
-lemma ticks_image_sub':
-  assumes \<open>dilating f sub r\<close>
-  and     \<open>\<exists>c. hamlet ((Rep_run r) n c)\<close>
-  shows   \<open>\<exists>n\<^sub>0. f n\<^sub>0 = n\<close>
-proof -
-  from assms(1) have \<open>dilating_fun f r\<close> by (simp add: dilating_def)
-  with dilating_fun_def assms(2) show ?thesis by blast
-qed
-
-text \<open>Time is preserved by dilation when ticks occur.\<close>
+text \<open>The date of an event is preserved by dilation.\<close>
 
 lemma ticks_tag_image:
   assumes \<open>dilating f sub r\<close>
@@ -213,11 +216,12 @@ lemma ticks_tag_image:
 proof -
   from ticks_image_sub'[OF assms(1,2)] have \<open>\<exists>k\<^sub>0. f k\<^sub>0 = k\<close> .
   from this obtain k\<^sub>0 where \<open>f k\<^sub>0 = k\<close> by blast
-  moreover with assms(1,3) have \<open>time ((Rep_run sub) k\<^sub>0 c) = \<tau>\<close> by (simp add: dilating_def) 
+  moreover with assms(1,3) have \<open>time ((Rep_run sub) k\<^sub>0 c) = \<tau>\<close>
+    by (simp add: dilating_def) 
   ultimately show ?thesis by blast
 qed
 
-text \<open>TESL operators are preserved by dilation.\<close>
+text \<open>TESL operators are invariant by dilation.\<close>
 
 lemma ticks_sub:
   assumes \<open>dilating f sub r\<close>
@@ -236,8 +240,8 @@ where
   \<open>opt_lift f \<equiv> \<lambda>x. case x of None \<Rightarrow> None | Some y \<Rightarrow> Some (f y)\<close>
 
 text \<open>
-  The set of instants when a clock ticks in a dilated run is the image by the dilation function
-  of the set of instants when it ticks in the subrun.
+  The set of instants when a clock ticks in a dilated run is the image by the 
+  dilation function of the set of instants when it ticks in the subrun.
 \<close>
 lemma tick_set_sub:
   assumes \<open>dilating f sub r\<close>
@@ -282,7 +286,8 @@ text \<open>
 lemma Least_sub:
   assumes \<open>dilating f sub r\<close>
   and     \<open>\<exists>k::nat. hamlet ((Rep_run sub) k c)\<close>
-  shows   \<open>(LEAST k. k \<in> {t. hamlet ((Rep_run r) t c)}) = f (LEAST k. k \<in> {t. hamlet ((Rep_run sub) t c)})\<close>
+  shows   \<open>(LEAST k. k \<in> {t. hamlet ((Rep_run r) t c)})
+              = f (LEAST k. k \<in> {t. hamlet ((Rep_run sub) t c)})\<close>
           (is \<open>(LEAST k. k \<in> ?R) = f (LEAST k. k \<in> ?S)\<close>)
 proof -
   from assms(2) have \<open>\<exists>x. x \<in> ?S\<close> by simp
@@ -316,7 +321,8 @@ lemma ticks_imp_ticks_subk:
 proof -
   from no_tick_sub[OF assms(1)] assms(2) have \<open>\<exists>k\<^sub>0. f k\<^sub>0 = k\<close> by blast
   from this obtain k\<^sub>0 where \<open>f k\<^sub>0 = k\<close> by blast
-  moreover with ticks_sub[OF assms(1)] assms(2) have \<open>hamlet ((Rep_run sub) k\<^sub>0 c)\<close> by blast
+  moreover with ticks_sub[OF assms(1)] assms(2)
+    have \<open>hamlet ((Rep_run sub) k\<^sub>0 c)\<close> by blast
   ultimately show ?thesis by blast
 qed
 
@@ -344,7 +350,8 @@ next
       obtain i\<^sub>0 where i0prop:\<open>f i\<^sub>0 = i \<and> hamlet ((Rep_run sub) i\<^sub>0 c)\<close> by blast
     with h have \<open>f m < f i\<^sub>0 \<and> f i\<^sub>0 < f n\<close> by simp
     moreover have \<open>strict_mono f\<close> using assms dilating_def dilating_fun_def by blast
-    ultimately have \<open>m < i\<^sub>0 \<and> i\<^sub>0 < n\<close> using strict_mono_less strict_mono_less_eq by blast
+    ultimately have \<open>m < i\<^sub>0 \<and> i\<^sub>0 < n\<close>
+      using strict_mono_less strict_mono_less_eq by blast
     with i0prop have \<open>\<exists>i\<^sub>0. f i\<^sub>0 = i \<and> i\<^sub>0 \<in> ?SUB\<close> by blast
   } thus \<open>?RUN \<subseteq> image f ?SUB\<close> by blast
 qed
@@ -370,7 +377,8 @@ next
       obtain i\<^sub>0 where i0prop:\<open>f i\<^sub>0 = i \<and> hamlet ((Rep_run sub) i\<^sub>0 c)\<close> by blast
     with h have \<open>f m \<le> f i\<^sub>0 \<and> f i\<^sub>0 < f n\<close> by simp
     moreover have \<open>strict_mono f\<close> using assms dilating_def dilating_fun_def by blast
-    ultimately have \<open>m \<le> i\<^sub>0 \<and> i\<^sub>0 < n\<close> using strict_mono_less strict_mono_less_eq by blast
+    ultimately have \<open>m \<le> i\<^sub>0 \<and> i\<^sub>0 < n\<close>
+      using strict_mono_less strict_mono_less_eq by blast
     with i0prop have \<open>\<exists>i\<^sub>0. f i\<^sub>0 = i \<and> i\<^sub>0 \<in> ?SUB\<close> by blast
   } thus \<open>?RUN \<subseteq> image f ?SUB\<close> by blast
 qed
@@ -396,7 +404,8 @@ next
       obtain i\<^sub>0 where i0prop:\<open>f i\<^sub>0 = i \<and> hamlet ((Rep_run sub) i\<^sub>0 c)\<close> by blast
     with h have \<open>f m < f i\<^sub>0 \<and> f i\<^sub>0 \<le> f n\<close> by simp
     moreover have \<open>strict_mono f\<close> using assms dilating_def dilating_fun_def by blast
-    ultimately have \<open>m < i\<^sub>0 \<and> i\<^sub>0 \<le> n\<close> using strict_mono_less strict_mono_less_eq by blast
+    ultimately have \<open>m < i\<^sub>0 \<and> i\<^sub>0 \<le> n\<close>
+      using strict_mono_less strict_mono_less_eq by blast
     with i0prop have \<open>\<exists>i\<^sub>0. f i\<^sub>0 = i \<and> i\<^sub>0 \<in> ?SUB\<close> by blast
   } thus \<open>?RUN \<subseteq> image f ?SUB\<close> by blast
 qed
@@ -428,26 +437,30 @@ next
 qed
 
 
-text \<open>No tick can occur in a dilated run before the image of 0 by the dilation function. \<close>
+text \<open>
+  No tick can occur in a dilated run before the image of 0 by the dilation function.
+\<close>
 
 lemma empty_dilated_prefix:
   assumes \<open>dilating f sub r\<close>
   and     \<open>n < f 0\<close>
 shows   \<open>\<not> hamlet ((Rep_run r) n c)\<close>
-proof - (* This one is easy with the new definition of a dilating function. *)
+proof -
   from assms have False by (simp add: dilating_def dilating_fun_def)
   thus ?thesis ..
 qed
 
 corollary empty_dilated_prefix':
   assumes \<open>dilating f sub r\<close>
-  shows   \<open>{i. f 0 \<le> i \<and> i \<le> f n \<and> hamlet ((Rep_run r) i c)} = {i. i \<le> f n \<and> hamlet ((Rep_run r) i c)}\<close>
+  shows   \<open>{i. f 0 \<le> i \<and> i \<le> f n \<and> hamlet ((Rep_run r) i c)}
+         = {i. i \<le> f n \<and> hamlet ((Rep_run r) i c)}\<close>
 proof -
   from assms have \<open>strict_mono f\<close> by (simp add: dilating_def dilating_fun_def)
   hence \<open>f 0 \<le> f n\<close> unfolding strict_mono_def by (simp add: less_mono_imp_le_mono)
   hence \<open>\<forall>i. i \<le> f n = (i < f 0) \<or> (f 0 \<le> i \<and> i \<le> f n)\<close> by auto
   hence \<open>{i. i \<le> f n \<and> hamlet ((Rep_run r) i c)}
-        = {i. i < f 0 \<and> hamlet ((Rep_run r) i c)} \<union> {i. f 0 \<le> i \<and> i \<le> f n \<and> hamlet ((Rep_run r) i c)}\<close>
+        = {i. i < f 0 \<and> hamlet ((Rep_run r) i c)}
+        \<union> {i. f 0 \<le> i \<and> i \<le> f n \<and> hamlet ((Rep_run r) i c)}\<close>
     by auto
   also have \<open>... = {i. f 0 \<le> i \<and> i \<le> f n \<and> hamlet ((Rep_run r) i c)}\<close>
      using empty_dilated_prefix[OF assms] by blast
@@ -488,7 +501,10 @@ lemma nat_sing_prop:
   \<open>{i::nat. i = k \<and> P(i)} = {i::nat. i = k \<and> P(k)}\<close>
 by auto
 
-text \<open>The set definition and the function definition of @{const tick_count} are equivalent.\<close>
+text \<open>
+  The set definition and the function definition of @{const tick_count}
+  are equivalent.
+\<close>
 lemma tick_count_is_fun[code]:\<open>tick_count r c n = run_tick_count r c n\<close>
 proof (induction n)
   case 0
@@ -504,54 +520,63 @@ next
     show ?case
     proof (cases \<open>hamlet ((Rep_run r) (Suc k) c)\<close>)
       case True
-        hence \<open>{i. i \<le> Suc k \<and> hamlet ((Rep_run r) i c)} = insert (Suc k) {i. i \<le> k \<and> hamlet ((Rep_run r) i c)}\<close>
-          by auto
+        hence \<open>{i. i \<le> Suc k \<and> hamlet ((Rep_run r) i c)}
+             = insert (Suc k) {i. i \<le> k \<and> hamlet ((Rep_run r) i c)}\<close> by auto
         hence \<open>tick_count r c (Suc k) = Suc (tick_count r c k)\<close>
           by (simp add: tick_count_def)
         with Suc.IH have \<open>tick_count r c (Suc k) = Suc (run_tick_count r c k)\<close> by simp
         thus ?thesis by (simp add: True)
     next
       case False
-        hence \<open>{i. i \<le> Suc k \<and> hamlet ((Rep_run r) i c)} = {i. i \<le> k \<and> hamlet ((Rep_run r) i c)}\<close>
+        hence \<open>{i. i \<le> Suc k \<and> hamlet ((Rep_run r) i c)}
+             = {i. i \<le> k \<and> hamlet ((Rep_run r) i c)}\<close>
           using le_Suc_eq by auto
-        hence \<open>tick_count r c (Suc k) = tick_count r c k\<close> by (simp add: tick_count_def)
+        hence \<open>tick_count r c (Suc k) = tick_count r c k\<close>
+          by (simp add: tick_count_def)
         thus ?thesis using Suc.IH by (simp add: False)
     qed
 qed
 
-text\<open>The set definition and the function definition of @{const tick_count_strict}  are equivalent.\<close> 
+text \<open>
+  To show that the set definition and the function definition 
+  of @{const tick_count_strict} are equivalent, we first show that
+  the \<^emph>\<open>strictness\<close> of @{const tick_count_strict} can be softened using @{const Suc}.
+\<close> 
 lemma tick_count_strict_suc:\<open>tick_count_strict r c (Suc n) = tick_count r c n\<close>
   unfolding tick_count_def tick_count_strict_def using less_Suc_eq_le by auto
 
-lemma tick_count_strict_is_fun[code]:\<open>tick_count_strict r c n = run_tick_count_strictly r c n\<close>
+lemma tick_count_strict_is_fun[code]:
+  \<open>tick_count_strict r c n = run_tick_count_strictly r c n\<close>
 proof (cases \<open>n = 0\<close>)
   case True
     hence \<open>tick_count_strict r c n = 0\<close> unfolding tick_count_strict_def by simp
-    also have \<open>... = run_tick_count_strictly r c 0\<close> using run_tick_count_strictly.simps(1)[symmetric] .
+    also have \<open>... = run_tick_count_strictly r c 0\<close>
+      using run_tick_count_strictly.simps(1)[symmetric] .
     finally show ?thesis using True by simp
 next
   case False
-  from not0_implies_Suc[OF this] obtain m where *:\<open>n = Suc m\<close> by blast
-  hence \<open>tick_count_strict r c n = tick_count r c m\<close> using tick_count_strict_suc by simp
-  also have \<open>... = run_tick_count r c m\<close> using tick_count_is_fun[of \<open>r\<close> \<open>c\<close> \<open>m\<close>] .
-  also have \<open>... = run_tick_count_strictly r c (Suc m)\<close> using run_tick_count_strictly.simps(2)[symmetric] .
-  finally show ?thesis using * by simp
+    from not0_implies_Suc[OF this] obtain m where *:\<open>n = Suc m\<close> by blast
+    hence \<open>tick_count_strict r c n = tick_count r c m\<close>
+      using tick_count_strict_suc by simp
+    also have \<open>... = run_tick_count r c m\<close> using tick_count_is_fun[of \<open>r\<close> \<open>c\<close> \<open>m\<close>] .
+    also have \<open>... = run_tick_count_strictly r c (Suc m)\<close>
+      using run_tick_count_strictly.simps(2)[symmetric] .
+    finally show ?thesis using * by simp
 qed
 
-lemma cong_suc_collect:
-  assumes \<open>\<And>r K n. P r K n = P' r K n\<close>
-      and \<open>\<And>r K n. Q r K n = Q' r K n\<close>
-      and \<open>\<And>r K n. Q r K (Suc n) = P r K n\<close>
-    shows \<open>\<And>K\<^sub>1 K\<^sub>2 n. {r. P' r K\<^sub>2 n \<le> Q' r K\<^sub>1 n} = {r. Q' r K\<^sub>2 (Suc n) \<le> Q' r K\<^sub>1 n}\<close>
-  using assms by auto
-
+text \<open>
+  This leads to an alternate definition of the strict precedence relation.
+\<close>
 lemma strictly_precedes_alt_def1:
   \<open>{ \<rho>. \<forall>n::nat. (run_tick_count \<rho> K\<^sub>2 n) \<le> (run_tick_count_strictly \<rho> K\<^sub>1 n) }
- = { \<rho>. \<forall>n::nat. (run_tick_count_strictly \<rho> K\<^sub>2 (Suc n)) \<le> (run_tick_count_strictly \<rho> K\<^sub>1 n) }\<close>
-  using cong_suc_collect[of tick_count run_tick_count tick_count_strict run_tick_count_strictly,
-                         OF tick_count_is_fun tick_count_strict_is_fun tick_count_strict_suc] 
-  by simp
+ = { \<rho>. \<forall>n::nat. (run_tick_count_strictly \<rho> K\<^sub>2 (Suc n))
+                  \<le> (run_tick_count_strictly \<rho> K\<^sub>1 n) }\<close>
+by auto
 
+text \<open>
+  The strict precedence relation can even be defined using 
+  only @{const \<open>run_tick_count\<close>}:
+\<close>
 lemma zero_gt_all:
   assumes \<open>P (0::nat)\<close>
       and \<open>\<And>n. n > 0 \<Longrightarrow> P n\<close>
@@ -560,17 +585,21 @@ lemma zero_gt_all:
 
 lemma strictly_precedes_alt_def2:
   \<open>{ \<rho>. \<forall>n::nat. (run_tick_count \<rho> K\<^sub>2 n) \<le> (run_tick_count_strictly \<rho> K\<^sub>1 n) }
- = { \<rho>. (\<not>hamlet ((Rep_run \<rho>) 0 K\<^sub>2)) \<and> (\<forall>n::nat. (run_tick_count \<rho> K\<^sub>2 (Suc n)) \<le> (run_tick_count \<rho> K\<^sub>1 n)) }\<close>
+ = { \<rho>. (\<not>hamlet ((Rep_run \<rho>) 0 K\<^sub>2))
+      \<and> (\<forall>n::nat. (run_tick_count \<rho> K\<^sub>2 (Suc n)) \<le> (run_tick_count \<rho> K\<^sub>1 n)) }\<close>
   (is \<open>?P = ?P'\<close>)
 proof
   { fix r::\<open>'a run\<close>
     assume \<open>r \<in> ?P\<close>
-    hence \<open>\<forall>n::nat. (run_tick_count r K\<^sub>2 n) \<le> (run_tick_count_strictly r K\<^sub>1 n)\<close> by simp
+    hence \<open>\<forall>n::nat. (run_tick_count r K\<^sub>2 n) \<le> (run_tick_count_strictly r K\<^sub>1 n)\<close>
+      by simp
     hence 1:\<open>\<forall>n::nat. (tick_count r K\<^sub>2 n) \<le> (tick_count_strict r K\<^sub>1 n)\<close>
-      using tick_count_is_fun[symmetric, of r] tick_count_strict_is_fun[symmetric, of r] by simp
+      using tick_count_is_fun[symmetric, of r] tick_count_strict_is_fun[symmetric, of r]
+      by simp
     hence \<open>\<forall>n::nat. (tick_count_strict r K\<^sub>2 (Suc n)) \<le> (tick_count_strict r K\<^sub>1 n)\<close>
       using tick_count_strict_suc[symmetric, of \<open>r\<close> \<open>K\<^sub>2\<close>] by simp
-    hence \<open>\<forall>n::nat. (tick_count_strict r K\<^sub>2 (Suc (Suc n))) \<le> (tick_count_strict r K\<^sub>1 (Suc n))\<close> by simp
+    hence \<open>\<forall>n::nat. (tick_count_strict r K\<^sub>2 (Suc (Suc n))) \<le> (tick_count_strict r K\<^sub>1 (Suc n))\<close>
+      by simp
     hence \<open>\<forall>n::nat. (tick_count r K\<^sub>2 (Suc n)) \<le> (tick_count r K\<^sub>1 n)\<close>
       using tick_count_strict_suc[symmetric, of \<open>r\<close>] by simp
     hence *:\<open>\<forall>n::nat. (run_tick_count r K\<^sub>2 (Suc n)) \<le> (run_tick_count r K\<^sub>1 n)\<close>
@@ -602,6 +631,10 @@ proof
   } thus \<open>?P' \<subseteq> ?P\<close> ..
 qed
 
+text \<open>
+  Some properties of @{const \<open>run_tick_count\<close>}, @{const \<open>tick_count\<close>} 
+  and @{const \<open>Suc\<close>}:
+\<close>
 lemma run_tick_count_suc:
   \<open>run_tick_count r c (Suc n) = (if hamlet ((Rep_run r) (Suc n) c)
                                  then Suc (run_tick_count r c n)
@@ -614,41 +647,55 @@ corollary tick_count_suc:
                              else tick_count r c n)\<close>
 by (simp add: tick_count_is_fun)
 
-lemma card_suc:\<open>card {i. i \<le> (Suc n) \<and> P i} = card {i. i \<le> n \<and> P i} + card {i. i = (Suc n) \<and> P i}\<close>
+text \<open>
+  Some generic properties on the cardinal of sets of nat that we will need later.
+\<close>
+lemma card_suc:
+  \<open>card {i. i \<le> (Suc n) \<and> P i} = card {i. i \<le> n \<and> P i} + card {i. i = (Suc n) \<and> P i}\<close>
 proof -
   have \<open>{i. i \<le> n \<and> P i} \<inter> {i. i = (Suc n) \<and> P i} = {}\<close> by auto
-  moreover have \<open>{i. i \<le> n \<and> P i} \<union> {i. i = (Suc n) \<and> P i} = {i. i \<le> (Suc n) \<and> P i}\<close> by auto
+  moreover have \<open>{i. i \<le> n \<and> P i} \<union> {i. i = (Suc n) \<and> P i}
+               = {i. i \<le> (Suc n) \<and> P i}\<close> by auto
   moreover have \<open>finite {i. i \<le> n \<and> P i}\<close> by simp
   moreover have \<open>finite {i. i = (Suc n) \<and> P i}\<close> by simp
-  ultimately show ?thesis using card_Un_disjoint[of \<open>{i. i \<le> n \<and> P i}\<close> \<open>{i. i = Suc n \<and> P i}\<close>] by simp
+  ultimately show ?thesis
+    using card_Un_disjoint[of \<open>{i. i \<le> n \<and> P i}\<close> \<open>{i. i = Suc n \<and> P i}\<close>] by simp
 qed
 
 lemma card_le_leq:
   assumes \<open>m < n\<close>
-    shows \<open>card {i::nat. m < i \<and> i \<le> n \<and> P i} = card {i. m < i \<and> i < n \<and> P i} + card {i. i = n \<and> P i}\<close>
+    shows \<open>card {i::nat. m < i \<and> i \<le> n \<and> P i}
+         = card {i. m < i \<and> i < n \<and> P i} + card {i. i = n \<and> P i}\<close>
 proof -
   have \<open>{i::nat. m < i \<and> i < n \<and> P i} \<inter> {i. i = n \<and> P i} = {}\<close> by auto
-  moreover with assms have \<open>{i::nat. m < i \<and> i < n \<and> P i} \<union> {i. i = n \<and> P i} = {i. m < i \<and> i \<le> n \<and> P i}\<close> by auto
+  moreover with assms have
+    \<open>{i::nat. m < i \<and> i < n \<and> P i} \<union> {i. i = n \<and> P i} = {i. m < i \<and> i \<le> n \<and> P i}\<close>
+  by auto
   moreover have \<open>finite {i. m < i \<and> i < n \<and> P i}\<close> by simp
   moreover have \<open>finite {i. i = n \<and> P i}\<close> by simp
-  ultimately show ?thesis using card_Un_disjoint[of \<open>{i. m < i \<and> i < n \<and> P i}\<close> \<open>{i. i = n \<and> P i}\<close>] by simp
+  ultimately show ?thesis
+    using card_Un_disjoint[of \<open>{i. m < i \<and> i < n \<and> P i}\<close> \<open>{i. i = n \<and> P i}\<close>] by simp
 qed
 
-lemma card_le_leq_0:\<open>card {i::nat. i \<le> n \<and> P i} = card {i. i < n \<and> P i} + card {i. i = n \<and> P i}\<close>
+lemma card_le_leq_0:
+  \<open>card {i::nat. i \<le> n \<and> P i} = card {i. i < n \<and> P i} + card {i. i = n \<and> P i}\<close>
 proof -
   have \<open>{i::nat. i < n \<and> P i} \<inter> {i. i = n \<and> P i} = {}\<close> by auto
   moreover have \<open>{i. i < n \<and> P i} \<union> {i. i = n \<and> P i} = {i. i \<le> n \<and> P i}\<close> by auto
   moreover have \<open>finite {i. i < n \<and> P i}\<close> by simp
   moreover have \<open>finite {i. i = n \<and> P i}\<close> by simp
-  ultimately show ?thesis using card_Un_disjoint[of \<open>{i. i < n \<and> P i}\<close> \<open>{i. i = n \<and> P i}\<close>] by simp
+  ultimately show ?thesis
+    using card_Un_disjoint[of \<open>{i. i < n \<and> P i}\<close> \<open>{i. i = n \<and> P i}\<close>] by simp
 qed
 
 lemma card_mnm:
   assumes \<open>m < n\<close>
-    shows \<open>card {i::nat. i < n \<and> P i} = card {i. i \<le> m \<and> P i} + card {i. m < i \<and> i < n \<and> P i}\<close>
+    shows \<open>card {i::nat. i < n \<and> P i}
+         = card {i. i \<le> m \<and> P i} + card {i. m < i \<and> i < n \<and> P i}\<close>
 proof -
   have 1:\<open>{i::nat. i \<le> m \<and> P i} \<inter> {i. m < i \<and> i < n \<and> P i} = {}\<close> by auto
-  from assms have \<open>\<forall>i::nat. i < n = (i \<le> m) \<or> (m < i \<and> i < n)\<close>  using less_trans by auto
+  from assms have \<open>\<forall>i::nat. i < n = (i \<le> m) \<or> (m < i \<and> i < n)\<close>
+    using less_trans by auto
   hence 2:
     \<open>{i::nat. i < n \<and> P i} = {i. i \<le> m \<and> P i} \<union> {i. m < i \<and> i < n \<and> P i}\<close> by blast
   have 3:\<open>finite {i. i \<le> m \<and> P i}\<close> by simp
@@ -658,10 +705,12 @@ qed
 
 lemma card_mnm':
   assumes \<open>m < n\<close>
-    shows \<open>card {i::nat. i < n \<and> P i} = card {i. i < m \<and> P i} + card {i. m \<le> i \<and> i < n \<and> P i}\<close>
+    shows \<open>card {i::nat. i < n \<and> P i}
+         = card {i. i < m \<and> P i} + card {i. m \<le> i \<and> i < n \<and> P i}\<close>
 proof -
   have 1:\<open>{i::nat. i < m \<and> P i} \<inter> {i. m \<le> i \<and> i < n \<and> P i} = {}\<close> by auto
-  from assms have \<open>\<forall>i::nat. i < n = (i < m) \<or> (m \<le> i \<and> i < n)\<close>  using less_trans by auto
+  from assms have \<open>\<forall>i::nat. i < n = (i < m) \<or> (m \<le> i \<and> i < n)\<close>
+    using less_trans by auto
   hence 2:
     \<open>{i::nat. i < n \<and> P i} = {i. i < m \<and> P i} \<union> {i. m \<le> i \<and> i < n \<and> P i}\<close> by blast
   have 3:\<open>finite {i. i < m \<and> P i}\<close> by simp
@@ -669,12 +718,37 @@ proof -
   from card_Un_disjoint[OF 3 4 1] 2 show ?thesis by simp
 qed
 
-
 lemma nat_interval_union:
   assumes \<open>m \<le> n\<close>
-    shows \<open>{i::nat. i \<le> n \<and> P i} = {i::nat. i \<le> m \<and> P i} \<union> {i::nat. m < i \<and> i \<le> n \<and> P i}\<close>
+    shows \<open>{i::nat. i \<le> n \<and> P i}
+         = {i::nat. i \<le> m \<and> P i} \<union> {i::nat. m < i \<and> i \<le> n \<and> P i}\<close>
 using assms le_cases nat_less_le by auto
 
+lemma card_sing_prop:\<open>card {i. i = n \<and> P i} = (if P n then 1 else 0)\<close>
+proof (cases \<open>P n\<close>)
+  case True
+    hence \<open>{i. i = n \<and> P i} = {n}\<close> by (simp add: Collect_conv_if)
+    with \<open>P n\<close> show ?thesis by simp
+next
+  case False
+    hence \<open>{i. i = n \<and> P i} = {}\<close> by (simp add: Collect_conv_if)
+    with \<open>\<not>P n\<close> show ?thesis by simp
+qed
+
+lemma card_prop_mono:
+  assumes \<open>m \<le> n\<close>
+    shows \<open>card {i::nat. i \<le> m \<and> P i} \<le> card {i. i \<le> n \<and> P i}\<close>
+proof -
+  from assms have \<open>{i. i \<le> m \<and> P i} \<subseteq> {i. i \<le> n \<and> P i}\<close> by auto
+  moreover have \<open>finite {i. i \<le> n \<and> P i}\<close> by simp
+  ultimately show ?thesis by (simp add: card_mono)
+qed
+
+
+text \<open>
+  In a dilated run, no tick occurs strictly between two successive instants that 
+  are the images by @{term \<open>f\<close>} of instants of the original run.
+\<close>
 lemma no_tick_before_suc:
   assumes \<open>dilating f sub r\<close>
       and \<open>(f n) < k \<and> k < (f (Suc n))\<close>
@@ -689,9 +763,16 @@ proof -
   } thus ?thesis using assms(2) by blast
 qed
 
+text \<open>
+  From this, we show that the number of ticks on any clock at @{term \<open>f (Suc n)\<close>}
+  depends only on the number of ticks on this clock at @{term \<open>f n\<close>} and whether
+  this clock ticks at @{term \<open>f (Suc n)\<close>}.
+  All the instants in between are stuttering instants.
+\<close>
 lemma tick_count_fsuc:
   assumes \<open>dilating f sub r\<close>
-  shows \<open>tick_count r c (f (Suc n)) = tick_count r c (f n) + card {k. k = f (Suc n) \<and> hamlet ((Rep_run r) k c)}\<close>
+    shows \<open>tick_count r c (f (Suc n))
+         = tick_count r c (f n) + card {k. k = f (Suc n) \<and> hamlet ((Rep_run r) k c)}\<close>
 proof -
   have smf:\<open>strict_mono f\<close> using assms dilating_def dilating_fun_def by blast
   moreover have \<open>finite {k. k \<le> f n \<and> hamlet ((Rep_run r) k c)}\<close> by simp
@@ -714,27 +795,18 @@ proof -
   ultimately show ?thesis by (simp add: tick_count_def)
 qed
 
-lemma card_sing_prop:\<open>card {i. i = n \<and> P i} = (if P n then 1 else 0)\<close>
-proof (cases \<open>P n\<close>)
-  case True
-    hence \<open>{i. i = n \<and> P i} = {n}\<close> by (simp add: Collect_conv_if)
-    with \<open>P n\<close> show ?thesis by simp
-next
-  case False
-    hence \<open>{i. i = n \<and> P i} = {}\<close> by (simp add: Collect_conv_if)
-    with \<open>\<not>P n\<close> show ?thesis by simp
-qed
-
 corollary tick_count_f_suc:
   assumes \<open>dilating f sub r\<close>
-    shows \<open>tick_count r c (f (Suc n)) = tick_count r c (f n) + (if hamlet ((Rep_run r) (f (Suc n)) c) then 1 else 0)\<close>
-using tick_count_fsuc[OF assms] card_sing_prop[of \<open>f (Suc n)\<close> \<open>\<lambda>k. hamlet ((Rep_run r) k c)\<close>] by simp
+    shows \<open>tick_count r c (f (Suc n))
+         = tick_count r c (f n) + (if hamlet ((Rep_run r) (f (Suc n)) c) then 1 else 0)\<close>
+using tick_count_fsuc[OF assms]
+      card_sing_prop[of \<open>f (Suc n)\<close> \<open>\<lambda>k. hamlet ((Rep_run r) k c)\<close>] by simp
 
 corollary tick_count_f_suc_suc:
   assumes \<open>dilating f sub r\<close>
     shows \<open>tick_count r c (f (Suc n)) = (if hamlet ((Rep_run r) (f (Suc n)) c)
-                                       then Suc (tick_count r c (f n))
-                                       else tick_count r c (f n))\<close>
+                                         then Suc (tick_count r c (f n))
+                                         else tick_count r c (f n))\<close>
 using tick_count_f_suc[OF assms] by simp
 
 lemma tick_count_f_suc_sub:
@@ -744,6 +816,28 @@ lemma tick_count_f_suc_sub:
                                          else tick_count r c (f n))\<close>
 using tick_count_f_suc_suc[OF assms] assms by (simp add: dilating_def)
 
+text \<open>
+  The number of ticks does not progress during stuttering instants.
+\<close>
+lemma tick_count_latest:
+  assumes \<open>dilating f sub r\<close>
+      and \<open>f n\<^sub>p < n \<and> (\<forall>k. f n\<^sub>p < k \<and> k \<le> n \<longrightarrow> (\<nexists>k\<^sub>0. f k\<^sub>0 = k))\<close>
+    shows \<open>tick_count r c n = tick_count r c (f n\<^sub>p)\<close>
+proof -
+  have union:\<open>{i. i \<le> n \<and> hamlet ((Rep_run r) i c)} =
+          {i. i \<le> f n\<^sub>p \<and> hamlet ((Rep_run r) i c)}
+        \<union> {i. f n\<^sub>p < i \<and> i \<le> n \<and> hamlet ((Rep_run r) i c)}\<close> using assms(2) by auto
+  have partition: \<open>{i. i \<le> f n\<^sub>p \<and> hamlet ((Rep_run r) i c)}
+        \<inter> {i. f n\<^sub>p < i \<and> i \<le> n \<and> hamlet ((Rep_run r) i c)} = {}\<close>
+    by (simp add: disjoint_iff_not_equal)
+  from assms have \<open>{i. f n\<^sub>p < i \<and> i \<le> n \<and> hamlet ((Rep_run r) i c)} = {}\<close>
+    using no_tick_sub by fastforce
+  with union and partition show ?thesis by (simp add: tick_count_def)
+qed
+
+text \<open>
+  We finally show that the number of ticks on any clock is preserved by dilation.
+\<close>
 lemma tick_count_sub:
   assumes \<open>dilating f sub r\<close>
     shows \<open>tick_count sub c n = tick_count r c (f n)\<close>
@@ -770,6 +864,9 @@ proof -
   finally show ?thesis .
 qed
 
+text \<open>
+  The number of ticks occurring strictly before the first instant is null.
+\<close>
 lemma tick_count_strict_0:
   assumes \<open>dilating f sub r\<close>
     shows \<open>tick_count_strict r c (f 0) = 0\<close>
@@ -778,22 +875,10 @@ proof -
   thus ?thesis unfolding tick_count_strict_def by simp
 qed
 
-lemma tick_count_latest:
-  assumes \<open>dilating f sub r\<close>
-      and \<open>f n\<^sub>p < n \<and> (\<forall>k. f n\<^sub>p < k \<and> k \<le> n \<longrightarrow> (\<nexists>k\<^sub>0. f k\<^sub>0 = k))\<close>
-    shows \<open>tick_count r c n = tick_count r c (f n\<^sub>p)\<close>
-proof -
-  have union:\<open>{i. i \<le> n \<and> hamlet ((Rep_run r) i c)} =
-          {i. i \<le> f n\<^sub>p \<and> hamlet ((Rep_run r) i c)}
-        \<union> {i. f n\<^sub>p < i \<and> i \<le> n \<and> hamlet ((Rep_run r) i c)}\<close> using assms(2) by auto
-  have partition: \<open>{i. i \<le> f n\<^sub>p \<and> hamlet ((Rep_run r) i c)}
-        \<inter> {i. f n\<^sub>p < i \<and> i \<le> n \<and> hamlet ((Rep_run r) i c)} = {}\<close>
-    by (simp add: disjoint_iff_not_equal)
-  from assms have \<open>{i. f n\<^sub>p < i \<and> i \<le> n \<and> hamlet ((Rep_run r) i c)} = {}\<close>
-    using no_tick_sub by fastforce
-  with union and partition show ?thesis by (simp add: tick_count_def)
-qed
-
+text \<open>
+  The number of ticks strictly before an instant does not progress
+  during stuttering instants.
+\<close>
 lemma tick_count_strict_stable:
   assumes \<open>dilating f sub r\<close>
   assumes \<open>(f n) < k \<and> k < (f (Suc n))\<close>
@@ -804,16 +889,22 @@ proof -
   hence \<open>\<forall>i. k \<le> i \<longrightarrow> f n < i\<close> by simp
   with no_tick_before_suc[OF assms(1)] have
     *:\<open>\<forall>i. k \<le> i \<and> i < f (Suc n) \<longrightarrow> \<not>hamlet ((Rep_run r) i c)\<close> by blast
-  from tick_count_strict_def have \<open>tick_count_strict r c (f (Suc n)) = card {i. i < f (Suc n) \<and> hamlet ((Rep_run r) i c)}\<close> .
-  also have \<open>... = card {i. i < k \<and> hamlet ((Rep_run r) i c)} + card {i. k \<le> i \<and> i < f (Suc n) \<and> hamlet ((Rep_run r) i c)}\<close> 
+  from tick_count_strict_def have
+    \<open>tick_count_strict r c (f (Suc n)) = card {i. i < f (Suc n) \<and> hamlet ((Rep_run r) i c)}\<close> .
+  also have
+    \<open>... = card {i. i < k \<and> hamlet ((Rep_run r) i c)}
+         + card {i. k \<le> i \<and> i < f (Suc n) \<and> hamlet ((Rep_run r) i c)}\<close> 
     using card_mnm' assms(2) by simp
   also have \<open>... = card {i. i < k \<and> hamlet ((Rep_run r) i c)}\<close> using * by simp
   finally show ?thesis by (simp add: tick_count_strict_def)
 qed
 
+text \<open>
+  Finally, the number of ticks strictly before an instant is preserved by dilation.
+\<close>
 lemma tick_count_strict_sub:
   assumes \<open>dilating f sub r\<close>
-  shows \<open>tick_count_strict sub c n = tick_count_strict r c (f n)\<close>
+    shows \<open>tick_count_strict sub c n = tick_count_strict r c (f n)\<close>
 proof -
   have \<open>tick_count_strict sub c n = card {i. i < n \<and> hamlet ((Rep_run sub) i c)}\<close>
     using tick_count_strict_def[of \<open>sub\<close> \<open>c\<close> \<open>n\<close>] .
@@ -826,14 +917,9 @@ proof -
   finally show ?thesis .
 qed
 
-lemma card_prop_mono:
-  assumes \<open>m \<le> n\<close>
-    shows \<open>card {i::nat. i \<le> m \<and> P i} \<le> card {i. i \<le> n \<and> P i}\<close>
-proof -
-  from assms have \<open>{i. i \<le> m \<and> P i} \<subseteq> {i. i \<le> n \<and> P i}\<close> by auto
-  moreover have \<open>finite {i. i \<le> n \<and> P i}\<close> by simp
-  ultimately show ?thesis by (simp add: card_mono)
-qed
+text \<open>
+  The tick count on any clock can only increase.
+\<close>
 
 lemma mono_tick_count:
   \<open>mono (\<lambda> k. tick_count r c k)\<close>
@@ -845,6 +931,11 @@ proof
   } thus \<open>\<And>x y. x \<le> y \<Longrightarrow> tick_count r c x \<le> tick_count r c y\<close> .
 qed
 
+text \<open>
+  In a dilated run, for any stuttering instant, there is an instant which is the 
+  image of an instant in the original run, and which is the latest one before
+  the stuttering instant.
+\<close>
 lemma greatest_prev_image:
   assumes \<open>dilating f sub r\<close>
     shows \<open>(\<nexists>n\<^sub>0. f n\<^sub>0 = n) \<Longrightarrow> (\<exists>n\<^sub>p. f n\<^sub>p < n \<and> (\<forall>k. f n\<^sub>p < k \<and> k \<le> n \<longrightarrow> (\<nexists>k\<^sub>0. f k\<^sub>0 = k)))\<close>
@@ -872,6 +963,10 @@ next
   qed
 qed
 
+text \<open>
+  If a strictly monotonous function on @{typ \<open>nat\<close>} increases only by one,
+  its argument was increased only by one.
+\<close>
 lemma strict_mono_suc:
   assumes \<open>strict_mono f\<close>
       and \<open>f sn = Suc (f n)\<close>
@@ -890,6 +985,10 @@ proof -
   ultimately show ?thesis by (simp add: Suc_leI)
 qed
 
+text \<open>
+  Two successive non stuttering instants of a dilated run are the images
+  of two successive instants of the original run.
+\<close>
 lemma next_non_stuttering:
   assumes \<open>dilating f sub r\<close>
       and \<open>f n\<^sub>p < n \<and> (\<forall>k. f n\<^sub>p < k \<and> k \<le> n \<longrightarrow> (\<nexists>k\<^sub>0. f k\<^sub>0 = k))\<close>
@@ -912,6 +1011,9 @@ proof -
   with ** show ?thesis by simp
 qed
 
+text \<open>
+  The order relation between tick counts on clocks is preserved by dilation.
+\<close>
 lemma dil_tick_count:
   assumes \<open>sub \<lless> r\<close>
       and \<open>\<forall>n. run_tick_count sub a n \<le> run_tick_count sub b n\<close>
@@ -922,7 +1024,8 @@ proof -
   proof (induction n)
     case 0 
       from assms(2) have \<open>run_tick_count sub a 0 \<le> run_tick_count sub b 0\<close> ..
-      with run_tick_count_sub[OF *, of _ 0] have \<open>run_tick_count r a (f 0) \<le> run_tick_count r b (f 0)\<close> by simp
+      with run_tick_count_sub[OF *, of _ 0] have
+        \<open>run_tick_count r a (f 0) \<le> run_tick_count r b (f 0)\<close> by simp
       moreover from * have \<open>f 0 = 0\<close> by (simp add:dilating_def dilating_fun_def)
       ultimately show ?case by simp
   next
@@ -938,7 +1041,8 @@ proof -
             thus ?thesis by (simp add: fn0)
         next
           case False
-            hence \<open>\<not> hamlet ((Rep_run r) (Suc n') a)\<close> using * fn0 ticks_sub by fastforce
+            hence \<open>\<not> hamlet ((Rep_run r) (Suc n') a)\<close>
+              using * fn0 ticks_sub by fastforce
             thus ?thesis by (simp add: Suc.IH le_SucI)
         qed
     next
@@ -948,6 +1052,9 @@ proof -
   qed
 qed
 
+text \<open>
+  Time does not progress during stuttering instants.
+\<close>
 lemma stutter_no_time:
   assumes \<open>dilating f sub r\<close>
       and \<open>\<And>k. f n < k \<and> k \<le> m \<Longrightarrow> (\<nexists>k\<^sub>0. f k\<^sub>0 = k)\<close>
@@ -979,9 +1086,13 @@ proof -
   finally show ?thesis .
 qed
 
+text \<open>
+  The first instant at which a given date is reached on a clock is preserved
+  by dilation.
+\<close>
 lemma first_time_image:
   assumes \<open>dilating f sub r\<close>
-  shows \<open>first_time sub c n t = first_time r c (f n) t\<close>
+    shows \<open>first_time sub c n t = first_time r c (f n) t\<close>
 proof
   assume \<open>first_time sub c n t\<close>
   with before_first_time[OF this]
@@ -989,7 +1100,8 @@ proof
       by (simp add: first_time_def)
   moreover have \<open>\<forall>n c. time (Rep_run sub n c) = time (Rep_run r (f n) c)\<close>
       using assms(1) by (simp add: dilating_def)
-  ultimately have **:\<open>time ((Rep_run r) (f n) c) = t \<and> (\<forall>m < n. time((Rep_run r) (f m) c) < t)\<close>
+  ultimately have **:
+    \<open>time ((Rep_run r) (f n) c) = t \<and> (\<forall>m < n. time((Rep_run r) (f m) c) < t)\<close>
     by simp
   have \<open>\<forall>m < f n. time ((Rep_run r) m c) < t\<close>
   proof -
@@ -1006,8 +1118,8 @@ proof
       case False
         hence \<open>\<exists>m\<^sub>p. f m\<^sub>p < m \<and> (\<forall>k. f m\<^sub>p < k \<and> k \<le> m \<longrightarrow> (\<nexists>k\<^sub>0. f k\<^sub>0 = k))\<close>
           using greatest_prev_image[OF assms] by simp
-        from this obtain m\<^sub>p where mp:\<open>f m\<^sub>p < m \<and> (\<forall>k. f m\<^sub>p < k \<and> k \<le> m \<longrightarrow> (\<nexists>k\<^sub>0. f k\<^sub>0 = k))\<close>
-          by blast
+        from this obtain m\<^sub>p where
+          mp:\<open>f m\<^sub>p < m \<and> (\<forall>k. f m\<^sub>p < k \<and> k \<le> m \<longrightarrow> (\<nexists>k\<^sub>0. f k\<^sub>0 = k))\<close> by blast
         hence \<open>time ((Rep_run r) m c) = time ((Rep_run sub) m\<^sub>p c)\<close>
           using time_stuttering[OF assms] by blast
         also from hyp mp have \<open>f m\<^sub>p < f n\<close> by linarith
@@ -1029,6 +1141,10 @@ next
   ultimately show \<open>first_time sub c n t\<close> by (simp add: alt_first_time_def)
 qed
 
+text \<open>
+  The first instant of a dilated run is necessarily the image of the first instant
+  of the original run.
+\<close>
 lemma first_dilated_instant:
   assumes \<open>strict_mono f\<close>
       and \<open>f (0::nat) = (0::nat)\<close>

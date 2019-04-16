@@ -149,7 +149,42 @@ A contracting function is the reverse of a dilating fun, it maps an instant inde
 \end{isamarkuptext}\isamarkuptrue%
 \isacommand{definition}\isamarkupfalse%
 \ contracting{\isacharunderscore}fun\isanewline
-\ \ \isakeyword{where}\ {\isacartoucheopen}contracting{\isacharunderscore}fun\ g\ {\isasymequiv}\ mono\ g\ {\isasymand}\ g\ {\isadigit{0}}\ {\isacharequal}\ {\isadigit{0}}\ {\isasymand}\ {\isacharparenleft}{\isasymforall}n{\isachardot}\ g\ n\ {\isasymle}\ n{\isacharparenright}{\isacartoucheclose}\isanewline
+\ \ \isakeyword{where}\ {\isacartoucheopen}contracting{\isacharunderscore}fun\ g\ {\isasymequiv}\ mono\ g\ {\isasymand}\ g\ {\isadigit{0}}\ {\isacharequal}\ {\isadigit{0}}\ {\isasymand}\ {\isacharparenleft}{\isasymforall}n{\isachardot}\ g\ n\ {\isasymle}\ n{\isacharparenright}{\isacartoucheclose}%
+\begin{isamarkuptext}%
+\autoref{fig:dilating-run} illustrates the relations between the instants of 
+  a run and the instants of a dilated run, with the mappings by the dilating 
+  function \isa{f} and the contracting function \isa{g}:
+  \begin{figure}
+    \centering
+    \includegraphics{dilating.pdf}
+    \caption{Dilating and contracting functions}\label{fig:dilating-run}
+  \end{figure}%
+\end{isamarkuptext}\isamarkuptrue%
+%
+\begin{isamarkuptext}%
+A function \isa{g} is contracting with respect to the dilation of run
+\isa{sub} into run \isa{r} by the dilating function \isa{f} if:
+
+%
+\begin{itemize}%
+\item it is a contracting function ;
+
+\item \isa{{\isacharparenleft}f\ {\isasymcirc}\ g{\isacharparenright}\ n} is the index of the last original instant before instant 
+\isa{n} in run \isa{r}, therefore:
+
+%
+\begin{itemize}%
+\item the time does not change on any clock between instants \isa{{\isacharparenleft}f\ {\isasymcirc}\ g{\isacharparenright}\ n}
+and \isa{n} of run \isa{r};
+
+\item no clock ticks before \isa{n} strictly after \isa{{\isacharparenleft}f\ {\isasymcirc}\ g{\isacharparenright}\ n} 
+in run \isa{r}.
+See \autoref{fig:dilating-run} for a better understanding. Notice that in this 
+example, \isa{{\isadigit{2}}} is equal to \isa{{\isacharparenleft}f\ {\isasymcirc}\ g{\isacharparenright}\ {\isadigit{2}}}, \isa{{\isacharparenleft}f\ {\isasymcirc}\ g{\isacharparenright}\ {\isadigit{3}}}, 
+and \isa{{\isacharparenleft}f\ {\isasymcirc}\ g{\isacharparenright}\ {\isadigit{4}}}. %
+\end{itemize}%
+\end{itemize}%
+\end{isamarkuptext}\isamarkuptrue%
 \isanewline
 \isacommand{definition}\isamarkupfalse%
 \ contracting\isanewline
@@ -158,8 +193,11 @@ A contracting function is the reverse of a dilating fun, it maps an instant inde
 \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ {\isasymand}\ {\isacharparenleft}{\isasymforall}n\ c\ k{\isachardot}\ f\ {\isacharparenleft}g\ n{\isacharparenright}\ {\isasymle}\ k\ {\isasymand}\ k\ {\isasymle}\ n\isanewline
 \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ {\isasymlongrightarrow}\ time\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ r{\isacharparenright}\ k\ c{\isacharparenright}\ {\isacharequal}\ time\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ sub{\isacharparenright}\ {\isacharparenleft}g\ n{\isacharparenright}\ c{\isacharparenright}{\isacharparenright}\isanewline
 \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ {\isasymand}\ {\isacharparenleft}{\isasymforall}n\ c\ k{\isachardot}\ f\ {\isacharparenleft}g\ n{\isacharparenright}\ {\isacharless}\ k\ {\isasymand}\ k\ {\isasymle}\ n\isanewline
-\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ {\isasymlongrightarrow}\ {\isasymnot}\ hamlet\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ r{\isacharparenright}\ k\ c{\isacharparenright}{\isacharparenright}{\isacartoucheclose}\isanewline
-\isanewline
+\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ {\isasymlongrightarrow}\ {\isasymnot}\ hamlet\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ r{\isacharparenright}\ k\ c{\isacharparenright}{\isacharparenright}{\isacartoucheclose}%
+\begin{isamarkuptext}%
+For any dilating function, we can build its \emph{inverse}, as illustrated on
+  \autoref{fig:dilating-run}, which is a contracting function:%
+\end{isamarkuptext}\isamarkuptrue%
 \isacommand{definition}\isamarkupfalse%
 \ {\isacartoucheopen}dil{\isacharunderscore}inverse\ f{\isacharcolon}{\isacharcolon}{\isacharparenleft}nat\ {\isasymRightarrow}\ nat{\isacharparenright}\ {\isasymequiv}\ {\isacharparenleft}{\isasymlambda}n{\isachardot}\ Max\ {\isacharbraceleft}i{\isachardot}\ f\ i\ {\isasymle}\ n{\isacharbraceright}{\isacharparenright}{\isacartoucheclose}\isanewline
 %
@@ -247,14 +285,34 @@ A contracting function is the reverse of a dilating fun, it maps an instant inde
 %:%150=89%:%
 %:%151=89%:%
 %:%152=90%:%
-%:%153=91%:%
-%:%154=92%:%
-%:%155=92%:%
-%:%156=93%:%
-%:%157=94%:%
-%:%161=98%:%
-%:%162=99%:%
-%:%163=100%:%
-%:%164=100%:%
-%:%167=101%:%
-%:%172=102%:%
+%:%154=93%:%
+%:%155=94%:%
+%:%156=95%:%
+%:%157=96%:%
+%:%158=97%:%
+%:%159=98%:%
+%:%160=99%:%
+%:%161=100%:%
+%:%165=112%:%
+%:%166=113%:%
+%:%170=114%:%
+%:%172=115%:%
+%:%173=116%:%
+%:%177=117%:%
+%:%178=118%:%
+%:%180=119%:%
+%:%181=120%:%
+%:%182=121%:%
+%:%183=122%:%
+%:%184=123%:%
+%:%188=130%:%
+%:%189=131%:%
+%:%190=131%:%
+%:%191=132%:%
+%:%192=133%:%
+%:%198=140%:%
+%:%199=141%:%
+%:%201=143%:%
+%:%202=143%:%
+%:%205=144%:%
+%:%210=145%:%

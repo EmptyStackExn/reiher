@@ -16,3 +16,4 @@ session "TESL" = "HOL" +
     "root.tex"
     "root.bib"
     "figures/glue.pdf"
+    "figures/dilating.pdf"
