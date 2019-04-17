@@ -37,6 +37,12 @@
 \endisadelimtheory
 %
 \begin{isamarkuptext}%
+Using the lemmas of the previous section about the invariance by stuttering
+  of various properties of TESL specifications, we can now prove that the atomic 
+  formulae that compose TESL specifications are invariant by stuttering.%
+\end{isamarkuptext}\isamarkuptrue%
+%
+\begin{isamarkuptext}%
 Sporadic specifications are preserved in a dilated run.%
 \end{isamarkuptext}\isamarkuptrue%
 \isacommand{lemma}\isamarkupfalse%
@@ -208,7 +214,8 @@ Precedence relations are preserved in a dilated run.%
 \ {\isacartoucheopen}{\isasymforall}n{\isachardot}\ {\isacharparenleft}run{\isacharunderscore}tick{\isacharunderscore}count\ sub\ c\isactrlsub {\isadigit{2}}\ n{\isacharparenright}\ {\isasymle}\ {\isacharparenleft}run{\isacharunderscore}tick{\isacharunderscore}count\ sub\ c\isactrlsub {\isadigit{1}}\ n{\isacharparenright}{\isacartoucheclose}\ \isacommand{by}\isamarkupfalse%
 \ simp\isanewline
 \ \ \isacommand{from}\isamarkupfalse%
-\ dil{\isacharunderscore}tick{\isacharunderscore}count{\isacharbrackleft}OF\ assms{\isacharparenleft}{\isadigit{1}}{\isacharparenright}\ this{\isacharbrackright}\ \isacommand{have}\isamarkupfalse%
+\ dil{\isacharunderscore}tick{\isacharunderscore}count{\isacharbrackleft}OF\ assms{\isacharparenleft}{\isadigit{1}}{\isacharparenright}\ this{\isacharbrackright}\isanewline
+\ \ \ \ \isacommand{have}\isamarkupfalse%
 \ {\isacartoucheopen}{\isasymforall}n{\isachardot}\ {\isacharparenleft}run{\isacharunderscore}tick{\isacharunderscore}count\ r\ c\isactrlsub {\isadigit{2}}\ n{\isacharparenright}\ {\isasymle}\ {\isacharparenleft}run{\isacharunderscore}tick{\isacharunderscore}count\ r\ c\isactrlsub {\isadigit{1}}\ n{\isacharparenright}{\isacartoucheclose}\ \isacommand{by}\isamarkupfalse%
 \ simp\isanewline
 \ \ \isacommand{thus}\isamarkupfalse%
@@ -243,21 +250,26 @@ Precedence relations are preserved in a dilated run.%
 \ blast\isanewline
 \ \ \isacommand{from}\isamarkupfalse%
 \ assms{\isacharparenleft}{\isadigit{2}}{\isacharparenright}\ \isacommand{have}\isamarkupfalse%
-\ {\isacartoucheopen}sub\ {\isasymin}\ {\isacharbraceleft}\ {\isasymrho}{\isachardot}\ {\isasymforall}n{\isacharcolon}{\isacharcolon}nat{\isachardot}\ {\isacharparenleft}run{\isacharunderscore}tick{\isacharunderscore}count\ {\isasymrho}\ c\isactrlsub {\isadigit{2}}\ n{\isacharparenright}\ {\isasymle}\ {\isacharparenleft}run{\isacharunderscore}tick{\isacharunderscore}count{\isacharunderscore}strictly\ {\isasymrho}\ c\isactrlsub {\isadigit{1}}\ n{\isacharparenright}\ {\isacharbraceright}{\isacartoucheclose}\ \isacommand{by}\isamarkupfalse%
+\isanewline
+\ \ \ \ {\isacartoucheopen}sub\ {\isasymin}\ {\isacharbraceleft}\ {\isasymrho}{\isachardot}\ {\isasymforall}n{\isacharcolon}{\isacharcolon}nat{\isachardot}\ {\isacharparenleft}run{\isacharunderscore}tick{\isacharunderscore}count\ {\isasymrho}\ c\isactrlsub {\isadigit{2}}\ n{\isacharparenright}\ {\isasymle}\ {\isacharparenleft}run{\isacharunderscore}tick{\isacharunderscore}count{\isacharunderscore}strictly\ {\isasymrho}\ c\isactrlsub {\isadigit{1}}\ n{\isacharparenright}\ {\isacharbraceright}{\isacartoucheclose}\isanewline
+\ \ \isacommand{by}\isamarkupfalse%
 \ simp\isanewline
 \ \ \isacommand{with}\isamarkupfalse%
 \ strictly{\isacharunderscore}precedes{\isacharunderscore}alt{\isacharunderscore}def{\isadigit{2}}{\isacharbrackleft}of\ {\isacartoucheopen}c\isactrlsub {\isadigit{2}}{\isacartoucheclose}\ {\isacartoucheopen}c\isactrlsub {\isadigit{1}}{\isacartoucheclose}{\isacharbrackright}\ \ \isacommand{have}\isamarkupfalse%
 \isanewline
-\ \ \ \ {\isacartoucheopen}sub\ {\isasymin}\ {\isacharbraceleft}\ {\isasymrho}{\isachardot}\ {\isacharparenleft}{\isasymnot}hamlet\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ {\isadigit{0}}\ c\isactrlsub {\isadigit{2}}{\isacharparenright}{\isacharparenright}\ {\isasymand}\ {\isacharparenleft}{\isasymforall}n{\isacharcolon}{\isacharcolon}nat{\isachardot}\ {\isacharparenleft}run{\isacharunderscore}tick{\isacharunderscore}count\ {\isasymrho}\ c\isactrlsub {\isadigit{2}}\ {\isacharparenleft}Suc\ n{\isacharparenright}{\isacharparenright}\ {\isasymle}\ {\isacharparenleft}run{\isacharunderscore}tick{\isacharunderscore}count\ {\isasymrho}\ c\isactrlsub {\isadigit{1}}\ n{\isacharparenright}{\isacharparenright}\ {\isacharbraceright}{\isacartoucheclose}\isanewline
+\ \ \ \ {\isacartoucheopen}sub\ {\isasymin}\ {\isacharbraceleft}\ {\isasymrho}{\isachardot}\ {\isacharparenleft}{\isasymnot}hamlet\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ {\isadigit{0}}\ c\isactrlsub {\isadigit{2}}{\isacharparenright}{\isacharparenright}\isanewline
+\ \ {\isasymand}\ {\isacharparenleft}{\isasymforall}n{\isacharcolon}{\isacharcolon}nat{\isachardot}\ {\isacharparenleft}run{\isacharunderscore}tick{\isacharunderscore}count\ {\isasymrho}\ c\isactrlsub {\isadigit{2}}\ {\isacharparenleft}Suc\ n{\isacharparenright}{\isacharparenright}\ {\isasymle}\ {\isacharparenleft}run{\isacharunderscore}tick{\isacharunderscore}count\ {\isasymrho}\ c\isactrlsub {\isadigit{1}}\ n{\isacharparenright}{\isacharparenright}\ {\isacharbraceright}{\isacartoucheclose}\isanewline
 \ \ \isacommand{by}\isamarkupfalse%
 \ blast\isanewline
 \ \ \isacommand{hence}\isamarkupfalse%
-\ {\isacartoucheopen}{\isacharparenleft}{\isasymnot}hamlet\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ sub{\isacharparenright}\ {\isadigit{0}}\ c\isactrlsub {\isadigit{2}}{\isacharparenright}{\isacharparenright}\ {\isasymand}\ {\isacharparenleft}{\isasymforall}n{\isacharcolon}{\isacharcolon}nat{\isachardot}\ {\isacharparenleft}run{\isacharunderscore}tick{\isacharunderscore}count\ sub\ c\isactrlsub {\isadigit{2}}\ {\isacharparenleft}Suc\ n{\isacharparenright}{\isacharparenright}\ {\isasymle}\ {\isacharparenleft}run{\isacharunderscore}tick{\isacharunderscore}count\ sub\ c\isactrlsub {\isadigit{1}}\ n{\isacharparenright}{\isacharparenright}{\isacartoucheclose}\isanewline
+\ {\isacartoucheopen}{\isacharparenleft}{\isasymnot}hamlet\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ sub{\isacharparenright}\ {\isadigit{0}}\ c\isactrlsub {\isadigit{2}}{\isacharparenright}{\isacharparenright}\isanewline
+\ \ \ \ \ \ \ {\isasymand}\ {\isacharparenleft}{\isasymforall}n{\isacharcolon}{\isacharcolon}nat{\isachardot}\ {\isacharparenleft}run{\isacharunderscore}tick{\isacharunderscore}count\ sub\ c\isactrlsub {\isadigit{2}}\ {\isacharparenleft}Suc\ n{\isacharparenright}{\isacharparenright}\ {\isasymle}\ {\isacharparenleft}run{\isacharunderscore}tick{\isacharunderscore}count\ sub\ c\isactrlsub {\isadigit{1}}\ n{\isacharparenright}{\isacharparenright}{\isacartoucheclose}\isanewline
 \ \ \ \ \isacommand{by}\isamarkupfalse%
 \ simp\isanewline
 \ \ \isacommand{hence}\isamarkupfalse%
 \isanewline
-\ \ \ \ {\isadigit{1}}{\isacharcolon}{\isacartoucheopen}{\isacharparenleft}{\isasymnot}hamlet\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ sub{\isacharparenright}\ {\isadigit{0}}\ c\isactrlsub {\isadigit{2}}{\isacharparenright}{\isacharparenright}\ {\isasymand}\ {\isacharparenleft}{\isasymforall}n{\isacharcolon}{\isacharcolon}nat{\isachardot}\ {\isacharparenleft}tick{\isacharunderscore}count\ sub\ c\isactrlsub {\isadigit{2}}\ {\isacharparenleft}Suc\ n{\isacharparenright}{\isacharparenright}\ {\isasymle}\ {\isacharparenleft}tick{\isacharunderscore}count\ sub\ c\isactrlsub {\isadigit{1}}\ n{\isacharparenright}{\isacharparenright}{\isacartoucheclose}\isanewline
+\ \ \ \ {\isadigit{1}}{\isacharcolon}{\isacartoucheopen}{\isacharparenleft}{\isasymnot}hamlet\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ sub{\isacharparenright}\ {\isadigit{0}}\ c\isactrlsub {\isadigit{2}}{\isacharparenright}{\isacharparenright}\isanewline
+\ \ \ \ \ {\isasymand}\ {\isacharparenleft}{\isasymforall}n{\isacharcolon}{\isacharcolon}nat{\isachardot}\ {\isacharparenleft}tick{\isacharunderscore}count\ sub\ c\isactrlsub {\isadigit{2}}\ {\isacharparenleft}Suc\ n{\isacharparenright}{\isacharparenright}\ {\isasymle}\ {\isacharparenleft}tick{\isacharunderscore}count\ sub\ c\isactrlsub {\isadigit{1}}\ n{\isacharparenright}{\isacharparenright}{\isacartoucheclose}\isanewline
 \ \ \isacommand{by}\isamarkupfalse%
 \ {\isacharparenleft}simp\ add{\isacharcolon}\ tick{\isacharunderscore}count{\isacharunderscore}is{\isacharunderscore}fun{\isacharparenright}\isanewline
 \ \ \isacommand{have}\isamarkupfalse%
@@ -292,9 +304,10 @@ Precedence relations are preserved in a dilated run.%
 \ sn\isactrlsub {\isadigit{0}}\ \isakeyword{where}\ fsn{\isacharcolon}{\isacartoucheopen}f\ sn\isactrlsub {\isadigit{0}}\ {\isacharequal}\ Suc\ n{\isacartoucheclose}\ \isacommand{by}\isamarkupfalse%
 \ blast\isanewline
 \ \ \ \ \ \ \ \ \ \ \ \ \ \ \isacommand{with}\isamarkupfalse%
-\ fn\ \isacommand{have}\isamarkupfalse%
-\ {\isacartoucheopen}sn\isactrlsub {\isadigit{0}}\ {\isacharequal}\ Suc\ n\isactrlsub {\isadigit{0}}{\isacartoucheclose}\ \isacommand{using}\isamarkupfalse%
-\ strict{\isacharunderscore}mono{\isacharunderscore}suc\ {\isacharasterisk}\ dilating{\isacharunderscore}def\ dilating{\isacharunderscore}fun{\isacharunderscore}def\ \isacommand{by}\isamarkupfalse%
+\ fn\ strict{\isacharunderscore}mono{\isacharunderscore}suc\ {\isacharasterisk}\ \isacommand{have}\isamarkupfalse%
+\ {\isacartoucheopen}sn\isactrlsub {\isadigit{0}}\ {\isacharequal}\ Suc\ n\isactrlsub {\isadigit{0}}{\isacartoucheclose}\isanewline
+\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \isacommand{using}\isamarkupfalse%
+\ \ dilating{\isacharunderscore}def\ dilating{\isacharunderscore}fun{\isacharunderscore}def\ \isacommand{by}\isamarkupfalse%
 \ blast\isanewline
 \ \ \ \ \ \ \ \ \ \ \ \ \ \ \isacommand{with}\isamarkupfalse%
 \ {\isadigit{1}}\ \isacommand{have}\isamarkupfalse%
@@ -316,11 +329,13 @@ Precedence relations are preserved in a dilated run.%
 \ {\isacharasterisk}\ \isacommand{by}\isamarkupfalse%
 \ {\isacharparenleft}simp\ add{\isacharcolon}\ dilating{\isacharunderscore}def\ dilating{\isacharunderscore}fun{\isacharunderscore}def{\isacharparenright}\isanewline
 \ \ \ \ \ \ \ \ \ \ \ \ \ \ \isacommand{hence}\isamarkupfalse%
-\ {\isacartoucheopen}tick{\isacharunderscore}count\ r\ c\isactrlsub {\isadigit{2}}\ {\isacharparenleft}Suc\ n{\isacharparenright}\ {\isacharequal}\ tick{\isacharunderscore}count\ r\ c\isactrlsub {\isadigit{2}}\ n{\isacartoucheclose}\ \isacommand{by}\isamarkupfalse%
+\ {\isacartoucheopen}tick{\isacharunderscore}count\ r\ c\isactrlsub {\isadigit{2}}\ {\isacharparenleft}Suc\ n{\isacharparenright}\ {\isacharequal}\ tick{\isacharunderscore}count\ r\ c\isactrlsub {\isadigit{2}}\ n{\isacartoucheclose}\isanewline
+\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \isacommand{by}\isamarkupfalse%
 \ {\isacharparenleft}simp\ add{\isacharcolon}\ tick{\isacharunderscore}count{\isacharunderscore}suc{\isacharparenright}\isanewline
 \ \ \ \ \ \ \ \ \ \ \ \ \ \ \isacommand{also}\isamarkupfalse%
 \ \isacommand{have}\isamarkupfalse%
-\ {\isacartoucheopen}{\isachardot}{\isachardot}{\isachardot}\ {\isacharequal}\ tick{\isacharunderscore}count\ sub\ c\isactrlsub {\isadigit{2}}\ n\isactrlsub {\isadigit{0}}{\isacartoucheclose}\ \isacommand{using}\isamarkupfalse%
+\ {\isacartoucheopen}{\isachardot}{\isachardot}{\isachardot}\ {\isacharequal}\ tick{\isacharunderscore}count\ sub\ c\isactrlsub {\isadigit{2}}\ n\isactrlsub {\isadigit{0}}{\isacartoucheclose}\isanewline
+\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \isacommand{using}\isamarkupfalse%
 \ fn\ tick{\isacharunderscore}count{\isacharunderscore}sub{\isacharbrackleft}OF\ {\isacharasterisk}{\isacharbrackright}\ \isacommand{by}\isamarkupfalse%
 \ simp\isanewline
 \ \ \ \ \ \ \ \ \ \ \ \ \ \ \isacommand{finally}\isamarkupfalse%
@@ -334,11 +349,13 @@ Precedence relations are preserved in a dilated run.%
 \ {\isacharparenleft}simp\ add{\isacharcolon}\ tick{\isacharunderscore}count{\isacharunderscore}suc{\isacharparenright}\isanewline
 \ \ \ \ \ \ \ \ \ \ \ \ \ \ \isacommand{ultimately}\isamarkupfalse%
 \ \isacommand{have}\isamarkupfalse%
-\ {\isacartoucheopen}tick{\isacharunderscore}count\ r\ c\isactrlsub {\isadigit{2}}\ {\isacharparenleft}Suc\ n{\isacharparenright}\ {\isasymle}\ tick{\isacharunderscore}count\ sub\ c\isactrlsub {\isadigit{2}}\ {\isacharparenleft}Suc\ n\isactrlsub {\isadigit{0}}{\isacharparenright}{\isacartoucheclose}\ \isacommand{by}\isamarkupfalse%
+\isanewline
+\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ {\isacartoucheopen}tick{\isacharunderscore}count\ r\ c\isactrlsub {\isadigit{2}}\ {\isacharparenleft}Suc\ n{\isacharparenright}\ {\isasymle}\ tick{\isacharunderscore}count\ sub\ c\isactrlsub {\isadigit{2}}\ {\isacharparenleft}Suc\ n\isactrlsub {\isadigit{0}}{\isacharparenright}{\isacartoucheclose}\ \isacommand{by}\isamarkupfalse%
 \ simp\isanewline
 \ \ \ \ \ \ \ \ \ \ \ \ \ \ \isacommand{moreover}\isamarkupfalse%
 \ \isacommand{have}\isamarkupfalse%
-\ {\isacartoucheopen}tick{\isacharunderscore}count\ sub\ c\isactrlsub {\isadigit{2}}\ {\isacharparenleft}Suc\ n\isactrlsub {\isadigit{0}}{\isacharparenright}\ {\isasymle}\ tick{\isacharunderscore}count\ sub\ c\isactrlsub {\isadigit{1}}\ n\isactrlsub {\isadigit{0}}{\isacartoucheclose}\ \isacommand{using}\isamarkupfalse%
+\isanewline
+\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ {\isacartoucheopen}tick{\isacharunderscore}count\ sub\ c\isactrlsub {\isadigit{2}}\ {\isacharparenleft}Suc\ n\isactrlsub {\isadigit{0}}{\isacharparenright}\ {\isasymle}\ tick{\isacharunderscore}count\ sub\ c\isactrlsub {\isadigit{1}}\ n\isactrlsub {\isadigit{0}}{\isacartoucheclose}\ \isacommand{using}\isamarkupfalse%
 \ {\isadigit{1}}\ \isacommand{by}\isamarkupfalse%
 \ simp\isanewline
 \ \ \ \ \ \ \ \ \ \ \ \ \ \ \isacommand{ultimately}\isamarkupfalse%
@@ -359,15 +376,17 @@ Precedence relations are preserved in a dilated run.%
 }\isanewline
 \ \ \ \ \ \ \ \ \ \ \isacommand{from}\isamarkupfalse%
 \ greatest{\isacharunderscore}prev{\isacharunderscore}image{\isacharbrackleft}OF\ {\isacharasterisk}\ this{\isacharbrackright}\ \isacommand{obtain}\isamarkupfalse%
-\ n\isactrlsub p\isanewline
-\ \ \ \ \ \ \ \ \ \ \ \ \isakeyword{where}\ np{\isacharunderscore}prop{\isacharcolon}{\isacartoucheopen}f\ n\isactrlsub p\ {\isacharless}\ n\ {\isasymand}\ {\isacharparenleft}{\isasymforall}k{\isachardot}\ f\ n\isactrlsub p\ {\isacharless}\ k\ {\isasymand}\ k\ {\isasymle}\ n\ {\isasymlongrightarrow}\ {\isacharparenleft}{\isasymnexists}k\isactrlsub {\isadigit{0}}{\isachardot}\ f\ k\isactrlsub {\isadigit{0}}\ {\isacharequal}\ k{\isacharparenright}{\isacharparenright}{\isacartoucheclose}\ \isacommand{by}\isamarkupfalse%
+\ n\isactrlsub p\ \ \isakeyword{where}\isanewline
+\ \ \ \ \ \ \ \ \ \ \ \ np{\isacharunderscore}prop{\isacharcolon}{\isacartoucheopen}f\ n\isactrlsub p\ {\isacharless}\ n\ {\isasymand}\ {\isacharparenleft}{\isasymforall}k{\isachardot}\ f\ n\isactrlsub p\ {\isacharless}\ k\ {\isasymand}\ k\ {\isasymle}\ n\ {\isasymlongrightarrow}\ {\isacharparenleft}{\isasymnexists}k\isactrlsub {\isadigit{0}}{\isachardot}\ f\ k\isactrlsub {\isadigit{0}}\ {\isacharequal}\ k{\isacharparenright}{\isacharparenright}{\isacartoucheclose}\ \isacommand{by}\isamarkupfalse%
 \ blast\isanewline
 \ \ \ \ \ \ \ \ \ \ \isacommand{from}\isamarkupfalse%
 \ tick{\isacharunderscore}count{\isacharunderscore}latest{\isacharbrackleft}OF\ {\isacharasterisk}\ this{\isacharbrackright}\ \isacommand{have}\isamarkupfalse%
-\ {\isacartoucheopen}tick{\isacharunderscore}count\ r\ c\isactrlsub {\isadigit{1}}\ n\ {\isacharequal}\ tick{\isacharunderscore}count\ r\ c\isactrlsub {\isadigit{1}}\ {\isacharparenleft}f\ n\isactrlsub p{\isacharparenright}{\isacartoucheclose}\ \isacommand{{\isachardot}}\isamarkupfalse%
+\isanewline
+\ \ \ \ \ \ \ \ \ \ \ \ {\isacartoucheopen}tick{\isacharunderscore}count\ r\ c\isactrlsub {\isadigit{1}}\ n\ {\isacharequal}\ tick{\isacharunderscore}count\ r\ c\isactrlsub {\isadigit{1}}\ {\isacharparenleft}f\ n\isactrlsub p{\isacharparenright}{\isacartoucheclose}\ \isacommand{{\isachardot}}\isamarkupfalse%
 \ \isanewline
 \ \ \ \ \ \ \ \ \ \ \isacommand{hence}\isamarkupfalse%
-\ a{\isacharcolon}{\isacartoucheopen}tick{\isacharunderscore}count\ r\ c\isactrlsub {\isadigit{1}}\ n\ {\isacharequal}\ tick{\isacharunderscore}count\ sub\ c\isactrlsub {\isadigit{1}}\ n\isactrlsub p{\isacartoucheclose}\ \isacommand{using}\isamarkupfalse%
+\ a{\isacharcolon}{\isacartoucheopen}tick{\isacharunderscore}count\ r\ c\isactrlsub {\isadigit{1}}\ n\ {\isacharequal}\ tick{\isacharunderscore}count\ sub\ c\isactrlsub {\isadigit{1}}\ n\isactrlsub p{\isacartoucheclose}\isanewline
+\ \ \ \ \ \ \ \ \ \ \ \ \isacommand{using}\isamarkupfalse%
 \ tick{\isacharunderscore}count{\isacharunderscore}sub{\isacharbrackleft}OF\ {\isacharasterisk}{\isacharbrackright}\ \isacommand{by}\isamarkupfalse%
 \ simp\isanewline
 \ \ \ \ \ \ \ \ \ \ \isacommand{have}\isamarkupfalse%
@@ -410,7 +429,8 @@ Precedence relations are preserved in a dilated run.%
 \ {\isacharasterisk}\ \isacommand{by}\isamarkupfalse%
 \ {\isacharparenleft}simp\ add{\isacharcolon}\ dilating{\isacharunderscore}def\ dilating{\isacharunderscore}fun{\isacharunderscore}def{\isacharparenright}\isanewline
 \ \ \ \ \ \ \ \ \ \ \ \ \ \ \isacommand{hence}\isamarkupfalse%
-\ {\isacartoucheopen}tick{\isacharunderscore}count\ r\ c\isactrlsub {\isadigit{2}}\ {\isacharparenleft}Suc\ n{\isacharparenright}\ {\isacharequal}\ tick{\isacharunderscore}count\ r\ c\isactrlsub {\isadigit{2}}\ n{\isacartoucheclose}\ \isacommand{by}\isamarkupfalse%
+\ {\isacartoucheopen}tick{\isacharunderscore}count\ r\ c\isactrlsub {\isadigit{2}}\ {\isacharparenleft}Suc\ n{\isacharparenright}\ {\isacharequal}\ tick{\isacharunderscore}count\ r\ c\isactrlsub {\isadigit{2}}\ n{\isacartoucheclose}\isanewline
+\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \isacommand{by}\isamarkupfalse%
 \ {\isacharparenleft}simp\ add{\isacharcolon}\ tick{\isacharunderscore}count{\isacharunderscore}suc{\isacharparenright}\isanewline
 \ \ \ \ \ \ \ \ \ \ \ \ \ \ \isacommand{also}\isamarkupfalse%
 \ \isacommand{have}\isamarkupfalse%
@@ -429,11 +449,13 @@ Precedence relations are preserved in a dilated run.%
 \ {\isacharparenleft}simp\ add{\isacharcolon}\ tick{\isacharunderscore}count{\isacharunderscore}suc{\isacharparenright}\isanewline
 \ \ \ \ \ \ \ \ \ \ \ \ \ \ \isacommand{ultimately}\isamarkupfalse%
 \ \isacommand{have}\isamarkupfalse%
-\ {\isacartoucheopen}tick{\isacharunderscore}count\ r\ c\isactrlsub {\isadigit{2}}\ {\isacharparenleft}Suc\ n{\isacharparenright}\ {\isasymle}\ tick{\isacharunderscore}count\ sub\ c\isactrlsub {\isadigit{2}}\ {\isacharparenleft}Suc\ n\isactrlsub p{\isacharparenright}{\isacartoucheclose}\ \isacommand{by}\isamarkupfalse%
+\isanewline
+\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ {\isacartoucheopen}tick{\isacharunderscore}count\ r\ c\isactrlsub {\isadigit{2}}\ {\isacharparenleft}Suc\ n{\isacharparenright}\ {\isasymle}\ tick{\isacharunderscore}count\ sub\ c\isactrlsub {\isadigit{2}}\ {\isacharparenleft}Suc\ n\isactrlsub p{\isacharparenright}{\isacartoucheclose}\ \isacommand{by}\isamarkupfalse%
 \ simp\isanewline
 \ \ \ \ \ \ \ \ \ \ \ \ \ \ \isacommand{moreover}\isamarkupfalse%
 \ \isacommand{have}\isamarkupfalse%
-\ {\isacartoucheopen}tick{\isacharunderscore}count\ sub\ c\isactrlsub {\isadigit{2}}\ {\isacharparenleft}Suc\ n\isactrlsub p{\isacharparenright}\ {\isasymle}\ tick{\isacharunderscore}count\ sub\ c\isactrlsub {\isadigit{1}}\ n\isactrlsub p{\isacartoucheclose}\ \isacommand{using}\isamarkupfalse%
+\isanewline
+\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ {\isacartoucheopen}tick{\isacharunderscore}count\ sub\ c\isactrlsub {\isadigit{2}}\ {\isacharparenleft}Suc\ n\isactrlsub p{\isacharparenright}\ {\isasymle}\ tick{\isacharunderscore}count\ sub\ c\isactrlsub {\isadigit{1}}\ n\isactrlsub p{\isacartoucheclose}\ \isacommand{using}\isamarkupfalse%
 \ {\isadigit{1}}\ \isacommand{by}\isamarkupfalse%
 \ simp\isanewline
 \ \ \ \ \ \ \ \ \ \ \ \ \ \ \isacommand{ultimately}\isamarkupfalse%
@@ -647,64 +669,7 @@ Time delayed relations are preserved in a dilated run.%
 \endisadelimproof
 %
 \begin{isamarkuptext}%
-Time relations are preserved by contraction%
-\end{isamarkuptext}\isamarkuptrue%
-\isacommand{lemma}\isamarkupfalse%
-\ tagrel{\isacharunderscore}sub{\isacharunderscore}inv{\isacharcolon}\isanewline
-\ \ \isakeyword{assumes}\ {\isacartoucheopen}sub\ {\isasymlless}\ r{\isacartoucheclose}\isanewline
-\ \ \ \ \ \ \isakeyword{and}\ {\isacartoucheopen}r\ {\isasymin}\ {\isasymlbrakk}\ time{\isacharminus}relation\ {\isasymlfloor}c\isactrlsub {\isadigit{1}}{\isacharcomma}\ c\isactrlsub {\isadigit{2}}{\isasymrfloor}\ {\isasymin}\ R\ {\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L{\isacartoucheclose}\isanewline
-\ \ \ \ \isakeyword{shows}\ {\isacartoucheopen}sub\ {\isasymin}\ {\isasymlbrakk}\ time{\isacharminus}relation\ {\isasymlfloor}c\isactrlsub {\isadigit{1}}{\isacharcomma}\ c\isactrlsub {\isadigit{2}}{\isasymrfloor}\ {\isasymin}\ R\ {\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L{\isacartoucheclose}\isanewline
-%
-\isadelimproof
-%
-\endisadelimproof
-%
-\isatagproof
-\isacommand{proof}\isamarkupfalse%
-\ {\isacharminus}\isanewline
-\ \ \isacommand{from}\isamarkupfalse%
-\ assms{\isacharparenleft}{\isadigit{1}}{\isacharparenright}\ is{\isacharunderscore}subrun{\isacharunderscore}def\ \isacommand{obtain}\isamarkupfalse%
-\ f\ \isakeyword{where}\ df{\isacharcolon}{\isacartoucheopen}dilating\ f\ sub\ r{\isacartoucheclose}\ \isacommand{by}\isamarkupfalse%
-\ blast\isanewline
-\ \ \isacommand{moreover}\isamarkupfalse%
-\ \isacommand{from}\isamarkupfalse%
-\ assms{\isacharparenleft}{\isadigit{2}}{\isacharparenright}\ TESL{\isacharunderscore}interpretation{\isacharunderscore}atomic{\isachardot}simps{\isacharparenleft}{\isadigit{2}}{\isacharparenright}\ \isacommand{have}\isamarkupfalse%
-\isanewline
-\ \ \ \ {\isacartoucheopen}r\ {\isasymin}\ {\isacharbraceleft}{\isasymrho}{\isachardot}\ {\isasymforall}n{\isachardot}\ R\ {\isacharparenleft}time\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ n\ c\isactrlsub {\isadigit{1}}{\isacharparenright}{\isacharcomma}\ time\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ n\ c\isactrlsub {\isadigit{2}}{\isacharparenright}{\isacharparenright}{\isacharbraceright}{\isacartoucheclose}\ \isacommand{by}\isamarkupfalse%
-\ blast\isanewline
-\ \ \isacommand{hence}\isamarkupfalse%
-\ {\isacartoucheopen}{\isasymforall}n{\isachardot}\ R\ {\isacharparenleft}time\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ r{\isacharparenright}\ n\ c\isactrlsub {\isadigit{1}}{\isacharparenright}{\isacharcomma}\ time\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ r{\isacharparenright}\ n\ c\isactrlsub {\isadigit{2}}{\isacharparenright}{\isacharparenright}{\isacartoucheclose}\ \isacommand{by}\isamarkupfalse%
-\ simp\isanewline
-\ \ \isacommand{hence}\isamarkupfalse%
-\ {\isacartoucheopen}{\isasymforall}n{\isachardot}\ {\isacharparenleft}{\isasymexists}n\isactrlsub {\isadigit{0}}{\isachardot}\ f\ n\isactrlsub {\isadigit{0}}\ {\isacharequal}\ n{\isacharparenright}\ {\isasymlongrightarrow}\ R\ {\isacharparenleft}time\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ r{\isacharparenright}\ n\ c\isactrlsub {\isadigit{1}}{\isacharparenright}{\isacharcomma}\ time\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ r{\isacharparenright}\ n\ c\isactrlsub {\isadigit{2}}{\isacharparenright}{\isacharparenright}{\isacartoucheclose}\ \isacommand{by}\isamarkupfalse%
-\ simp\isanewline
-\ \ \isacommand{hence}\isamarkupfalse%
-\ {\isacartoucheopen}{\isasymforall}n\isactrlsub {\isadigit{0}}{\isachardot}\ R\ {\isacharparenleft}time\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ r{\isacharparenright}\ {\isacharparenleft}f\ n\isactrlsub {\isadigit{0}}{\isacharparenright}\ c\isactrlsub {\isadigit{1}}{\isacharparenright}{\isacharcomma}\ time\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ r{\isacharparenright}\ {\isacharparenleft}f\ n\isactrlsub {\isadigit{0}}{\isacharparenright}\ c\isactrlsub {\isadigit{2}}{\isacharparenright}{\isacharparenright}{\isacartoucheclose}\ \isacommand{by}\isamarkupfalse%
-\ blast\isanewline
-\ \ \isacommand{moreover}\isamarkupfalse%
-\ \isacommand{from}\isamarkupfalse%
-\ dilating{\isacharunderscore}def\ df\ \isacommand{have}\isamarkupfalse%
-\isanewline
-\ \ \ \ {\isacartoucheopen}{\isasymforall}n\ c{\isachardot}\ time\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ sub{\isacharparenright}\ n\ c{\isacharparenright}\ {\isacharequal}\ time\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ r{\isacharparenright}\ {\isacharparenleft}f\ n{\isacharparenright}\ c{\isacharparenright}{\isacartoucheclose}\ \isacommand{by}\isamarkupfalse%
-\ blast\isanewline
-\ \ \isacommand{ultimately}\isamarkupfalse%
-\ \isacommand{have}\isamarkupfalse%
-\ {\isacartoucheopen}{\isasymforall}n\isactrlsub {\isadigit{0}}{\isachardot}\ R\ {\isacharparenleft}time\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ sub{\isacharparenright}\ n\isactrlsub {\isadigit{0}}\ c\isactrlsub {\isadigit{1}}{\isacharparenright}{\isacharcomma}\ time\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ sub{\isacharparenright}\ n\isactrlsub {\isadigit{0}}\ c\isactrlsub {\isadigit{2}}{\isacharparenright}{\isacharparenright}{\isacartoucheclose}\ \isacommand{by}\isamarkupfalse%
-\ auto\isanewline
-\ \ \isacommand{thus}\isamarkupfalse%
-\ {\isacharquery}thesis\ \isacommand{by}\isamarkupfalse%
-\ simp\isanewline
-\isacommand{qed}\isamarkupfalse%
-%
-\endisatagproof
-{\isafoldproof}%
-%
-\isadelimproof
-%
-\endisadelimproof
-%
-\begin{isamarkuptext}%
-A time relation is preserved through dilation of a run.%
+Time relations are preserved through dilation of a run.%
 \end{isamarkuptext}\isamarkuptrue%
 \isacommand{lemma}\isamarkupfalse%
 \ tagrel{\isacharunderscore}sub{\isacharprime}{\isacharcolon}\isanewline
@@ -838,10 +803,69 @@ A time relation is preserved through dilation of a run.%
 {\isafoldproof}%
 %
 \isadelimproof
-\isanewline
 %
 \endisadelimproof
+%
+\begin{isamarkuptext}%
+Time relations are also preserved by contraction%
+\end{isamarkuptext}\isamarkuptrue%
+\isacommand{lemma}\isamarkupfalse%
+\ tagrel{\isacharunderscore}sub{\isacharunderscore}inv{\isacharcolon}\isanewline
+\ \ \isakeyword{assumes}\ {\isacartoucheopen}sub\ {\isasymlless}\ r{\isacartoucheclose}\isanewline
+\ \ \ \ \ \ \isakeyword{and}\ {\isacartoucheopen}r\ {\isasymin}\ {\isasymlbrakk}\ time{\isacharminus}relation\ {\isasymlfloor}c\isactrlsub {\isadigit{1}}{\isacharcomma}\ c\isactrlsub {\isadigit{2}}{\isasymrfloor}\ {\isasymin}\ R\ {\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L{\isacartoucheclose}\isanewline
+\ \ \ \ \isakeyword{shows}\ {\isacartoucheopen}sub\ {\isasymin}\ {\isasymlbrakk}\ time{\isacharminus}relation\ {\isasymlfloor}c\isactrlsub {\isadigit{1}}{\isacharcomma}\ c\isactrlsub {\isadigit{2}}{\isasymrfloor}\ {\isasymin}\ R\ {\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L{\isacartoucheclose}\isanewline
+%
+\isadelimproof
+%
+\endisadelimproof
+%
+\isatagproof
+\isacommand{proof}\isamarkupfalse%
+\ {\isacharminus}\isanewline
+\ \ \isacommand{from}\isamarkupfalse%
+\ assms{\isacharparenleft}{\isadigit{1}}{\isacharparenright}\ is{\isacharunderscore}subrun{\isacharunderscore}def\ \isacommand{obtain}\isamarkupfalse%
+\ f\ \isakeyword{where}\ df{\isacharcolon}{\isacartoucheopen}dilating\ f\ sub\ r{\isacartoucheclose}\ \isacommand{by}\isamarkupfalse%
+\ blast\isanewline
+\ \ \isacommand{moreover}\isamarkupfalse%
+\ \isacommand{from}\isamarkupfalse%
+\ assms{\isacharparenleft}{\isadigit{2}}{\isacharparenright}\ TESL{\isacharunderscore}interpretation{\isacharunderscore}atomic{\isachardot}simps{\isacharparenleft}{\isadigit{2}}{\isacharparenright}\ \isacommand{have}\isamarkupfalse%
 \isanewline
+\ \ \ \ {\isacartoucheopen}r\ {\isasymin}\ {\isacharbraceleft}{\isasymrho}{\isachardot}\ {\isasymforall}n{\isachardot}\ R\ {\isacharparenleft}time\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ n\ c\isactrlsub {\isadigit{1}}{\isacharparenright}{\isacharcomma}\ time\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ n\ c\isactrlsub {\isadigit{2}}{\isacharparenright}{\isacharparenright}{\isacharbraceright}{\isacartoucheclose}\ \isacommand{by}\isamarkupfalse%
+\ blast\isanewline
+\ \ \isacommand{hence}\isamarkupfalse%
+\ {\isacartoucheopen}{\isasymforall}n{\isachardot}\ R\ {\isacharparenleft}time\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ r{\isacharparenright}\ n\ c\isactrlsub {\isadigit{1}}{\isacharparenright}{\isacharcomma}\ time\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ r{\isacharparenright}\ n\ c\isactrlsub {\isadigit{2}}{\isacharparenright}{\isacharparenright}{\isacartoucheclose}\ \isacommand{by}\isamarkupfalse%
+\ simp\isanewline
+\ \ \isacommand{hence}\isamarkupfalse%
+\ {\isacartoucheopen}{\isasymforall}n{\isachardot}\ {\isacharparenleft}{\isasymexists}n\isactrlsub {\isadigit{0}}{\isachardot}\ f\ n\isactrlsub {\isadigit{0}}\ {\isacharequal}\ n{\isacharparenright}\ {\isasymlongrightarrow}\ R\ {\isacharparenleft}time\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ r{\isacharparenright}\ n\ c\isactrlsub {\isadigit{1}}{\isacharparenright}{\isacharcomma}\ time\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ r{\isacharparenright}\ n\ c\isactrlsub {\isadigit{2}}{\isacharparenright}{\isacharparenright}{\isacartoucheclose}\ \isacommand{by}\isamarkupfalse%
+\ simp\isanewline
+\ \ \isacommand{hence}\isamarkupfalse%
+\ {\isacartoucheopen}{\isasymforall}n\isactrlsub {\isadigit{0}}{\isachardot}\ R\ {\isacharparenleft}time\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ r{\isacharparenright}\ {\isacharparenleft}f\ n\isactrlsub {\isadigit{0}}{\isacharparenright}\ c\isactrlsub {\isadigit{1}}{\isacharparenright}{\isacharcomma}\ time\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ r{\isacharparenright}\ {\isacharparenleft}f\ n\isactrlsub {\isadigit{0}}{\isacharparenright}\ c\isactrlsub {\isadigit{2}}{\isacharparenright}{\isacharparenright}{\isacartoucheclose}\ \isacommand{by}\isamarkupfalse%
+\ blast\isanewline
+\ \ \isacommand{moreover}\isamarkupfalse%
+\ \isacommand{from}\isamarkupfalse%
+\ dilating{\isacharunderscore}def\ df\ \isacommand{have}\isamarkupfalse%
+\isanewline
+\ \ \ \ {\isacartoucheopen}{\isasymforall}n\ c{\isachardot}\ time\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ sub{\isacharparenright}\ n\ c{\isacharparenright}\ {\isacharequal}\ time\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ r{\isacharparenright}\ {\isacharparenleft}f\ n{\isacharparenright}\ c{\isacharparenright}{\isacartoucheclose}\ \isacommand{by}\isamarkupfalse%
+\ blast\isanewline
+\ \ \isacommand{ultimately}\isamarkupfalse%
+\ \isacommand{have}\isamarkupfalse%
+\ {\isacartoucheopen}{\isasymforall}n\isactrlsub {\isadigit{0}}{\isachardot}\ R\ {\isacharparenleft}time\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ sub{\isacharparenright}\ n\isactrlsub {\isadigit{0}}\ c\isactrlsub {\isadigit{1}}{\isacharparenright}{\isacharcomma}\ time\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ sub{\isacharparenright}\ n\isactrlsub {\isadigit{0}}\ c\isactrlsub {\isadigit{2}}{\isacharparenright}{\isacharparenright}{\isacartoucheclose}\ \isacommand{by}\isamarkupfalse%
+\ auto\isanewline
+\ \ \isacommand{thus}\isamarkupfalse%
+\ {\isacharquery}thesis\ \isacommand{by}\isamarkupfalse%
+\ simp\isanewline
+\isacommand{qed}\isamarkupfalse%
+%
+\endisatagproof
+{\isafoldproof}%
+%
+\isadelimproof
+%
+\endisadelimproof
+%
+\begin{isamarkuptext}%
+Kill relations are preserved in a dilated run.%
+\end{isamarkuptext}\isamarkuptrue%
 \isacommand{theorem}\isamarkupfalse%
 \ kill{\isacharunderscore}sub{\isacharcolon}\isanewline
 \ \ \isakeyword{assumes}\ {\isacartoucheopen}sub\ {\isasymlless}\ r{\isacartoucheclose}\isanewline
@@ -950,6 +974,14 @@ A time relation is preserved through dilation of a run.%
 %
 \endisadelimproof
 \isanewline
+\isacommand{lemmas}\isamarkupfalse%
+\ atomic{\isacharunderscore}sub{\isacharunderscore}lemmas\ {\isacharequal}\ sporadic{\isacharunderscore}sub\ tagrel{\isacharunderscore}sub\ implies{\isacharunderscore}sub\ implies{\isacharunderscore}not{\isacharunderscore}sub\isanewline
+\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ time{\isacharunderscore}delayed{\isacharunderscore}sub\ weakly{\isacharunderscore}precedes{\isacharunderscore}sub\isanewline
+\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ strictly{\isacharunderscore}precedes{\isacharunderscore}sub\ kill{\isacharunderscore}sub%
+\begin{isamarkuptext}%
+We can now prove that all atomic specification formulae are preserved
+  by the dilation of runs.%
+\end{isamarkuptext}\isamarkuptrue%
 \isacommand{lemma}\isamarkupfalse%
 \ atomic{\isacharunderscore}sub{\isacharcolon}\ \isanewline
 \ \ \isakeyword{assumes}\ {\isacartoucheopen}sub\ {\isasymlless}\ r{\isacartoucheclose}\isanewline
@@ -961,80 +993,19 @@ A time relation is preserved through dilation of a run.%
 \endisadelimproof
 %
 \isatagproof
-\isacommand{proof}\isamarkupfalse%
-\ {\isacharparenleft}cases\ {\isasymphi}{\isacharparenright}\isanewline
-\ \ \isacommand{case}\isamarkupfalse%
-\ {\isacharparenleft}SporadicOn{\isacharparenright}\isanewline
-\ \ \ \ \isacommand{thus}\isamarkupfalse%
-\ {\isacharquery}thesis\ \isacommand{using}\isamarkupfalse%
-\ assms{\isacharparenleft}{\isadigit{2}}{\isacharparenright}\ sporadic{\isacharunderscore}sub{\isacharbrackleft}OF\ assms{\isacharparenleft}{\isadigit{1}}{\isacharparenright}{\isacharbrackright}\ \isacommand{by}\isamarkupfalse%
-\ simp\isanewline
-\isacommand{next}\isamarkupfalse%
-\isanewline
-\ \ \isacommand{case}\isamarkupfalse%
-\ {\isacharparenleft}TagRelation{\isacharparenright}\isanewline
-\ \ \ \ \isacommand{thus}\isamarkupfalse%
-\ {\isacharquery}thesis\ \isacommand{using}\isamarkupfalse%
-\ assms{\isacharparenleft}{\isadigit{2}}{\isacharparenright}\ tagrel{\isacharunderscore}sub{\isacharbrackleft}OF\ assms{\isacharparenleft}{\isadigit{1}}{\isacharparenright}{\isacharbrackright}\ \isacommand{by}\isamarkupfalse%
-\ simp\isanewline
-\isacommand{next}\isamarkupfalse%
-\isanewline
-\ \ \isacommand{case}\isamarkupfalse%
-\ {\isacharparenleft}Implies{\isacharparenright}\isanewline
-\ \ \ \ \isacommand{thus}\isamarkupfalse%
-\ {\isacharquery}thesis\ \isacommand{using}\isamarkupfalse%
-\ assms{\isacharparenleft}{\isadigit{2}}{\isacharparenright}\ implies{\isacharunderscore}sub{\isacharbrackleft}OF\ assms{\isacharparenleft}{\isadigit{1}}{\isacharparenright}{\isacharbrackright}\ \isacommand{by}\isamarkupfalse%
-\ simp\isanewline
-\isacommand{next}\isamarkupfalse%
-\isanewline
-\ \ \isacommand{case}\isamarkupfalse%
-\ {\isacharparenleft}ImpliesNot{\isacharparenright}\isanewline
-\ \ \ \ \isacommand{thus}\isamarkupfalse%
-\ {\isacharquery}thesis\ \isacommand{using}\isamarkupfalse%
-\ assms{\isacharparenleft}{\isadigit{2}}{\isacharparenright}\ implies{\isacharunderscore}not{\isacharunderscore}sub{\isacharbrackleft}OF\ assms{\isacharparenleft}{\isadigit{1}}{\isacharparenright}{\isacharbrackright}\ \isacommand{by}\isamarkupfalse%
-\ simp\isanewline
-\isacommand{next}\isamarkupfalse%
-\isanewline
-\ \ \isacommand{case}\isamarkupfalse%
-\ {\isacharparenleft}TimeDelayedBy{\isacharparenright}\isanewline
-\ \ \ \ \isacommand{thus}\isamarkupfalse%
-\ {\isacharquery}thesis\ \isacommand{using}\isamarkupfalse%
-\ assms{\isacharparenleft}{\isadigit{2}}{\isacharparenright}\ time{\isacharunderscore}delayed{\isacharunderscore}sub{\isacharbrackleft}OF\ assms{\isacharparenleft}{\isadigit{1}}{\isacharparenright}{\isacharbrackright}\ \isacommand{by}\isamarkupfalse%
-\ simp\isanewline
-\isacommand{next}\isamarkupfalse%
-\isanewline
-\ \ \isacommand{case}\isamarkupfalse%
-\ {\isacharparenleft}WeaklyPrecedes{\isacharparenright}\isanewline
-\ \ \ \ \isacommand{thus}\isamarkupfalse%
-\ {\isacharquery}thesis\ \isacommand{using}\isamarkupfalse%
-\ assms{\isacharparenleft}{\isadigit{2}}{\isacharparenright}\ weakly{\isacharunderscore}precedes{\isacharunderscore}sub{\isacharbrackleft}OF\ assms{\isacharparenleft}{\isadigit{1}}{\isacharparenright}{\isacharbrackright}\ \isacommand{by}\isamarkupfalse%
-\ simp\isanewline
-\isacommand{next}\isamarkupfalse%
-\isanewline
-\ \ \isacommand{case}\isamarkupfalse%
-\ {\isacharparenleft}StrictlyPrecedes{\isacharparenright}\isanewline
-\ \ \ \ \isacommand{thus}\isamarkupfalse%
-\ {\isacharquery}thesis\ \isacommand{using}\isamarkupfalse%
-\ assms{\isacharparenleft}{\isadigit{2}}{\isacharparenright}\ strictly{\isacharunderscore}precedes{\isacharunderscore}sub{\isacharbrackleft}OF\ assms{\isacharparenleft}{\isadigit{1}}{\isacharparenright}{\isacharbrackright}\ \isacommand{by}\isamarkupfalse%
-\ simp\isanewline
-\isacommand{next}\isamarkupfalse%
-\isanewline
-\ \ \isacommand{case}\isamarkupfalse%
-\ {\isacharparenleft}Kills{\isacharparenright}\isanewline
-\ \ \ \ \isacommand{thus}\isamarkupfalse%
-\ {\isacharquery}thesis\ \isacommand{using}\isamarkupfalse%
-\ assms{\isacharparenleft}{\isadigit{2}}{\isacharparenright}\ kill{\isacharunderscore}sub{\isacharbrackleft}OF\ assms{\isacharparenleft}{\isadigit{1}}{\isacharparenright}{\isacharbrackright}\ \isacommand{by}\isamarkupfalse%
-\ simp\isanewline
-\isacommand{qed}\isamarkupfalse%
-%
+\isacommand{using}\isamarkupfalse%
+\ assms{\isacharparenleft}{\isadigit{2}}{\isacharparenright}\ atomic{\isacharunderscore}sub{\isacharunderscore}lemmas{\isacharbrackleft}OF\ assms{\isacharparenleft}{\isadigit{1}}{\isacharparenright}{\isacharbrackright}\ \isacommand{by}\isamarkupfalse%
+\ {\isacharparenleft}cases\ {\isasymphi}{\isacharcomma}\ simp{\isacharunderscore}all{\isacharparenright}%
 \endisatagproof
 {\isafoldproof}%
 %
 \isadelimproof
-\isanewline
 %
 \endisadelimproof
-\isanewline
+%
+\begin{isamarkuptext}%
+Finally, any TESL specification is invariant by stuttering.%
+\end{isamarkuptext}\isamarkuptrue%
 \isacommand{theorem}\isamarkupfalse%
 \ TESL{\isacharunderscore}stuttering{\isacharunderscore}invariant{\isacharcolon}\isanewline
 \ \ \isakeyword{assumes}\ {\isacartoucheopen}sub\ {\isasymlless}\ r{\isacartoucheclose}\isanewline
@@ -1110,879 +1081,840 @@ A time relation is preserved through dilation of a run.%
 %:%29=4%:%
 %:%30=5%:%
 %:%31=6%:%
-%:%40=8%:%
-%:%42=9%:%
-%:%43=9%:%
-%:%44=10%:%
-%:%45=11%:%
-%:%46=12%:%
-%:%53=13%:%
-%:%54=13%:%
-%:%55=14%:%
-%:%56=14%:%
-%:%57=14%:%
-%:%58=15%:%
-%:%59=15%:%
-%:%60=16%:%
-%:%61=16%:%
-%:%62=17%:%
-%:%63=17%:%
-%:%64=18%:%
-%:%65=18%:%
-%:%66=18%:%
-%:%67=18%:%
-%:%68=19%:%
-%:%69=19%:%
-%:%70=20%:%
-%:%71=20%:%
-%:%72=20%:%
-%:%73=20%:%
-%:%74=21%:%
-%:%75=21%:%
-%:%76=21%:%
-%:%77=21%:%
-%:%78=22%:%
-%:%79=22%:%
-%:%80=22%:%
-%:%81=23%:%
-%:%91=25%:%
-%:%93=26%:%
-%:%94=26%:%
-%:%95=27%:%
-%:%96=28%:%
-%:%97=29%:%
-%:%104=30%:%
-%:%105=30%:%
-%:%106=31%:%
-%:%107=31%:%
-%:%108=31%:%
-%:%109=31%:%
-%:%110=32%:%
-%:%111=32%:%
-%:%112=32%:%
-%:%113=32%:%
-%:%114=33%:%
-%:%115=33%:%
-%:%116=34%:%
-%:%117=34%:%
-%:%118=34%:%
-%:%119=35%:%
-%:%120=35%:%
-%:%121=35%:%
-%:%122=36%:%
-%:%123=36%:%
-%:%124=36%:%
-%:%125=37%:%
-%:%126=37%:%
-%:%127=37%:%
-%:%128=38%:%
-%:%134=38%:%
-%:%137=39%:%
-%:%138=40%:%
-%:%139=40%:%
-%:%140=41%:%
-%:%141=42%:%
-%:%142=43%:%
-%:%149=44%:%
-%:%150=44%:%
-%:%151=45%:%
-%:%152=45%:%
-%:%153=45%:%
-%:%154=45%:%
-%:%155=46%:%
-%:%156=46%:%
-%:%157=46%:%
-%:%158=46%:%
-%:%159=47%:%
-%:%160=47%:%
-%:%161=48%:%
-%:%162=48%:%
-%:%163=48%:%
-%:%164=49%:%
-%:%165=49%:%
-%:%166=49%:%
-%:%167=50%:%
-%:%168=50%:%
-%:%169=50%:%
-%:%170=51%:%
-%:%171=51%:%
-%:%172=51%:%
-%:%173=52%:%
-%:%183=54%:%
-%:%185=55%:%
-%:%186=55%:%
-%:%187=56%:%
-%:%188=57%:%
-%:%189=58%:%
-%:%196=59%:%
-%:%197=59%:%
-%:%198=60%:%
-%:%199=60%:%
-%:%200=60%:%
-%:%201=60%:%
-%:%202=61%:%
-%:%203=61%:%
-%:%204=61%:%
-%:%205=62%:%
-%:%206=62%:%
-%:%207=63%:%
-%:%208=63%:%
-%:%209=63%:%
-%:%210=64%:%
-%:%211=64%:%
-%:%212=64%:%
-%:%213=64%:%
-%:%214=65%:%
-%:%215=65%:%
-%:%216=65%:%
-%:%217=66%:%
-%:%223=66%:%
-%:%226=67%:%
-%:%227=68%:%
-%:%228=68%:%
-%:%229=69%:%
-%:%230=70%:%
-%:%231=71%:%
-%:%238=72%:%
-%:%239=72%:%
-%:%240=73%:%
-%:%241=73%:%
-%:%242=73%:%
-%:%243=73%:%
-%:%244=74%:%
-%:%245=74%:%
-%:%246=74%:%
-%:%247=74%:%
-%:%248=75%:%
-%:%249=75%:%
-%:%250=75%:%
-%:%251=76%:%
-%:%252=77%:%
-%:%253=77%:%
-%:%254=78%:%
-%:%255=78%:%
-%:%256=79%:%
-%:%257=79%:%
-%:%258=80%:%
-%:%259=80%:%
-%:%260=81%:%
-%:%261=82%:%
-%:%262=82%:%
-%:%263=83%:%
-%:%264=83%:%
-%:%265=84%:%
-%:%266=84%:%
-%:%267=85%:%
-%:%268=85%:%
-%:%269=85%:%
-%:%270=86%:%
-%:%271=86%:%
-%:%272=87%:%
-%:%273=87%:%
-%:%274=88%:%
-%:%275=88%:%
-%:%276=88%:%
-%:%277=88%:%
-%:%278=89%:%
-%:%279=89%:%
-%:%280=89%:%
-%:%281=89%:%
-%:%282=90%:%
-%:%283=90%:%
-%:%284=91%:%
-%:%285=91%:%
-%:%286=92%:%
-%:%287=92%:%
-%:%288=92%:%
-%:%289=92%:%
-%:%290=93%:%
-%:%291=93%:%
-%:%292=93%:%
-%:%293=93%:%
-%:%294=94%:%
-%:%295=94%:%
-%:%296=94%:%
-%:%297=94%:%
-%:%298=94%:%
-%:%299=95%:%
-%:%300=95%:%
-%:%301=95%:%
-%:%302=95%:%
-%:%303=96%:%
-%:%304=96%:%
-%:%305=96%:%
-%:%306=96%:%
-%:%307=97%:%
-%:%308=97%:%
-%:%309=98%:%
-%:%310=98%:%
-%:%311=98%:%
-%:%312=98%:%
-%:%313=99%:%
-%:%314=99%:%
-%:%315=100%:%
-%:%316=100%:%
-%:%317=100%:%
-%:%318=101%:%
-%:%319=101%:%
-%:%320=101%:%
-%:%321=102%:%
-%:%322=102%:%
-%:%323=102%:%
-%:%324=102%:%
-%:%325=102%:%
-%:%326=103%:%
-%:%327=103%:%
-%:%328=103%:%
-%:%329=103%:%
-%:%330=104%:%
-%:%331=104%:%
-%:%332=104%:%
-%:%333=105%:%
-%:%334=105%:%
-%:%335=106%:%
-%:%336=106%:%
-%:%337=106%:%
-%:%338=106%:%
-%:%339=107%:%
-%:%340=107%:%
-%:%341=107%:%
-%:%342=107%:%
-%:%343=107%:%
-%:%344=108%:%
-%:%345=108%:%
-%:%346=108%:%
-%:%347=108%:%
-%:%348=109%:%
-%:%349=109%:%
-%:%350=109%:%
-%:%351=109%:%
-%:%352=110%:%
-%:%353=110%:%
-%:%354=111%:%
-%:%355=111%:%
-%:%356=112%:%
-%:%357=112%:%
-%:%358=112%:%
-%:%359=112%:%
-%:%360=113%:%
-%:%361=113%:%
-%:%362=113%:%
-%:%363=114%:%
-%:%364=114%:%
-%:%365=115%:%
-%:%366=115%:%
-%:%367=115%:%
-%:%368=115%:%
-%:%369=116%:%
-%:%370=116%:%
-%:%371=116%:%
-%:%372=116%:%
-%:%373=117%:%
-%:%374=117%:%
-%:%375=117%:%
-%:%376=117%:%
-%:%377=118%:%
-%:%378=118%:%
-%:%379=119%:%
-%:%380=119%:%
-%:%381=120%:%
-%:%382=120%:%
-%:%383=120%:%
-%:%384=120%:%
-%:%385=121%:%
-%:%386=121%:%
-%:%387=121%:%
-%:%388=121%:%
-%:%389=122%:%
-%:%390=122%:%
-%:%391=122%:%
-%:%392=122%:%
-%:%393=123%:%
-%:%394=123%:%
-%:%395=123%:%
-%:%396=123%:%
-%:%397=124%:%
-%:%398=124%:%
-%:%399=124%:%
-%:%400=124%:%
-%:%401=125%:%
-%:%402=125%:%
-%:%403=126%:%
-%:%404=126%:%
-%:%405=126%:%
-%:%406=126%:%
-%:%407=127%:%
-%:%408=127%:%
-%:%409=128%:%
-%:%410=128%:%
-%:%411=128%:%
-%:%412=129%:%
-%:%413=129%:%
-%:%414=129%:%
-%:%415=130%:%
-%:%416=130%:%
-%:%417=130%:%
-%:%418=130%:%
-%:%419=131%:%
-%:%420=131%:%
-%:%421=132%:%
-%:%422=132%:%
-%:%423=132%:%
-%:%424=132%:%
-%:%425=133%:%
-%:%426=133%:%
-%:%427=133%:%
-%:%428=134%:%
-%:%429=134%:%
-%:%430=135%:%
-%:%431=135%:%
-%:%432=135%:%
-%:%433=135%:%
-%:%434=136%:%
-%:%435=136%:%
-%:%436=136%:%
-%:%437=136%:%
-%:%438=136%:%
-%:%439=137%:%
-%:%440=137%:%
-%:%441=137%:%
-%:%442=137%:%
-%:%443=138%:%
-%:%444=138%:%
-%:%445=138%:%
-%:%446=138%:%
-%:%447=138%:%
-%:%448=139%:%
-%:%449=139%:%
-%:%450=140%:%
-%:%451=140%:%
-%:%452=141%:%
-%:%453=141%:%
-%:%454=141%:%
-%:%455=141%:%
-%:%456=142%:%
-%:%457=142%:%
-%:%458=143%:%
-%:%459=143%:%
-%:%460=143%:%
-%:%461=143%:%
-%:%462=144%:%
-%:%463=144%:%
-%:%464=144%:%
-%:%465=145%:%
-%:%466=145%:%
-%:%467=145%:%
-%:%468=145%:%
-%:%469=146%:%
-%:%479=149%:%
-%:%481=151%:%
-%:%482=151%:%
-%:%483=152%:%
-%:%484=153%:%
-%:%485=154%:%
-%:%492=155%:%
-%:%493=155%:%
-%:%494=156%:%
-%:%495=156%:%
-%:%496=156%:%
-%:%497=156%:%
-%:%498=157%:%
-%:%499=157%:%
-%:%500=157%:%
-%:%502=159%:%
-%:%503=160%:%
-%:%504=160%:%
-%:%505=160%:%
-%:%506=161%:%
-%:%507=161%:%
-%:%509=163%:%
-%:%510=164%:%
-%:%511=164%:%
-%:%512=164%:%
-%:%513=165%:%
-%:%514=165%:%
-%:%516=167%:%
-%:%517=168%:%
-%:%518=168%:%
-%:%519=169%:%
-%:%520=169%:%
-%:%521=169%:%
-%:%522=169%:%
-%:%523=170%:%
-%:%524=170%:%
-%:%525=170%:%
-%:%526=170%:%
-%:%527=171%:%
-%:%528=171%:%
-%:%529=171%:%
-%:%530=172%:%
-%:%531=173%:%
-%:%532=173%:%
-%:%533=174%:%
-%:%534=174%:%
-%:%535=175%:%
-%:%536=176%:%
-%:%537=176%:%
-%:%538=177%:%
-%:%539=177%:%
-%:%540=177%:%
-%:%541=177%:%
-%:%542=178%:%
-%:%543=178%:%
-%:%544=179%:%
-%:%545=179%:%
-%:%546=180%:%
-%:%547=180%:%
-%:%548=181%:%
-%:%549=181%:%
-%:%550=181%:%
-%:%551=181%:%
-%:%552=182%:%
-%:%553=182%:%
-%:%554=182%:%
-%:%555=182%:%
-%:%556=182%:%
-%:%557=183%:%
-%:%558=183%:%
-%:%559=183%:%
-%:%560=183%:%
-%:%561=183%:%
-%:%562=184%:%
-%:%563=184%:%
-%:%564=185%:%
-%:%565=185%:%
-%:%566=185%:%
-%:%567=186%:%
-%:%568=186%:%
-%:%569=187%:%
-%:%570=187%:%
-%:%571=188%:%
-%:%572=188%:%
-%:%573=188%:%
-%:%574=188%:%
-%:%575=189%:%
-%:%576=189%:%
-%:%577=189%:%
-%:%578=189%:%
-%:%579=189%:%
-%:%580=190%:%
-%:%581=190%:%
-%:%582=191%:%
-%:%583=191%:%
-%:%584=192%:%
-%:%585=192%:%
-%:%586=192%:%
-%:%587=193%:%
-%:%588=193%:%
-%:%589=193%:%
-%:%590=193%:%
-%:%591=194%:%
-%:%592=194%:%
-%:%593=194%:%
-%:%594=194%:%
-%:%595=195%:%
-%:%596=195%:%
-%:%597=195%:%
-%:%598=196%:%
-%:%599=196%:%
-%:%600=196%:%
-%:%601=197%:%
-%:%602=197%:%
-%:%603=197%:%
-%:%604=197%:%
-%:%605=198%:%
-%:%606=198%:%
-%:%607=198%:%
-%:%608=198%:%
-%:%609=198%:%
-%:%610=199%:%
-%:%611=199%:%
-%:%612=199%:%
-%:%613=199%:%
-%:%614=200%:%
-%:%615=200%:%
-%:%616=201%:%
-%:%617=201%:%
-%:%618=202%:%
-%:%619=202%:%
-%:%620=202%:%
-%:%621=203%:%
-%:%622=203%:%
-%:%623=204%:%
-%:%624=204%:%
-%:%625=205%:%
-%:%626=205%:%
-%:%627=205%:%
-%:%628=205%:%
-%:%629=206%:%
-%:%630=206%:%
-%:%631=207%:%
-%:%632=207%:%
-%:%633=207%:%
-%:%634=207%:%
-%:%635=208%:%
-%:%636=208%:%
-%:%637=209%:%
-%:%638=209%:%
-%:%639=209%:%
-%:%640=210%:%
-%:%650=212%:%
-%:%652=213%:%
-%:%653=213%:%
-%:%654=214%:%
-%:%655=215%:%
-%:%656=216%:%
-%:%663=217%:%
-%:%664=217%:%
-%:%665=218%:%
-%:%666=218%:%
-%:%667=218%:%
-%:%668=218%:%
-%:%669=219%:%
-%:%670=219%:%
-%:%671=219%:%
-%:%672=219%:%
-%:%673=220%:%
-%:%674=220%:%
-%:%675=221%:%
-%:%676=221%:%
-%:%677=221%:%
-%:%678=222%:%
-%:%679=222%:%
-%:%680=222%:%
-%:%681=223%:%
-%:%682=223%:%
-%:%683=223%:%
-%:%684=224%:%
-%:%685=224%:%
-%:%686=224%:%
-%:%687=224%:%
-%:%688=225%:%
-%:%689=225%:%
-%:%690=226%:%
-%:%691=226%:%
-%:%692=226%:%
-%:%693=226%:%
-%:%694=227%:%
-%:%695=227%:%
-%:%696=227%:%
-%:%697=228%:%
-%:%707=230%:%
-%:%709=231%:%
-%:%710=231%:%
-%:%711=232%:%
-%:%712=233%:%
-%:%713=234%:%
-%:%720=235%:%
-%:%721=235%:%
-%:%722=236%:%
-%:%723=236%:%
-%:%724=236%:%
-%:%725=236%:%
-%:%726=237%:%
-%:%727=237%:%
-%:%728=237%:%
-%:%729=237%:%
-%:%730=238%:%
-%:%731=238%:%
-%:%732=239%:%
-%:%733=239%:%
-%:%734=239%:%
-%:%735=240%:%
-%:%736=240%:%
-%:%737=241%:%
-%:%738=241%:%
-%:%739=242%:%
-%:%740=242%:%
-%:%741=243%:%
-%:%742=243%:%
-%:%743=243%:%
-%:%744=243%:%
-%:%745=244%:%
-%:%746=244%:%
-%:%747=244%:%
-%:%748=244%:%
-%:%749=244%:%
-%:%750=245%:%
-%:%751=245%:%
-%:%752=245%:%
-%:%753=245%:%
-%:%754=246%:%
-%:%755=246%:%
-%:%756=247%:%
-%:%757=247%:%
-%:%758=247%:%
-%:%759=247%:%
-%:%760=248%:%
-%:%761=248%:%
-%:%762=249%:%
-%:%763=249%:%
-%:%764=250%:%
-%:%765=250%:%
-%:%766=250%:%
-%:%767=251%:%
-%:%768=251%:%
-%:%769=252%:%
-%:%770=252%:%
-%:%771=253%:%
-%:%772=253%:%
-%:%773=253%:%
-%:%774=254%:%
-%:%775=254%:%
-%:%776=255%:%
-%:%777=255%:%
-%:%778=255%:%
-%:%779=255%:%
-%:%780=256%:%
-%:%781=256%:%
-%:%782=257%:%
-%:%783=257%:%
-%:%784=258%:%
-%:%785=258%:%
-%:%786=258%:%
-%:%787=258%:%
-%:%788=259%:%
-%:%789=259%:%
-%:%790=259%:%
-%:%791=259%:%
-%:%792=260%:%
-%:%793=260%:%
-%:%794=260%:%
-%:%795=260%:%
-%:%796=261%:%
-%:%797=261%:%
-%:%798=262%:%
-%:%799=262%:%
-%:%800=262%:%
-%:%801=262%:%
-%:%802=263%:%
-%:%803=263%:%
-%:%804=264%:%
-%:%805=264%:%
-%:%806=264%:%
-%:%807=264%:%
-%:%808=265%:%
-%:%809=265%:%
-%:%810=266%:%
-%:%811=266%:%
-%:%812=267%:%
-%:%818=267%:%
-%:%821=268%:%
-%:%822=269%:%
-%:%823=269%:%
-%:%824=270%:%
-%:%825=271%:%
-%:%826=272%:%
-%:%833=273%:%
-%:%834=273%:%
-%:%835=273%:%
-%:%836=273%:%
-%:%841=273%:%
-%:%844=274%:%
-%:%845=275%:%
-%:%846=275%:%
-%:%847=276%:%
-%:%848=277%:%
-%:%849=278%:%
-%:%856=279%:%
-%:%857=279%:%
-%:%858=280%:%
-%:%859=280%:%
-%:%860=280%:%
-%:%861=280%:%
-%:%862=281%:%
-%:%863=281%:%
-%:%864=281%:%
-%:%865=282%:%
-%:%866=282%:%
-%:%867=283%:%
-%:%868=283%:%
-%:%869=284%:%
-%:%870=284%:%
-%:%871=284%:%
-%:%872=285%:%
-%:%873=285%:%
-%:%874=286%:%
-%:%875=286%:%
-%:%876=287%:%
-%:%877=287%:%
-%:%878=287%:%
-%:%879=287%:%
-%:%880=288%:%
-%:%881=288%:%
-%:%882=288%:%
-%:%883=288%:%
-%:%884=289%:%
-%:%885=289%:%
-%:%886=290%:%
-%:%887=290%:%
-%:%888=291%:%
-%:%889=291%:%
-%:%890=291%:%
-%:%891=291%:%
-%:%892=292%:%
-%:%893=292%:%
-%:%894=293%:%
-%:%895=293%:%
-%:%896=294%:%
-%:%897=294%:%
-%:%898=295%:%
-%:%899=295%:%
-%:%900=295%:%
-%:%901=295%:%
-%:%902=296%:%
-%:%903=296%:%
-%:%904=297%:%
-%:%905=297%:%
-%:%906=297%:%
-%:%907=298%:%
-%:%908=298%:%
-%:%909=298%:%
-%:%910=298%:%
-%:%911=298%:%
-%:%912=299%:%
-%:%913=299%:%
-%:%914=300%:%
-%:%915=300%:%
-%:%916=301%:%
-%:%917=301%:%
-%:%918=301%:%
-%:%919=301%:%
-%:%920=302%:%
-%:%921=302%:%
-%:%922=303%:%
-%:%923=303%:%
-%:%924=303%:%
-%:%925=303%:%
-%:%926=304%:%
-%:%927=304%:%
-%:%928=305%:%
-%:%929=305%:%
-%:%930=305%:%
-%:%931=305%:%
-%:%932=306%:%
-%:%933=306%:%
-%:%934=307%:%
-%:%935=307%:%
-%:%936=308%:%
-%:%937=308%:%
-%:%938=308%:%
-%:%939=309%:%
-%:%940=309%:%
-%:%941=309%:%
-%:%942=309%:%
-%:%943=310%:%
-%:%949=310%:%
-%:%952=311%:%
-%:%953=312%:%
-%:%954=312%:%
-%:%955=313%:%
-%:%956=314%:%
-%:%957=315%:%
-%:%964=316%:%
-%:%965=316%:%
-%:%966=317%:%
-%:%967=317%:%
-%:%968=318%:%
-%:%969=318%:%
-%:%970=318%:%
-%:%971=318%:%
-%:%972=319%:%
-%:%973=319%:%
-%:%974=320%:%
-%:%975=320%:%
-%:%976=321%:%
-%:%977=321%:%
-%:%978=321%:%
-%:%979=321%:%
-%:%980=322%:%
-%:%981=322%:%
-%:%982=323%:%
-%:%983=323%:%
-%:%984=324%:%
-%:%985=324%:%
-%:%986=324%:%
-%:%987=324%:%
-%:%988=325%:%
-%:%989=325%:%
-%:%990=326%:%
-%:%991=326%:%
-%:%992=327%:%
-%:%993=327%:%
-%:%994=327%:%
-%:%995=327%:%
-%:%996=328%:%
-%:%997=328%:%
-%:%998=329%:%
-%:%999=329%:%
-%:%1000=330%:%
-%:%1001=330%:%
-%:%1002=330%:%
-%:%1003=330%:%
-%:%1004=331%:%
-%:%1005=331%:%
-%:%1006=332%:%
-%:%1007=332%:%
-%:%1008=333%:%
-%:%1009=333%:%
-%:%1010=333%:%
-%:%1011=333%:%
-%:%1012=334%:%
-%:%1013=334%:%
-%:%1014=335%:%
-%:%1015=335%:%
-%:%1016=336%:%
-%:%1017=336%:%
-%:%1018=336%:%
-%:%1019=336%:%
-%:%1020=337%:%
-%:%1021=337%:%
-%:%1022=338%:%
-%:%1023=338%:%
-%:%1024=339%:%
-%:%1025=339%:%
-%:%1026=339%:%
-%:%1027=339%:%
-%:%1028=340%:%
-%:%1034=340%:%
-%:%1037=341%:%
-%:%1038=342%:%
-%:%1039=342%:%
-%:%1040=343%:%
-%:%1041=344%:%
-%:%1048=345%:%
-%:%1049=345%:%
-%:%1050=346%:%
-%:%1051=346%:%
-%:%1052=347%:%
-%:%1053=347%:%
-%:%1054=347%:%
-%:%1055=348%:%
-%:%1056=348%:%
-%:%1057=349%:%
-%:%1058=349%:%
-%:%1059=350%:%
-%:%1060=350%:%
-%:%1061=350%:%
-%:%1062=351%:%
-%:%1063=351%:%
-%:%1064=351%:%
-%:%1065=352%:%
-%:%1066=352%:%
-%:%1067=352%:%
-%:%1068=352%:%
-%:%1069=353%:%
-%:%1070=353%:%
-%:%1071=353%:%
-%:%1072=353%:%
-%:%1073=353%:%
-%:%1074=354%:%
-%:%1075=354%:%
-%:%1076=354%:%
-%:%1077=354%:%
-%:%1078=354%:%
-%:%1079=355%:%
-%:%1085=355%:%
-%:%1090=356%:%
-%:%1095=357%:%
+%:%40=9%:%
+%:%41=10%:%
+%:%42=11%:%
+%:%46=14%:%
+%:%48=15%:%
+%:%49=15%:%
+%:%50=16%:%
+%:%51=17%:%
+%:%52=18%:%
+%:%59=19%:%
+%:%60=19%:%
+%:%61=20%:%
+%:%62=20%:%
+%:%63=20%:%
+%:%64=21%:%
+%:%65=21%:%
+%:%66=22%:%
+%:%67=22%:%
+%:%68=23%:%
+%:%69=23%:%
+%:%70=24%:%
+%:%71=24%:%
+%:%72=24%:%
+%:%73=24%:%
+%:%74=25%:%
+%:%75=25%:%
+%:%76=26%:%
+%:%77=26%:%
+%:%78=26%:%
+%:%79=26%:%
+%:%80=27%:%
+%:%81=27%:%
+%:%82=27%:%
+%:%83=27%:%
+%:%84=28%:%
+%:%85=28%:%
+%:%86=28%:%
+%:%87=29%:%
+%:%97=31%:%
+%:%99=32%:%
+%:%100=32%:%
+%:%101=33%:%
+%:%102=34%:%
+%:%103=35%:%
+%:%110=36%:%
+%:%111=36%:%
+%:%112=37%:%
+%:%113=37%:%
+%:%114=37%:%
+%:%115=37%:%
+%:%116=38%:%
+%:%117=38%:%
+%:%118=38%:%
+%:%119=38%:%
+%:%120=39%:%
+%:%121=39%:%
+%:%122=40%:%
+%:%123=40%:%
+%:%124=40%:%
+%:%125=41%:%
+%:%126=41%:%
+%:%127=41%:%
+%:%128=42%:%
+%:%129=42%:%
+%:%130=42%:%
+%:%131=43%:%
+%:%132=43%:%
+%:%133=43%:%
+%:%134=44%:%
+%:%140=44%:%
+%:%143=45%:%
+%:%144=46%:%
+%:%145=46%:%
+%:%146=47%:%
+%:%147=48%:%
+%:%148=49%:%
+%:%155=50%:%
+%:%156=50%:%
+%:%157=51%:%
+%:%158=51%:%
+%:%159=51%:%
+%:%160=51%:%
+%:%161=52%:%
+%:%162=52%:%
+%:%163=52%:%
+%:%164=52%:%
+%:%165=53%:%
+%:%166=53%:%
+%:%167=54%:%
+%:%168=54%:%
+%:%169=54%:%
+%:%170=55%:%
+%:%171=55%:%
+%:%172=55%:%
+%:%173=56%:%
+%:%174=56%:%
+%:%175=56%:%
+%:%176=57%:%
+%:%177=57%:%
+%:%178=57%:%
+%:%179=58%:%
+%:%189=60%:%
+%:%191=61%:%
+%:%192=61%:%
+%:%193=62%:%
+%:%194=63%:%
+%:%195=64%:%
+%:%202=65%:%
+%:%203=65%:%
+%:%204=66%:%
+%:%205=66%:%
+%:%206=66%:%
+%:%207=66%:%
+%:%208=67%:%
+%:%209=67%:%
+%:%210=67%:%
+%:%211=68%:%
+%:%212=68%:%
+%:%213=69%:%
+%:%214=69%:%
+%:%215=69%:%
+%:%216=70%:%
+%:%217=70%:%
+%:%218=71%:%
+%:%219=71%:%
+%:%220=71%:%
+%:%221=72%:%
+%:%222=72%:%
+%:%223=72%:%
+%:%224=73%:%
+%:%230=73%:%
+%:%233=74%:%
+%:%234=75%:%
+%:%235=75%:%
+%:%236=76%:%
+%:%237=77%:%
+%:%238=78%:%
+%:%245=79%:%
+%:%246=79%:%
+%:%247=80%:%
+%:%248=80%:%
+%:%249=80%:%
+%:%250=80%:%
+%:%251=81%:%
+%:%252=81%:%
+%:%253=81%:%
+%:%254=82%:%
+%:%255=83%:%
+%:%256=83%:%
+%:%257=84%:%
+%:%258=84%:%
+%:%259=84%:%
+%:%260=85%:%
+%:%261=86%:%
+%:%262=87%:%
+%:%263=87%:%
+%:%264=88%:%
+%:%265=88%:%
+%:%266=89%:%
+%:%267=90%:%
+%:%268=90%:%
+%:%269=91%:%
+%:%270=91%:%
+%:%271=92%:%
+%:%272=93%:%
+%:%273=94%:%
+%:%274=94%:%
+%:%275=95%:%
+%:%276=95%:%
+%:%277=96%:%
+%:%278=96%:%
+%:%279=97%:%
+%:%280=97%:%
+%:%281=97%:%
+%:%282=98%:%
+%:%283=98%:%
+%:%284=99%:%
+%:%285=99%:%
+%:%286=100%:%
+%:%287=100%:%
+%:%288=100%:%
+%:%289=100%:%
+%:%290=101%:%
+%:%291=101%:%
+%:%292=101%:%
+%:%293=101%:%
+%:%294=102%:%
+%:%295=102%:%
+%:%296=103%:%
+%:%297=103%:%
+%:%298=104%:%
+%:%299=104%:%
+%:%300=104%:%
+%:%301=104%:%
+%:%302=105%:%
+%:%303=105%:%
+%:%304=105%:%
+%:%305=105%:%
+%:%306=106%:%
+%:%307=106%:%
+%:%308=106%:%
+%:%309=107%:%
+%:%310=107%:%
+%:%311=107%:%
+%:%312=108%:%
+%:%313=108%:%
+%:%314=108%:%
+%:%315=108%:%
+%:%316=109%:%
+%:%317=109%:%
+%:%318=109%:%
+%:%319=109%:%
+%:%320=110%:%
+%:%321=110%:%
+%:%322=111%:%
+%:%323=111%:%
+%:%324=111%:%
+%:%325=111%:%
+%:%326=112%:%
+%:%327=112%:%
+%:%328=113%:%
+%:%329=113%:%
+%:%330=113%:%
+%:%331=114%:%
+%:%332=114%:%
+%:%333=115%:%
+%:%334=115%:%
+%:%335=116%:%
+%:%336=116%:%
+%:%337=116%:%
+%:%338=117%:%
+%:%339=117%:%
+%:%340=117%:%
+%:%341=118%:%
+%:%342=118%:%
+%:%343=118%:%
+%:%344=118%:%
+%:%345=119%:%
+%:%346=119%:%
+%:%347=119%:%
+%:%348=120%:%
+%:%349=120%:%
+%:%350=121%:%
+%:%351=121%:%
+%:%352=121%:%
+%:%353=122%:%
+%:%354=122%:%
+%:%355=123%:%
+%:%356=123%:%
+%:%357=123%:%
+%:%358=124%:%
+%:%359=124%:%
+%:%360=124%:%
+%:%361=125%:%
+%:%362=125%:%
+%:%363=125%:%
+%:%364=125%:%
+%:%365=126%:%
+%:%366=126%:%
+%:%367=126%:%
+%:%368=126%:%
+%:%369=127%:%
+%:%370=127%:%
+%:%371=128%:%
+%:%372=128%:%
+%:%373=129%:%
+%:%374=129%:%
+%:%375=129%:%
+%:%376=129%:%
+%:%377=130%:%
+%:%378=130%:%
+%:%379=130%:%
+%:%380=131%:%
+%:%381=131%:%
+%:%382=132%:%
+%:%383=132%:%
+%:%384=132%:%
+%:%385=133%:%
+%:%386=133%:%
+%:%387=134%:%
+%:%388=134%:%
+%:%389=135%:%
+%:%390=135%:%
+%:%391=135%:%
+%:%392=136%:%
+%:%393=136%:%
+%:%394=136%:%
+%:%395=136%:%
+%:%396=137%:%
+%:%397=137%:%
+%:%398=138%:%
+%:%399=138%:%
+%:%400=139%:%
+%:%401=139%:%
+%:%402=139%:%
+%:%403=139%:%
+%:%404=140%:%
+%:%405=140%:%
+%:%406=140%:%
+%:%407=140%:%
+%:%408=141%:%
+%:%409=141%:%
+%:%410=141%:%
+%:%411=141%:%
+%:%412=142%:%
+%:%413=142%:%
+%:%414=142%:%
+%:%415=142%:%
+%:%416=143%:%
+%:%417=143%:%
+%:%418=143%:%
+%:%419=143%:%
+%:%420=144%:%
+%:%421=144%:%
+%:%422=145%:%
+%:%423=145%:%
+%:%424=145%:%
+%:%425=145%:%
+%:%426=146%:%
+%:%427=146%:%
+%:%428=147%:%
+%:%429=147%:%
+%:%430=147%:%
+%:%431=148%:%
+%:%432=148%:%
+%:%433=149%:%
+%:%434=149%:%
+%:%435=150%:%
+%:%436=150%:%
+%:%437=150%:%
+%:%438=150%:%
+%:%439=151%:%
+%:%440=151%:%
+%:%441=152%:%
+%:%442=152%:%
+%:%443=152%:%
+%:%444=152%:%
+%:%445=153%:%
+%:%446=153%:%
+%:%447=153%:%
+%:%448=154%:%
+%:%449=154%:%
+%:%450=155%:%
+%:%451=155%:%
+%:%452=155%:%
+%:%453=156%:%
+%:%454=156%:%
+%:%455=157%:%
+%:%456=157%:%
+%:%457=157%:%
+%:%458=158%:%
+%:%459=158%:%
+%:%460=158%:%
+%:%461=159%:%
+%:%462=159%:%
+%:%463=159%:%
+%:%464=159%:%
+%:%465=160%:%
+%:%466=160%:%
+%:%467=160%:%
+%:%468=160%:%
+%:%469=160%:%
+%:%470=161%:%
+%:%471=161%:%
+%:%472=162%:%
+%:%473=162%:%
+%:%474=163%:%
+%:%475=163%:%
+%:%476=163%:%
+%:%477=163%:%
+%:%478=164%:%
+%:%479=164%:%
+%:%480=165%:%
+%:%481=165%:%
+%:%482=165%:%
+%:%483=165%:%
+%:%484=166%:%
+%:%485=166%:%
+%:%486=166%:%
+%:%487=167%:%
+%:%488=167%:%
+%:%489=167%:%
+%:%490=167%:%
+%:%491=168%:%
+%:%501=171%:%
+%:%503=173%:%
+%:%504=173%:%
+%:%505=174%:%
+%:%506=175%:%
+%:%507=176%:%
+%:%514=177%:%
+%:%515=177%:%
+%:%516=178%:%
+%:%517=178%:%
+%:%518=178%:%
+%:%519=178%:%
+%:%520=179%:%
+%:%521=179%:%
+%:%522=179%:%
+%:%524=181%:%
+%:%525=182%:%
+%:%526=182%:%
+%:%527=182%:%
+%:%528=183%:%
+%:%529=183%:%
+%:%531=185%:%
+%:%532=186%:%
+%:%533=186%:%
+%:%534=186%:%
+%:%535=187%:%
+%:%536=187%:%
+%:%538=189%:%
+%:%539=190%:%
+%:%540=190%:%
+%:%541=191%:%
+%:%542=191%:%
+%:%543=191%:%
+%:%544=191%:%
+%:%545=192%:%
+%:%546=192%:%
+%:%547=192%:%
+%:%548=192%:%
+%:%549=193%:%
+%:%550=193%:%
+%:%551=193%:%
+%:%552=194%:%
+%:%553=195%:%
+%:%554=195%:%
+%:%555=196%:%
+%:%556=196%:%
+%:%557=197%:%
+%:%558=198%:%
+%:%559=198%:%
+%:%560=199%:%
+%:%561=199%:%
+%:%562=199%:%
+%:%563=199%:%
+%:%564=200%:%
+%:%565=200%:%
+%:%566=201%:%
+%:%567=201%:%
+%:%568=202%:%
+%:%569=202%:%
+%:%570=203%:%
+%:%571=203%:%
+%:%572=203%:%
+%:%573=203%:%
+%:%574=204%:%
+%:%575=204%:%
+%:%576=204%:%
+%:%577=204%:%
+%:%578=204%:%
+%:%579=205%:%
+%:%580=205%:%
+%:%581=205%:%
+%:%582=205%:%
+%:%583=205%:%
+%:%584=206%:%
+%:%585=206%:%
+%:%586=207%:%
+%:%587=207%:%
+%:%588=207%:%
+%:%589=208%:%
+%:%590=208%:%
+%:%591=209%:%
+%:%592=209%:%
+%:%593=210%:%
+%:%594=210%:%
+%:%595=210%:%
+%:%596=210%:%
+%:%597=211%:%
+%:%598=211%:%
+%:%599=211%:%
+%:%600=211%:%
+%:%601=211%:%
+%:%602=212%:%
+%:%603=212%:%
+%:%604=213%:%
+%:%605=213%:%
+%:%606=214%:%
+%:%607=214%:%
+%:%608=214%:%
+%:%609=215%:%
+%:%610=215%:%
+%:%611=215%:%
+%:%612=215%:%
+%:%613=216%:%
+%:%614=216%:%
+%:%615=216%:%
+%:%616=216%:%
+%:%617=217%:%
+%:%618=217%:%
+%:%619=217%:%
+%:%620=218%:%
+%:%621=218%:%
+%:%622=218%:%
+%:%623=219%:%
+%:%624=219%:%
+%:%625=219%:%
+%:%626=219%:%
+%:%627=220%:%
+%:%628=220%:%
+%:%629=220%:%
+%:%630=220%:%
+%:%631=220%:%
+%:%632=221%:%
+%:%633=221%:%
+%:%634=221%:%
+%:%635=221%:%
+%:%636=222%:%
+%:%637=222%:%
+%:%638=223%:%
+%:%639=223%:%
+%:%640=224%:%
+%:%641=224%:%
+%:%642=224%:%
+%:%643=225%:%
+%:%644=225%:%
+%:%645=226%:%
+%:%646=226%:%
+%:%647=227%:%
+%:%648=227%:%
+%:%649=227%:%
+%:%650=227%:%
+%:%651=228%:%
+%:%652=228%:%
+%:%653=229%:%
+%:%654=229%:%
+%:%655=229%:%
+%:%656=229%:%
+%:%657=230%:%
+%:%658=230%:%
+%:%659=231%:%
+%:%660=231%:%
+%:%661=231%:%
+%:%662=232%:%
+%:%672=234%:%
+%:%674=235%:%
+%:%675=235%:%
+%:%676=236%:%
+%:%677=237%:%
+%:%678=238%:%
+%:%685=239%:%
+%:%686=239%:%
+%:%687=240%:%
+%:%688=240%:%
+%:%689=240%:%
+%:%690=240%:%
+%:%691=241%:%
+%:%692=241%:%
+%:%693=241%:%
+%:%694=241%:%
+%:%695=242%:%
+%:%696=242%:%
+%:%697=243%:%
+%:%698=243%:%
+%:%699=243%:%
+%:%700=244%:%
+%:%701=244%:%
+%:%702=245%:%
+%:%703=245%:%
+%:%704=246%:%
+%:%705=246%:%
+%:%706=247%:%
+%:%707=247%:%
+%:%708=247%:%
+%:%709=247%:%
+%:%710=248%:%
+%:%711=248%:%
+%:%712=248%:%
+%:%713=248%:%
+%:%714=248%:%
+%:%715=249%:%
+%:%716=249%:%
+%:%717=249%:%
+%:%718=249%:%
+%:%719=250%:%
+%:%720=250%:%
+%:%721=251%:%
+%:%722=251%:%
+%:%723=251%:%
+%:%724=251%:%
+%:%725=252%:%
+%:%726=252%:%
+%:%727=253%:%
+%:%728=253%:%
+%:%729=254%:%
+%:%730=254%:%
+%:%731=254%:%
+%:%732=255%:%
+%:%733=255%:%
+%:%734=256%:%
+%:%735=256%:%
+%:%736=257%:%
+%:%737=257%:%
+%:%738=257%:%
+%:%739=258%:%
+%:%740=258%:%
+%:%741=259%:%
+%:%742=259%:%
+%:%743=259%:%
+%:%744=259%:%
+%:%745=260%:%
+%:%746=260%:%
+%:%747=261%:%
+%:%748=261%:%
+%:%749=262%:%
+%:%750=262%:%
+%:%751=262%:%
+%:%752=262%:%
+%:%753=263%:%
+%:%754=263%:%
+%:%755=263%:%
+%:%756=263%:%
+%:%757=264%:%
+%:%758=264%:%
+%:%759=264%:%
+%:%760=264%:%
+%:%761=265%:%
+%:%762=265%:%
+%:%763=266%:%
+%:%764=266%:%
+%:%765=266%:%
+%:%766=266%:%
+%:%767=267%:%
+%:%768=267%:%
+%:%769=268%:%
+%:%770=268%:%
+%:%771=268%:%
+%:%772=268%:%
+%:%773=269%:%
+%:%774=269%:%
+%:%775=270%:%
+%:%776=270%:%
+%:%777=271%:%
+%:%783=271%:%
+%:%786=272%:%
+%:%787=273%:%
+%:%788=273%:%
+%:%789=274%:%
+%:%790=275%:%
+%:%791=276%:%
+%:%798=277%:%
+%:%799=277%:%
+%:%800=277%:%
+%:%801=277%:%
+%:%810=279%:%
+%:%812=280%:%
+%:%813=280%:%
+%:%814=281%:%
+%:%815=282%:%
+%:%816=283%:%
+%:%823=284%:%
+%:%824=284%:%
+%:%825=285%:%
+%:%826=285%:%
+%:%827=285%:%
+%:%828=285%:%
+%:%829=286%:%
+%:%830=286%:%
+%:%831=286%:%
+%:%832=286%:%
+%:%833=287%:%
+%:%834=287%:%
+%:%835=288%:%
+%:%836=288%:%
+%:%837=288%:%
+%:%838=289%:%
+%:%839=289%:%
+%:%840=289%:%
+%:%841=290%:%
+%:%842=290%:%
+%:%843=290%:%
+%:%844=291%:%
+%:%845=291%:%
+%:%846=291%:%
+%:%847=291%:%
+%:%848=292%:%
+%:%849=292%:%
+%:%850=293%:%
+%:%851=293%:%
+%:%852=293%:%
+%:%853=293%:%
+%:%854=294%:%
+%:%855=294%:%
+%:%856=294%:%
+%:%857=295%:%
+%:%867=298%:%
+%:%869=300%:%
+%:%870=300%:%
+%:%871=301%:%
+%:%872=302%:%
+%:%873=303%:%
+%:%880=304%:%
+%:%881=304%:%
+%:%882=305%:%
+%:%883=305%:%
+%:%884=305%:%
+%:%885=305%:%
+%:%886=306%:%
+%:%887=306%:%
+%:%888=306%:%
+%:%889=307%:%
+%:%890=307%:%
+%:%891=308%:%
+%:%892=308%:%
+%:%893=309%:%
+%:%894=309%:%
+%:%895=309%:%
+%:%896=310%:%
+%:%897=310%:%
+%:%898=311%:%
+%:%899=311%:%
+%:%900=312%:%
+%:%901=312%:%
+%:%902=312%:%
+%:%903=312%:%
+%:%904=313%:%
+%:%905=313%:%
+%:%906=313%:%
+%:%907=313%:%
+%:%908=314%:%
+%:%909=314%:%
+%:%910=315%:%
+%:%911=315%:%
+%:%912=316%:%
+%:%913=316%:%
+%:%914=316%:%
+%:%915=316%:%
+%:%916=317%:%
+%:%917=317%:%
+%:%918=318%:%
+%:%919=318%:%
+%:%920=319%:%
+%:%921=319%:%
+%:%922=320%:%
+%:%923=320%:%
+%:%924=320%:%
+%:%925=320%:%
+%:%926=321%:%
+%:%927=321%:%
+%:%928=322%:%
+%:%929=322%:%
+%:%930=322%:%
+%:%931=323%:%
+%:%932=323%:%
+%:%933=323%:%
+%:%934=323%:%
+%:%935=323%:%
+%:%936=324%:%
+%:%937=324%:%
+%:%938=325%:%
+%:%939=325%:%
+%:%940=326%:%
+%:%941=326%:%
+%:%942=326%:%
+%:%943=326%:%
+%:%944=327%:%
+%:%945=327%:%
+%:%946=328%:%
+%:%947=328%:%
+%:%948=328%:%
+%:%949=328%:%
+%:%950=329%:%
+%:%951=329%:%
+%:%952=330%:%
+%:%953=330%:%
+%:%954=330%:%
+%:%955=330%:%
+%:%956=331%:%
+%:%957=331%:%
+%:%958=332%:%
+%:%959=332%:%
+%:%960=333%:%
+%:%961=333%:%
+%:%962=333%:%
+%:%963=334%:%
+%:%964=334%:%
+%:%965=334%:%
+%:%966=334%:%
+%:%967=335%:%
+%:%973=335%:%
+%:%976=336%:%
+%:%977=337%:%
+%:%978=337%:%
+%:%979=338%:%
+%:%980=339%:%
+%:%982=342%:%
+%:%983=343%:%
+%:%985=345%:%
+%:%986=345%:%
+%:%987=346%:%
+%:%988=347%:%
+%:%989=348%:%
+%:%996=349%:%
+%:%997=349%:%
+%:%998=349%:%
+%:%1007=352%:%
+%:%1009=354%:%
+%:%1010=354%:%
+%:%1011=355%:%
+%:%1012=356%:%
+%:%1019=357%:%
+%:%1020=357%:%
+%:%1021=358%:%
+%:%1022=358%:%
+%:%1023=359%:%
+%:%1024=359%:%
+%:%1025=359%:%
+%:%1026=360%:%
+%:%1027=360%:%
+%:%1028=361%:%
+%:%1029=361%:%
+%:%1030=362%:%
+%:%1031=362%:%
+%:%1032=362%:%
+%:%1033=363%:%
+%:%1034=363%:%
+%:%1035=363%:%
+%:%1036=364%:%
+%:%1037=364%:%
+%:%1038=364%:%
+%:%1039=364%:%
+%:%1040=365%:%
+%:%1041=365%:%
+%:%1042=365%:%
+%:%1043=365%:%
+%:%1044=365%:%
+%:%1045=366%:%
+%:%1046=366%:%
+%:%1047=366%:%
+%:%1048=366%:%
+%:%1049=366%:%
+%:%1050=367%:%
+%:%1056=367%:%
+%:%1061=368%:%
+%:%1066=369%:%

@@ -5,8 +5,9 @@ imports TESL
       
 begin
 text \<open>
-  Runs are sequences of instants, and each instant maps a clock to a pair that 
-  tells whether the clock ticks or not, and what is the current time on this clock.
+  Runs are sequences of instants, and each instant maps a clock to a pair 
+  @{term \<open>(h, t)\<close>} where @{term \<open>h\<close>} tells whether the clock ticks or not, 
+  and @{term \<open>t\<close>} is the current time on this clock.
   The first element of the pair is called the \<^emph>\<open>hamlet\<close> of the clock (to tick or 
   not to tick), the second element is called the \<^emph>\<open>time\<close>.
 \<close>
@@ -19,7 +20,7 @@ type_synonym '\<tau> instant = \<open>clock \<Rightarrow> (bool \<times> '\<tau>
 text\<open>
   Runs have the additional constraint that time cannot go backwards on any clock
   in the sequence of instants.
-Therefore, for any clock, the time projection of a run is monotonous.
+  Therefore, for any clock, the time projection of a run is monotonous.
 \<close>
 typedef (overloaded) '\<tau>::linordered_field run =
   \<open>{ \<rho>::nat \<Rightarrow> '\<tau> instant. \<forall>c. mono (\<lambda>n. time (\<rho> n c)) }\<close>
@@ -31,6 +32,12 @@ qed
 lemma Abs_run_inverse_rewrite:
   \<open>\<forall>c. mono (\<lambda>n. time (\<rho> n c)) \<Longrightarrow> Rep_run (Abs_run \<rho>) = \<rho>\<close>
 by (simp add: Abs_run_inverse)
+
+text \<open>
+  A \<^emph>\<open>dense\<close> run is a run in which something happens (at least one clock ticks) 
+  at every instant.
+\<close>
+definition \<open>dense_run \<rho> \<equiv> (\<forall>n. \<exists>c. hamlet ((Rep_run \<rho>) n c))\<close>
 
 text\<open>
   @{term \<open>run_tick_count \<rho> K n\<close>} counts the number of ticks on clock @{term \<open>K\<close>} 

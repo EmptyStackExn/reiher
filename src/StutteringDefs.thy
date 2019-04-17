@@ -25,9 +25,9 @@ text \<open>
   indices of the dilated run.
   The properties of a dilating function are:
   \<^item> it is strictly increasing because instants are inserted into the run,
-  \<^item> the image of an instant index is greater than it because stuttering instant 
+  \<^item> the image of an instant index is greater than it because stuttering instants 
     can only delay the original instants of the run, 
-  \<^item> no instant is inserted before the first one in oredr to have a well defined 
+  \<^item> no instant is inserted before the first one in order to have a well defined 
     initial date on each clock,
   \<^item> if @{term \<open>n\<close>} is not in the image of the function, no clock ticks at 
     instant @{term \<open>n\<close>} and the date on the clocks do not change.
@@ -42,7 +42,7 @@ where
    )\<close>
 
 text\<open>
-  Dilating a run. A run @{term r} is a dilation of a run @{term sub} by 
+  A run @{term r} is a dilation of a run @{term sub} by 
   function @{term f} if:
   \<^item> @{term f} is a dilating function for @{term r} 
   \<^item> the time in @{term r} is the time in @{term sub} dilated by @{term f}
@@ -60,22 +60,6 @@ text \<open>
 definition is_subrun ::\<open>'a::linordered_field run \<Rightarrow> 'a run \<Rightarrow> bool\<close> (infixl "\<lless>" 60)
 where
   \<open>sub \<lless> r \<equiv> (\<exists>f. dilating f sub r)\<close>
-
-text \<open>
-  @{term \<open>tick_count r c n\<close>} is the number of ticks of clock @{term c} in 
-  run @{term r} upto instant @{term n}.
-\<close>
-definition tick_count :: \<open>'a::linordered_field run \<Rightarrow> clock \<Rightarrow> nat \<Rightarrow> nat\<close>
-where
-  \<open>tick_count r c n = card {i. i \<le> n \<and> hamlet ((Rep_run r) i c)}\<close>
-
-text \<open>
-  @{term \<open>tick_count_strict r c n\<close>} is the number of ticks of clock @{term c} 
-  in run @{term r} upto but excluding instant @{term n}.
-\<close> 
-definition tick_count_strict :: \<open>'a::linordered_field run \<Rightarrow> clock \<Rightarrow> nat \<Rightarrow> nat\<close>
-where
-  \<open>tick_count_strict r c n = card {i. i < n \<and> hamlet ((Rep_run r) i c)}\<close>
 
 text \<open>
   A contracting function is the reverse of a dilating fun, it maps an instant index 
@@ -114,6 +98,7 @@ text \<open>
   \<^item> it is a contracting function ;
   \<^item> @{term \<open>(f \<circ> g) n\<close>} is the index of the last original instant before instant 
     @{term \<open>n\<close>} in run @{term \<open>r\<close>}, therefore:
+    \<^item> @{term \<open>(f \<circ> g) n \<le> n \<close>}
     \<^item> the time does not change on any clock between instants @{term \<open>(f \<circ> g) n\<close>}
       and @{term \<open>n\<close>} of run @{term \<open>r\<close>};
     \<^item> no clock ticks before @{term \<open>n\<close>} strictly after @{term \<open>(f \<circ> g) n\<close>} 
@@ -131,6 +116,7 @@ no_notation dummytwo    ("2")
 definition contracting
 where 
   \<open>contracting g r sub f \<equiv>  contracting_fun g
+                          \<and> (\<forall>n. f (g n) \<le> n)
                           \<and> (\<forall>n c k. f (g n) \<le> k \<and> k \<le> n
                               \<longrightarrow> time ((Rep_run r) k c) = time ((Rep_run sub) (g n) c))
                           \<and> (\<forall>n c k. f (g n) < k \<and> k \<le> n
@@ -141,5 +127,30 @@ text \<open>
   \autoref{fig:dilating-run}, which is a contracting function:
 \<close>
 definition \<open>dil_inverse f::(nat \<Rightarrow> nat) \<equiv> (\<lambda>n. Max {i. f i \<le> n})\<close>
+
+subsection \<open>
+  Alternate definitions for counting ticks.
+\<close>
+text \<open>
+  For proving the stuttering invariance of TESL specifications, we will need
+  these alternate definitions for counting ticks, which are based on sets.
+\<close>
+
+text \<open>
+  @{term \<open>tick_count r c n\<close>} is the number of ticks of clock @{term c} in 
+  run @{term r} upto instant @{term n}.
+\<close>
+definition tick_count :: \<open>'a::linordered_field run \<Rightarrow> clock \<Rightarrow> nat \<Rightarrow> nat\<close>
+where
+  \<open>tick_count r c n = card {i. i \<le> n \<and> hamlet ((Rep_run r) i c)}\<close>
+
+text \<open>
+  @{term \<open>tick_count_strict r c n\<close>} is the number of ticks of clock @{term c} 
+  in run @{term r} upto but excluding instant @{term n}.
+\<close> 
+definition tick_count_strict :: \<open>'a::linordered_field run \<Rightarrow> clock \<Rightarrow> nat \<Rightarrow> nat\<close>
+where
+  \<open>tick_count_strict r c n = card {i. i < n \<and> hamlet ((Rep_run r) i c)}\<close>
+
 
 end

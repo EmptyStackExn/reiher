@@ -18,7 +18,7 @@ section \<open>Denotational interpretation for atomic TESL formulae\<close>
 consts dummyT0 ::\<open>'\<tau> tag_const\<close>
 consts dummyDeltaT ::\<open>'\<tau> tag_const\<close>
 
-notation dummyT0    ("t\<^sub>0")
+notation dummyT0     ("t\<^sub>0")
 notation dummyDeltaT ("\<delta>t")
 (*>*)
 
@@ -30,7 +30,7 @@ where
     \<open>\<lbrakk> K\<^sub>1 sporadic \<tau> on K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
         {\<rho>. \<exists>n::nat. hamlet ((Rep_run \<rho>) n K\<^sub>1) \<and> time ((Rep_run \<rho>) n K\<^sub>2) = \<tau>}\<close>
   \<comment> \<open>@{term \<open>time-relation \<lfloor>K\<^sub>1, K\<^sub>2\<rfloor> \<in> R\<close>} means that at each instant, the time 
-      on @{term \<open>K\<^sub>1\<close>} and the time on @{term \<open>K\<^sub>2\<close>} are in relation @{term \<open>R\<close>}.\<close>
+      on @{term \<open>K\<^sub>1\<close>} and the time on @{term \<open>K\<^sub>2\<close>} are in relation~@{term \<open>R\<close>}.\<close>
   | \<open>\<lbrakk> time-relation \<lfloor>K\<^sub>1, K\<^sub>2\<rfloor> \<in> R \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
         {\<rho>. \<forall>n::nat. R (time ((Rep_run \<rho>) n K\<^sub>1), time ((Rep_run \<rho>) n K\<^sub>2))}\<close>
   \<comment> \<open>@{term \<open>master implies slave\<close>} means that at each instant at which 
@@ -43,12 +43,12 @@ where
         {\<rho>. \<forall>n::nat. hamlet ((Rep_run \<rho>) n master) \<longrightarrow> \<not>hamlet ((Rep_run \<rho>) n slave)}\<close>
   \<comment> \<open>@{term \<open>master time-delayed by \<delta>\<tau> on measuring implies slave\<close>} means that 
       at each instant at which  @{term \<open>master\<close>} ticks, @{term \<open>slave\<close>} will
-      ticks after a delay @{term \<open>\<delta>\<tau>\<close>} measured on the time scale 
+      tick after a delay @{term \<open>\<delta>\<tau>\<close>} measured on the time scale 
       of @{term \<open>measuring\<close>}.\<close>
   | \<open>\<lbrakk> master time-delayed by \<delta>\<tau> on measuring implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
     \<comment> \<open>
-      When master ticks, let's call @term\<open>t\<^sub>0\<close> the current date on measuring. Then, 
-      at the first instant when the date on measuring is @term\<open>t\<^sub>0+\<delta>t\<close>, 
+      When master ticks, let's call @{term \<open>t\<^sub>0\<close>} the current date on measuring. Then, 
+      at the first instant when the date on measuring is @{term \<open>t\<^sub>0+\<delta>t\<close>}, 
       slave has to tick.
     \<close>
         {\<rho>. \<forall>n. hamlet ((Rep_run \<rho>) n master) \<longrightarrow>
@@ -65,9 +65,9 @@ where
         {\<rho>. \<forall>n::nat. (run_tick_count \<rho> K\<^sub>2 n) \<le> (run_tick_count \<rho> K\<^sub>1 n)}\<close>
   \<comment> \<open>@{term \<open>K\<^sub>1 strictly precedes K\<^sub>2\<close>} means that each tick on @{term \<open>K\<^sub>2\<close>}
         must be preceded by at least one tick on @{term \<open>K\<^sub>1\<close>} at a previous instant.
-        Therefore, at each instant @{term \<open>n\<close>}, the number of ticks on @{term \<open>K\<^sub>2\<close>}
+        Therefore, at each instant n, the number of ticks on @{term \<open>K\<^sub>2\<close>}
         must be less or equal to the number of ticks on @{term \<open>K\<^sub>1\<close>} 
-        at instant @{term \<open>n - 1\<close>}.\<close>
+        at instant n - 1.\<close>
   | \<open>\<lbrakk> K\<^sub>1 strictly precedes K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
         {\<rho>. \<forall>n::nat. (run_tick_count \<rho> K\<^sub>2 n) \<le> (run_tick_count_strictly \<rho> K\<^sub>1 n)}\<close>
   \<comment> \<open>@{term \<open>K\<^sub>1 kills K\<^sub>2\<close>} means that when @{term \<open>K\<^sub>1\<close>} ticks, @{term \<open>K\<^sub>2\<close>}
@@ -137,7 +137,7 @@ lemmas TESL_interp_aci = TESL_interp_commute
                          TESL_interp_left_commute
                          TESL_interp_left_idem
 
-text \<open>The empty formula is the identity element\<close>
+text \<open>The empty formula is the identity element.\<close>
 lemma TESL_interp_neutral1:
   \<open>\<lbrakk>\<lbrakk> [] @ \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<close>
 by simp
@@ -158,6 +158,9 @@ lemma TESL_sem_decreases_tail:
   \<open>\<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L \<supseteq> \<lbrakk>\<lbrakk> \<Phi> @ [\<phi>] \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<close>
 by (simp add: TESL_interp_homo_append)
 
+text \<open>
+  Repeating a formula in a specification does not change the specification.
+\<close>
 lemma TESL_interp_formula_stuttering:
   assumes \<open>\<phi> \<in> set \<Phi>\<close>
     shows \<open>\<lbrakk>\<lbrakk> \<phi> # \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<close>
@@ -168,6 +171,9 @@ proof -
   thus ?thesis using assms TESL_interpretation_image by fastforce
 qed
 
+text \<open>
+  Removing duplicate formulae in a specification does not change the specification.
+\<close>
 lemma TESL_interp_remdups_absorb:
   \<open>\<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<lbrakk>\<lbrakk> remdups \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<close>
 proof (induction \<Phi>)
@@ -175,6 +181,9 @@ proof (induction \<Phi>)
     thus ?case using TESL_interp_formula_stuttering by auto
 qed simp
 
+text \<open>
+  Specifications that contain the same formulae have the same semantics.
+\<close>
 lemma TESL_interp_set_lifting:
   assumes \<open>set \<Phi> = set \<Phi>'\<close>
     shows \<open>\<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<lbrakk>\<lbrakk> \<Phi>' \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<close>
@@ -190,6 +199,9 @@ proof -
   ultimately show ?thesis using TESL_interp_remdups_absorb by auto
 qed
 
+text \<open>
+  The semantics of specifications is contravariant with respect to their inclusion.
+\<close>
 theorem TESL_interp_decreases_setinc:
   assumes \<open>set \<Phi> \<subseteq> set \<Phi>'\<close>
     shows \<open>\<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L \<supseteq> \<lbrakk>\<lbrakk> \<Phi>' \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<close>

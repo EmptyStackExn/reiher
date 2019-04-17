@@ -5,6 +5,12 @@ imports StutteringLemmas
 
 begin
 
+text \<open>
+  Using the lemmas of the previous section about the invariance by stuttering
+  of various properties of TESL specifications, we can now prove that the atomic 
+  formulae that compose TESL specifications are invariant by stuttering.
+\<close>
+
 text \<open>Sporadic specifications are preserved in a dilated run.\<close>
 lemma sporadic_sub:
   assumes \<open>sub \<lless> r\<close>
@@ -61,7 +67,8 @@ proof -
   from assms(2) have
     \<open>sub \<in> {r. \<forall>n. (run_tick_count r c\<^sub>2 n) \<le> (run_tick_count r c\<^sub>1 n)}\<close> by simp
   hence \<open>\<forall>n. (run_tick_count sub c\<^sub>2 n) \<le> (run_tick_count sub c\<^sub>1 n)\<close> by simp
-  from dil_tick_count[OF assms(1) this] have \<open>\<forall>n. (run_tick_count r c\<^sub>2 n) \<le> (run_tick_count r c\<^sub>1 n)\<close> by simp
+  from dil_tick_count[OF assms(1) this]
+    have \<open>\<forall>n. (run_tick_count r c\<^sub>2 n) \<le> (run_tick_count r c\<^sub>1 n)\<close> by simp
   thus ?thesis by simp
 qed
 
@@ -71,14 +78,19 @@ theorem strictly_precedes_sub:
     shows \<open>r \<in> \<lbrakk>c\<^sub>1 strictly precedes c\<^sub>2\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<close>
 proof -
   from assms(1) is_subrun_def obtain f where *:\<open>dilating f sub r\<close> by blast
-  from assms(2) have \<open>sub \<in> { \<rho>. \<forall>n::nat. (run_tick_count \<rho> c\<^sub>2 n) \<le> (run_tick_count_strictly \<rho> c\<^sub>1 n) }\<close> by simp
+  from assms(2) have
+    \<open>sub \<in> { \<rho>. \<forall>n::nat. (run_tick_count \<rho> c\<^sub>2 n) \<le> (run_tick_count_strictly \<rho> c\<^sub>1 n) }\<close>
+  by simp
   with strictly_precedes_alt_def2[of \<open>c\<^sub>2\<close> \<open>c\<^sub>1\<close>]  have
-    \<open>sub \<in> { \<rho>. (\<not>hamlet ((Rep_run \<rho>) 0 c\<^sub>2)) \<and> (\<forall>n::nat. (run_tick_count \<rho> c\<^sub>2 (Suc n)) \<le> (run_tick_count \<rho> c\<^sub>1 n)) }\<close>
+    \<open>sub \<in> { \<rho>. (\<not>hamlet ((Rep_run \<rho>) 0 c\<^sub>2))
+  \<and> (\<forall>n::nat. (run_tick_count \<rho> c\<^sub>2 (Suc n)) \<le> (run_tick_count \<rho> c\<^sub>1 n)) }\<close>
   by blast
-  hence \<open>(\<not>hamlet ((Rep_run sub) 0 c\<^sub>2)) \<and> (\<forall>n::nat. (run_tick_count sub c\<^sub>2 (Suc n)) \<le> (run_tick_count sub c\<^sub>1 n))\<close>
+  hence \<open>(\<not>hamlet ((Rep_run sub) 0 c\<^sub>2))
+       \<and> (\<forall>n::nat. (run_tick_count sub c\<^sub>2 (Suc n)) \<le> (run_tick_count sub c\<^sub>1 n))\<close>
     by simp
   hence
-    1:\<open>(\<not>hamlet ((Rep_run sub) 0 c\<^sub>2)) \<and> (\<forall>n::nat. (tick_count sub c\<^sub>2 (Suc n)) \<le> (tick_count sub c\<^sub>1 n))\<close>
+    1:\<open>(\<not>hamlet ((Rep_run sub) 0 c\<^sub>2))
+     \<and> (\<forall>n::nat. (tick_count sub c\<^sub>2 (Suc n)) \<le> (tick_count sub c\<^sub>1 n))\<close>
   by (simp add: tick_count_is_fun)
   have \<open>\<forall>n::nat. (tick_count r c\<^sub>2 (Suc n)) \<le> (tick_count r c\<^sub>1 n)\<close>
   proof -
@@ -91,29 +103,36 @@ proof -
           proof (cases \<open>\<exists>sn\<^sub>0. f sn\<^sub>0 = Suc n\<close>)
             case True \<comment> \<open>Suc n is in the image of f\<close>
               from this obtain sn\<^sub>0 where fsn:\<open>f sn\<^sub>0 = Suc n\<close> by blast
-              with fn have \<open>sn\<^sub>0 = Suc n\<^sub>0\<close> using strict_mono_suc * dilating_def dilating_fun_def by blast
+              with fn strict_mono_suc * have \<open>sn\<^sub>0 = Suc n\<^sub>0\<close>
+                using  dilating_def dilating_fun_def by blast
               with 1 have \<open>tick_count sub c\<^sub>2 sn\<^sub>0 \<le> tick_count sub c\<^sub>1 n\<^sub>0\<close> by simp
               thus ?thesis using fn fsn tick_count_sub[OF *] by simp
           next
             case False \<comment> \<open>Suc n is not in the image of f\<close>
               hence \<open>\<not>hamlet ((Rep_run r) (Suc n) c\<^sub>2)\<close>
                 using * by (simp add: dilating_def dilating_fun_def)
-              hence \<open>tick_count r c\<^sub>2 (Suc n) = tick_count r c\<^sub>2 n\<close> by (simp add: tick_count_suc)
-              also have \<open>... = tick_count sub c\<^sub>2 n\<^sub>0\<close> using fn tick_count_sub[OF *] by simp
+              hence \<open>tick_count r c\<^sub>2 (Suc n) = tick_count r c\<^sub>2 n\<close>
+                by (simp add: tick_count_suc)
+              also have \<open>... = tick_count sub c\<^sub>2 n\<^sub>0\<close>
+                using fn tick_count_sub[OF *] by simp
               finally have \<open>tick_count r c\<^sub>2 (Suc n) = tick_count sub c\<^sub>2 n\<^sub>0\<close> .
               moreover have \<open>tick_count sub c\<^sub>2 n\<^sub>0 \<le> tick_count sub c\<^sub>2 (Suc n\<^sub>0)\<close>
                 by (simp add: tick_count_suc)
-              ultimately have \<open>tick_count r c\<^sub>2 (Suc n) \<le> tick_count sub c\<^sub>2 (Suc n\<^sub>0)\<close> by simp
-              moreover have \<open>tick_count sub c\<^sub>2 (Suc n\<^sub>0) \<le> tick_count sub c\<^sub>1 n\<^sub>0\<close> using 1 by simp
+              ultimately have
+                \<open>tick_count r c\<^sub>2 (Suc n) \<le> tick_count sub c\<^sub>2 (Suc n\<^sub>0)\<close> by simp
+              moreover have
+                \<open>tick_count sub c\<^sub>2 (Suc n\<^sub>0) \<le> tick_count sub c\<^sub>1 n\<^sub>0\<close> using 1 by simp
               ultimately have \<open>tick_count r c\<^sub>2 (Suc n) \<le> tick_count sub c\<^sub>1 n\<^sub>0\<close> by simp
               thus ?thesis using tick_count_sub[OF *] fn by simp
           qed
       next
         case False \<comment> \<open>n is not in the image of f\<close>
-          from greatest_prev_image[OF * this] obtain n\<^sub>p
-            where np_prop:\<open>f n\<^sub>p < n \<and> (\<forall>k. f n\<^sub>p < k \<and> k \<le> n \<longrightarrow> (\<nexists>k\<^sub>0. f k\<^sub>0 = k))\<close> by blast
-          from tick_count_latest[OF * this] have \<open>tick_count r c\<^sub>1 n = tick_count r c\<^sub>1 (f n\<^sub>p)\<close> . 
-          hence a:\<open>tick_count r c\<^sub>1 n = tick_count sub c\<^sub>1 n\<^sub>p\<close> using tick_count_sub[OF *] by simp
+          from greatest_prev_image[OF * this] obtain n\<^sub>p  where
+            np_prop:\<open>f n\<^sub>p < n \<and> (\<forall>k. f n\<^sub>p < k \<and> k \<le> n \<longrightarrow> (\<nexists>k\<^sub>0. f k\<^sub>0 = k))\<close> by blast
+          from tick_count_latest[OF * this] have
+            \<open>tick_count r c\<^sub>1 n = tick_count r c\<^sub>1 (f n\<^sub>p)\<close> . 
+          hence a:\<open>tick_count r c\<^sub>1 n = tick_count sub c\<^sub>1 n\<^sub>p\<close>
+            using tick_count_sub[OF *] by simp
           have b: \<open>tick_count sub c\<^sub>2 (Suc n\<^sub>p) \<le> tick_count sub c\<^sub>1 n\<^sub>p\<close> using 1 by simp
           show ?thesis
           proof (cases \<open>\<exists>sn\<^sub>0. f sn\<^sub>0 = Suc n\<close>)
@@ -126,14 +145,17 @@ proof -
             case False \<comment> \<open>Suc n is not in the image of f\<close>
               hence \<open>\<not>hamlet ((Rep_run r) (Suc n) c\<^sub>2)\<close>
                 using * by (simp add: dilating_def dilating_fun_def)
-              hence \<open>tick_count r c\<^sub>2 (Suc n) = tick_count r c\<^sub>2 n\<close> by (simp add: tick_count_suc)
+              hence \<open>tick_count r c\<^sub>2 (Suc n) = tick_count r c\<^sub>2 n\<close>
+                by (simp add: tick_count_suc)
               also have \<open>... = tick_count sub c\<^sub>2 n\<^sub>p\<close> using np_prop tick_count_sub[OF *]
                 by (simp add: tick_count_latest[OF * np_prop])
               finally have \<open>tick_count r c\<^sub>2 (Suc n) = tick_count sub c\<^sub>2 n\<^sub>p\<close> .
               moreover have \<open>tick_count sub c\<^sub>2 n\<^sub>p \<le> tick_count sub c\<^sub>2 (Suc n\<^sub>p)\<close>
                 by (simp add: tick_count_suc)
-              ultimately have \<open>tick_count r c\<^sub>2 (Suc n) \<le> tick_count sub c\<^sub>2 (Suc n\<^sub>p)\<close> by simp
-              moreover have \<open>tick_count sub c\<^sub>2 (Suc n\<^sub>p) \<le> tick_count sub c\<^sub>1 n\<^sub>p\<close> using 1 by simp
+              ultimately have
+                \<open>tick_count r c\<^sub>2 (Suc n) \<le> tick_count sub c\<^sub>2 (Suc n\<^sub>p)\<close> by simp
+              moreover have
+                \<open>tick_count sub c\<^sub>2 (Suc n\<^sub>p) \<le> tick_count sub c\<^sub>1 n\<^sub>p\<close> using 1 by simp
               ultimately have \<open>tick_count r c\<^sub>2 (Suc n) \<le> tick_count sub c\<^sub>1 n\<^sub>p\<close> by simp
               thus ?thesis using np_prop mono_tick_count  using a by linarith
           qed
@@ -209,25 +231,7 @@ proof -
   thus ?thesis by simp
 qed
 
-text \<open>Time relations are preserved by contraction\<close>
-lemma tagrel_sub_inv:
-  assumes \<open>sub \<lless> r\<close>
-      and \<open>r \<in> \<lbrakk> time-relation \<lfloor>c\<^sub>1, c\<^sub>2\<rfloor> \<in> R \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<close>
-    shows \<open>sub \<in> \<lbrakk> time-relation \<lfloor>c\<^sub>1, c\<^sub>2\<rfloor> \<in> R \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<close>
-proof -
-  from assms(1) is_subrun_def obtain f where df:\<open>dilating f sub r\<close> by blast
-  moreover from assms(2) TESL_interpretation_atomic.simps(2) have
-    \<open>r \<in> {\<rho>. \<forall>n. R (time ((Rep_run \<rho>) n c\<^sub>1), time ((Rep_run \<rho>) n c\<^sub>2))}\<close> by blast
-  hence \<open>\<forall>n. R (time ((Rep_run r) n c\<^sub>1), time ((Rep_run r) n c\<^sub>2))\<close> by simp
-  hence \<open>\<forall>n. (\<exists>n\<^sub>0. f n\<^sub>0 = n) \<longrightarrow> R (time ((Rep_run r) n c\<^sub>1), time ((Rep_run r) n c\<^sub>2))\<close> by simp
-  hence \<open>\<forall>n\<^sub>0. R (time ((Rep_run r) (f n\<^sub>0) c\<^sub>1), time ((Rep_run r) (f n\<^sub>0) c\<^sub>2))\<close> by blast
-  moreover from dilating_def df have
-    \<open>\<forall>n c. time ((Rep_run sub) n c) = time ((Rep_run r) (f n) c)\<close> by blast
-  ultimately have \<open>\<forall>n\<^sub>0. R (time ((Rep_run sub) n\<^sub>0 c\<^sub>1), time ((Rep_run sub) n\<^sub>0 c\<^sub>2))\<close> by auto
-  thus ?thesis by simp
-qed
-
-text \<open>A time relation is preserved through dilation of a run.\<close>
+text \<open>Time relations are preserved through dilation of a run.\<close>
 lemma tagrel_sub':
   assumes \<open>sub \<lless> r\<close>
       and \<open>sub \<in> \<lbrakk> time-relation \<lfloor>c\<^sub>1,c\<^sub>2\<rfloor> \<in> R \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<close>
@@ -272,6 +276,27 @@ corollary tagrel_sub:
     shows \<open>r \<in> \<lbrakk> time-relation \<lfloor>c\<^sub>1,c\<^sub>2\<rfloor> \<in> R \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<close>
 using tagrel_sub'[OF assms] unfolding TESL_interpretation_atomic.simps(3) by simp
 
+text \<open>Time relations are also preserved by contraction\<close>
+lemma tagrel_sub_inv:
+  assumes \<open>sub \<lless> r\<close>
+      and \<open>r \<in> \<lbrakk> time-relation \<lfloor>c\<^sub>1, c\<^sub>2\<rfloor> \<in> R \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<close>
+    shows \<open>sub \<in> \<lbrakk> time-relation \<lfloor>c\<^sub>1, c\<^sub>2\<rfloor> \<in> R \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<close>
+proof -
+  from assms(1) is_subrun_def obtain f where df:\<open>dilating f sub r\<close> by blast
+  moreover from assms(2) TESL_interpretation_atomic.simps(2) have
+    \<open>r \<in> {\<rho>. \<forall>n. R (time ((Rep_run \<rho>) n c\<^sub>1), time ((Rep_run \<rho>) n c\<^sub>2))}\<close> by blast
+  hence \<open>\<forall>n. R (time ((Rep_run r) n c\<^sub>1), time ((Rep_run r) n c\<^sub>2))\<close> by simp
+  hence \<open>\<forall>n. (\<exists>n\<^sub>0. f n\<^sub>0 = n) \<longrightarrow> R (time ((Rep_run r) n c\<^sub>1), time ((Rep_run r) n c\<^sub>2))\<close> by simp
+  hence \<open>\<forall>n\<^sub>0. R (time ((Rep_run r) (f n\<^sub>0) c\<^sub>1), time ((Rep_run r) (f n\<^sub>0) c\<^sub>2))\<close> by blast
+  moreover from dilating_def df have
+    \<open>\<forall>n c. time ((Rep_run sub) n c) = time ((Rep_run r) (f n) c)\<close> by blast
+  ultimately have \<open>\<forall>n\<^sub>0. R (time ((Rep_run sub) n\<^sub>0 c\<^sub>1), time ((Rep_run sub) n\<^sub>0 c\<^sub>2))\<close> by auto
+  thus ?thesis by simp
+qed
+
+text \<open>
+  Kill relations are preserved in a dilated run.
+\<close>
 theorem kill_sub:
   assumes \<open>sub \<lless> r\<close>
       and \<open>sub \<in> \<lbrakk> c\<^sub>1 kills c\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<close>
@@ -309,36 +334,23 @@ proof -
   thus ?thesis using TESL_interpretation_atomic.simps(8) by blast
 qed
 
+lemmas atomic_sub_lemmas = sporadic_sub tagrel_sub implies_sub implies_not_sub
+                           time_delayed_sub weakly_precedes_sub
+                           strictly_precedes_sub kill_sub
+
+text \<open>
+  We can now prove that all atomic specification formulae are preserved
+  by the dilation of runs.
+\<close>
 lemma atomic_sub: 
   assumes \<open>sub \<lless> r\<close>
       and \<open>sub \<in> \<lbrakk> \<phi> \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<close>
     shows \<open>r \<in> \<lbrakk> \<phi> \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<close>
-proof (cases \<phi>)
-  case (SporadicOn)
-    thus ?thesis using assms(2) sporadic_sub[OF assms(1)] by simp
-next
-  case (TagRelation)
-    thus ?thesis using assms(2) tagrel_sub[OF assms(1)] by simp
-next
-  case (Implies)
-    thus ?thesis using assms(2) implies_sub[OF assms(1)] by simp
-next
-  case (ImpliesNot)
-    thus ?thesis using assms(2) implies_not_sub[OF assms(1)] by simp
-next
-  case (TimeDelayedBy)
-    thus ?thesis using assms(2) time_delayed_sub[OF assms(1)] by simp
-next
-  case (WeaklyPrecedes)
-    thus ?thesis using assms(2) weakly_precedes_sub[OF assms(1)] by simp
-next
-  case (StrictlyPrecedes)
-    thus ?thesis using assms(2) strictly_precedes_sub[OF assms(1)] by simp
-next
-  case (Kills)
-    thus ?thesis using assms(2) kill_sub[OF assms(1)] by simp
-qed
+using assms(2) atomic_sub_lemmas[OF assms(1)] by (cases \<phi>, simp_all)
 
+text \<open>
+  Finally, any TESL specification is invariant by stuttering.
+\<close>
 theorem TESL_stuttering_invariant:
   assumes \<open>sub \<lless> r\<close>
     shows \<open>sub \<in> \<lbrakk>\<lbrakk> S \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L \<Longrightarrow> r \<in> \<lbrakk>\<lbrakk> S \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<close>

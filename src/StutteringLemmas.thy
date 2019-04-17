@@ -7,7 +7,7 @@ imports StutteringDefs
 begin
 
 text \<open>
-  In this section, we proof several lemmas that will be used to prove that TESL 
+  In this section, we prove several lemmas that will be used to show that TESL 
   specifications are invariant by stuttering.
 
   The following one will be useful in proving properties over a sequence of 
@@ -1156,6 +1156,11 @@ proof -
   thus ?thesis by simp
 qed
 
+text \<open>
+  For any instant @{term \<open>n\<close>} of a dilated run, let @{term \<open>n\<^sub>0\<close>} be the last 
+  instant before @{term \<open>n\<close>} that is the image of an original instant. All instants
+  strictly after @{term \<open>n\<^sub>0\<close>} and before @{term \<open>n\<close>} are stuttering instants.
+\<close>
 lemma not_image_stut:
   assumes \<open>dilating f sub r\<close>
       and \<open>n\<^sub>0 = Max {i. f i \<le> n}\<close>
@@ -1174,6 +1179,10 @@ proof -
   with assms(3) strict_mono_less[OF smf] show ?thesis by auto
 qed
 
+text \<open>
+  For any dilating function @{term \<open>f\<close>}, @{term \<open>dil_inverse f\<close>} is a 
+  contracting function.
+\<close>
 lemma contracting_inverse:
   assumes \<open>dilating f sub r\<close>
     shows \<open>contracting (dil_inverse f) r sub f\<close>
@@ -1205,12 +1214,18 @@ proof -
     unfolding dil_inverse_def by blast
 
   from 1 2 3 have *:\<open>contracting_fun (dil_inverse f)\<close> by (simp add: contracting_fun_def)
+  
+  have \<open>\<forall>n. finite {i. f i \<le> n}\<close> by (simp add: finite_prefix)
+  moreover have \<open>\<forall>n. {i. f i \<le> n} \<noteq> {}\<close> using prefix_not_empty by blast
+  ultimately have 4:\<open>\<forall>n. f ((dil_inverse f) n) \<le> n\<close> 
+    unfolding dil_inverse_def
+    using assms(1) dilating_def dilating_fun_def Max_in by blast
 
-  have 4:\<open>\<forall>n c k. f ((dil_inverse f) n) < k \<and> k \<le> n
+  have 5:\<open>\<forall>n c k. f ((dil_inverse f) n) < k \<and> k \<le> n
                               \<longrightarrow> \<not> hamlet ((Rep_run r) k c)\<close>
     using not_image_stut[OF assms] no_img_tick unfolding dil_inverse_def by blast
 
-  have 5:\<open>(\<forall>n c k. f ((dil_inverse f) n) \<le> k \<and> k \<le> n
+  have 6:\<open>(\<forall>n c k. f ((dil_inverse f) n) \<le> k \<and> k \<le> n
                       \<longrightarrow> time ((Rep_run r) k c) = time ((Rep_run sub) ((dil_inverse f) n) c))\<close>
   proof -
     { fix n c k assume h:\<open>f ((dil_inverse f) n) \<le> k \<and> k \<le> n\<close>
@@ -1233,7 +1248,50 @@ proof -
     } thus ?thesis by simp
   qed
 
-  from * 5 4 show ?thesis unfolding contracting_def by simp
+  from * 4 5 6 show ?thesis unfolding contracting_def by simp
+qed
+
+text \<open>
+  The only possible contracting function toward a dense run (a run with no empty 
+  instants) is the inverse of the dilating function as defined by 
+  @{term \<open>dil_inverse\<close>}.
+\<close>
+lemma dense_run_dil_inverse_only:
+  assumes \<open>dilating f sub r\<close>
+      and \<open>contracting g r sub f\<close>
+      and \<open>dense_run sub\<close>
+    shows \<open>g = (dil_inverse f)\<close>
+proof
+  from assms(1) have *:\<open>\<And>n. finite {i. f i \<le> n}\<close>
+    using finite_less_ub by (simp add:  dilating_def dilating_fun_def)
+  from assms(1) have \<open>f 0 = 0\<close> by (simp add:  dilating_def dilating_fun_def)
+  hence \<open>\<And>n. 0 \<in> {i. f i \<le> n}\<close> by simp
+  hence **:\<open>\<And>n. {i. f i \<le> n} \<noteq> {}\<close> by blast
+  { fix n assume h:\<open>g n < (dil_inverse f) n\<close>
+    hence \<open>\<exists>k > g n. f k \<le> n\<close> unfolding dil_inverse_def using Max_in[OF * **] by blast
+    from this obtain k where kprop:\<open>g n < k \<and> f k \<le> n\<close> by blast
+    with assms(3) dense_run_def obtain c where \<open>hamlet ((Rep_run sub) k c)\<close> by blast
+    hence \<open>hamlet ((Rep_run r) (f k) c)\<close> using ticks_sub[OF assms(1)] by blast
+    moreover from kprop have \<open>f (g n) < f k \<and> f k \<le> n\<close> using assms(1)
+      by (simp add: dilating_def dilating_fun_def strict_monoD)
+    ultimately have False using assms(2) unfolding contracting_def by blast
+  } hence 1:\<open>\<And>n. \<not>(g n < (dil_inverse f) n)\<close> by blast
+  { fix n assume h:\<open>g n > (dil_inverse f) n\<close>
+    have \<open>\<exists>k \<le> g n. f k > n\<close> 
+    proof -
+      { assume \<open>\<forall>k \<le> g n. f k \<le> n\<close>
+        with h have False unfolding dil_inverse_def
+        using Max_gr_iff[OF * **] by blast
+      }
+      thus ?thesis using not_less by blast
+    qed
+    from this obtain k where \<open>k \<le> g n \<and> f k > n\<close> by blast
+    hence \<open>f (g n) \<ge> f k \<and> f k > n\<close> using assms(1)
+      by (simp add: dilating_def dilating_fun_def strict_mono_less_eq)
+    hence \<open>f (g n) > n\<close> by simp
+    with assms(2) have False unfolding contracting_def by (simp add: leD)
+  } hence 2:\<open>\<And>n. \<not>(g n > (dil_inverse f) n)\<close> by blast
+  from 1 2 show \<open>\<And>n. g n = (dil_inverse f) n\<close> by (simp add: not_less_iff_gr_or_eq)
 qed
 
 end

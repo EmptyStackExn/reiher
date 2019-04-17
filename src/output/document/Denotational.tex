@@ -75,7 +75,7 @@ The denotational semantics maps TESL formulae to sets of satisfying runs.
 \ \ \ \ \ \ \ \ {\isacharbraceleft}{\isasymrho}{\isachardot}\ {\isasymexists}n{\isacharcolon}{\isacharcolon}nat{\isachardot}\ hamlet\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ n\ K\isactrlsub {\isadigit{1}}{\isacharparenright}\ {\isasymand}\ time\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ n\ K\isactrlsub {\isadigit{2}}{\isacharparenright}\ {\isacharequal}\ {\isasymtau}{\isacharbraceright}{\isacartoucheclose}\isanewline
 \ \ %
 \isamarkupcmt{\isa{time{\isacharminus}relation\ {\isasymlfloor}K\isactrlsub {\isadigit{1}}{\isacharcomma}\ K\isactrlsub {\isadigit{2}}{\isasymrfloor}\ {\isasymin}\ R} means that at each instant, the time 
-      on \isa{K\isactrlsub {\isadigit{1}}} and the time on \isa{K\isactrlsub {\isadigit{2}}} are in relation \isa{R}.%
+      on \isa{K\isactrlsub {\isadigit{1}}} and the time on \isa{K\isactrlsub {\isadigit{2}}} are in relation~\isa{R}.%
 }\isanewline
 \ \ {\isacharbar}\ {\isacartoucheopen}{\isasymlbrakk}\ time{\isacharminus}relation\ {\isasymlfloor}K\isactrlsub {\isadigit{1}}{\isacharcomma}\ K\isactrlsub {\isadigit{2}}{\isasymrfloor}\ {\isasymin}\ R\ {\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L\ {\isacharequal}\isanewline
 \ \ \ \ \ \ \ \ {\isacharbraceleft}{\isasymrho}{\isachardot}\ {\isasymforall}n{\isacharcolon}{\isacharcolon}nat{\isachardot}\ R\ {\isacharparenleft}time\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ n\ K\isactrlsub {\isadigit{1}}{\isacharparenright}{\isacharcomma}\ time\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ n\ K\isactrlsub {\isadigit{2}}{\isacharparenright}{\isacharparenright}{\isacharbraceright}{\isacartoucheclose}\isanewline
@@ -94,13 +94,13 @@ The denotational semantics maps TESL formulae to sets of satisfying runs.
 \ \ %
 \isamarkupcmt{\isa{master\ time{\isacharminus}delayed\ by\ {\isasymdelta}{\isasymtau}\ on\ measuring\ implies\ slave} means that 
       at each instant at which  \isa{master} ticks, \isa{slave} will
-      ticks after a delay \isa{{\isasymdelta}{\isasymtau}} measured on the time scale 
+      tick after a delay \isa{{\isasymdelta}{\isasymtau}} measured on the time scale 
       of \isa{measuring}.%
 }\isanewline
 \ \ {\isacharbar}\ {\isacartoucheopen}{\isasymlbrakk}\ master\ time{\isacharminus}delayed\ by\ {\isasymdelta}{\isasymtau}\ on\ measuring\ implies\ slave\ {\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L\ {\isacharequal}\isanewline
 \ \ \ \ %
-\isamarkupcmt{When master ticks, let's call @term\isa{t\isactrlsub {\isadigit{0}}} the current date on measuring. Then, 
-      at the first instant when the date on measuring is @term\isa{t\isactrlsub {\isadigit{0}}{\isacharplus}{\isasymdelta}t}, 
+\isamarkupcmt{When master ticks, let's call \isa{t\isactrlsub {\isadigit{0}}} the current date on measuring. Then, 
+      at the first instant when the date on measuring is \isa{t\isactrlsub {\isadigit{0}}\ {\isacharplus}\ {\isasymdelta}t}, 
       slave has to tick.%
 }\isanewline
 \ \ \ \ \ \ \ \ {\isacharbraceleft}{\isasymrho}{\isachardot}\ {\isasymforall}n{\isachardot}\ hamlet\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ n\ master{\isacharparenright}\ {\isasymlongrightarrow}\isanewline
@@ -120,9 +120,9 @@ The denotational semantics maps TESL formulae to sets of satisfying runs.
 \ \ %
 \isamarkupcmt{\isa{K\isactrlsub {\isadigit{1}}\ strictly\ precedes\ K\isactrlsub {\isadigit{2}}} means that each tick on \isa{K\isactrlsub {\isadigit{2}}}
         must be preceded by at least one tick on \isa{K\isactrlsub {\isadigit{1}}} at a previous instant.
-        Therefore, at each instant \isa{n}, the number of ticks on \isa{K\isactrlsub {\isadigit{2}}}
+        Therefore, at each instant n, the number of ticks on \isa{K\isactrlsub {\isadigit{2}}}
         must be less or equal to the number of ticks on \isa{K\isactrlsub {\isadigit{1}}} 
-        at instant \isa{n\ {\isacharminus}\ {\isacharparenleft}{\isadigit{1}}{\isacharcolon}{\isacharcolon}{\isacharprime}a{\isacharparenright}}.%
+        at instant n - 1.%
 }\isanewline
 \ \ {\isacharbar}\ {\isacartoucheopen}{\isasymlbrakk}\ K\isactrlsub {\isadigit{1}}\ strictly\ precedes\ K\isactrlsub {\isadigit{2}}\ {\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L\ {\isacharequal}\isanewline
 \ \ \ \ \ \ \ \ {\isacharbraceleft}{\isasymrho}{\isachardot}\ {\isasymforall}n{\isacharcolon}{\isacharcolon}nat{\isachardot}\ {\isacharparenleft}run{\isacharunderscore}tick{\isacharunderscore}count\ {\isasymrho}\ K\isactrlsub {\isadigit{2}}\ n{\isacharparenright}\ {\isasymle}\ {\isacharparenleft}run{\isacharunderscore}tick{\isacharunderscore}count{\isacharunderscore}strictly\ {\isasymrho}\ K\isactrlsub {\isadigit{1}}\ n{\isacharparenright}{\isacharbraceright}{\isacartoucheclose}\isanewline
@@ -392,7 +392,7 @@ Similar to the expansion laws of lattices.%
 \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ TESL{\isacharunderscore}interp{\isacharunderscore}left{\isacharunderscore}commute\isanewline
 \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ TESL{\isacharunderscore}interp{\isacharunderscore}left{\isacharunderscore}idem%
 \begin{isamarkuptext}%
-The empty formula is the identity element%
+The empty formula is the identity element.%
 \end{isamarkuptext}\isamarkuptrue%
 \isacommand{lemma}\isamarkupfalse%
 \ TESL{\isacharunderscore}interp{\isacharunderscore}neutral{\isadigit{1}}{\isacharcolon}\isanewline
@@ -485,10 +485,12 @@ Adding constraints to a TESL formula reduces the number of satisfying runs.%
 {\isafoldproof}%
 %
 \isadelimproof
-\isanewline
 %
 \endisadelimproof
-\isanewline
+%
+\begin{isamarkuptext}%
+Repeating a formula in a specification does not change the specification.%
+\end{isamarkuptext}\isamarkuptrue%
 \isacommand{lemma}\isamarkupfalse%
 \ TESL{\isacharunderscore}interp{\isacharunderscore}formula{\isacharunderscore}stuttering{\isacharcolon}\isanewline
 \ \ \isakeyword{assumes}\ {\isacartoucheopen}{\isasymphi}\ {\isasymin}\ set\ {\isasymPhi}{\isacartoucheclose}\isanewline
@@ -519,10 +521,12 @@ Adding constraints to a TESL formula reduces the number of satisfying runs.%
 {\isafoldproof}%
 %
 \isadelimproof
-\isanewline
 %
 \endisadelimproof
-\isanewline
+%
+\begin{isamarkuptext}%
+Removing duplicate formulae in a specification does not change the specification.%
+\end{isamarkuptext}\isamarkuptrue%
 \isacommand{lemma}\isamarkupfalse%
 \ TESL{\isacharunderscore}interp{\isacharunderscore}remdups{\isacharunderscore}absorb{\isacharcolon}\isanewline
 \ \ {\isacartoucheopen}{\isasymlbrakk}{\isasymlbrakk}\ {\isasymPhi}\ {\isasymrbrakk}{\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L\ {\isacharequal}\ {\isasymlbrakk}{\isasymlbrakk}\ remdups\ {\isasymPhi}\ {\isasymrbrakk}{\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L{\isacartoucheclose}\isanewline
@@ -546,10 +550,12 @@ Adding constraints to a TESL formula reduces the number of satisfying runs.%
 {\isafoldproof}%
 %
 \isadelimproof
-\isanewline
 %
 \endisadelimproof
-\isanewline
+%
+\begin{isamarkuptext}%
+Specifications that contain the same formulae have the same semantics.%
+\end{isamarkuptext}\isamarkuptrue%
 \isacommand{lemma}\isamarkupfalse%
 \ TESL{\isacharunderscore}interp{\isacharunderscore}set{\isacharunderscore}lifting{\isacharcolon}\isanewline
 \ \ \isakeyword{assumes}\ {\isacartoucheopen}set\ {\isasymPhi}\ {\isacharequal}\ set\ {\isasymPhi}{\isacharprime}{\isacartoucheclose}\isanewline
@@ -592,10 +598,12 @@ Adding constraints to a TESL formula reduces the number of satisfying runs.%
 {\isafoldproof}%
 %
 \isadelimproof
-\isanewline
 %
 \endisadelimproof
-\isanewline
+%
+\begin{isamarkuptext}%
+The semantics of specifications is contravariant with respect to their inclusion.%
+\end{isamarkuptext}\isamarkuptrue%
 \isacommand{theorem}\isamarkupfalse%
 \ TESL{\isacharunderscore}interp{\isacharunderscore}decreases{\isacharunderscore}setinc{\isacharcolon}\isanewline
 \ \ \isakeyword{assumes}\ {\isacartoucheopen}set\ {\isasymPhi}\ {\isasymsubseteq}\ set\ {\isasymPhi}{\isacharprime}{\isacartoucheclose}\isanewline
@@ -1022,183 +1030,179 @@ Adding constraints to a TESL formula reduces the number of satisfying runs.%
 %:%475=158%:%
 %:%482=159%:%
 %:%483=159%:%
-%:%488=159%:%
-%:%491=160%:%
-%:%492=161%:%
-%:%493=161%:%
-%:%494=162%:%
-%:%495=163%:%
-%:%502=164%:%
-%:%503=164%:%
-%:%504=165%:%
-%:%505=165%:%
-%:%506=165%:%
-%:%507=166%:%
-%:%508=166%:%
-%:%509=167%:%
-%:%510=167%:%
-%:%511=167%:%
-%:%512=168%:%
-%:%513=168%:%
-%:%514=168%:%
-%:%515=168%:%
-%:%516=169%:%
-%:%522=169%:%
-%:%525=170%:%
-%:%526=171%:%
-%:%527=171%:%
-%:%528=172%:%
-%:%535=173%:%
-%:%536=173%:%
-%:%537=174%:%
-%:%538=174%:%
-%:%539=175%:%
-%:%540=175%:%
-%:%541=175%:%
-%:%542=175%:%
-%:%543=176%:%
-%:%544=176%:%
-%:%549=176%:%
-%:%552=177%:%
-%:%553=178%:%
-%:%554=178%:%
-%:%555=179%:%
-%:%556=180%:%
-%:%563=181%:%
-%:%564=181%:%
-%:%565=182%:%
-%:%566=182%:%
-%:%567=183%:%
-%:%568=183%:%
-%:%569=184%:%
-%:%570=184%:%
-%:%571=184%:%
-%:%572=185%:%
-%:%573=185%:%
-%:%574=186%:%
-%:%575=186%:%
-%:%576=186%:%
-%:%577=187%:%
-%:%578=187%:%
-%:%579=188%:%
-%:%580=188%:%
-%:%581=188%:%
-%:%582=189%:%
-%:%583=189%:%
-%:%584=190%:%
-%:%585=190%:%
-%:%586=190%:%
-%:%587=190%:%
-%:%588=190%:%
-%:%589=191%:%
-%:%595=191%:%
-%:%598=192%:%
-%:%599=193%:%
-%:%600=193%:%
-%:%601=194%:%
-%:%602=195%:%
-%:%609=196%:%
-%:%610=196%:%
-%:%611=197%:%
-%:%612=197%:%
-%:%613=197%:%
-%:%614=197%:%
-%:%615=198%:%
-%:%616=198%:%
-%:%617=198%:%
-%:%618=198%:%
-%:%619=199%:%
-%:%620=199%:%
-%:%621=199%:%
-%:%622=200%:%
-%:%623=200%:%
-%:%624=200%:%
-%:%625=201%:%
-%:%626=201%:%
-%:%627=201%:%
-%:%628=202%:%
-%:%629=202%:%
-%:%630=202%:%
-%:%631=203%:%
-%:%632=203%:%
-%:%633=203%:%
-%:%634=204%:%
-%:%635=204%:%
-%:%636=205%:%
-%:%637=205%:%
-%:%638=205%:%
-%:%639=205%:%
-%:%640=206%:%
-%:%641=206%:%
-%:%642=206%:%
-%:%643=206%:%
-%:%644=207%:%
-%:%650=207%:%
-%:%653=208%:%
-%:%654=209%:%
-%:%655=209%:%
-%:%656=210%:%
-%:%657=211%:%
-%:%664=212%:%
-%:%665=212%:%
-%:%666=212%:%
-%:%671=212%:%
-%:%674=213%:%
-%:%675=214%:%
-%:%676=214%:%
-%:%677=215%:%
-%:%678=216%:%
-%:%685=217%:%
-%:%686=217%:%
-%:%687=218%:%
-%:%688=218%:%
-%:%693=218%:%
-%:%696=219%:%
-%:%697=220%:%
-%:%698=220%:%
-%:%699=221%:%
-%:%700=222%:%
-%:%707=223%:%
-%:%708=223%:%
-%:%709=224%:%
-%:%714=224%:%
-%:%717=225%:%
-%:%718=226%:%
-%:%719=226%:%
-%:%720=227%:%
-%:%721=228%:%
-%:%728=229%:%
-%:%729=229%:%
-%:%730=229%:%
-%:%744=231%:%
-%:%754=233%:%
-%:%755=233%:%
-%:%756=234%:%
-%:%763=235%:%
-%:%764=235%:%
-%:%765=236%:%
-%:%766=236%:%
-%:%767=236%:%
-%:%768=236%:%
-%:%769=237%:%
-%:%770=237%:%
-%:%771=237%:%
-%:%772=237%:%
-%:%773=238%:%
-%:%779=238%:%
-%:%782=239%:%
-%:%783=240%:%
-%:%784=240%:%
-%:%785=241%:%
-%:%792=242%:%
-%:%793=242%:%
-%:%794=242%:%
-%:%799=242%:%
-%:%802=243%:%
-%:%803=244%:%
-%:%804=244%:%
-%:%805=245%:%
-%:%812=246%:%
-%:%813=246%:%
-%:%821=252%:%
-%:%828=253%:%
+%:%492=162%:%
+%:%494=164%:%
+%:%495=164%:%
+%:%496=165%:%
+%:%497=166%:%
+%:%504=167%:%
+%:%505=167%:%
+%:%506=168%:%
+%:%507=168%:%
+%:%508=168%:%
+%:%509=169%:%
+%:%510=169%:%
+%:%511=170%:%
+%:%512=170%:%
+%:%513=170%:%
+%:%514=171%:%
+%:%515=171%:%
+%:%516=171%:%
+%:%517=171%:%
+%:%518=172%:%
+%:%528=175%:%
+%:%530=177%:%
+%:%531=177%:%
+%:%532=178%:%
+%:%539=179%:%
+%:%540=179%:%
+%:%541=180%:%
+%:%542=180%:%
+%:%543=181%:%
+%:%544=181%:%
+%:%545=181%:%
+%:%546=181%:%
+%:%547=182%:%
+%:%548=182%:%
+%:%557=185%:%
+%:%559=187%:%
+%:%560=187%:%
+%:%561=188%:%
+%:%562=189%:%
+%:%569=190%:%
+%:%570=190%:%
+%:%571=191%:%
+%:%572=191%:%
+%:%573=192%:%
+%:%574=192%:%
+%:%575=193%:%
+%:%576=193%:%
+%:%577=193%:%
+%:%578=194%:%
+%:%579=194%:%
+%:%580=195%:%
+%:%581=195%:%
+%:%582=195%:%
+%:%583=196%:%
+%:%584=196%:%
+%:%585=197%:%
+%:%586=197%:%
+%:%587=197%:%
+%:%588=198%:%
+%:%589=198%:%
+%:%590=199%:%
+%:%591=199%:%
+%:%592=199%:%
+%:%593=199%:%
+%:%594=199%:%
+%:%595=200%:%
+%:%605=203%:%
+%:%607=205%:%
+%:%608=205%:%
+%:%609=206%:%
+%:%610=207%:%
+%:%617=208%:%
+%:%618=208%:%
+%:%619=209%:%
+%:%620=209%:%
+%:%621=209%:%
+%:%622=209%:%
+%:%623=210%:%
+%:%624=210%:%
+%:%625=210%:%
+%:%626=210%:%
+%:%627=211%:%
+%:%628=211%:%
+%:%629=211%:%
+%:%630=212%:%
+%:%631=212%:%
+%:%632=212%:%
+%:%633=213%:%
+%:%634=213%:%
+%:%635=213%:%
+%:%636=214%:%
+%:%637=214%:%
+%:%638=214%:%
+%:%639=215%:%
+%:%640=215%:%
+%:%641=215%:%
+%:%642=216%:%
+%:%643=216%:%
+%:%644=217%:%
+%:%645=217%:%
+%:%646=217%:%
+%:%647=217%:%
+%:%648=218%:%
+%:%649=218%:%
+%:%650=218%:%
+%:%651=218%:%
+%:%652=219%:%
+%:%658=219%:%
+%:%661=220%:%
+%:%662=221%:%
+%:%663=221%:%
+%:%664=222%:%
+%:%665=223%:%
+%:%672=224%:%
+%:%673=224%:%
+%:%674=224%:%
+%:%679=224%:%
+%:%682=225%:%
+%:%683=226%:%
+%:%684=226%:%
+%:%685=227%:%
+%:%686=228%:%
+%:%693=229%:%
+%:%694=229%:%
+%:%695=230%:%
+%:%696=230%:%
+%:%701=230%:%
+%:%704=231%:%
+%:%705=232%:%
+%:%706=232%:%
+%:%707=233%:%
+%:%708=234%:%
+%:%715=235%:%
+%:%716=235%:%
+%:%717=236%:%
+%:%722=236%:%
+%:%725=237%:%
+%:%726=238%:%
+%:%727=238%:%
+%:%728=239%:%
+%:%729=240%:%
+%:%736=241%:%
+%:%737=241%:%
+%:%738=241%:%
+%:%752=243%:%
+%:%762=245%:%
+%:%763=245%:%
+%:%764=246%:%
+%:%771=247%:%
+%:%772=247%:%
+%:%773=248%:%
+%:%774=248%:%
+%:%775=248%:%
+%:%776=248%:%
+%:%777=249%:%
+%:%778=249%:%
+%:%779=249%:%
+%:%780=249%:%
+%:%781=250%:%
+%:%787=250%:%
+%:%790=251%:%
+%:%791=252%:%
+%:%792=252%:%
+%:%793=253%:%
+%:%800=254%:%
+%:%801=254%:%
+%:%802=254%:%
+%:%807=254%:%
+%:%810=255%:%
+%:%811=256%:%
+%:%812=256%:%
+%:%813=257%:%
+%:%820=258%:%
+%:%821=258%:%
+%:%829=264%:%
+%:%836=265%:%

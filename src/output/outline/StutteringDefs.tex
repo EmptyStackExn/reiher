@@ -77,10 +77,10 @@ The properties of a dilating function are:
 \begin{itemize}%
 \item it is strictly increasing because instants are inserted into the run,
 
-\item the image of an instant index is greater than it because stuttering instant 
+\item the image of an instant index is greater than it because stuttering instants 
 can only delay the original instants of the run, 
 
-\item no instant is inserted before the first one in oredr to have a well defined 
+\item no instant is inserted before the first one in order to have a well defined 
 initial date on each clock,
 
 \item if \isa{n} is not in the image of the function, no clock ticks at 
@@ -97,7 +97,7 @@ instant \isa{n} and the date on the clocks do not change.%
 \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ {\isacharequal}\ time\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ r{\isacharparenright}\ n\ c{\isacharparenright}{\isacharparenright}{\isacharparenright}\isanewline
 \ \ \ {\isacharparenright}{\isacartoucheclose}%
 \begin{isamarkuptext}%
-Dilating a run. A run \isa{r} is a dilation of a run \isa{sub} by 
+A run \isa{r} is a dilation of a run \isa{sub} by 
 function \isa{f} if:
 
 %
@@ -122,22 +122,6 @@ A \emph{run} is a \emph{subrun} of another run if there exists a dilation betwee
 \ is{\isacharunderscore}subrun\ {\isacharcolon}{\isacharcolon}{\isacartoucheopen}{\isacharprime}a{\isacharcolon}{\isacharcolon}linordered{\isacharunderscore}field\ run\ {\isasymRightarrow}\ {\isacharprime}a\ run\ {\isasymRightarrow}\ bool{\isacartoucheclose}\ {\isacharparenleft}\isakeyword{infixl}\ {\isachardoublequoteopen}{\isasymlless}{\isachardoublequoteclose}\ {\isadigit{6}}{\isadigit{0}}{\isacharparenright}\isanewline
 \isakeyword{where}\isanewline
 \ \ {\isacartoucheopen}sub\ {\isasymlless}\ r\ {\isasymequiv}\ {\isacharparenleft}{\isasymexists}f{\isachardot}\ dilating\ f\ sub\ r{\isacharparenright}{\isacartoucheclose}%
-\begin{isamarkuptext}%
-\isa{tick{\isacharunderscore}count\ r\ c\ n} is the number of ticks of clock \isa{c} in 
-  run \isa{r} upto instant \isa{n}.%
-\end{isamarkuptext}\isamarkuptrue%
-\isacommand{definition}\isamarkupfalse%
-\ tick{\isacharunderscore}count\ {\isacharcolon}{\isacharcolon}\ {\isacartoucheopen}{\isacharprime}a{\isacharcolon}{\isacharcolon}linordered{\isacharunderscore}field\ run\ {\isasymRightarrow}\ clock\ {\isasymRightarrow}\ nat\ {\isasymRightarrow}\ nat{\isacartoucheclose}\isanewline
-\isakeyword{where}\isanewline
-\ \ {\isacartoucheopen}tick{\isacharunderscore}count\ r\ c\ n\ {\isacharequal}\ card\ {\isacharbraceleft}i{\isachardot}\ i\ {\isasymle}\ n\ {\isasymand}\ hamlet\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ r{\isacharparenright}\ i\ c{\isacharparenright}{\isacharbraceright}{\isacartoucheclose}%
-\begin{isamarkuptext}%
-\isa{tick{\isacharunderscore}count{\isacharunderscore}strict\ r\ c\ n} is the number of ticks of clock \isa{c} 
-  in run \isa{r} upto but excluding instant \isa{n}.%
-\end{isamarkuptext}\isamarkuptrue%
-\isacommand{definition}\isamarkupfalse%
-\ tick{\isacharunderscore}count{\isacharunderscore}strict\ {\isacharcolon}{\isacharcolon}\ {\isacartoucheopen}{\isacharprime}a{\isacharcolon}{\isacharcolon}linordered{\isacharunderscore}field\ run\ {\isasymRightarrow}\ clock\ {\isasymRightarrow}\ nat\ {\isasymRightarrow}\ nat{\isacartoucheclose}\isanewline
-\isakeyword{where}\isanewline
-\ \ {\isacartoucheopen}tick{\isacharunderscore}count{\isacharunderscore}strict\ r\ c\ n\ {\isacharequal}\ card\ {\isacharbraceleft}i{\isachardot}\ i\ {\isacharless}\ n\ {\isasymand}\ hamlet\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ r{\isacharparenright}\ i\ c{\isacharparenright}{\isacharbraceright}{\isacartoucheclose}%
 \begin{isamarkuptext}%
 A contracting function is the reverse of a dilating fun, it maps an instant index 
   of a dilated run to the index of the last instant of a non stuttering run that
@@ -174,6 +158,8 @@ A function \isa{g} is contracting with respect to the dilation of run
 
 %
 \begin{itemize}%
+\item \isa{{\isacharparenleft}f\ {\isasymcirc}\ g{\isacharparenright}\ n\ {\isasymle}\ n}
+
 \item the time does not change on any clock between instants \isa{{\isacharparenleft}f\ {\isasymcirc}\ g{\isacharparenright}\ n}
 and \isa{n} of run \isa{r};
 
@@ -190,6 +176,7 @@ and \isa{{\isacharparenleft}f\ {\isasymcirc}\ g{\isacharparenright}\ {\isadigit{
 \ contracting\isanewline
 \isakeyword{where}\ \isanewline
 \ \ {\isacartoucheopen}contracting\ g\ r\ sub\ f\ {\isasymequiv}\ \ contracting{\isacharunderscore}fun\ g\isanewline
+\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ {\isasymand}\ {\isacharparenleft}{\isasymforall}n{\isachardot}\ f\ {\isacharparenleft}g\ n{\isacharparenright}\ {\isasymle}\ n{\isacharparenright}\isanewline
 \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ {\isasymand}\ {\isacharparenleft}{\isasymforall}n\ c\ k{\isachardot}\ f\ {\isacharparenleft}g\ n{\isacharparenright}\ {\isasymle}\ k\ {\isasymand}\ k\ {\isasymle}\ n\isanewline
 \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ {\isasymlongrightarrow}\ time\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ r{\isacharparenright}\ k\ c{\isacharparenright}\ {\isacharequal}\ time\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ sub{\isacharparenright}\ {\isacharparenleft}g\ n{\isacharparenright}\ c{\isacharparenright}{\isacharparenright}\isanewline
 \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ {\isasymand}\ {\isacharparenleft}{\isasymforall}n\ c\ k{\isachardot}\ f\ {\isacharparenleft}g\ n{\isacharparenright}\ {\isacharless}\ k\ {\isasymand}\ k\ {\isasymle}\ n\isanewline
@@ -199,7 +186,46 @@ For any dilating function, we can build its \emph{inverse}, as illustrated on
   \autoref{fig:dilating-run}, which is a contracting function:%
 \end{isamarkuptext}\isamarkuptrue%
 \isacommand{definition}\isamarkupfalse%
-\ {\isacartoucheopen}dil{\isacharunderscore}inverse\ f{\isacharcolon}{\isacharcolon}{\isacharparenleft}nat\ {\isasymRightarrow}\ nat{\isacharparenright}\ {\isasymequiv}\ {\isacharparenleft}{\isasymlambda}n{\isachardot}\ Max\ {\isacharbraceleft}i{\isachardot}\ f\ i\ {\isasymle}\ n{\isacharbraceright}{\isacharparenright}{\isacartoucheclose}\isanewline
+\ {\isacartoucheopen}dil{\isacharunderscore}inverse\ f{\isacharcolon}{\isacharcolon}{\isacharparenleft}nat\ {\isasymRightarrow}\ nat{\isacharparenright}\ {\isasymequiv}\ {\isacharparenleft}{\isasymlambda}n{\isachardot}\ Max\ {\isacharbraceleft}i{\isachardot}\ f\ i\ {\isasymle}\ n{\isacharbraceright}{\isacharparenright}{\isacartoucheclose}%
+\isadelimdocument
+%
+\endisadelimdocument
+%
+\isatagdocument
+%
+\isamarkupsubsection{Alternate definitions for counting ticks.%
+}
+\isamarkuptrue%
+%
+\endisatagdocument
+{\isafolddocument}%
+%
+\isadelimdocument
+%
+\endisadelimdocument
+%
+\begin{isamarkuptext}%
+For proving the stuttering invariance of TESL specifications, we will need
+  these alternate definitions for counting ticks, which are based on sets.%
+\end{isamarkuptext}\isamarkuptrue%
+%
+\begin{isamarkuptext}%
+\isa{tick{\isacharunderscore}count\ r\ c\ n} is the number of ticks of clock \isa{c} in 
+  run \isa{r} upto instant \isa{n}.%
+\end{isamarkuptext}\isamarkuptrue%
+\isacommand{definition}\isamarkupfalse%
+\ tick{\isacharunderscore}count\ {\isacharcolon}{\isacharcolon}\ {\isacartoucheopen}{\isacharprime}a{\isacharcolon}{\isacharcolon}linordered{\isacharunderscore}field\ run\ {\isasymRightarrow}\ clock\ {\isasymRightarrow}\ nat\ {\isasymRightarrow}\ nat{\isacartoucheclose}\isanewline
+\isakeyword{where}\isanewline
+\ \ {\isacartoucheopen}tick{\isacharunderscore}count\ r\ c\ n\ {\isacharequal}\ card\ {\isacharbraceleft}i{\isachardot}\ i\ {\isasymle}\ n\ {\isasymand}\ hamlet\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ r{\isacharparenright}\ i\ c{\isacharparenright}{\isacharbraceright}{\isacartoucheclose}%
+\begin{isamarkuptext}%
+\isa{tick{\isacharunderscore}count{\isacharunderscore}strict\ r\ c\ n} is the number of ticks of clock \isa{c} 
+  in run \isa{r} upto but excluding instant \isa{n}.%
+\end{isamarkuptext}\isamarkuptrue%
+\isacommand{definition}\isamarkupfalse%
+\ tick{\isacharunderscore}count{\isacharunderscore}strict\ {\isacharcolon}{\isacharcolon}\ {\isacartoucheopen}{\isacharprime}a{\isacharcolon}{\isacharcolon}linordered{\isacharunderscore}field\ run\ {\isasymRightarrow}\ clock\ {\isasymRightarrow}\ nat\ {\isasymRightarrow}\ nat{\isacartoucheclose}\isanewline
+\isakeyword{where}\isanewline
+\ \ {\isacartoucheopen}tick{\isacharunderscore}count{\isacharunderscore}strict\ r\ c\ n\ {\isacharequal}\ card\ {\isacharbraceleft}i{\isachardot}\ i\ {\isacharless}\ n\ {\isasymand}\ hamlet\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ r{\isacharparenright}\ i\ c{\isacharparenright}{\isacharbraceright}{\isacartoucheclose}\isanewline
+\isanewline
 %
 \isadelimtheory
 \isanewline
@@ -265,54 +291,58 @@ For any dilating function, we can build its \emph{inverse}, as illustrated on
 %:%124=62%:%
 %:%126=65%:%
 %:%127=66%:%
+%:%128=67%:%
 %:%129=68%:%
-%:%130=68%:%
-%:%131=69%:%
-%:%132=70%:%
+%:%130=69%:%
+%:%131=70%:%
+%:%132=71%:%
 %:%134=73%:%
-%:%135=74%:%
-%:%137=76%:%
-%:%138=76%:%
-%:%139=77%:%
-%:%140=78%:%
+%:%135=73%:%
+%:%136=74%:%
+%:%138=77%:%
+%:%139=78%:%
+%:%140=79%:%
+%:%141=80%:%
 %:%142=81%:%
 %:%143=82%:%
 %:%144=83%:%
 %:%145=84%:%
-%:%146=85%:%
-%:%147=86%:%
-%:%148=87%:%
-%:%150=89%:%
-%:%151=89%:%
-%:%152=90%:%
-%:%154=93%:%
-%:%155=94%:%
-%:%156=95%:%
-%:%157=96%:%
-%:%158=97%:%
-%:%159=98%:%
-%:%160=99%:%
-%:%161=100%:%
-%:%165=112%:%
-%:%166=113%:%
-%:%170=114%:%
-%:%172=115%:%
-%:%173=116%:%
+%:%149=96%:%
+%:%150=97%:%
+%:%154=98%:%
+%:%156=99%:%
+%:%157=100%:%
+%:%163=102%:%
+%:%164=103%:%
+%:%166=104%:%
+%:%167=105%:%
+%:%168=106%:%
+%:%169=107%:%
+%:%170=108%:%
+%:%174=115%:%
+%:%175=116%:%
+%:%176=116%:%
 %:%177=117%:%
 %:%178=118%:%
-%:%180=119%:%
-%:%181=120%:%
-%:%182=121%:%
-%:%183=122%:%
-%:%184=123%:%
-%:%188=130%:%
-%:%189=131%:%
-%:%190=131%:%
-%:%191=132%:%
-%:%192=133%:%
-%:%198=140%:%
-%:%199=141%:%
-%:%201=143%:%
-%:%202=143%:%
-%:%205=144%:%
-%:%210=145%:%
+%:%185=126%:%
+%:%186=127%:%
+%:%188=129%:%
+%:%189=129%:%
+%:%196=132%:%
+%:%208=135%:%
+%:%209=136%:%
+%:%213=140%:%
+%:%214=141%:%
+%:%216=143%:%
+%:%217=143%:%
+%:%218=144%:%
+%:%219=145%:%
+%:%221=148%:%
+%:%222=149%:%
+%:%224=151%:%
+%:%225=151%:%
+%:%226=152%:%
+%:%227=153%:%
+%:%228=154%:%
+%:%231=155%:%
+%:%236=156%:%

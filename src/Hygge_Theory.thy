@@ -195,7 +195,7 @@ section \<open>Completeness\<close>
 
 text \<open>
   We will now show that any run that satisfies a specification can be derived
-  from the initial configuration, at any at any number of steps.
+  from the initial configuration, at any number of steps.
 
   We start by proving that any run that is denoted by a configuration @{term \<open>\<S>\<close>}
   is necessarily denoted by at least one of the configurations that can be reached

@@ -17,7 +17,7 @@
 \contentsline {subsection}{\numberline {3.2.2}Expansion law}{18}{subsection.3.2.2}% 
 \contentsline {section}{\numberline {3.3}Equational laws for the denotation of TESL formulae}{18}{section.3.3}% 
 \contentsline {section}{\numberline {3.4}Decreasing interpretation of TESL formulae}{19}{section.3.4}% 
-\contentsline {section}{\numberline {3.5}Some special cases}{20}{section.3.5}% 
+\contentsline {section}{\numberline {3.5}Some special cases}{21}{section.3.5}% 
 \contentsline {chapter}{\numberline {4}Symbolic Primitives for Building Runs}{23}{chapter.4}% 
 \contentsline {subsection}{\numberline {4.0.1}Symbolic Primitives for Runs}{23}{subsection.4.0.1}% 
 \contentsline {section}{\numberline {4.1}Semantics of Primitive Constraints}{24}{section.4.1}% 
@@ -45,6 +45,7 @@
 \contentsline {chapter}{\numberline {8}Properties of TESL}{63}{chapter.8}% 
 \contentsline {section}{\numberline {8.1}Stuttering Invariance}{63}{section.8.1}% 
 \contentsline {subsection}{\numberline {8.1.1}Definition of stuttering}{63}{subsection.8.1.1}% 
-\contentsline {subsection}{\numberline {8.1.2}Stuttering Lemmas}{65}{subsection.8.1.2}% 
-\contentsline {subsection}{\numberline {8.1.3}Lemmas used to prove the invariance by stuttering}{66}{subsection.8.1.3}% 
-\contentsline {subsection}{\numberline {8.1.4}Main Theorems}{85}{subsection.8.1.4}% 
+\contentsline {subsection}{\numberline {8.1.2}Alternate definitions for counting ticks.}{65}{subsection.8.1.2}% 
+\contentsline {subsection}{\numberline {8.1.3}Stuttering Lemmas}{65}{subsection.8.1.3}% 
+\contentsline {subsection}{\numberline {8.1.4}Lemmas used to prove the invariance by stuttering}{66}{subsection.8.1.4}% 
+\contentsline {subsection}{\numberline {8.1.5}Main Theorems}{86}{subsection.8.1.5}% 
