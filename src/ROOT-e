@@ -1,9 +1,6 @@
 session "Hygge_Theory" = "HOL" +
-  options [document = pdf, document_output = "output"]
-  theories [document = false]
+  options [document = false]
+  theories
     (* Foo *)
     (* Bar *)
-  theories
     Hygge_Theory
-  document_files
-    "root.tex"
