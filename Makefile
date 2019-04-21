@@ -16,7 +16,7 @@ browser_info:
 	sed -i -e 's/<h2>Theories<\/h2>/<h2><a href="session_graph.pdf">Index<\/a><\/h2>/g' docs/index.html
 	sed -i -e 's/<p>View <a href="session_graph.pdf">theory dependencies<\/a><\/p>/<p>Denotational and operational semantics for the <a href="http:\/\/wdi.supelec.fr\/software\/TESL\/">Tagged Events Specification Language<\/a>.<\/p>\
 <p>Check out root theory <a href="Hygge_Theory.html">Hygge_Theory<\/a> for soundness, completeness, progress and termination properties, and <a href="Stuttering.html">Stuttering<\/a> for stuttering properties.<\/p>/g' docs/index.html
-	sed -i -e 's/<\/body>/<p>Copyright (c) 2018 T. Balabonski, F. Boulanger, C. Keller, H. Nguyen Van, B. Valiron, B. Wolff, CentraleSupélec \/ Université Paris-Sud \/ CNRS<\/p>\
+	sed -i -e 's/<\/body>/<p>Copyright (c) 2019 T. Balabonski, F. Boulanger, C. Keller, H. Nguyen Van, B. Valiron, B. Wolff, CentraleSupélec \/ Université Paris-Sud \/ CNRS<\/p>\
 <\/body>/g' docs/index.html
 	sed -i -e 's/..\/..\/HOL\/HOL\//http:\/\/isabelle.in.tum.de\/website-Isabelle2017\/dist\/library\/HOL\/HOL\//g' docs/TESL.html
 

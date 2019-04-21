@@ -6,7 +6,7 @@ imports TESL
 begin
 text \<open>
   Runs are sequences of instants, and each instant maps a clock to a pair 
-  @{term \<open>(h, t)\<close>} where @{term \<open>h\<close>} tells whether the clock ticks or not, 
+  @{term \<open>(h, t)\<close>} where @{term \<open>h\<close>} indicates whether the clock ticks or not, 
   and @{term \<open>t\<close>} is the current time on this clock.
   The first element of the pair is called the \<^emph>\<open>hamlet\<close> of the clock (to tick or 
   not to tick), the second element is called the \<^emph>\<open>time\<close>.

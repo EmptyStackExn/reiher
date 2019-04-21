@@ -29,9 +29,9 @@ addressing the following conceptual issues:
 \<^item> coordination between subsystems involves causality, so the occurrence of an event may enforce 
   the occurrence of other events, possibly after a certain duration has elapsed or an event has 
   occurred a given number of times,
-\<^item> the domain of time (discrete, rational, continuous,. . . ) may be different in the subsystems, 
+\<^item> the domain of time (discrete, rational, continuous. . . ) may be different in the subsystems, 
   leading to \<^emph>\<open>polytimed\<close> systems,
-\<^item> the time frames of different sub-systems may be related (for instance, time in a GPS satellite 
+\<^item> the time frames of different sub-systems may be related (e.g., time in a GPS satellite 
   and in a GPS receiver on Earth are related although they are not the same).
 \<close>
 
@@ -63,9 +63,9 @@ notation dummyLEQ      (infixl "\<le>\<^sub>\<T>" 100)
 (*>*)
 
 text\<open>
-In order to tackle the heterogeneous nature of the subsystems, we abstract their behavior as clocks. 
-Each clock models an event – something that can occur or not at a given time. This time is measured 
-in a time frame associated with each clock, and the nature of time (integer, rational, real or any 
+In order to tackle the heterogeneous nature of the forming subsystems, we abstract their behavior as clocks. 
+Each clock models an event, something that can occur or not at a given time. This time is measured 
+in a time frame associated with each clock, and the nature of time (integer, rational, real, or any 
 type with a linear order) is specific to each clock. 
 When the event associated with a clock occurs, the clock ticks. In order to support any kind of 
 behavior for the subsystems, we are only interested in specifying what we can observe at a series 
@@ -86,7 +86,7 @@ text\<open>
   intersecting the denoted run sets of constraint operators.
   Consequently, such specification languages do not limit the number of clocks used to model a 
   system (as long as it is finite) and it is always possible to add clocks to a specification. 
-  Moreover they are \<^emph>\<open>compositional\<close> by construction since the composition of specifications 
+  Moreover, they are \<^emph>\<open>compositional\<close> by construction since the composition of specifications 
   consists of the conjunction of their constraints.
 \<close>
 
@@ -110,7 +110,7 @@ text\<open>
 
 subsection\<open>Instantaneous Causal Operators\<close>
 text\<open>
-  TESL has operators to deal with instantaneous causality, i.e. to react to an event occurrence
+  TESL has operators to deal with instantaneous causality, i.e., to react to an event occurrence
   in the very same observation instant.
   \<^item> \<^verbatim>\<open>c1 implies c2\<close> means that at any instant where \<^verbatim>\<open>c1\<close> ticks, \<^verbatim>\<open>c2\<close> has to tick too.
   \<^item> \<^verbatim>\<open>c1 implies not c2\<close> means that at any instant where \<^verbatim>\<open>c1\<close> ticks, \<^verbatim>\<open>c2\<close> cannot tick.
@@ -127,29 +127,28 @@ text\<open>
   \<^item> \<^verbatim>\<open>c1 time delayed by d on m implies c2\<close> means that every time clock \<^verbatim>\<open>c1\<close> ticks, \<^verbatim>\<open>c2\<close> must have 
     a tick at the first instant where the time on \<^verbatim>\<open>m\<close> is \<^verbatim>\<open>d\<close> later than it was when \<^verbatim>\<open>c1\<close> had ticked.
     This means that every tick on \<^verbatim>\<open>c1\<close> is followed by a tick on \<^verbatim>\<open>c2\<close> after a delay \<^verbatim>\<open>d\<close> measured
-    on the time scale of closk \<^verbatim>\<open>m\<close>.
-  \<^item> \<^verbatim>\<open>time relation (c1, c2) in R\<close> means that at every instant, the current times on clocks \<^verbatim>\<open>c1\<close>
+    on the time scale of clock \<^verbatim>\<open>m\<close>.
+  \<^item> \<^verbatim>\<open>time relation (c1, c2) in R\<close> means that at every instant, the current time on clocks \<^verbatim>\<open>c1\<close>
     and \<^verbatim>\<open>c2\<close> must be in relation \<^verbatim>\<open>R\<close>. By default, the time lines of different clocks are 
-    independent. This operator allows us to link two time lines, for instance to model the fact
+    independent. This operator allows us to link two time lines, e.g., to model the fact
     that time in a GPS satellite and time in a GPS receiver on Earth are not the same but are 
     related. Time being polymorphic in TESL, this can also be used to model the fact that the
     angular position on the camshaft of an engine moves twice as fast as the angular position 
     on the crankshaft~\<^footnote>\<open>See \url{http://wdi.supelec.fr/software/TESL/GalleryEngine} for more details\<close>. 
-    We will consider only linear relations here so that finding solutions is decidable.
-\<close>
+    We may consider only linear arithmetics to restrict to decidable resolution.\<close>
 
 subsection\<open>Asynchronous Operators\<close>
 text\<open>
   The last category of TESL operators allows the specification of asynchronous relations between
-  event occurrences. They do not tell when ticks have to occur, then only put bounds on the set 
+  event occurrences. They do not "tell" when ticks have to occur, then only put bounds on the set 
   of instants at which they should occur.
   \<^item> \<^verbatim>\<open>c1 weakly precedes c2\<close> means that for each tick on \<^verbatim>\<open>c2\<close>, there must be at least one tick
-    on \<^verbatim>\<open>c1\<close> at a previous instant or at the same instant. This can also be expressed by saying
-    that at each instant, the number of ticks on \<^verbatim>\<open>c2\<close> since the beginning of the run must be lower 
+    on \<^verbatim>\<open>c1\<close> at a previous or same instant. This can also be expressed by stating
+    that at each instant, the number of ticks on \<^verbatim>\<open>c2\<close> (since the beginning of the run) must be lower 
     or equal to the number of ticks on \<^verbatim>\<open>c1\<close>.
   \<^item> \<^verbatim>\<open>c1 strictly precedes c2\<close> means that for each tick on \<^verbatim>\<open>c2\<close>, there must be at least one tick
     on \<^verbatim>\<open>c1\<close> at a previous instant. This can also be expressed by saying that at each instant, 
-    the number of ticks on \<^verbatim>\<open>c2\<close> from the beginning of the run to this instant must be lower or 
+    the number of ticks on \<^verbatim>\<open>c2\<close> (from the beginning of the run to this instant) must be lower or 
     equal to the number of ticks on \<^verbatim>\<open>c1\<close> from the beginning of the run to the previous instant.
 \<close>
 

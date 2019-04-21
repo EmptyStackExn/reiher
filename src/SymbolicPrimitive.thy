@@ -6,19 +6,19 @@ theory SymbolicPrimitive
 begin
 
 text\<open>
-  We define here the primitive constraints on runs toward which we will translate
+  We define here the primitive constraints on runs, towards which we translate
   TESL specifications in the operational semantics.
   These constraints refer to a specific symbolic run and can therefore access
-  properties of the run at particular instants (for instance, the fact that a clock
+  properties of the run at particular instants (e.g., the fact that a clock
   ticks at instant @{term \<open>n\<close>} of the run, or the time on a given clock at 
   that instant).
 
   In the previous chapters, we had no reference to particular instants of a run 
   because the TESL language should be invariant by stuttering in order to allow 
   the composition of specifications: adding an instant where no clock ticks to 
-  a run that satisfies a formula should yield another satisfying run. However, 
-  when constructing runs that satisfy a formula, we need to be able to refer to 
-  the time or hamlet of a clock at a given instant.
+  a run that satisfies a formula should yield another satisfying run for the very
+  same specification. However, when constructing runs that satisfy a formula, we
+  need to be able to refer to the time or hamlet of a clock at a given instant.
 \<close>
 
 text\<open>
@@ -32,7 +32,7 @@ datatype cnt_expr =
 subsection\<open> Symbolic Primitives for Runs \<close>
 
 text\<open>
-  Tag variables are used to get the time on a clock at a given instant index.
+  Tag variables are used to assign the time on a clock at a given instant index.
 \<close>
 datatype tag_var =
   TSchematic \<open>clock * instant_index\<close> ("\<tau>\<^sub>v\<^sub>a\<^sub>r")

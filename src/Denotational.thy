@@ -8,7 +8,7 @@ imports
 begin
 text\<open>
   The denotational semantics maps TESL formulae to sets of satisfying runs.
-  Firstly, we define the semantics of atomic formulae (basic constructs of the 
+  First, we define the semantics of atomic formulae (basic constructs of the 
   TESL language), then we define the semantics of compound formulae as the
   intersection of the semantics of their components: a run must satisfy all
   the individual formulae of a compound formula.
@@ -80,7 +80,7 @@ section \<open>Denotational interpretation for TESL formulae\<close>
 
 text\<open>
   To satisfy a formula, a run has to satisfy the conjunction of its atomic 
-  formulae, therefore, the interpretation of a formula is the intersection
+  formulae. Therefore, the interpretation of a formula is the intersection
   of the interpretations of its components.
 \<close>
 fun TESL_interpretation :: \<open>('\<tau>::linordered_field) TESL_formula \<Rightarrow> '\<tau> run set\<close>

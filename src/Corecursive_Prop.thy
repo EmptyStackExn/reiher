@@ -16,7 +16,9 @@ text \<open>
   we need to be able to ignore the past (for which the constraints are encoded 
   in the context) and consider only the satisfaction of the constraints from
   a given instant index.
-  For this, we define an interpretation of TESL formulae for a suffix of a run. 
+  For this purpose, we define an interpretation of TESL formulae for a suffix of a run.
+  Note that this semantic variant is closely related to the  denotational semantics as
+  defined in the preceding chapters.
 \<close>
 fun TESL_interpretation_atomic_stepwise
     :: \<open>('\<tau>::linordered_field) TESL_atomic \<Rightarrow> nat \<Rightarrow> '\<tau> run set\<close> ("\<lbrakk> _ \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> _\<^esup>")
