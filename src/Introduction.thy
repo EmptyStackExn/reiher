@@ -135,17 +135,18 @@ text\<open>
     related. Time being polymorphic in TESL, this can also be used to model the fact that the
     angular position on the camshaft of an engine moves twice as fast as the angular position 
     on the crankshaft~\<^footnote>\<open>See \url{http://wdi.supelec.fr/software/TESL/GalleryEngine} for more details\<close>. 
-    We may consider only linear arithmetic relations to restrict the problem to a domain where the resolution is decidable.\<close>
+    We may consider only linear arithmetic relations to restrict the problem to a domain where 
+    the resolution is decidable.\<close>
 
 subsection\<open>Asynchronous Operators\<close>
 text\<open>
   The last category of TESL operators allows the specification of asynchronous relations between
-  event occurrences. They do not specify the precise instants at which ticks have to occur, they only put bounds on the set 
-  of instants at which they should occur.
+  event occurrences. They do not specify the precise instants at which ticks have to occur, 
+  they only put bounds on the set of instants at which they should occur.
   \<^item> \<^verbatim>\<open>c1 weakly precedes c2\<close> means that for each tick on \<^verbatim>\<open>c2\<close>, there must be at least one tick
     on \<^verbatim>\<open>c1\<close> at a previous or at the same instant. This can also be expressed by stating
-    that at each instant, the number of ticks since the beginning of the run must be lower or equal on \<^verbatim>\<open>c2\<close>  
-    than on \<^verbatim>\<open>c1\<close>.
+    that at each instant, the number of ticks since the beginning of the run must be lower or 
+    equal on \<^verbatim>\<open>c2\<close> than on \<^verbatim>\<open>c1\<close>.
   \<^item> \<^verbatim>\<open>c1 strictly precedes c2\<close> means that for each tick on \<^verbatim>\<open>c2\<close>, there must be at least one tick
     on \<^verbatim>\<open>c1\<close> at a previous instant. This can also be expressed by saying that at each instant, 
     the number of ticks on \<^verbatim>\<open>c2\<close> from the beginning of the run to this instant, must be lower or 

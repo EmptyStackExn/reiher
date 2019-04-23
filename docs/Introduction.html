@@ -152,17 +152,18 @@ individual time spaces of clocks and that it is ordered by some linear ordering 
     related. Time being polymorphic in TESL, this can also be used to model the fact that the
     angular position on the camshaft of an engine moves twice as fast as the angular position 
     on the crankshaft~&#8267;&#8249;See \url{http://wdi.supelec.fr/software/TESL/GalleryEngine} for more details&#8250;. 
-    We may consider only linear arithmetic relations to restrict the problem to a domain where the resolution is decidable.&#8250;</span></span></span><span>
+    We may consider only linear arithmetic relations to restrict the problem to a domain where 
+    the resolution is decidable.&#8250;</span></span></span><span>
 </span><span>
 </span><span class="keyword1"><span class="command">subsection</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Asynchronous Operators&#8250;</span></span></span><span>
 </span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;
   The last category of TESL operators allows the specification of asynchronous relations between
-  event occurrences. They do not specify the precise instants at which ticks have to occur, they only put bounds on the set 
-  of instants at which they should occur.
+  event occurrences. They do not specify the precise instants at which ticks have to occur, 
+  they only put bounds on the set of instants at which they should occur.
   &#9642; &#9641;&#8249;c1 weakly precedes c2&#8250; means that for each tick on &#9641;&#8249;c2&#8250;, there must be at least one tick
     on &#9641;&#8249;c1&#8250; at a previous or at the same instant. This can also be expressed by stating
-    that at each instant, the number of ticks since the beginning of the run must be lower or equal on &#9641;&#8249;c2&#8250;  
-    than on &#9641;&#8249;c1&#8250;.
+    that at each instant, the number of ticks since the beginning of the run must be lower or 
+    equal on &#9641;&#8249;c2&#8250; than on &#9641;&#8249;c1&#8250;.
   &#9642; &#9641;&#8249;c1 strictly precedes c2&#8250; means that for each tick on &#9641;&#8249;c2&#8250;, there must be at least one tick
     on &#9641;&#8249;c1&#8250; at a previous instant. This can also be expressed by saying that at each instant, 
     the number of ticks on &#9641;&#8249;c2&#8250; from the beginning of the run to this instant, must be lower or 

@@ -233,7 +233,8 @@ that time in a GPS satellite and time in a GPS receiver on Earth are not the sam
 related. Time being polymorphic in TESL, this can also be used to model the fact that the
 angular position on the camshaft of an engine moves twice as fast as the angular position 
 on the crankshaft~\footnote{See \url{http://wdi.supelec.fr/software/TESL/GalleryEngine} for more details}. 
-We may consider only linear arithmetic relations to restrict the problem to a domain where the resolution is decidable.%
+We may consider only linear arithmetic relations to restrict the problem to a domain where 
+the resolution is decidable.%
 \end{itemize}%
 \end{isamarkuptext}\isamarkuptrue%
 %
@@ -256,15 +257,15 @@ We may consider only linear arithmetic relations to restrict the problem to a do
 %
 \begin{isamarkuptext}%
 The last category of TESL operators allows the specification of asynchronous relations between
-event occurrences. They do not specify the precise instants at which ticks have to occur, they only put bounds on the set 
-of instants at which they should occur.
+event occurrences. They do not specify the precise instants at which ticks have to occur, 
+they only put bounds on the set of instants at which they should occur.
 
 %
 \begin{itemize}%
 \item \isatt{c1\ weakly\ precedes\ c2} means that for each tick on \isatt{c2}, there must be at least one tick
 on \isatt{c1} at a previous or at the same instant. This can also be expressed by stating
-that at each instant, the number of ticks since the beginning of the run must be lower or equal on \isatt{c2}  
-than on \isatt{c1}.
+that at each instant, the number of ticks since the beginning of the run must be lower or 
+equal on \isatt{c2} than on \isatt{c1}.
 
 \item \isatt{c1\ strictly\ precedes\ c2} means that for each tick on \isatt{c2}, there must be at least one tick
 on \isatt{c1} at a previous instant. This can also be expressed by saying that at each instant, 
@@ -377,15 +378,16 @@ equal to the number of ticks on \isatt{c1} from the beginning of the run to the 
 %:%234=136%:%
 %:%235=137%:%
 %:%236=138%:%
-%:%246=140%:%
-%:%258=142%:%
+%:%237=139%:%
+%:%247=141%:%
 %:%259=143%:%
 %:%260=144%:%
-%:%264=145%:%
+%:%261=145%:%
 %:%265=146%:%
 %:%266=147%:%
 %:%267=148%:%
-%:%269=149%:%
+%:%268=149%:%
 %:%270=150%:%
 %:%271=151%:%
 %:%272=152%:%
+%:%273=153%:%
