@@ -31,7 +31,7 @@ addressing the following conceptual issues:
   occurred a given number of times,
 \<^item> the domain of time (discrete, rational, continuous. . . ) may be different in the subsystems, 
   leading to \<^emph>\<open>polytimed\<close> systems,
-\<^item> the time frames of different sub-systems may be related (e.g., time in a GPS satellite 
+\<^item> the time frames of different sub-systems may be related (for instance, time in a GPS satellite 
   and in a GPS receiver on Earth are related although they are not the same).
 \<close>
 
@@ -63,8 +63,8 @@ notation dummyLEQ      (infixl "\<le>\<^sub>\<T>" 100)
 (*>*)
 
 text\<open>
-In order to tackle the heterogeneous nature of the forming subsystems, we abstract their behavior as clocks. 
-Each clock models an event, something that can occur or not at a given time. This time is measured 
+In order to tackle the heterogeneous nature of the subsystems, we abstract their behavior as clocks. 
+Each clock models an event, i.e., something that can occur or not at a given time. This time is measured 
 in a time frame associated with each clock, and the nature of time (integer, rational, real, or any 
 type with a linear order) is specific to each clock. 
 When the event associated with a clock occurs, the clock ticks. In order to support any kind of 
@@ -130,25 +130,25 @@ text\<open>
     on the time scale of clock \<^verbatim>\<open>m\<close>.
   \<^item> \<^verbatim>\<open>time relation (c1, c2) in R\<close> means that at every instant, the current time on clocks \<^verbatim>\<open>c1\<close>
     and \<^verbatim>\<open>c2\<close> must be in relation \<^verbatim>\<open>R\<close>. By default, the time lines of different clocks are 
-    independent. This operator allows us to link two time lines, e.g., to model the fact
+    independent. This operator allows us to link two time lines, for instance to model the fact
     that time in a GPS satellite and time in a GPS receiver on Earth are not the same but are 
     related. Time being polymorphic in TESL, this can also be used to model the fact that the
     angular position on the camshaft of an engine moves twice as fast as the angular position 
     on the crankshaft~\<^footnote>\<open>See \url{http://wdi.supelec.fr/software/TESL/GalleryEngine} for more details\<close>. 
-    We may consider only linear arithmetics to restrict to decidable resolution.\<close>
+    We may consider only linear arithmetic relations to restrict the problem to a domain where the resolution is decidable.\<close>
 
 subsection\<open>Asynchronous Operators\<close>
 text\<open>
   The last category of TESL operators allows the specification of asynchronous relations between
-  event occurrences. They do not "tell" when ticks have to occur, then only put bounds on the set 
+  event occurrences. They do not specify the precise instants at which ticks have to occur, they only put bounds on the set 
   of instants at which they should occur.
   \<^item> \<^verbatim>\<open>c1 weakly precedes c2\<close> means that for each tick on \<^verbatim>\<open>c2\<close>, there must be at least one tick
-    on \<^verbatim>\<open>c1\<close> at a previous or same instant. This can also be expressed by stating
-    that at each instant, the number of ticks on \<^verbatim>\<open>c2\<close> (since the beginning of the run) must be lower 
-    or equal to the number of ticks on \<^verbatim>\<open>c1\<close>.
+    on \<^verbatim>\<open>c1\<close> at a previous or at the same instant. This can also be expressed by stating
+    that at each instant, the number of ticks since the beginning of the run must be lower or equal on \<^verbatim>\<open>c2\<close>  
+    than on \<^verbatim>\<open>c1\<close>.
   \<^item> \<^verbatim>\<open>c1 strictly precedes c2\<close> means that for each tick on \<^verbatim>\<open>c2\<close>, there must be at least one tick
     on \<^verbatim>\<open>c1\<close> at a previous instant. This can also be expressed by saying that at each instant, 
-    the number of ticks on \<^verbatim>\<open>c2\<close> (from the beginning of the run to this instant) must be lower or 
+    the number of ticks on \<^verbatim>\<open>c2\<close> from the beginning of the run to this instant, must be lower or 
     equal to the number of ticks on \<^verbatim>\<open>c1\<close> from the beginning of the run to the previous instant.
 \<close>
 

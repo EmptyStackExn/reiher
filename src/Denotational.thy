@@ -8,7 +8,7 @@ imports
 begin
 text\<open>
   The denotational semantics maps TESL formulae to sets of satisfying runs.
-  First, we define the semantics of atomic formulae (basic constructs of the 
+  Firstly, we define the semantics of atomic formulae (basic constructs of the 
   TESL language), then we define the semantics of compound formulae as the
   intersection of the semantics of their components: a run must satisfy all
   the individual formulae of a compound formula.

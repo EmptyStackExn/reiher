@@ -143,7 +143,7 @@ next
                   TESL.uminus_tag_const.simps
                   zero_tag_const_def)
 next
-  text\<open>Substraction is adding the opposite.\<close>
+  text\<open>Subtraction is adding the opposite.\<close>
   fix a::\<open>'\<tau>::field tag_const\<close> and b::\<open>'\<tau>::field tag_const\<close>
   obtain u v where \<open>a = \<tau>\<^sub>c\<^sub>s\<^sub>t u\<close> and \<open>b = \<tau>\<^sub>c\<^sub>s\<^sub>t v\<close> using tag_const.exhaust by metis
   thus \<open>a - b = a + -b\<close>
@@ -191,7 +191,7 @@ qed
 end
 
 text\<open>
-  To compare dates (timestamps) on clocks, we need an order on tags.
+  For comparing dates (which are represented by tags) on clocks, we need an order on tags.
 \<close>
 
 instantiation tag_const :: (order)order
@@ -220,7 +220,7 @@ begin
 end
 
 text\<open>
-  To ensure that time does never flow backwards, we need a total order on tags.
+  For ensuring that time does never flow backwards, we need a total order on tags.
 \<close>
 instantiation tag_const :: (linorder)linorder
 begin

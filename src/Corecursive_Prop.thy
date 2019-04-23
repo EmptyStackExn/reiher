@@ -17,7 +17,7 @@ text \<open>
   in the context) and consider only the satisfaction of the constraints from
   a given instant index.
   For this purpose, we define an interpretation of TESL formulae for a suffix of a run.
-  Note that this semantic variant is closely related to the  denotational semantics as
+  That interpretation is closely related to the denotational semantics as
   defined in the preceding chapters.
 \<close>
 fun TESL_interpretation_atomic_stepwise

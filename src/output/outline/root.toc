@@ -35,7 +35,7 @@
 \contentsline {chapter}{\numberline {6}Semantics Equivalence}{29}{chapter.6}% 
 \contentsline {section}{\numberline {6.1}Stepwise denotational interpretation of TESL atoms}{29}{section.6.1}% 
 \contentsline {section}{\numberline {6.2}Coinduction Unfolding Properties}{31}{section.6.2}% 
-\contentsline {section}{\numberline {6.3}Interpretation of configurations}{32}{section.6.3}% 
+\contentsline {section}{\numberline {6.3}Interpretation of configurations}{33}{section.6.3}% 
 \contentsline {chapter}{\numberline {7}Main Theorems}{35}{chapter.7}% 
 \contentsline {section}{\numberline {7.1}Initial configuration}{35}{section.7.1}% 
 \contentsline {section}{\numberline {7.2}Soundness}{35}{section.7.2}% 

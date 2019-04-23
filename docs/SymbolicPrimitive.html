@@ -23,7 +23,7 @@
 </span><span class="keyword2"><span class="keyword">begin</span></span><span>
 </span><span>
 </span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;
-  We define here the primitive constraints on runs toward which we will translate
+  We define here the primitive constraints on runs, towards which we translate
   TESL specifications in the operational semantics.
   These constraints refer to a specific symbolic run and can therefore access
   properties of the run at particular instants (for instance, the fact that a clock
@@ -33,9 +33,9 @@
   In the previous chapters, we had no reference to particular instants of a run 
   because the TESL language should be invariant by stuttering in order to allow 
   the composition of specifications: adding an instant where no clock ticks to 
-  a run that satisfies a formula should yield another satisfying run. However, 
-  when constructing runs that satisfy a formula, we need to be able to refer to 
-  the time or hamlet of a clock at a given instant.
+  a run that satisfies a formula should yield another run that satisfies the 
+  same formula. However, when constructing runs that satisfy a formula, we
+  need to be able to refer to the time or hamlet of a clock at a given instant.
 &#8250;</span></span></span><span>
 </span><span>
 </span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;
@@ -49,7 +49,7 @@
 </span><span class="keyword1"><span class="command">subsection</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249; Symbolic Primitives for Runs &#8250;</span></span></span><span>
 </span><span>
 </span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;
-  Tag variables are used to get the time on a clock at a given instant index.
+  Tag variables are used to refer to the time on a clock at a given instant index.
 &#8250;</span></span></span><span>
 </span><span class="keyword1"><span class="command">datatype</span></span><span> </span><span>tag_var</span><span> </span><span class="delimiter">=</span><span>
 </span><span>  </span><span>TSchematic</span><span> </span><span class="cartouche"><span class="delete"><span class="delete">&#8249;clock * instant_index&#8250;</span></span></span><span> </span><span class="delimiter">(</span><span class="string"><span class="delete"><span class="delete">&quot;&#964;<span class="hidden">&#8681;</span><sub>v</sub><span class="hidden">&#8681;</span><sub>a</sub><span class="hidden">&#8681;</span><sub>r</sub>&quot;</span></span></span><span class="delimiter">)</span><span>

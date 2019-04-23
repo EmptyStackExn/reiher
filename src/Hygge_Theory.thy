@@ -305,7 +305,7 @@ theorem completeness:
 section \<open>Progress\<close>
 
 text \<open>
-  Reduction steps do not necessarily guarantee the construction of a run progress in the
+  Reduction steps do not guarantee that the construction of a run progresses in the
   sequence of instants. We need to show that it is always possible to reach the next 
   instant, and therefore any future instant, through a number of steps.
 \<close>

@@ -37,7 +37,7 @@
 \endisadelimtheory
 %
 \begin{isamarkuptext}%
-We define here the primitive constraints on runs toward which we will translate
+We define here the primitive constraints on runs, towards which we translate
   TESL specifications in the operational semantics.
   These constraints refer to a specific symbolic run and can therefore access
   properties of the run at particular instants (for instance, the fact that a clock
@@ -47,9 +47,9 @@ We define here the primitive constraints on runs toward which we will translate
   In the previous chapters, we had no reference to particular instants of a run 
   because the TESL language should be invariant by stuttering in order to allow 
   the composition of specifications: adding an instant where no clock ticks to 
-  a run that satisfies a formula should yield another satisfying run. However, 
-  when constructing runs that satisfy a formula, we need to be able to refer to 
-  the time or hamlet of a clock at a given instant.%
+  a run that satisfies a formula should yield another run that satisfies the 
+  same formula. However, when constructing runs that satisfy a formula, we
+  need to be able to refer to the time or hamlet of a clock at a given instant.%
 \end{isamarkuptext}\isamarkuptrue%
 %
 \begin{isamarkuptext}%
@@ -78,7 +78,7 @@ Counter expressions are used to get the number of ticks of a clock up to
 \endisadelimdocument
 %
 \begin{isamarkuptext}%
-Tag variables are used to get the time on a clock at a given instant index.%
+Tag variables are used to refer to the time on a clock at a given instant index.%
 \end{isamarkuptext}\isamarkuptrue%
 \isacommand{datatype}\isamarkupfalse%
 \ tag{\isacharunderscore}var\ {\isacharequal}\isanewline
