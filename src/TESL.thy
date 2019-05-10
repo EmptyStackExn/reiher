@@ -21,8 +21,7 @@ text\<open>
 datatype     clock         = Clk \<open>string\<close>
 type_synonym instant_index = \<open>nat\<close>
 
-datatype '\<tau> tag_const =
-    TConst   '\<tau>                      ("\<tau>\<^sub>c\<^sub>s\<^sub>t")
+datatype     '\<tau> tag_const =  TConst   (the_tag_const : '\<tau>)         ("\<tau>\<^sub>c\<^sub>s\<^sub>t")
 
 
 subsection\<open>Operators for the TESL language\<close>
@@ -36,7 +35,7 @@ datatype '\<tau> TESL_atomic =
   | Implies          \<open>clock\<close> \<open>clock\<close>                  (infixr "implies" 55)
   | ImpliesNot       \<open>clock\<close> \<open>clock\<close>                  (infixr "implies not" 55)
   | TimeDelayedBy    \<open>clock\<close> \<open>'\<tau> tag_const\<close> \<open>clock\<close> \<open>clock\<close> 
-                                            ("_ time-delayed by _ on _ implies _" 55)
+                                                      ("_ time-delayed by _ on _ implies _" 55)
   | WeaklyPrecedes   \<open>clock\<close> \<open>clock\<close>                  (infixr "weakly precedes" 55)
   | StrictlyPrecedes \<open>clock\<close> \<open>clock\<close>                  (infixr "strictly precedes" 55)
   | Kills            \<open>clock\<close> \<open>clock\<close>                  (infixr "kills" 55)
