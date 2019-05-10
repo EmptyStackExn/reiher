@@ -14,8 +14,8 @@ overloading morphism_TESL_atomic \<equiv>
             "morphism :: '\<tau> TESL_atomic \<Rightarrow> ('\<tau>::linorder \<Rightarrow> '\<tau>) \<Rightarrow> '\<tau> TESL_atomic" 
 begin 
 definition morphism_TESL_atomic : 
-          "(x::'\<tau> TESL_atomic) \<Otimes> (f::('\<tau>::linorder \<Rightarrow> '\<tau>)) = 
-              (case x of
+          "(\<Psi>::'\<tau> TESL_atomic) \<Otimes> (f::('\<tau>::linorder \<Rightarrow> '\<tau>)) = 
+              (case \<Psi> of
                 (C sporadic t on C')     \<Rightarrow> (C sporadic (t\<Otimes>f) on C') 
               | (time-relation \<lfloor>C, C'\<rfloor>\<in>R)\<Rightarrow> (time-relation \<lfloor>C, C'\<rfloor> \<in> (\<lambda>(t, t'). R(t\<Otimes>f,t'\<Otimes>f)))
               | (C implies C')           \<Rightarrow> (C implies C')
@@ -31,7 +31,7 @@ overloading morphism_TESL_formula \<equiv>
             "morphism :: '\<tau> TESL_formula \<Rightarrow> ('\<tau>::linorder \<Rightarrow> '\<tau>) \<Rightarrow> '\<tau> TESL_formula" 
 begin 
 definition  morphism_TESL_formula : 
-           "(x::'\<tau> TESL_formula) \<Otimes> (f::('\<tau>::linorder \<Rightarrow> '\<tau>)) = map (\<lambda>x. x \<Otimes> f) x" 
+           "(\<Psi>::'\<tau> TESL_formula) \<Otimes> (f::('\<tau>::linorder \<Rightarrow> '\<tau>)) = map (\<lambda>x. x \<Otimes> f) \<Psi>" 
 end
 
 
@@ -49,11 +49,11 @@ definition consistent :: "('\<tau>::linordered_field) TESL_formula \<Rightarrow>
 
 
 theorem consistency_coinduct : 
-  assumes start             : "([], 0 \<turnstile> \<Psi> \<triangleright> [])  \<hookrightarrow> (\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1)"
+  assumes start             : "([], 0 \<turnstile> \<Psi> \<triangleright> [])  \<hookrightarrow>\<^sup>*\<^sup>* (\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1)"
    and    loop              : "(\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1) \<hookrightarrow>\<^sup>+\<^sup>+ (\<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2)"
    and    retract_condition : "(\<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2) \<Otimes> f = (\<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1) " 
- shows    "consistent \<Psi>"    
-  sorry
+  shows   "consistent \<Psi>"    
+   sorry
 
 
 end
