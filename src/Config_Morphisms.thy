@@ -43,7 +43,7 @@ fun  morphism_TESL_config
            (\<Gamma>, n \<turnstile> (\<Psi>\<Otimes>f) \<triangleright> (\<Phi>\<Otimes>f))" 
 end
 
-
+find_theorems name:consistent
 definition consistent :: "('\<tau>::linordered_field) TESL_formula \<Rightarrow> bool" 
   where   "consistent \<Psi> \<equiv> \<lbrakk>\<lbrakk> \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L \<noteq> {}"
 
@@ -51,6 +51,8 @@ definition consistent :: "('\<tau>::linordered_field) TESL_formula \<Rightarrow>
 theorem consistency_coinduct : 
   assumes start             : "([], 0 \<turnstile> \<Psi> \<triangleright> [])  \<hookrightarrow>\<^sup>*\<^sup>* (\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1)"
    and    loop              : "(\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1) \<hookrightarrow>\<^sup>+\<^sup>+ (\<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2)"
+   and    init_invariant    : "consistent_context \<Gamma>\<^sub>1"
+   and    post_invariant    : "consistent_context \<Gamma>\<^sub>2"
    and    retract_condition : "(\<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2) \<Otimes> f = (\<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1) " 
   shows   "consistent \<Psi>"    
    sorry
