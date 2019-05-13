@@ -67,6 +67,27 @@ qed
 
 find_theorems name:"sound"
 
+subsubsection\<open>snippets on runs\<close>
+
+definition const_nontick_run :: "(clock \<Rightarrow> '\<tau> tag_const) \<Rightarrow> ('\<tau>::linordered_field) run " ("\<box>_" 80)
+  where "\<box>f \<equiv>  Abs_run(\<lambda>n c. (False, f c))"
+
+(* maintains mono *)
+definition set_tick :: "('\<tau>::linordered_field) run \<Rightarrow> nat \<Rightarrow> clock \<Rightarrow> ('\<tau>) run" 
+  where   "set_tick r k c = Abs_run(\<lambda>n c.  if k = n 
+                                           then (True , time(Rep_run r k c)) 
+                                           else Rep_run r k c) "
+definition unset_tick :: "('\<tau>::linordered_field) run \<Rightarrow> nat \<Rightarrow> clock \<Rightarrow> ('\<tau>) run" 
+  where   "unset_tick r k c = Abs_run(\<lambda>n c.  if k = n 
+                                           then (False , time(Rep_run r k c)) 
+                                           else Rep_run r k c) "
+
+(* ignoring mono *)
+definition patch :: "('\<tau>::linordered_field) run \<Rightarrow> nat \<Rightarrow>  '\<tau> run \<Rightarrow> '\<tau> run" ("_ \<ggreater>\<^bsup>_\<^esup> _" 80)
+  where   "r \<ggreater>\<^bsup>k\<^esup>r' \<equiv> Abs_run(\<lambda>n c. if n \<le> k then Rep_run (r) n c else  Rep_run (r') n c)"
+
+
+
 text\<open>For some infinite cases, the idea for a proof scheme looks as follows: if we can derive
 from the initial configuration @{term "([], 0 \<turnstile> \<Psi> \<triangleright> [])"} a start-point of a lasso
 @{term "(\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1)"}, and if we can traverse the lasso one time 
@@ -96,6 +117,7 @@ proof -
     using retract_condition by auto
   have 4 : "\<Psi>\<^sub>1 =  \<Psi>\<^sub>2 \<Otimes> f" 
     using retract_condition by auto
+  have X : 
   show ?thesis   
     sorry
 qed
