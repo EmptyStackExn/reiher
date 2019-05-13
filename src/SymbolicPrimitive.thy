@@ -32,9 +32,9 @@ datatype cnt_expr =
 subsection\<open> Symbolic Primitives for Runs \<close>
 
 text\<open>
-  Tag variables are used to refer to the time on a clock at a given instant index.
+  Tag values are used to refer to the time on a clock at a given instant index.
 \<close>
-datatype tag_var =
+datatype tag_val =
   TSchematic \<open>clock * instant_index\<close> ("\<tau>\<^sub>v\<^sub>a\<^sub>r")
 
 datatype '\<tau> constr =
@@ -59,7 +59,7 @@ datatype '\<tau> constr =
 | NotTicksFrom  \<open>clock\<close>   \<open>instant_index\<close>                        ("_ \<not>\<Up> \<ge> _")
 \<comment> \<open>@{term \<open>\<lfloor>\<tau>\<^sub>1, \<tau>\<^sub>2\<rfloor> \<in> R\<close>} constrains tag variables @{term \<open>\<tau>\<^sub>1\<close>} and  @{term \<open>\<tau>\<^sub>2\<close>} 
     to be in relation @{term \<open>R\<close>}.\<close>
-| TagArith      \<open>tag_var\<close> \<open>tag_var\<close> \<open>('\<tau> tag_const \<times> '\<tau> tag_const) \<Rightarrow> bool\<close> ("\<lfloor>_, _\<rfloor> \<in> _")
+| TagArith      \<open>tag_val\<close> \<open>tag_val\<close> \<open>('\<tau> tag_const \<times> '\<tau> tag_const) \<Rightarrow> bool\<close> ("\<lfloor>_, _\<rfloor> \<in> _")
 \<comment> \<open>@{term \<open>\<lceil>k\<^sub>1, k\<^sub>2\<rceil> \<in> R\<close>} constrains counter expressions @{term \<open>k\<^sub>1\<close>} and  @{term \<open>k\<^sub>2\<close>} 
     to be in relation @{term \<open>R\<close>}.\<close>
 | TickCntArith  \<open>cnt_expr\<close> \<open>cnt_expr\<close> \<open>(nat \<times> nat) \<Rightarrow> bool\<close>      ("\<lceil>_, _\<rceil> \<in> _")
