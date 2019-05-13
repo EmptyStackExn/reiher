@@ -129,7 +129,7 @@ by auto
 
 definition consistent_context :: \<open>('\<tau>::linordered_field) constr list \<Rightarrow> bool\<close>
 where 
-  \<open>consistent_context \<Gamma> \<equiv> \<exists>\<rho>. \<rho> \<in> \<lbrakk>\<lbrakk> \<Gamma> \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m\<close>
+  \<open>consistent_context \<Gamma> \<equiv> ( \<lbrakk>\<lbrakk> \<Gamma> \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<noteq> {}) \<close>
 
 subsection \<open>Defining a method for witness construction\<close>
 
