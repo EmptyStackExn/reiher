@@ -78,10 +78,10 @@ Counter expressions are used to get the number of ticks of a clock up to
 \endisadelimdocument
 %
 \begin{isamarkuptext}%
-Tag variables are used to refer to the time on a clock at a given instant index.%
+Tag values are used to refer to the time on a clock at a given instant index.%
 \end{isamarkuptext}\isamarkuptrue%
 \isacommand{datatype}\isamarkupfalse%
-\ tag{\isacharunderscore}var\ {\isacharequal}\isanewline
+\ tag{\isacharunderscore}val\ {\isacharequal}\isanewline
 \ \ TSchematic\ {\isacartoucheopen}clock\ {\isacharasterisk}\ instant{\isacharunderscore}index{\isacartoucheclose}\ {\isacharparenleft}{\isachardoublequoteopen}{\isasymtau}\isactrlsub v\isactrlsub a\isactrlsub r{\isachardoublequoteclose}{\isacharparenright}\isanewline
 \isanewline
 \isacommand{datatype}\isamarkupfalse%
@@ -121,7 +121,7 @@ Tag variables are used to refer to the time on a clock at a given instant index.
 \isamarkupcmt{\isa{{\isasymlfloor}{\isasymtau}\isactrlsub {\isadigit{1}}{\isacharcomma}\ {\isasymtau}\isactrlsub {\isadigit{2}}{\isasymrfloor}\ {\isasymin}\ R} constrains tag variables \isa{{\isasymtau}\isactrlsub {\isadigit{1}}} and  \isa{{\isasymtau}\isactrlsub {\isadigit{2}}} 
     to be in relation \isa{R}.%
 }\isanewline
-{\isacharbar}\ TagArith\ \ \ \ \ \ {\isacartoucheopen}tag{\isacharunderscore}var{\isacartoucheclose}\ {\isacartoucheopen}tag{\isacharunderscore}var{\isacartoucheclose}\ {\isacartoucheopen}{\isacharparenleft}{\isacharprime}{\isasymtau}\ tag{\isacharunderscore}const\ {\isasymtimes}\ {\isacharprime}{\isasymtau}\ tag{\isacharunderscore}const{\isacharparenright}\ {\isasymRightarrow}\ bool{\isacartoucheclose}\ {\isacharparenleft}{\isachardoublequoteopen}{\isasymlfloor}{\isacharunderscore}{\isacharcomma}\ {\isacharunderscore}{\isasymrfloor}\ {\isasymin}\ {\isacharunderscore}{\isachardoublequoteclose}{\isacharparenright}\isanewline
+{\isacharbar}\ TagArith\ \ \ \ \ \ {\isacartoucheopen}tag{\isacharunderscore}val{\isacartoucheclose}\ {\isacartoucheopen}tag{\isacharunderscore}val{\isacartoucheclose}\ {\isacartoucheopen}{\isacharparenleft}{\isacharprime}{\isasymtau}\ tag{\isacharunderscore}const\ {\isasymtimes}\ {\isacharprime}{\isasymtau}\ tag{\isacharunderscore}const{\isacharparenright}\ {\isasymRightarrow}\ bool{\isacartoucheclose}\ {\isacharparenleft}{\isachardoublequoteopen}{\isasymlfloor}{\isacharunderscore}{\isacharcomma}\ {\isacharunderscore}{\isasymrfloor}\ {\isasymin}\ {\isacharunderscore}{\isachardoublequoteclose}{\isacharparenright}\isanewline
 %
 \isamarkupcmt{\isa{{\isasymlceil}k\isactrlsub {\isadigit{1}}{\isacharcomma}\ k\isactrlsub {\isadigit{2}}{\isasymrceil}\ {\isasymin}\ R} constrains counter expressions \isa{k\isactrlsub {\isadigit{1}}} and  \isa{k\isactrlsub {\isadigit{2}}} 
     to be in relation \isa{R}.%
@@ -233,7 +233,7 @@ The composition of primitive constraints is their conjunction, and we get the
 \isacommand{definition}\isamarkupfalse%
 \ consistent{\isacharunderscore}context\ {\isacharcolon}{\isacharcolon}\ {\isacartoucheopen}{\isacharparenleft}{\isacharprime}{\isasymtau}{\isacharcolon}{\isacharcolon}linordered{\isacharunderscore}field{\isacharparenright}\ constr\ list\ {\isasymRightarrow}\ bool{\isacartoucheclose}\isanewline
 \isakeyword{where}\ \isanewline
-\ \ {\isacartoucheopen}consistent{\isacharunderscore}context\ {\isasymGamma}\ {\isasymequiv}\ {\isasymexists}{\isasymrho}{\isachardot}\ {\isasymrho}\ {\isasymin}\ {\isasymlbrakk}{\isasymlbrakk}\ {\isasymGamma}\ {\isasymrbrakk}{\isasymrbrakk}\isactrlsub p\isactrlsub r\isactrlsub i\isactrlsub m{\isacartoucheclose}%
+\ \ {\isacartoucheopen}consistent{\isacharunderscore}context\ {\isasymGamma}\ {\isasymequiv}\ {\isacharparenleft}\ {\isasymlbrakk}{\isasymlbrakk}\ {\isasymGamma}\ {\isasymrbrakk}{\isasymrbrakk}\isactrlsub p\isactrlsub r\isactrlsub i\isactrlsub m\ {\isasymnoteq}\ {\isacharbraceleft}{\isacharbraceright}{\isacharparenright}\ {\isacartoucheclose}%
 \isadelimdocument
 %
 \endisadelimdocument
