@@ -18,12 +18,12 @@ section \<open>Denotational interpretation for atomic TESL formulae\<close>
 consts dummyT0 ::\<open>'\<tau> tag_const\<close>
 consts dummyDeltaT ::\<open>'\<tau> tag_const\<close>
 
-notation dummyT0     ("t\<^sub>0")
-notation dummyDeltaT ("\<delta>t")
+notation dummyT0     (\<open>t\<^sub>0\<close>)
+notation dummyDeltaT (\<open>\<delta>t\<close>)
 (*>*)
 
 fun TESL_interpretation_atomic
-    :: \<open>('\<tau>::linordered_field) TESL_atomic \<Rightarrow> '\<tau> run set\<close> ("\<lbrakk> _ \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L")
+    :: \<open>('\<tau>::linordered_field) TESL_atomic \<Rightarrow> '\<tau> run set\<close> (\<open>\<lbrakk> _ \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<close>)
 where
   \<comment> \<open>@{term \<open>K\<^sub>1 sporadic \<tau> on K\<^sub>2\<close>} means that @{term \<open>K\<^sub>1\<close>} should tick at an 
       instant where the time on @{term \<open>K\<^sub>2\<close>} is @{term \<open>\<tau>\<close>}.\<close>
@@ -57,6 +57,16 @@ where
                             \<longrightarrow> hamlet ((Rep_run \<rho>) m slave)
                  )
         }\<close>
+  | \<open>\<lbrakk> master delayed by d on counter implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
+    \<comment> \<open>
+      When master ticks, we count d ticks on measuring and we must have a tick on slave.
+    \<close>
+        {\<rho>. \<forall>n. hamlet ((Rep_run \<rho>) n master) \<longrightarrow>
+                 (
+                  \<forall>m \<ge> n.  counted_ticks \<rho> counter n m d
+                            \<longrightarrow> hamlet ((Rep_run \<rho>) m slave)
+                 )
+        }\<close>
   \<comment> \<open>@{term \<open>K\<^sub>1 weakly precedes K\<^sub>2\<close>} means that each tick on @{term \<open>K\<^sub>2\<close>}
         must be preceded by or coincide with at least one tick on @{term \<open>K\<^sub>1\<close>}.
         Therefore, at each instant @{term \<open>n\<close>}, the number of ticks on @{term \<open>K\<^sub>2\<close>} 
@@ -75,6 +85,12 @@ where
   | \<open>\<lbrakk> K\<^sub>1 kills K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
         {\<rho>. \<forall>n::nat. hamlet ((Rep_run \<rho>) n K\<^sub>1)
                         \<longrightarrow> (\<forall>m\<ge>n. \<not> hamlet ((Rep_run \<rho>) m K\<^sub>2))}\<close>
+  | \<open>\<lbrakk> from n delay count d on counter implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
+    \<comment> \<open>
+     Count d ticks on counter from instant n and put a tick on slave.
+    \<close>
+        {\<rho>. \<forall>m \<ge> n. counted_ticks \<rho> counter n m d
+                       \<longrightarrow> hamlet ((Rep_run \<rho>) m slave)}\<close>
 
 section \<open>Denotational interpretation for TESL formulae\<close>
 
@@ -84,7 +100,7 @@ text\<open>
   of the interpretations of its components.
 \<close>
 fun TESL_interpretation :: \<open>('\<tau>::linordered_field) TESL_formula \<Rightarrow> '\<tau> run set\<close>
-  ("\<lbrakk>\<lbrakk> _ \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L")
+  (\<open>\<lbrakk>\<lbrakk> _ \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<close>)
 where
   \<open>\<lbrakk>\<lbrakk> [] \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = {_. True}\<close>
 | \<open>\<lbrakk>\<lbrakk> \<phi> # \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<lbrakk> \<phi> \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L \<inter> \<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<close>
@@ -258,8 +274,8 @@ lemma NoSporadic_setinc:
 by (rule filter_is_subset)
 
 (*<*)
-no_notation dummyT0    ("t\<^sub>0")
-no_notation dummyDeltaT ("\<delta>t")
+no_notation dummyT0    (\<open>t\<^sub>0\<close>)
+no_notation dummyDeltaT (\<open>\<delta>t\<close>)
 (*>*)
 
 end

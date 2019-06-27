@@ -44,7 +44,7 @@ text\<open>
   in the interval \<^verbatim>\<open>[0, n]\<close> of run @{term \<open>\<rho>\<close>}.
 \<close>
 fun run_tick_count :: \<open>('\<tau>::linordered_field) run \<Rightarrow> clock \<Rightarrow> nat \<Rightarrow> nat\<close>
-  ("#\<^sub>\<le> _ _ _")
+  (\<open>#\<^sub>\<le> _ _ _\<close>)
 where
   \<open>(#\<^sub>\<le> \<rho> K 0)       = (if hamlet ((Rep_run \<rho>) 0 K)
                        then 1
@@ -53,12 +53,15 @@ where
                        then 1 + (#\<^sub>\<le> \<rho> K n)
                        else (#\<^sub>\<le> \<rho> K n))\<close>
 
+lemma run_tick_count_mono: \<open>mono (\<lambda>n. run_tick_count \<rho> K n)\<close>
+  by (simp add: mono_iff_le_Suc)
+
 text\<open>
   @{term \<open>run_tick_count_strictly \<rho> K n\<close>} counts the number of ticks on
   clock @{term \<open>K\<close>} in the interval \<^verbatim>\<open>[0, n[\<close> of run @{term \<open>\<rho>\<close>}.
 \<close>
 fun run_tick_count_strictly :: \<open>('\<tau>::linordered_field) run \<Rightarrow> clock \<Rightarrow> nat \<Rightarrow> nat\<close>
-  ("#\<^sub>< _ _ _")
+  (\<open>#\<^sub>< _ _ _\<close>)
 where
   \<open>(#\<^sub>< \<rho> K 0)       = 0\<close>
 | \<open>(#\<^sub>< \<rho> K (Suc n)) = #\<^sub>\<le> \<rho> K n\<close>
@@ -72,6 +75,74 @@ definition first_time :: \<open>'a::linordered_field run \<Rightarrow> clock \<R
 where
   \<open>first_time \<rho> K n \<tau> \<equiv> (time ((Rep_run \<rho>) n K) = \<tau>)
                       \<and> (\<nexists>n'. n' < n \<and> time ((Rep_run \<rho>) n' K) = \<tau>)\<close>
+
+definition counted_ticks :: \<open>'a::linordered_field run \<Rightarrow> clock \<Rightarrow> nat \<Rightarrow> nat \<Rightarrow> nat \<Rightarrow> bool\<close>
+where
+  \<open>counted_ticks \<rho> K n m d \<equiv> (n \<le> m) \<and> (run_tick_count \<rho> K m = run_tick_count \<rho> K n + d)
+            \<and> (\<nexists>m'. (n \<le> m') \<and> (m' < m) \<and> run_tick_count \<rho> K m' = run_tick_count \<rho> K n + d)
+  \<close>
+
+lemma counted_immediate: \<open>counted_ticks \<rho> K n n 0\<close>
+  by (simp add: counted_ticks_def)
+
+lemma counted_zero_same:
+  assumes \<open>counted_ticks \<rho> K n m 0\<close>
+    shows \<open>n = m\<close>
+proof -
+  consider (a) \<open>n < m\<close> | (b) \<open>n > m\<close> | (c) \<open>n = m\<close>  using nat_neq_iff by blast
+  then show ?thesis
+  proof cases
+    case a
+      hence \<open>\<not>counted_ticks \<rho> K n m 0\<close> 
+        using counted_ticks_def add_cancel_right_right by blast
+      with assms have False by simp
+      thus ?thesis ..
+  next
+    case b
+      hence \<open>\<not>(n \<le> m)\<close> by simp
+      hence \<open>\<not>counted_ticks \<rho> K n m 0\<close> using counted_ticks_def by blast
+      with assms have False by simp
+      thus ?thesis ..
+  next
+    case c thus ?thesis .
+  qed
+qed
+
+lemma tick_count_progress:
+  \<open>run_tick_count \<rho> K (n+k) \<le> (run_tick_count \<rho> K n) + k\<close>
+proof (induction k)
+  case 0 thus ?case by simp
+next
+  case (Suc k')
+    thus ?case using Suc.IH by auto
+qed
+
+lemma counted_suc_diff:
+  assumes \<open>counted_ticks \<rho> K n m (Suc i)\<close>
+  shows \<open>n+i < m\<close>
+proof -
+  from assms have \<open>run_tick_count \<rho> K m = run_tick_count \<rho> K n + (Suc i)\<close>
+    unfolding counted_ticks_def by simp
+  moreover from tick_count_progress have \<open>\<forall>k. run_tick_count \<rho> K (n+k) \<le> (run_tick_count \<rho> K n) + k\<close> ..
+  ultimately show ?thesis 
+      by (metis (no_types) add_le_cancel_left assms counted_ticks_def leI le_Suc_ex not_less_eq_eq tick_count_progress)
+qed
+
+lemma counted_suc:
+  assumes \<open>counted_ticks \<rho> K n m (Suc i)\<close>
+    shows \<open>n < m\<close>
+using assms counted_suc_diff by fastforce
+
+lemma counted_one_now_later:
+  assumes \<open>counted_ticks \<rho> K n m (Suc 0)\<close>
+      and \<open>m' > m\<close>
+    shows \<open>\<not>counted_ticks \<rho> K n m' (Suc 0)\<close>
+by (meson assms counted_ticks_def)
+
+lemma counted_one_now_ticks:
+  assumes \<open>counted_ticks \<rho> K n m (Suc 0)\<close>
+    shows \<open>hamlet ((Rep_run \<rho>) m K)\<close>
+sorry
 
 text\<open>
   The time on a clock is necessarily less than @{term \<open>\<tau>\<close>} before the first instant

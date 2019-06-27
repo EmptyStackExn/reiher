@@ -29,7 +29,7 @@ text \<open>
 \<close>
 abbreviation uncurry_conf
   ::\<open>('\<tau>::linordered_field) system \<Rightarrow> instant_index \<Rightarrow> '\<tau> TESL_formula \<Rightarrow> '\<tau> TESL_formula
-      \<Rightarrow> '\<tau> config\<close>                                                  ("_, _ \<turnstile> _ \<triangleright> _" 80)
+      \<Rightarrow> '\<tau> config\<close>                                                  (\<open>_, _ \<turnstile> _ \<triangleright> _\<close> 80)
 where
   \<open>\<Gamma>, n \<turnstile> \<Psi> \<triangleright> \<Phi> \<equiv> (\<Gamma>, n, \<Psi>, \<Phi>)\<close>
 
@@ -38,7 +38,7 @@ text \<open>
   when there are no more constraints to satisfy for the present instant.
 \<close>
 inductive operational_semantics_intro
-  ::\<open>('\<tau>::linordered_field) config \<Rightarrow> '\<tau> config \<Rightarrow> bool\<close>              ("_ \<hookrightarrow>\<^sub>i _" 70)
+  ::\<open>('\<tau>::linordered_field) config \<Rightarrow> '\<tau> config \<Rightarrow> bool\<close>              (\<open>_ \<hookrightarrow>\<^sub>i _\<close> 70)
 where
   instant_i:
   \<open>(\<Gamma>, n \<turnstile> [] \<triangleright> \<Phi>) \<hookrightarrow>\<^sub>i  (\<Gamma>, Suc n \<turnstile> \<Phi> \<triangleright> [])\<close>
@@ -48,7 +48,7 @@ text \<open>
   into constraints on the past and on the future.
 \<close>
 inductive operational_semantics_elim
-  ::\<open>('\<tau>::linordered_field) config \<Rightarrow> '\<tau> config \<Rightarrow> bool\<close>              ("_ \<hookrightarrow>\<^sub>e _" 70)
+  ::\<open>('\<tau>::linordered_field) config \<Rightarrow> '\<tau> config \<Rightarrow> bool\<close>              (\<open>_ \<hookrightarrow>\<^sub>e _\<close> 70)
 where
   sporadic_on_e1:
 \<comment> \<open>A sporadic constraint can be ignored in the present and rejected into the future.\<close>
@@ -98,6 +98,36 @@ where
   \<open>(\<Gamma>, n \<turnstile> ((K\<^sub>1 time-delayed by \<delta>\<tau> on K\<^sub>2 implies K\<^sub>3) # \<Psi>) \<triangleright> \<Phi>)
      \<hookrightarrow>\<^sub>e  (((K\<^sub>1 \<Up> n) # (K\<^sub>2 @ n \<oplus> \<delta>\<tau> \<Rightarrow> K\<^sub>3) # \<Gamma>), n
             \<turnstile> \<Psi> \<triangleright> ((K\<^sub>1 time-delayed by \<delta>\<tau> on K\<^sub>2 implies K\<^sub>3) # \<Phi>))\<close>
+| delayed_e1:
+\<comment> \<open>A delayed implication can be handled by forbidding a tick on 
+    the master clock.\<close>
+  \<open>(\<Gamma>, n \<turnstile> ((K\<^sub>1 delayed by d on K\<^sub>2 implies K\<^sub>3) # \<Psi>) \<triangleright> \<Phi>)
+     \<hookrightarrow>\<^sub>e  (((K\<^sub>1 \<not>\<Up> n) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> ((K\<^sub>1 delayed by d on K\<^sub>2 implies K\<^sub>3) # \<Phi>))\<close>
+| delayed_e2:
+\<comment> \<open>It can also be handled by making the master clock tick and adding a constraint 
+    that makes the slave clock tick when the delay has elapsed on the counting clock.\<close>
+\<comment> \<open>Special case for 0 delays.\<close>
+  \<open>(\<Gamma>, n \<turnstile> ((K\<^sub>1 delayed by 0 on K\<^sub>2 implies K\<^sub>3) # \<Psi>) \<triangleright> \<Phi>)
+     \<hookrightarrow>\<^sub>e  (((K\<^sub>1 \<Up> n) # (K\<^sub>3 \<Up> n) # \<Gamma>), n
+            \<turnstile> \<Psi> \<triangleright> ((K\<^sub>1 delayed by 0 on K\<^sub>2 implies K\<^sub>3) # \<Phi>))\<close>
+| delayed_e3:
+\<comment> \<open>It can also be handled by making the master clock tick and adding a constraint 
+    that makes the slave clock tick when the delay has elapsed on the counting clock.\<close>
+  \<open>(\<Gamma>, n \<turnstile> ((K\<^sub>1 delayed by (Suc d) on K\<^sub>2 implies K\<^sub>3) # \<Psi>) \<triangleright> \<Phi>)
+     \<hookrightarrow>\<^sub>e  (((K\<^sub>1 \<Up> n) # \<Gamma>), n
+            \<turnstile> \<Psi> \<triangleright> ((from n delay count (Suc d) on K\<^sub>2 implies K\<^sub>3) # (K\<^sub>1 delayed by (Suc d) on K\<^sub>2 implies K\<^sub>3) # \<Phi>))\<close>
+| delay_count_e1:
+\<comment> \<open>A delay count can be handled by making the counter clock not tick.\<close>
+  \<open>(\<Gamma>, n \<turnstile> ((from m delay count d on K\<^sub>2 implies K\<^sub>3) # \<Psi>) \<triangleright> \<Phi>)
+     \<hookrightarrow>\<^sub>e  (((K\<^sub>2 \<not>\<Up> n) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> ((from m delay count d on K\<^sub>2 implies K\<^sub>3) # \<Phi>))\<close>
+| delay_count_e2:
+\<comment> \<open>If we make the counter clock tick and the delay was 1, the slave clock has to tick too.\<close>
+  \<open>(\<Gamma>, n \<turnstile> ((from m delay count (Suc 0) on K\<^sub>2 implies K\<^sub>3) # \<Psi>) \<triangleright> \<Phi>)
+     \<hookrightarrow>\<^sub>e  (((K\<^sub>2 \<Up> n) # (K\<^sub>3 \<Up> n) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> \<Phi>)\<close>
+| delay_count_e3:
+\<comment> \<open>If the delay was greater than 1, we simply decrement it when the counter clock ticks.\<close>
+  \<open>(\<Gamma>, n \<turnstile> ((from m delay count (Suc (Suc d)) on K\<^sub>2 implies K\<^sub>3) # \<Psi>) \<triangleright> \<Phi>)
+     \<hookrightarrow>\<^sub>e  (((K\<^sub>2 \<Up> n) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> ((from n delay count (Suc d) on K\<^sub>2 implies K\<^sub>3) # \<Phi>))\<close>
 | weakly_precedes_e:
 \<comment> \<open>A weak precedence relation has to hold at every instant.\<close>
   \<open>(\<Gamma>, n \<turnstile> ((K\<^sub>1 weakly precedes K\<^sub>2) # \<Psi>) \<triangleright> \<Phi>)
@@ -123,7 +153,7 @@ text \<open>
   rule or the application of an elimination rule.
 \<close>
 inductive operational_semantics_step
-  ::\<open>('\<tau>::linordered_field) config \<Rightarrow> '\<tau> config \<Rightarrow> bool\<close>              ("_ \<hookrightarrow> _" 70)
+  ::\<open>('\<tau>::linordered_field) config \<Rightarrow> '\<tau> config \<Rightarrow> bool\<close>              (\<open>_ \<hookrightarrow> _\<close> 70)
 where
   intro_part:
   \<open>(\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1)  \<hookrightarrow>\<^sub>i  (\<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2)
@@ -137,27 +167,27 @@ text \<open>
   semantic step, its transitive closure and its reflexive closure.
 \<close>
 abbreviation operational_semantics_step_rtranclp
-  ::\<open>('\<tau>::linordered_field) config \<Rightarrow> '\<tau> config \<Rightarrow> bool\<close>              ("_ \<hookrightarrow>\<^sup>*\<^sup>* _" 70)
+  ::\<open>('\<tau>::linordered_field) config \<Rightarrow> '\<tau> config \<Rightarrow> bool\<close>              (\<open>_ \<hookrightarrow>\<^sup>*\<^sup>* _\<close> 70)
 where
   \<open>\<C>\<^sub>1 \<hookrightarrow>\<^sup>*\<^sup>* \<C>\<^sub>2 \<equiv> operational_semantics_step\<^sup>*\<^sup>* \<C>\<^sub>1 \<C>\<^sub>2\<close>
 
 abbreviation operational_semantics_step_tranclp
-  ::\<open>('\<tau>::linordered_field) config \<Rightarrow> '\<tau> config \<Rightarrow> bool\<close>              ("_ \<hookrightarrow>\<^sup>+\<^sup>+ _" 70)
+  ::\<open>('\<tau>::linordered_field) config \<Rightarrow> '\<tau> config \<Rightarrow> bool\<close>              (\<open>_ \<hookrightarrow>\<^sup>+\<^sup>+ _\<close> 70)
 where
   \<open>\<C>\<^sub>1 \<hookrightarrow>\<^sup>+\<^sup>+ \<C>\<^sub>2 \<equiv> operational_semantics_step\<^sup>+\<^sup>+ \<C>\<^sub>1 \<C>\<^sub>2\<close>
 
 abbreviation operational_semantics_step_reflclp
-  ::\<open>('\<tau>::linordered_field) config \<Rightarrow> '\<tau> config \<Rightarrow> bool\<close>              ("_ \<hookrightarrow>\<^sup>=\<^sup>= _" 70)
+  ::\<open>('\<tau>::linordered_field) config \<Rightarrow> '\<tau> config \<Rightarrow> bool\<close>              (\<open>_ \<hookrightarrow>\<^sup>=\<^sup>= _\<close> 70)
 where
   \<open>\<C>\<^sub>1 \<hookrightarrow>\<^sup>=\<^sup>= \<C>\<^sub>2 \<equiv> operational_semantics_step\<^sup>=\<^sup>= \<C>\<^sub>1 \<C>\<^sub>2\<close>
 
 abbreviation operational_semantics_step_relpowp
-  ::\<open>('\<tau>::linordered_field) config \<Rightarrow> nat \<Rightarrow> '\<tau> config \<Rightarrow> bool\<close>       ("_ \<hookrightarrow>\<^bsup>_\<^esup> _" 70)
+  ::\<open>('\<tau>::linordered_field) config \<Rightarrow> nat \<Rightarrow> '\<tau> config \<Rightarrow> bool\<close>       (\<open>_ \<hookrightarrow>\<^bsup>_\<^esup> _\<close> 70)
 where
   \<open>\<C>\<^sub>1 \<hookrightarrow>\<^bsup>n\<^esup> \<C>\<^sub>2 \<equiv> (operational_semantics_step ^^ n) \<C>\<^sub>1 \<C>\<^sub>2\<close>
 
 definition operational_semantics_elim_inv
-  ::\<open>('\<tau>::linordered_field) config \<Rightarrow> '\<tau> config \<Rightarrow> bool\<close>              ("_ \<hookrightarrow>\<^sub>e\<^sup>\<leftarrow> _" 70)
+  ::\<open>('\<tau>::linordered_field) config \<Rightarrow> '\<tau> config \<Rightarrow> bool\<close>              (\<open>_ \<hookrightarrow>\<^sub>e\<^sup>\<leftarrow> _\<close> 70)
 where
   \<open>\<C>\<^sub>1 \<hookrightarrow>\<^sub>e\<^sup>\<leftarrow> \<C>\<^sub>2 \<equiv> \<C>\<^sub>2 \<hookrightarrow>\<^sub>e \<C>\<^sub>1\<close>
 
@@ -182,7 +212,7 @@ text \<open>
   step from a given configuration.
 \<close>
 abbreviation Cnext_solve
-  ::\<open>('\<tau>::linordered_field) config \<Rightarrow> '\<tau> config set\<close> ("\<C>\<^sub>n\<^sub>e\<^sub>x\<^sub>t _")
+  ::\<open>('\<tau>::linordered_field) config \<Rightarrow> '\<tau> config set\<close> (\<open>\<C>\<^sub>n\<^sub>e\<^sub>x\<^sub>t _\<close>)
 where
   \<open>\<C>\<^sub>n\<^sub>e\<^sub>x\<^sub>t \<S> \<equiv> { \<S>'. \<S> \<hookrightarrow> \<S>' }\<close>
 

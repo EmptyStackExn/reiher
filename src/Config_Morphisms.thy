@@ -2,19 +2,19 @@ theory Config_Morphisms
   imports Hygge_Theory
 begin
 
-consts morphism :: \<open>'a \<Rightarrow> ('\<tau>::linorder \<Rightarrow> '\<tau>::linorder) \<Rightarrow> 'a\<close> (infixl "\<Otimes>" 100)
+consts morphism :: \<open>'a \<Rightarrow> ('\<tau>::linorder \<Rightarrow> '\<tau>::linorder) \<Rightarrow> 'a\<close> (infixl \<open>\<Otimes>\<close> 100)
 
-overloading morphism_tagconst \<equiv> "morphism :: '\<tau> tag_const \<Rightarrow> ('\<tau>::linorder \<Rightarrow> '\<tau>) \<Rightarrow> '\<tau> tag_const" 
+overloading morphism_tagconst \<equiv> \<open>morphism :: '\<tau> tag_const \<Rightarrow> ('\<tau>::linorder \<Rightarrow> '\<tau>) \<Rightarrow> '\<tau> tag_const\<close> 
 begin 
   definition morphism_tagconst :  
-          "(x::'\<tau> tag_const) \<Otimes> (f::('\<tau>::linorder \<Rightarrow> '\<tau>)) = (\<tau>\<^sub>c\<^sub>s\<^sub>t o f)(the_tag_const x) " 
+          \<open>(x::'\<tau> tag_const) \<Otimes> (f::('\<tau>::linorder \<Rightarrow> '\<tau>)) = (\<tau>\<^sub>c\<^sub>s\<^sub>t o f)(the_tag_const x) \<close> 
 end
 
 overloading morphism_TESL_atomic \<equiv> 
-            "morphism :: '\<tau> TESL_atomic \<Rightarrow> ('\<tau>::linorder \<Rightarrow> '\<tau>) \<Rightarrow> '\<tau> TESL_atomic" 
+            \<open>morphism :: '\<tau> TESL_atomic \<Rightarrow> ('\<tau>::linorder \<Rightarrow> '\<tau>) \<Rightarrow> '\<tau> TESL_atomic\<close> 
 begin 
 definition morphism_TESL_atomic : 
-          "(\<Psi>::'\<tau> TESL_atomic) \<Otimes> (f::('\<tau>::linorder \<Rightarrow> '\<tau>)) = 
+          \<open>(\<Psi>::'\<tau> TESL_atomic) \<Otimes> (f::('\<tau>::linorder \<Rightarrow> '\<tau>)) = 
               (case \<Psi> of
                 (C sporadic t on C')     \<Rightarrow> (C sporadic (t\<Otimes>f) on C') 
               | (time-relation \<lfloor>C, C'\<rfloor>\<in>R)\<Rightarrow> (time-relation \<lfloor>C, C'\<rfloor> \<in> (\<lambda>(t, t'). R(t\<Otimes>f,t'\<Otimes>f)))
@@ -24,100 +24,100 @@ definition morphism_TESL_atomic :
                                          \<Rightarrow> (C time-delayed by t\<Otimes>f on C' implies C'')
               | (C weakly precedes C')   \<Rightarrow> (C weakly precedes C')
               | (C strictly precedes C') \<Rightarrow> (C strictly precedes C') 
-              | (C kills C')             \<Rightarrow> (C kills C'))" 
+              | (C kills C')             \<Rightarrow> (C kills C'))\<close> 
 end
 
 overloading morphism_TESL_formula \<equiv> 
-            "morphism :: '\<tau> TESL_formula \<Rightarrow> ('\<tau>::linorder \<Rightarrow> '\<tau>) \<Rightarrow> '\<tau> TESL_formula" 
+            \<open>morphism :: '\<tau> TESL_formula \<Rightarrow> ('\<tau>::linorder \<Rightarrow> '\<tau>) \<Rightarrow> '\<tau> TESL_formula\<close> 
 begin 
 definition  morphism_TESL_formula : 
-           "(\<Psi>::'\<tau> TESL_formula) \<Otimes> (f::('\<tau>::linorder \<Rightarrow> '\<tau>)) = map (\<lambda>x. x \<Otimes> f) \<Psi>" 
+           \<open>(\<Psi>::'\<tau> TESL_formula) \<Otimes> (f::('\<tau>::linorder \<Rightarrow> '\<tau>)) = map (\<lambda>x. x \<Otimes> f) \<Psi>\<close> 
 end
 
 
 overloading morphism_TESL_config \<equiv> 
-            "morphism :: ('\<tau>::linordered_field) config \<Rightarrow> ('\<tau> \<Rightarrow> '\<tau>) \<Rightarrow> '\<tau> config" 
+            \<open>morphism :: ('\<tau>::linordered_field) config \<Rightarrow> ('\<tau> \<Rightarrow> '\<tau>) \<Rightarrow> '\<tau> config\<close> 
 begin 
 fun  morphism_TESL_config 
-  where  "((\<Gamma>, n \<turnstile> \<Psi> \<triangleright> \<Phi>)::('\<tau>::linordered_field) config) \<Otimes> (f::('\<tau> \<Rightarrow> '\<tau>)) =
-           (\<Gamma>, n \<turnstile> (\<Psi>\<Otimes>f) \<triangleright> (\<Phi>\<Otimes>f))" 
+  where  \<open>((\<Gamma>, n \<turnstile> \<Psi> \<triangleright> \<Phi>)::('\<tau>::linordered_field) config) \<Otimes> (f::('\<tau> \<Rightarrow> '\<tau>)) =
+           (\<Gamma>, n \<turnstile> (\<Psi>\<Otimes>f) \<triangleright> (\<Phi>\<Otimes>f))\<close> 
 end
 
 text\<open>A TESL formula is called consistent if it possesses Kripke-models in its denotational 
 interpretation.\<close>
 
 find_theorems TESL_interpretation
-definition consistent :: "('\<tau>::linordered_field) TESL_formula \<Rightarrow> bool" 
-  where   "consistent \<Psi> \<equiv> \<lbrakk>\<lbrakk> \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L \<noteq> {}"
+definition consistent :: \<open>('\<tau>::linordered_field) TESL_formula \<Rightarrow> bool\<close> 
+  where   \<open>consistent \<Psi> \<equiv> \<lbrakk>\<lbrakk> \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L \<noteq> {}\<close>
 
 
 text\<open> For the case of a non-periodic TESL formula, the esta 
 \<close>
 theorem consistency_finite :
-  assumes start             : "([], 0 \<turnstile> \<Psi> \<triangleright> [])  \<hookrightarrow>\<^sup>*\<^sup>* (\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> [] \<triangleright> [])"
-   and    init_invariant    : "consistent_context \<Gamma>\<^sub>1"
- shows   "consistent \<Psi>"    
+  assumes start             : \<open>([], 0 \<turnstile> \<Psi> \<triangleright> [])  \<hookrightarrow>\<^sup>*\<^sup>* (\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> [] \<triangleright> [])\<close>
+      and init_invariant    : \<open>consistent_context \<Gamma>\<^sub>1\<close>
+    shows \<open>consistent \<Psi>\<close>    
 proof -
-  have * : "\<exists> n. ([], 0 \<turnstile> \<Psi> \<triangleright> []) \<hookrightarrow>\<^bsup>n\<^esup> (\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> [] \<triangleright> []) "
+  have * : \<open>\<exists> n. (([], 0 \<turnstile> \<Psi> \<triangleright> []) \<hookrightarrow>\<^bsup>n\<^esup> (\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> [] \<triangleright> [])) \<close>
     by (simp add: rtranclp_imp_relpowp start)
   show ?thesis
   unfolding consistent_context_def consistent_def
-  using "*" consistent_context_def init_invariant soundness by fastforce
+  using * consistent_context_def init_invariant soundness by fastforce
 qed
 
 find_theorems name:"sound"
 
 subsubsection\<open>snippets on runs\<close>
 
-definition const_nontick_run :: "(clock \<Rightarrow> '\<tau> tag_const) \<Rightarrow> ('\<tau>::linordered_field) run " ("\<box>_" 80)
-  where "\<box>f \<equiv>  Abs_run(\<lambda>n c. (False, f c))"
+definition const_nontick_run :: \<open>(clock \<Rightarrow> '\<tau> tag_const) \<Rightarrow> ('\<tau>::linordered_field) run \<close> (\<open>\<box>_\<close> 80)
+  where \<open>\<box>f \<equiv>  Abs_run(\<lambda>n c. (False, f c))\<close>
 
 (* maintains mono *)
-definition set_tick :: "('\<tau>::linordered_field) run \<Rightarrow> nat \<Rightarrow> clock \<Rightarrow> ('\<tau>) run" 
-  where   "set_tick r k c = Abs_run(\<lambda>n c.  if k = n 
+definition set_tick :: \<open>('\<tau>::linordered_field) run \<Rightarrow> nat \<Rightarrow> clock \<Rightarrow> ('\<tau>) run\<close> 
+  where   \<open>set_tick r k c = Abs_run(\<lambda>n c.  if k = n 
                                            then (True , time(Rep_run r k c)) 
-                                           else Rep_run r k c) "
-definition unset_tick :: "('\<tau>::linordered_field) run \<Rightarrow> nat \<Rightarrow> clock \<Rightarrow> ('\<tau>) run" 
-  where   "unset_tick r k c = Abs_run(\<lambda>n c.  if k = n 
+                                           else Rep_run r k c) \<close>
+definition unset_tick :: \<open>('\<tau>::linordered_field) run \<Rightarrow> nat \<Rightarrow> clock \<Rightarrow> ('\<tau>) run\<close> 
+  where   \<open>unset_tick r k c = Abs_run(\<lambda>n c.  if k = n 
                                            then (False , time(Rep_run r k c)) 
-                                           else Rep_run r k c) "
+                                           else Rep_run r k c) \<close>
 
 (* ignoring mono *)
-definition patch :: "('\<tau>::linordered_field) run \<Rightarrow> nat \<Rightarrow>  '\<tau> run \<Rightarrow> '\<tau> run" ("_ \<ggreater>\<^bsup>_\<^esup> _" 80)
-  where   "r \<ggreater>\<^bsup>k\<^esup>r' \<equiv> Abs_run(\<lambda>n c. if n \<le> k then Rep_run (r) n c else  Rep_run (r') n c)"
+definition patch :: \<open>('\<tau>::linordered_field) run \<Rightarrow> nat \<Rightarrow>  '\<tau> run \<Rightarrow> '\<tau> run\<close> (\<open>_ \<ggreater>\<^bsup>_\<^esup> _\<close> 80)
+  where   \<open>r \<ggreater>\<^bsup>k\<^esup>r' \<equiv> Abs_run(\<lambda>n c. if n \<le> k then Rep_run (r) n c else  Rep_run (r') n c)\<close>
 
 
 
 text\<open>For some infinite cases, the idea for a proof scheme looks as follows: if we can derive
-from the initial configuration @{term "([], 0 \<turnstile> \<Psi> \<triangleright> [])"} a start-point of a lasso
-@{term "(\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1)"}, and if we can traverse the lasso one time 
-@{term "(\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1) \<hookrightarrow>\<^sup>+\<^sup>+ (\<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2)"} to isomorphic one, 
+from the initial configuration @{term \<open>([], 0 \<turnstile> \<Psi> \<triangleright> [])\<close>} a start-point of a lasso
+@{term \<open>(\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1)\<close>}, and if we can traverse the lasso one time 
+@{term \<open>(\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1) \<hookrightarrow>\<^sup>+\<^sup>+ (\<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2)\<close>} to isomorphic one, 
 we can always always make a derivation along the lasso. If the entry point of the lasso had traces 
-with prefixes consistent to @{term "\<Gamma>\<^sub>1"}, then there exist traces consisting of this prefix and 
-repetitions of the delta-prefix of the lasso which are consistent with @{term "\<Psi>"} which implies
-the logical consistency of  @{term "\<Psi>"}.
+with prefixes consistent to @{term \<open>\<Gamma>\<^sub>1\<close>}, then there exist traces consisting of this prefix and 
+repetitions of the delta-prefix of the lasso which are consistent with @{term \<open>\<Psi>\<close>} which implies
+the logical consistency of  @{term \<open>\<Psi>\<close>}.
 
 So far the idea. Remains to prove it. Why does one symbolic run along a lasso generalises to 
 arbitrary runs ? 
 \<close>
 
 theorem consistency_coinduct : 
-  assumes start             : "([], 0 \<turnstile> \<Psi> \<triangleright> [])   \<hookrightarrow>\<^sup>*\<^sup>* (\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1)"
-   and    loop              : "(\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1) \<hookrightarrow>\<^sup>+\<^sup>+ (\<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2)"
-   and    init_invariant    : "consistent_context \<Gamma>\<^sub>1"
-   and    post_invariant    : "consistent_context \<Gamma>\<^sub>2"
-   and    retract_condition : "(\<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2) \<Otimes> (f::'\<tau> \<Rightarrow> '\<tau>) = (\<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1) " 
-  shows   "consistent (\<Psi> :: ('\<tau> :: linordered_field)TESL_formula)"    
+  assumes start             : \<open>([], 0 \<turnstile> \<Psi> \<triangleright> [])   \<hookrightarrow>\<^sup>*\<^sup>* (\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1)\<close>
+      and loop              : \<open>(\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1) \<hookrightarrow>\<^sup>+\<^sup>+ (\<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2)\<close>
+      and init_invariant    : \<open>consistent_context \<Gamma>\<^sub>1\<close>
+      and post_invariant    : \<open>consistent_context \<Gamma>\<^sub>2\<close>
+      and retract_condition : \<open>(\<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2) \<Otimes> (f::'\<tau> \<Rightarrow> '\<tau>) = (\<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1) \<close> 
+    shows \<open>consistent (\<Psi> :: ('\<tau> :: linordered_field)TESL_formula)\<close>    
 proof -
-  have 1 : "\<exists> n. [], 0 \<turnstile> \<Psi> \<triangleright> [] \<hookrightarrow>\<^bsup>n\<^esup> (\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1) "
+  have 1 : \<open>\<exists> n. (([], 0 \<turnstile> \<Psi> \<triangleright> []) \<hookrightarrow>\<^bsup>n\<^esup> (\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1)) \<close>
     by (meson rtranclp_power start)
-  have 2 : "\<exists> m. (\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1) \<hookrightarrow>\<^bsup>m\<^esup> (\<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2) \<and> m>0"
+  have 2 : \<open>\<exists> m. (((\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1) \<hookrightarrow>\<^bsup>m\<^esup> (\<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2)) \<and> (m > 0)) \<close>
     by (meson loop tranclp_power)
-  have 3 : "\<Phi>\<^sub>1 =  \<Phi>\<^sub>2 \<Otimes> f" 
+  have 3 : \<open>\<Phi>\<^sub>1 =  \<Phi>\<^sub>2 \<Otimes> f\<close> 
     using retract_condition by auto
-  have 4 : "\<Psi>\<^sub>1 =  \<Psi>\<^sub>2 \<Otimes> f" 
+  have 4 : \<open>\<Psi>\<^sub>1 =  \<Psi>\<^sub>2 \<Otimes> f\<close> 
     using retract_condition by auto
-  have X : 
+  have X : True ..
   show ?thesis   
     sorry
 qed

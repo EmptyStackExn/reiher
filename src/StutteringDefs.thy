@@ -57,7 +57,7 @@ where
 text \<open>
   A \<^emph>\<open>run\<close> is a \<^emph>\<open>subrun\<close> of another run if there exists a dilation between them.
 \<close>
-definition is_subrun ::\<open>'a::linordered_field run \<Rightarrow> 'a run \<Rightarrow> bool\<close> (infixl "\<lless>" 60)
+definition is_subrun ::\<open>'a::linordered_field run \<Rightarrow> 'a run \<Rightarrow> bool\<close> (infixl \<open>\<lless>\<close> 60)
 where
   \<open>sub \<lless> r \<equiv> (\<exists>f. dilating f sub r)\<close>
 
@@ -88,9 +88,9 @@ text \<open>
 consts dummyf    :: \<open>nat \<Rightarrow> nat\<close>
 consts dummyg    :: \<open>nat \<Rightarrow> nat\<close>
 consts dummytwo  :: \<open>nat\<close>
-notation dummyf    ("f") 
-notation dummyg    ("g")
-notation dummytwo  ("2")
+notation dummyf    (\<open>f\<close>) 
+notation dummyg    (\<open>g\<close>)
+notation dummytwo  (\<open>2\<close>)
 (*>*)
 text \<open>
   A function @{term \<open>g\<close>} is contracting with respect to the dilation of run
@@ -108,9 +108,9 @@ text \<open>
   and @{term \<open>(f \<circ> g) 4\<close>}. 
 \<close>
 (*<*)
-no_notation dummyf      ("f") 
-no_notation dummyg      ("g") 
-no_notation dummytwo    ("2")
+no_notation dummyf      (\<open>f\<close>) 
+no_notation dummyg      (\<open>g\<close>) 
+no_notation dummytwo    (\<open>2\<close>)
 (*>*)
 
 definition contracting

@@ -141,6 +141,54 @@ proof -
             (((K\<^sub>1 \<Up> n) # (K\<^sub>2 \<not>\<Up> \<ge> n) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> ((K\<^sub>1 kills K\<^sub>2) # \<Phi>))\<close>
       thus ?P using HeronConf_interp_stepwise_kills_cases
                     HeronConf_interpretation.simps by blast
+    next
+      fix \<Gamma> n K\<^sub>1 d K\<^sub>2 K\<^sub>3 \<Psi> \<Phi>
+      assume h1:\<open>(\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1) = (\<Gamma>, n \<turnstile> ((K\<^sub>1 delayed by d on K\<^sub>2 implies K\<^sub>3) # \<Psi>) \<triangleright> \<Phi>)\<close>
+         and h2:\<open>(\<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2) = (((K\<^sub>1 \<not>\<Up> n) # \<Gamma>), n
+                                        \<turnstile> \<Psi> \<triangleright> ((K\<^sub>1 delayed by d on K\<^sub>2 implies K\<^sub>3) # \<Phi>))\<close>
+      thus ?P 
+      proof (cases d)
+        case 0
+          thus ?thesis using HeronConf_interp_stepwise_delayed_cases_zero
+                             HeronConf_interpretation.simps h1 h2 by blast
+      next
+        case (Suc d')
+          thus ?thesis using HeronConf_interp_stepwise_delayed_cases_suc
+                             HeronConf_interpretation.simps h1 h2 by blast
+      qed
+    next
+      fix \<Gamma> n K\<^sub>1 K\<^sub>2 K\<^sub>3 \<Psi> \<Phi>
+      assume \<open>(\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1) = (\<Gamma>, n \<turnstile> (K\<^sub>1 delayed by 0 on K\<^sub>2 implies K\<^sub>3) # \<Psi> \<triangleright> \<Phi>)\<close>
+      and \<open>(\<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2) = (((K\<^sub>1 \<Up> n) # (K\<^sub>3 \<Up> n) # \<Gamma>), n
+                                    \<turnstile> \<Psi> \<triangleright> ((K\<^sub>1 delayed by 0 on K\<^sub>2 implies K\<^sub>3) # \<Phi>))\<close>
+      thus ?P using HeronConf_interp_stepwise_delayed_cases_zero
+                    HeronConf_interpretation.simps by blast
+    next
+      fix \<Gamma> n K\<^sub>1 d K\<^sub>2 K\<^sub>3 \<Psi> \<Phi>
+      assume \<open>(\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1) = (\<Gamma>, n \<turnstile> (K\<^sub>1 delayed by Suc d on K\<^sub>2 implies K\<^sub>3) # \<Psi> \<triangleright> \<Phi>)\<close>
+      and \<open>(\<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2) = (((K\<^sub>1 \<Up> n) # \<Gamma>), n
+                                    \<turnstile> \<Psi> \<triangleright> ((from n delay count Suc d on K\<^sub>2 implies K\<^sub>3)
+                                            # (K\<^sub>1 delayed by Suc d on K\<^sub>2 implies K\<^sub>3) # \<Phi>))\<close>
+      thus ?P using HeronConf_interp_stepwise_delayed_cases_suc
+                    HeronConf_interpretation.simps by blast
+    next
+      fix \<Gamma> n m d K\<^sub>2 K\<^sub>3 \<Psi> \<Phi>
+      assume \<open>(\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1) = (\<Gamma>, n \<turnstile> (from m delay count d on K\<^sub>2 implies K\<^sub>3) # \<Psi> \<triangleright> \<Phi>)\<close>
+      and \<open>(\<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2) = (((K\<^sub>2 \<not>\<Up> n) # \<Gamma>), n
+                                    \<turnstile> \<Psi> \<triangleright> ((from m delay count d on K\<^sub>2 implies K\<^sub>3) # \<Phi>))\<close>
+      thus ?P sorry
+    next
+      fix \<Gamma> n m K\<^sub>2 K\<^sub>3 \<Psi> \<Phi>
+      assume \<open>(\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1) = (\<Gamma>, n \<turnstile> (from m delay count Suc 0 on K\<^sub>2 implies K\<^sub>3) # \<Psi> \<triangleright> \<Phi>)\<close>
+      and \<open>(\<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2) = (((K\<^sub>2 \<Up> n) # (K\<^sub>3 \<Up> n) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> \<Phi>)\<close>
+      thus ?P sorry
+    next
+      fix \<Gamma> n m d K\<^sub>2 K\<^sub>3 \<Psi> \<Phi>
+      assume \<open>(\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1) = (\<Gamma>, n
+                                     \<turnstile> (from m delay count Suc (Suc d) on K\<^sub>2 implies K\<^sub>3) # \<Psi> \<triangleright> \<Phi>)\<close>
+      and \<open>(\<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2) = (((K\<^sub>2 \<Up> n) # \<Gamma>), n
+                                    \<turnstile> \<Psi> \<triangleright> ((from n delay count Suc d on K\<^sub>2 implies K\<^sub>3) # \<Phi>))\<close>
+      thus ?P sorry
     qed
   qed
 qed
@@ -253,6 +301,10 @@ lemma complete_direct_successors:
         case (Kills K1 K2) thus ?thesis
           using HeronConf_interp_stepwise_kills_cases[of \<open>\<Gamma>\<close> \<open>n\<close> \<open>K1\<close> \<open>K2\<close> \<open>\<Psi>\<close> \<open>\<Phi>\<close>]
                 Cnext_solve_kills[of \<open>K1\<close> \<open>n\<close> \<open>\<Gamma>\<close> \<open>\<Psi>\<close> \<open>K2\<close> \<open>\<Phi>\<close>] by blast
+      next
+        case (DelayedBy K1 d K2 K3) thus ?thesis sorry
+      next
+        case (DelayCount n d K2 K3) thus ?thesis sorry
       qed
   qed
 
@@ -711,6 +763,13 @@ next
         with rc show ?thesis by blast
       qed
       ultimately show ?case using Kills.prems(2) by blast
+    next
+      case (DelayedBy x1 x2 x3 x4)
+      then show ?case sorry
+    next
+      case (DelayCount x1 x2 x3 x4)
+      then show ?case sorry
+
   qed
 qed
 
@@ -787,14 +846,14 @@ text \<open>
   Since this computation terminates when the list of constraints for the present
   instant becomes empty, we introduce a measure for this formula.
 \<close>
-primrec measure_interpretation :: \<open>'\<tau>::linordered_field TESL_formula \<Rightarrow> nat\<close> ("\<mu>")
+primrec measure_interpretation :: \<open>'\<tau>::linordered_field TESL_formula \<Rightarrow> nat\<close> (\<open>\<mu>\<close>)
 where
   \<open>\<mu> [] = (0::nat)\<close>
 | \<open>\<mu> (\<phi> # \<Phi>) = (case \<phi> of
                       _ sporadic _ on _ \<Rightarrow> 1 + \<mu> \<Phi>
                     | _                 \<Rightarrow> 2 + \<mu> \<Phi>)\<close>
 
-fun measure_interpretation_config :: \<open>'\<tau>::linordered_field config \<Rightarrow> nat\<close> ("\<mu>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g")
+fun measure_interpretation_config :: \<open>'\<tau>::linordered_field config \<Rightarrow> nat\<close> (\<open>\<mu>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g\<close>)
 where
   \<open>\<mu>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g (\<Gamma>, n \<turnstile> \<Psi> \<triangleright> \<Phi>) = \<mu> \<Psi>\<close>
 

@@ -21,7 +21,7 @@ text \<open>
   defined in the preceding chapters.
 \<close>
 fun TESL_interpretation_atomic_stepwise
-    :: \<open>('\<tau>::linordered_field) TESL_atomic \<Rightarrow> nat \<Rightarrow> '\<tau> run set\<close> ("\<lbrakk> _ \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> _\<^esup>")
+    :: \<open>('\<tau>::linordered_field) TESL_atomic \<Rightarrow> nat \<Rightarrow> '\<tau> run set\<close> (\<open>\<lbrakk> _ \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> _\<^esup>\<close>)
 where
   \<open>\<lbrakk> K\<^sub>1 sporadic \<tau> on K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> i\<^esup> =
       {\<rho>. \<exists>n\<ge>i. hamlet ((Rep_run \<rho>) n K\<^sub>1) \<and> time ((Rep_run \<rho>) n K\<^sub>2) = \<tau>}\<close>
@@ -44,6 +44,16 @@ where
       {\<rho>. \<forall>n\<ge>i. (run_tick_count \<rho> K\<^sub>2 n) \<le> (run_tick_count_strictly \<rho> K\<^sub>1 n)}\<close>
 | \<open>\<lbrakk> K\<^sub>1 kills K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> i\<^esup> =
       {\<rho>. \<forall>n\<ge>i. hamlet ((Rep_run \<rho>) n K\<^sub>1) \<longrightarrow> (\<forall>m\<ge>n. \<not> hamlet ((Rep_run \<rho>) m K\<^sub>2))}\<close>
+| \<open>\<lbrakk> K1 delayed by d on K2 implies K3 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> i\<^esup> =
+      {\<rho>. \<forall>n\<ge>i. hamlet ((Rep_run \<rho>) n K1) \<longrightarrow>
+                 (
+                  \<forall>m \<ge> n.  counted_ticks \<rho> K2 n m d
+                            \<longrightarrow> hamlet ((Rep_run \<rho>) m K3)
+                 )
+      }\<close>
+| \<open>\<lbrakk> from n delay count d on K2 implies K3 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> i\<^esup> =
+    {\<rho>. \<forall>m\<ge>i. (m \<ge> n \<and> counted_ticks \<rho> K2 n m d) \<longrightarrow> hamlet ((Rep_run \<rho>) m K3)}
+  \<close>
 
 text \<open>
   The denotational interpretation of TESL formulae can be unfolded into the 
@@ -86,6 +96,16 @@ by auto
 
 lemma TESL_interp_unfold_stepwise_kills:
   \<open>\<lbrakk> master kills slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<Inter> {Y. \<exists>n::nat. Y = \<lbrakk> master kills slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup>}\<close>
+by auto
+
+lemma TESL_interp_unfold_stepwise_delayed:
+  \<open>\<lbrakk> master delayed by d on counting implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L
+    = \<Inter> {Y. \<exists>n. Y = \<lbrakk> master delayed by d on counting implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup>}\<close>
+by auto
+
+lemma TESL_interp_unfold_stepwise_counting:
+  \<open>\<lbrakk> from i delay count d on counter implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L
+    = \<Inter> {Y. \<exists>n. Y = \<lbrakk> from i delay count d on counter implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup>}\<close>
 by auto
 
 text \<open>
@@ -135,6 +155,12 @@ next
   case Kills
     thus ?thesis
       using TESL_interp_unfold_stepwise_kills by simp
+next
+  case DelayedBy
+    thus ?thesis using TESL_interp_unfold_stepwise_delayed by simp
+next
+  case DelayCount
+    thus ?thesis using TESL_interp_unfold_stepwise_counting by simp
 qed
 
 text \<open>
@@ -196,8 +222,8 @@ text \<open>
 \<close>
 lemma TESL_interp_stepwise_sporadicon_coind_unfold:
   \<open>\<lbrakk> K\<^sub>1 sporadic \<tau> on K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> =
-    \<lbrakk> K\<^sub>1 \<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk> K\<^sub>2 \<Down> n @ \<tau> \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m        \<comment> \<open>rule @{term sporadic_on_e2}\<close>
-    \<union> \<lbrakk> K\<^sub>1 sporadic \<tau> on K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>\<close>   \<comment> \<open>rule @{term sporadic_on_e1}\<close>
+    \<lbrakk> K\<^sub>1 \<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk> K\<^sub>2 \<Down> n @ \<tau> \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m        \<comment> \<open>rule @{thm sporadic_on_e2}\<close>
+    \<union> \<lbrakk> K\<^sub>1 sporadic \<tau> on K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>\<close>   \<comment> \<open>rule @{thm sporadic_on_e1}\<close>
 unfolding TESL_interpretation_atomic_stepwise.simps(1)
           symbolic_run_interpretation_primitive.simps(1,6)
 using exists_nat_set_suc[of \<open>n\<close> \<open>\<lambda>\<rho> n. hamlet (Rep_run \<rho> n K\<^sub>1)
@@ -206,7 +232,7 @@ by (simp add: Collect_conj_eq)
 
 
 lemma TESL_interp_stepwise_tagrel_coind_unfold:
-  \<open>\<lbrakk> time-relation \<lfloor>K\<^sub>1, K\<^sub>2\<rfloor> \<in> R \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> =        \<comment> \<open>rule @{term tagrel_e}\<close>
+  \<open>\<lbrakk> time-relation \<lfloor>K\<^sub>1, K\<^sub>2\<rfloor> \<in> R \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> =        \<comment> \<open>rule @{thm tagrel_e}\<close>
      \<lbrakk> \<lfloor>\<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>1, n), \<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>2, n)\<rfloor> \<in> R \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m
      \<inter> \<lbrakk> time-relation \<lfloor>K\<^sub>1, K\<^sub>2\<rfloor> \<in> R \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>\<close>
 proof -
@@ -220,8 +246,8 @@ qed
 
 lemma TESL_interp_stepwise_implies_coind_unfold:
   \<open>\<lbrakk> master implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> =
-     (   \<lbrakk> master \<not>\<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m                     \<comment> \<open>rule @{term implies_e1}\<close>
-       \<union> \<lbrakk> master \<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk> slave \<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m)  \<comment> \<open>rule @{term implies_e2}\<close>
+     (   \<lbrakk> master \<not>\<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m                     \<comment> \<open>rule @{thm implies_e1}\<close>
+       \<union> \<lbrakk> master \<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk> slave \<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m)  \<comment> \<open>rule @{thm implies_e2}\<close>
      \<inter> \<lbrakk> master implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>\<close>
 proof -
   have \<open>{\<rho>. \<forall>m\<ge>n. hamlet ((Rep_run \<rho>) m master) \<longrightarrow> hamlet ((Rep_run \<rho>) m slave)}
@@ -235,8 +261,8 @@ qed
 
 lemma TESL_interp_stepwise_implies_not_coind_unfold:
   \<open>\<lbrakk> master implies not slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> =
-     (    \<lbrakk> master \<not>\<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m                       \<comment> \<open>rule @{term implies_not_e1}\<close>
-        \<union> \<lbrakk> master \<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk> slave \<not>\<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m)  \<comment> \<open>rule @{term implies_not_e2}\<close>
+     (    \<lbrakk> master \<not>\<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m                       \<comment> \<open>rule @{thm implies_not_e1}\<close>
+        \<union> \<lbrakk> master \<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk> slave \<not>\<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m)  \<comment> \<open>rule @{thm implies_not_e2}\<close>
      \<inter> \<lbrakk> master implies not slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>\<close>
 proof -
   have \<open>{\<rho>. \<forall>m\<ge>n. hamlet ((Rep_run \<rho>) m master) \<longrightarrow> \<not> hamlet ((Rep_run \<rho>) m slave)}
@@ -250,9 +276,9 @@ qed
 
 lemma TESL_interp_stepwise_timedelayed_coind_unfold:
   \<open>\<lbrakk> master time-delayed by \<delta>\<tau> on measuring implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> =
-     (     \<lbrakk> master \<not>\<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m               \<comment> \<open>rule @{term timedelayed_e1}\<close>
+     (     \<lbrakk> master \<not>\<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m               \<comment> \<open>rule @{thm timedelayed_e1}\<close>
         \<union> (\<lbrakk> master \<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk> measuring @ n \<oplus> \<delta>\<tau> \<Rightarrow> slave \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m))
-                                             \<comment> \<open>rule @{term timedelayed_e2}\<close>
+                                             \<comment> \<open>rule @{thm timedelayed_e2}\<close>
      \<inter> \<lbrakk> master time-delayed by \<delta>\<tau> on measuring implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>\<close>
 proof -
   let ?prop = \<open>\<lambda>\<rho> m. hamlet ((Rep_run \<rho>) m master) \<longrightarrow>
@@ -268,7 +294,7 @@ proof -
 qed
 
 lemma TESL_interp_stepwise_weakly_precedes_coind_unfold:
-   \<open>\<lbrakk> K\<^sub>1 weakly precedes K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> =                 \<comment> \<open>rule @{term weakly_precedes_e}\<close>
+   \<open>\<lbrakk> K\<^sub>1 weakly precedes K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> =                 \<comment> \<open>rule @{thm weakly_precedes_e}\<close>
       \<lbrakk> (\<lceil>#\<^sup>\<le> K\<^sub>2 n, #\<^sup>\<le> K\<^sub>1 n\<rceil> \<in> (\<lambda>(x,y). x\<le>y)) \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m 
       \<inter> \<lbrakk> K\<^sub>1 weakly precedes K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>\<close>
 proof -
@@ -282,7 +308,7 @@ proof -
 qed
 
 lemma TESL_interp_stepwise_strictly_precedes_coind_unfold:
-   \<open>\<lbrakk> K\<^sub>1 strictly precedes K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> =               \<comment> \<open>rule @{term strictly_precedes_e}\<close>
+   \<open>\<lbrakk> K\<^sub>1 strictly precedes K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> =               \<comment> \<open>rule @{thm strictly_precedes_e}\<close>
       \<lbrakk> (\<lceil>#\<^sup>\<le> K\<^sub>2 n, #\<^sup>< K\<^sub>1 n\<rceil> \<in> (\<lambda>(x,y). x\<le>y)) \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m
       \<inter> \<lbrakk> K\<^sub>1 strictly precedes K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>\<close>
 proof -
@@ -297,8 +323,8 @@ qed
 
 lemma TESL_interp_stepwise_kills_coind_unfold:
    \<open>\<lbrakk> K\<^sub>1 kills K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> =
-      (   \<lbrakk> K\<^sub>1 \<not>\<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m                        \<comment> \<open>rule @{term kills_e1}\<close>
-        \<union> \<lbrakk> K\<^sub>1 \<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk> K\<^sub>2 \<not>\<Up> \<ge> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m)    \<comment> \<open>rule @{term kills_e2}\<close>
+      (   \<lbrakk> K\<^sub>1 \<not>\<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m                        \<comment> \<open>rule @{thm kills_e1}\<close>
+        \<union> \<lbrakk> K\<^sub>1 \<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk> K\<^sub>2 \<not>\<Up> \<ge> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m)    \<comment> \<open>rule @{thm kills_e2}\<close>
       \<inter> \<lbrakk> K\<^sub>1 kills K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>\<close>
 proof -
   let ?kills = \<open>\<lambda>n \<rho>. \<forall>p\<ge>n. hamlet ((Rep_run \<rho>) p K\<^sub>1)
@@ -343,13 +369,128 @@ proof -
   finally show ?thesis by blast
 qed
 
+lemma stepwise_delay_unfold_zero:\<open>{\<rho>::('a::linordered_field) run. hamlet (Rep_run \<rho> n master) 
+              \<longrightarrow> (\<forall>p\<ge>n. counted_ticks \<rho> counting n p 0 \<longrightarrow> hamlet (Rep_run \<rho> p slave))}
+        = \<lbrakk> master \<not>\<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<union> \<lbrakk> master \<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m
+        \<inter> \<lbrakk> slave \<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m\<close> (is \<open>{\<rho>. ?P \<rho>} = ?N \<union> ?T \<inter> ?S\<close>)
+proof
+  { fix \<rho>::\<open>('a::linordered_field) run\<close>
+    assume h:\<open>\<rho> \<in> {\<rho>. ?P \<rho>}\<close>
+    have \<open>\<rho> \<in> ?N \<union> ?T \<inter> ?S\<close>
+    proof (cases \<open>hamlet (Rep_run \<rho> n master)\<close>)
+      case master_ticks:True
+        with h have \<open>(\<forall>p\<ge>n. counted_ticks \<rho> counting n p 0 \<longrightarrow> hamlet (Rep_run \<rho> p slave))\<close> by simp
+        hence \<open>hamlet (Rep_run \<rho> n slave)\<close> by (simp add: counted_immediate)
+        hence \<open>\<rho> \<in> ?T \<inter> ?S\<close> by (simp add: master_ticks)
+        thus ?thesis by blast
+    next
+      case master_doesnot_tick:False
+        hence \<open>\<rho> \<in> ?N\<close> by simp
+        thus ?thesis by simp
+    qed
+  } thus \<open>{\<rho>. ?P \<rho>} \<subseteq> ?N \<union> ?T \<inter> ?S\<close> by blast
+  { fix \<rho>::\<open>('a::linordered_field) run\<close>
+    assume h:\<open>\<rho> \<in> ?N \<union> ?T \<inter> ?S\<close>
+    have \<open>\<rho> \<in> {\<rho>. ?P \<rho>}\<close>
+    proof (cases \<open>\<rho> \<in> ?N\<close>)
+      case True
+        hence \<open>\<not>hamlet (Rep_run \<rho> n master)\<close> by simp
+        thus ?thesis by simp
+    next
+      case False
+        with h have \<open>\<rho> \<in> ?T \<inter> ?S\<close> by simp
+        hence \<open>hamlet (Rep_run \<rho> n master) \<and> hamlet (Rep_run \<rho> n slave)\<close> by simp
+        thus ?thesis using counted_zero_same by fastforce
+    qed
+  } thus \<open>?N \<union> ?T \<inter> ?S \<subseteq> {\<rho>. ?P \<rho>}\<close> by blast
+qed
+
+lemma stepwise_delay_unfold_suc:
+  \<open>{\<rho>::('a::linordered_field) run. hamlet (Rep_run \<rho> n master) 
+           \<longrightarrow> (\<forall>p\<ge>n. counted_ticks \<rho> counting n p (Suc d) \<longrightarrow> hamlet (Rep_run \<rho> p slave))}
+        = \<lbrakk> master \<not>\<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<union> \<lbrakk> master \<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m
+        \<inter> \<lbrakk> from n delay count (Suc d) on counting implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>\<close> (is \<open>{\<rho>. ?P \<rho>} = ?N \<union> ?T \<inter> ?S\<close>)
+proof
+  { fix \<rho>::\<open>('a::linordered_field) run\<close>
+    assume h:\<open>\<rho> \<in> {\<rho>. ?P \<rho>}\<close>
+    have \<open>\<rho> \<in> ?N \<union> ?T \<inter> ?S\<close>
+    proof (cases \<open>hamlet (Rep_run \<rho> n master)\<close>)
+      case master_ticks:True
+        with h have \<open>(\<forall>p\<ge>n. counted_ticks \<rho> counting n p (Suc d) \<longrightarrow> hamlet (Rep_run \<rho> p slave))\<close> by simp
+        hence \<open>\<rho> \<in> ?T \<inter> ?S\<close> by (simp add: master_ticks)
+        thus ?thesis by blast
+    next
+      case master_doesnot_tick:False
+        hence \<open>\<rho> \<in> ?N\<close> by simp
+        thus ?thesis by simp
+    qed
+  } thus \<open>{\<rho>. ?P \<rho>} \<subseteq> ?N \<union> ?T \<inter> ?S\<close> by blast
+  { fix \<rho>::\<open>('a::linordered_field) run\<close>
+    assume h:\<open>\<rho> \<in> ?N \<union> ?T \<inter> ?S\<close>
+    have \<open>\<rho> \<in> {\<rho>. ?P \<rho>}\<close>
+    proof (cases \<open>\<rho> \<in> ?N\<close>)
+      case True
+        hence \<open>\<not>hamlet (Rep_run \<rho> n master)\<close> by simp
+        thus ?thesis by simp
+    next
+      case False
+        with h have 1:\<open>\<rho> \<in> ?T \<inter> ?S\<close> by simp
+        have \<open>\<not>counted_ticks \<rho> counting n n (Suc d)\<close> using counted_suc by blast
+        hence \<open>counted_ticks \<rho> counting n n (Suc d) \<longrightarrow> hamlet (Rep_run \<rho> n slave)\<close> by simp
+        with 1 have \<open>hamlet (Rep_run \<rho> n master)
+          \<and> (\<forall>p\<ge>n. counted_ticks \<rho> counting n p (Suc d) \<longrightarrow> hamlet (Rep_run \<rho> p slave))\<close>
+          using counted_suc by fastforce
+        thus ?thesis by blast
+    qed
+  } thus \<open>?N \<union> ?T \<inter> ?S \<subseteq> {\<rho>. ?P \<rho>}\<close> by blast
+qed
+
+lemma TESL_interp_stepwise_delayed_coind_zero_unfold:
+  \<open>\<lbrakk> master delayed by 0 on counting implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> =
+     (     \<lbrakk> master \<not>\<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m                   \<comment> \<open>rule @{thm delayed_e1}\<close>
+        \<union>  (\<lbrakk> master \<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk> slave \<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m) \<comment> \<open>rule @{thm delayed_e2}\<close>
+     )
+     \<inter> \<lbrakk> master delayed by 0 on counting implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>\<close>
+proof -
+  let ?prop = \<open>\<lambda>\<rho> m. hamlet ((Rep_run \<rho>) m master) \<longrightarrow>
+                 (\<forall>p \<ge> m. counted_ticks \<rho> counting m p 0 \<longrightarrow> hamlet ((Rep_run \<rho>) p slave))\<close>
+  have \<open>\<lbrakk> master delayed by 0 on counting implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> =
+                {\<rho>. \<forall>m\<ge>n. ?prop \<rho> m} \<close> by simp
+  also have \<open>... = {\<rho>. ?prop \<rho> n } \<inter> {\<rho>. \<forall>m\<ge> Suc n. ?prop \<rho> m }\<close>
+  using forall_nat_set_suc[of n \<open>?prop\<close>] by blast
+  also have \<open>... = {\<rho>. ?prop \<rho> n}
+              \<inter> \<lbrakk> master delayed by 0 on counting implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>\<close>
+    by simp
+  finally show ?thesis using stepwise_delay_unfold_zero by blast
+qed
+
+lemma TESL_interp_stepwise_delayed_coind_suc_unfold:
+  \<open>\<lbrakk> master delayed by (Suc d) on counting implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> =
+     ( \<lbrakk> master \<not>\<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m                   \<comment> \<open>rule @{thm delayed_e1}\<close>
+        \<union> (\<lbrakk> master \<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m                \<comment> \<open>rule @{thm delayed_e3}\<close>
+           \<inter> \<lbrakk> from n delay count (Suc d) on counting implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>)
+     )
+     \<inter> \<lbrakk> master delayed by (Suc d) on counting implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>\<close>
+proof -
+  let ?prop = \<open>\<lambda>\<rho> m. hamlet ((Rep_run \<rho>) m master) \<longrightarrow>
+                (\<forall>p \<ge> m. counted_ticks \<rho> counting m p (Suc d) \<longrightarrow> hamlet ((Rep_run \<rho>) p slave))\<close>
+  have \<open>\<lbrakk> master delayed by (Suc d) on counting implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> =
+                {\<rho>. \<forall>m\<ge>n. ?prop \<rho> m} \<close> by simp
+  also have \<open>... = {\<rho>. ?prop \<rho> n} \<inter> {\<rho>. \<forall>m \<ge> Suc n. ?prop \<rho> m}\<close>
+    using forall_nat_set_suc[of \<open>n\<close> \<open>?prop\<close>] by blast
+  also have \<open>... = {\<rho>. ?prop \<rho> n}
+              \<inter> \<lbrakk> master delayed by (Suc d) on counting implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>\<close>
+    by simp
+  finally show ?thesis using stepwise_delay_unfold_suc by blast
+qed
+
 text \<open>
   The stepwise interpretation of a TESL formula is the intersection of the
   interpretation of its atomic components.
 \<close>
 fun TESL_interpretation_stepwise
   ::\<open>'\<tau>::linordered_field TESL_formula \<Rightarrow> nat \<Rightarrow> '\<tau> run set\<close>
-  ("\<lbrakk>\<lbrakk> _ \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> _\<^esup>")
+  (\<open>\<lbrakk>\<lbrakk> _ \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> _\<^esup>\<close>)
 where
   \<open>\<lbrakk>\<lbrakk> [] \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> = {\<rho>. True}\<close>
 | \<open>\<lbrakk>\<lbrakk> \<phi> # \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> = \<lbrakk> \<phi> \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> \<inter> \<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup>\<close>
@@ -388,7 +529,7 @@ text \<open>
   \<^item> the interpretation of its future from the next instant.
 \<close>
 fun HeronConf_interpretation
-  ::\<open>'\<tau>::linordered_field config \<Rightarrow> '\<tau> run set\<close>          ("\<lbrakk> _ \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g" 71)
+  ::\<open>'\<tau>::linordered_field config \<Rightarrow> '\<tau> run set\<close>          (\<open>\<lbrakk> _ \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g\<close> 71)
 where
   \<open>\<lbrakk> \<Gamma>, n \<turnstile> \<Psi> \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g = \<lbrakk>\<lbrakk> \<Gamma> \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk>\<lbrakk> \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> \<inter> \<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>\<close>
 
@@ -659,5 +800,222 @@ proof -
       thus ?thesis by auto
     qed
 qed
+
+lemma HeronConf_interp_stepwise_delayed_cases_zero:
+  \<open>\<lbrakk> \<Gamma>, n \<turnstile> ((K\<^sub>1 delayed by 0 on K\<^sub>2 implies K\<^sub>3) # \<Psi>) \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
+    = \<lbrakk> ((K\<^sub>1 \<not>\<Up> n) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> ((K\<^sub>1 delayed by 0 on K\<^sub>2 implies K\<^sub>3) # \<Phi>) \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
+    \<union> \<lbrakk> ((K\<^sub>1 \<Up> n) # (K\<^sub>3 \<Up> n) # \<Gamma>), n
+            \<turnstile> \<Psi> \<triangleright> ((K\<^sub>1 delayed by 0 on K\<^sub>2 implies K\<^sub>3) # \<Phi>) \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
+  \<close>
+proof -
+  have \<open>\<lbrakk> \<Gamma>, n \<turnstile> ((K\<^sub>1 delayed by 0 on K\<^sub>2 implies K\<^sub>3) # \<Psi>) \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g =
+        \<lbrakk>\<lbrakk> \<Gamma> \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk>\<lbrakk> (K\<^sub>1 delayed by 0 on K\<^sub>2 implies K\<^sub>3) # \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> \<inter> \<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>\<close>
+    by simp
+  also have 
+    \<open>... = \<lbrakk>\<lbrakk> \<Gamma> \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk> K\<^sub>1 delayed by 0 on K\<^sub>2 implies K\<^sub>3 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> \<inter> \<lbrakk>\<lbrakk> \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> \<inter> \<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>\<close>
+    using TESL_interpretation_stepwise.simps(2)[of _ \<open>\<Psi>\<close> \<open>n\<close>] by blast
+  also have \<open>... = \<lbrakk>\<lbrakk> \<Gamma> \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> {\<rho>. \<forall>z\<ge>n. hamlet ((Rep_run \<rho>) z K\<^sub>1) \<longrightarrow>
+                 (\<forall>m \<ge> z.  counted_ticks \<rho> K\<^sub>2 z m 0
+                            \<longrightarrow> hamlet ((Rep_run \<rho>) m K\<^sub>3)) }
+                \<inter> \<lbrakk>\<lbrakk> \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> \<inter> \<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>\<close>
+    using TESL_interpretation_atomic_stepwise.simps(9)[of \<open>K\<^sub>1\<close> \<open>0\<close> \<open>K\<^sub>2\<close> \<open>K\<^sub>3\<close> \<open>n\<close>] by blast
+  also have \<open>... = \<lbrakk>\<lbrakk> \<Gamma> \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m
+                \<inter> {\<rho>. hamlet ((Rep_run \<rho>) n K\<^sub>1) \<longrightarrow>
+                    (\<forall>m \<ge> n.  counted_ticks \<rho> K\<^sub>2 n m 0
+                            \<longrightarrow> hamlet ((Rep_run \<rho>) m K\<^sub>3)) }
+                \<inter> {\<rho>. \<forall>z\<ge> Suc n. hamlet ((Rep_run \<rho>) z K\<^sub>1) \<longrightarrow>
+                    (\<forall>m \<ge> z.  counted_ticks \<rho> K\<^sub>2 z m 0
+                            \<longrightarrow> hamlet ((Rep_run \<rho>) m K\<^sub>3)) }
+                \<inter> \<lbrakk>\<lbrakk> \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> \<inter> \<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>\<close>
+    using forall_nat_set_suc[of \<open>n\<close> \<open>\<lambda>\<rho> z. hamlet ((Rep_run \<rho>) z K\<^sub>1) \<longrightarrow>
+                 (\<forall>m \<ge> z.  counted_ticks \<rho> K\<^sub>2 z m 0
+                            \<longrightarrow> hamlet ((Rep_run \<rho>) m K\<^sub>3))\<close>] by blast
+  also have \<open>... = \<lbrakk>\<lbrakk> \<Gamma> \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m
+                \<inter> {\<rho>. hamlet ((Rep_run \<rho>) n K\<^sub>1) \<longrightarrow> hamlet ((Rep_run \<rho>) n K\<^sub>3) }
+                \<inter> {\<rho>. \<forall>z\<ge> Suc n. hamlet ((Rep_run \<rho>) z K\<^sub>1) \<longrightarrow>
+                    (\<forall>m \<ge> z.  counted_ticks \<rho> K\<^sub>2 z m 0
+                            \<longrightarrow> hamlet ((Rep_run \<rho>) m K\<^sub>3)) }
+                \<inter> \<lbrakk>\<lbrakk> \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> \<inter> \<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>\<close>
+      using counted_immediate counted_zero_same by blast
+  also have \<open>... = \<lbrakk>\<lbrakk> \<Gamma> \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m
+                \<inter> ( {\<rho>. \<not>hamlet ((Rep_run \<rho>) n K\<^sub>1)}
+                  \<union> {\<rho>. hamlet ((Rep_run \<rho>) n K\<^sub>1) \<and> hamlet ((Rep_run \<rho>) n K\<^sub>3)} )
+                \<inter> {\<rho>. \<forall>z\<ge> Suc n. hamlet ((Rep_run \<rho>) z K\<^sub>1) \<longrightarrow>
+                    (\<forall>m \<ge> z.  counted_ticks \<rho> K\<^sub>2 z m 0
+                          \<longrightarrow> hamlet ((Rep_run \<rho>) m K\<^sub>3)) }
+                \<inter> \<lbrakk>\<lbrakk> \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> \<inter> \<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>\<close> by blast
+  also have \<open>... = \<lbrakk>\<lbrakk> \<Gamma> \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m
+                \<inter> (\<lbrakk> K\<^sub>1 \<not>\<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<union> (\<lbrakk> K\<^sub>1 \<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk> K\<^sub>3 \<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m))
+                \<inter> {\<rho>. \<forall>z\<ge> Suc n. hamlet ((Rep_run \<rho>) z K\<^sub>1) \<longrightarrow>
+                    (\<forall>m \<ge> z.  counted_ticks \<rho> K\<^sub>2 z m 0
+                            \<longrightarrow> hamlet ((Rep_run \<rho>) m K\<^sub>3)) }
+                \<inter> \<lbrakk>\<lbrakk> \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> \<inter> \<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>\<close>
+      by (simp add: Collect_conj_eq)
+  also have \<open>... = \<lbrakk>\<lbrakk> \<Gamma> \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m
+                \<inter> (\<lbrakk> K\<^sub>1 \<not>\<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<union> (\<lbrakk> K\<^sub>1 \<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk> K\<^sub>3 \<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m))
+                \<inter> \<lbrakk> K\<^sub>1 delayed by 0 on K\<^sub>2 implies K\<^sub>3 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>
+                \<inter> \<lbrakk>\<lbrakk> \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> \<inter> \<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>\<close>
+    by simp
+  finally show ?thesis by auto
+qed
+
+lemma HeronConf_interp_stepwise_delayed_cases_suc:
+  \<open>\<lbrakk> \<Gamma>, n \<turnstile> ((K\<^sub>1 delayed by (Suc d) on K\<^sub>2 implies K\<^sub>3) # \<Psi>) \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
+    = \<lbrakk> ((K\<^sub>1 \<not>\<Up> n) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> ((K\<^sub>1 delayed by (Suc d) on K\<^sub>2 implies K\<^sub>3) # \<Phi>) \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
+    \<union> \<lbrakk> ((K\<^sub>1 \<Up> n) # \<Gamma>), n
+        \<turnstile> \<Psi> \<triangleright> ((from n delay count (Suc d) on K\<^sub>2 implies K\<^sub>3)
+                # (K\<^sub>1 delayed by (Suc d) on K\<^sub>2 implies K\<^sub>3) # \<Phi>) \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
+  \<close>
+proof -
+  have \<open>\<lbrakk> \<Gamma>, n \<turnstile> ((K\<^sub>1 delayed by (Suc d) on K\<^sub>2 implies K\<^sub>3) # \<Psi>) \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
+      = \<lbrakk>\<lbrakk> \<Gamma> \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk>\<lbrakk> (K\<^sub>1 delayed by (Suc d) on K\<^sub>2 implies K\<^sub>3) # \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup>
+      \<inter> \<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>\<close>
+    by simp
+  also have \<open>... = \<lbrakk>\<lbrakk> \<Gamma> \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m 
+                \<inter> \<lbrakk> K\<^sub>1 delayed by (Suc d) on K\<^sub>2 implies K\<^sub>3 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup>
+                \<inter> \<lbrakk>\<lbrakk> \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> \<inter> \<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>\<close>
+    by (simp add: Int_assoc)
+  also have \<open>... = \<lbrakk>\<lbrakk> \<Gamma> \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m 
+                \<inter> {\<rho>. \<forall>z\<ge>n. hamlet ((Rep_run \<rho>) z K\<^sub>1) \<longrightarrow>
+                    (\<forall>m \<ge> z.  counted_ticks \<rho> K\<^sub>2 z m (Suc d)
+                            \<longrightarrow> hamlet ((Rep_run \<rho>) m K\<^sub>3)) }
+                \<inter> \<lbrakk>\<lbrakk> \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> \<inter> \<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>\<close>
+    by simp
+  also have \<open>... = \<lbrakk>\<lbrakk> \<Gamma> \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m 
+                \<inter> {\<rho>. hamlet ((Rep_run \<rho>) n K\<^sub>1) \<longrightarrow>
+                    (\<forall>m \<ge> n.  counted_ticks \<rho> K\<^sub>2 n m (Suc d)
+                            \<longrightarrow> hamlet ((Rep_run \<rho>) m K\<^sub>3)) }
+                \<inter> {\<rho>. \<forall>z\<ge> Suc n. hamlet ((Rep_run \<rho>) z K\<^sub>1) \<longrightarrow>
+                    (\<forall>m \<ge> z.  counted_ticks \<rho> K\<^sub>2 z m (Suc d)
+                            \<longrightarrow> hamlet ((Rep_run \<rho>) m K\<^sub>3)) }
+                \<inter> \<lbrakk>\<lbrakk> \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> \<inter> \<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>\<close>
+    using forall_nat_set_suc[of \<open>n\<close> \<open>\<lambda>\<rho> z. hamlet ((Rep_run \<rho>) z K\<^sub>1) \<longrightarrow>
+                 (\<forall>m \<ge> z.  counted_ticks \<rho> K\<^sub>2 z m (Suc d)
+                            \<longrightarrow> hamlet ((Rep_run \<rho>) m K\<^sub>3))\<close>] by blast
+  also have \<open>... = \<lbrakk>\<lbrakk> \<Gamma> \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m 
+                \<inter> ({\<rho>. \<not>hamlet ((Rep_run \<rho>) n K\<^sub>1)} \<union> {\<rho>. hamlet ((Rep_run \<rho>) n K\<^sub>1) \<and>
+                    (\<forall>m \<ge> n.  counted_ticks \<rho> K\<^sub>2 n m (Suc d)
+                            \<longrightarrow> hamlet ((Rep_run \<rho>) m K\<^sub>3)) })
+                \<inter> {\<rho>. \<forall>z\<ge> Suc n. hamlet ((Rep_run \<rho>) z K\<^sub>1) \<longrightarrow>
+                    (\<forall>m \<ge> z.  counted_ticks \<rho> K\<^sub>2 z m (Suc d)
+                            \<longrightarrow> hamlet ((Rep_run \<rho>) m K\<^sub>3)) }
+                \<inter> \<lbrakk>\<lbrakk> \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> \<inter> \<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>\<close>
+    by blast
+  also have \<open>... = \<lbrakk>\<lbrakk> \<Gamma> \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m 
+                \<inter> ({\<rho>. \<not>hamlet ((Rep_run \<rho>) n K\<^sub>1)} \<union> {\<rho>. hamlet ((Rep_run \<rho>) n K\<^sub>1) \<and>
+                    (\<forall>m \<ge> Suc n.  counted_ticks \<rho> K\<^sub>2 n m (Suc d)
+                            \<longrightarrow> hamlet ((Rep_run \<rho>) m K\<^sub>3)) })
+                \<inter> {\<rho>. \<forall>z\<ge> Suc n. hamlet ((Rep_run \<rho>) z K\<^sub>1) \<longrightarrow>
+                    (\<forall>m \<ge> z.  counted_ticks \<rho> K\<^sub>2 z m (Suc d)
+                            \<longrightarrow> hamlet ((Rep_run \<rho>) m K\<^sub>3)) }
+                \<inter> \<lbrakk>\<lbrakk> \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> \<inter> \<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>\<close>
+    using counted_suc by force
+  also have \<open>... = \<lbrakk>\<lbrakk> \<Gamma> \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m 
+                \<inter> (\<lbrakk> K\<^sub>1 \<not>\<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m
+                    \<union> (\<lbrakk> K\<^sub>1 \<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk> from n delay count (Suc d) on K\<^sub>2 implies K\<^sub>3 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>)
+                  )
+                \<inter> {\<rho>. \<forall>z\<ge> Suc n. hamlet ((Rep_run \<rho>) z K\<^sub>1) \<longrightarrow>
+                    (\<forall>m \<ge> z.  counted_ticks \<rho> K\<^sub>2 z m (Suc d)
+                            \<longrightarrow> hamlet ((Rep_run \<rho>) m K\<^sub>3)) }
+                \<inter> \<lbrakk>\<lbrakk> \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> \<inter> \<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>\<close>
+    by (simp add: Collect_conj_eq)
+  also have \<open>... = \<lbrakk>\<lbrakk> \<Gamma> \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m 
+                \<inter> (\<lbrakk> K\<^sub>1 \<not>\<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m 
+                    \<union> (\<lbrakk> K\<^sub>1 \<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk> from n delay count (Suc d) on K\<^sub>2 implies K\<^sub>3 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>)
+                  )
+                \<inter> \<lbrakk> K\<^sub>1 delayed by (Suc d) on K\<^sub>2 implies K\<^sub>3 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>
+                \<inter> \<lbrakk>\<lbrakk> \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> \<inter> \<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>\<close>
+    by simp
+  also have \<open>... = \<lbrakk>\<lbrakk> \<Gamma> \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m 
+                \<inter> (\<lbrakk> K\<^sub>1 \<not>\<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m
+                    \<union> (\<lbrakk> K\<^sub>1 \<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk> from n delay count (Suc d) on K\<^sub>2 implies K\<^sub>3 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>)
+                  )
+                \<inter> \<lbrakk>\<lbrakk> \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> \<inter> \<lbrakk>\<lbrakk> (K\<^sub>1 delayed by (Suc d) on K\<^sub>2 implies K\<^sub>3) # \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>\<close>
+    using TESL_interpretation_stepwise.simps(2) by blast
+  also have \<open>... = (\<lbrakk>\<lbrakk> \<Gamma> \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk> K\<^sub>1 \<not>\<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m
+                  \<inter> \<lbrakk>\<lbrakk> \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> \<inter> \<lbrakk>\<lbrakk> (K\<^sub>1 delayed by (Suc d) on K\<^sub>2 implies K\<^sub>3) # \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>)
+                 \<union> (\<lbrakk>\<lbrakk> \<Gamma> \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m
+                      \<inter> (\<lbrakk> K\<^sub>1 \<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk> from n delay count (Suc d) on K\<^sub>2 implies K\<^sub>3 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>)
+                  \<inter> \<lbrakk>\<lbrakk> \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> \<inter> \<lbrakk>\<lbrakk> (K\<^sub>1 delayed by (Suc d) on K\<^sub>2 implies K\<^sub>3) # \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>
+                   )\<close> by blast
+  also have \<open>... = (\<lbrakk>\<lbrakk> (K\<^sub>1 \<not>\<Up> n) # \<Gamma> \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m 
+                  \<inter> \<lbrakk>\<lbrakk> \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> \<inter> \<lbrakk>\<lbrakk> (K\<^sub>1 delayed by (Suc d) on K\<^sub>2 implies K\<^sub>3) # \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>)
+                 \<union> (\<lbrakk>\<lbrakk> (K\<^sub>1 \<Up> n) # \<Gamma> \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m  \<inter> \<lbrakk> from n delay count (Suc d) on K\<^sub>2 implies K\<^sub>3 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>
+                  \<inter> \<lbrakk>\<lbrakk> \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> \<inter> \<lbrakk>\<lbrakk> (K\<^sub>1 delayed by (Suc d) on K\<^sub>2 implies K\<^sub>3) # \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>
+            )\<close>
+    by (simp add: inf_assoc inf_commute)
+  also have \<open>... = (\<lbrakk>\<lbrakk> (K\<^sub>1 \<not>\<Up> n) # \<Gamma> \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m 
+                  \<inter> \<lbrakk>\<lbrakk> \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> \<inter> \<lbrakk>\<lbrakk> (K\<^sub>1 delayed by (Suc d) on K\<^sub>2 implies K\<^sub>3) # \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>)
+                 \<union> (\<lbrakk>\<lbrakk> (K\<^sub>1 \<Up> n) # \<Gamma> \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk>\<lbrakk> \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup>
+                  \<inter> \<lbrakk>\<lbrakk> (from n delay count (Suc d) on K\<^sub>2 implies K\<^sub>3)
+                     # (K\<^sub>1 delayed by (Suc d) on K\<^sub>2 implies K\<^sub>3) # \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>
+                    )\<close>
+    using TESL_interpretation_stepwise.simps(2) by blast
+  finally show ?thesis by simp
+qed
+
+lemma counted_exp:
+  \<open>(\<forall>z \<ge> n. counted_ticks \<rho> K m z (Suc 0) \<longrightarrow> hamlet ((Rep_run \<rho>) z K'))
+    = ((counted_ticks \<rho> K m n (Suc 0) \<longrightarrow> hamlet ((Rep_run \<rho>) n K'))
+    \<and> (\<forall>z \<ge> Suc n. counted_ticks \<rho> K m z (Suc 0) \<longrightarrow> hamlet ((Rep_run \<rho>) z K')))\<close>
+using forall_nat_expansion[of \<open>n\<close> \<open>\<lambda>z. counted_ticks \<rho> K m z (Suc 0) \<longrightarrow> hamlet (Rep_run \<rho> z K')\<close>] .
+
+\<comment> \<open>
+  The issue here is that it is assumed that a delay count is removed from the configuration
+  as soon as it elapses, but nothing prevents elapsed delay counts to be in a context.
+\<close>
+lemma HeronConf_interp_stepwise_delay_count_cases_one:
+  \<open>\<lbrakk> \<Gamma>, n \<turnstile> ((from m delay count (Suc 0) on K\<^sub>1 implies K\<^sub>2) # \<Psi>) \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
+    = \<lbrakk> ((K\<^sub>1 \<not>\<Up> n) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> ((from m delay count (Suc 0) on K\<^sub>1 implies K\<^sub>2) # \<Phi>) \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
+    \<union> \<lbrakk> ((K\<^sub>1 \<Up> n) # (K\<^sub>2 \<Up> n) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
+  \<close>
+proof -
+  have \<open>\<lbrakk> \<Gamma>, n \<turnstile> ((from m delay count (Suc 0) on K\<^sub>1 implies K\<^sub>2) # \<Psi>) \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
+      = \<lbrakk>\<lbrakk> \<Gamma> \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk>\<lbrakk> (from m delay count (Suc 0) on K\<^sub>1 implies K\<^sub>2) # \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup>
+      \<inter> \<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>\<close>
+    by simp
+  also have \<open>... = \<lbrakk>\<lbrakk> \<Gamma> \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m 
+                \<inter> \<lbrakk> (from m delay count (Suc 0) on K\<^sub>1 implies K\<^sub>2) \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup>
+                \<inter> \<lbrakk>\<lbrakk> \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> \<inter> \<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>\<close>
+    by (simp add: inf.assoc)
+  also have \<open>... = \<lbrakk>\<lbrakk> \<Gamma> \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m 
+                \<inter> {\<rho>. \<forall>z \<ge> n.  (z \<ge> m \<and> counted_ticks \<rho> K\<^sub>1 m z (Suc 0))
+                            \<longrightarrow> hamlet ((Rep_run \<rho>) z K\<^sub>2) }
+                \<inter> \<lbrakk>\<lbrakk> \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> \<inter> \<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>\<close>
+    by simp
+  also have \<open>... = \<lbrakk>\<lbrakk> \<Gamma> \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m 
+                \<inter> {\<rho>. \<forall>z \<ge> n.  (counted_ticks \<rho> K\<^sub>1 m z (Suc 0))
+                            \<longrightarrow> hamlet ((Rep_run \<rho>) z K\<^sub>2) }
+                \<inter> \<lbrakk>\<lbrakk> \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> \<inter> \<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>\<close>
+    by (simp add: counted_ticks_def)
+  also have \<open>... = \<lbrakk>\<lbrakk> \<Gamma> \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m 
+                \<inter> {\<rho>. (counted_ticks \<rho> K\<^sub>1 m n (Suc 0)\<longrightarrow> hamlet ((Rep_run \<rho>) n K\<^sub>2))
+                      \<and> (\<forall>z \<ge> Suc n. (counted_ticks \<rho> K\<^sub>1 m z (Suc 0))
+                            \<longrightarrow> hamlet ((Rep_run \<rho>) z K\<^sub>2)) }
+                \<inter> \<lbrakk>\<lbrakk> \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> \<inter> \<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>\<close>
+    using counted_exp by blast
+  also have \<open>... = \<lbrakk>\<lbrakk> \<Gamma> \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m 
+                \<inter> {\<rho>. (\<not>counted_ticks \<rho> K\<^sub>1 m n (Suc 0) \<or> hamlet ((Rep_run \<rho>) n K\<^sub>2))
+                      \<and> (\<forall>z \<ge> Suc n. (counted_ticks \<rho> K\<^sub>1 m z (Suc 0))
+                            \<longrightarrow> hamlet ((Rep_run \<rho>) z K\<^sub>2)) }
+                \<inter> \<lbrakk>\<lbrakk> \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> \<inter> \<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>\<close>
+    by simp
+  also have \<open>... = \<lbrakk>\<lbrakk> \<Gamma> \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m 
+                \<inter> {\<rho>. (\<not>counted_ticks \<rho> K\<^sub>1 m n (Suc 0) \<or> hamlet ((Rep_run \<rho>) n K\<^sub>2))
+                      \<and> (counted_ticks \<rho> K\<^sub>1 m n (Suc 0) \<or> (\<forall>z \<ge> Suc n. (counted_ticks \<rho> K\<^sub>1 m z (Suc 0))
+                            \<longrightarrow> hamlet ((Rep_run \<rho>) z K\<^sub>2))) }
+                \<inter> \<lbrakk>\<lbrakk> \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> \<inter> \<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>\<close>
+    using counted_one_now_later by fastforce
+  also have \<open>... = \<lbrakk>\<lbrakk> \<Gamma> \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m 
+                \<inter> {\<rho>. (\<not>counted_ticks \<rho> K\<^sub>1 m n (Suc 0) \<or> hamlet ((Rep_run \<rho>) n K\<^sub>2))}
+                \<inter> {\<rho>. (counted_ticks \<rho> K\<^sub>1 m n (Suc 0) \<or> (\<forall>z \<ge> Suc n. (counted_ticks \<rho> K\<^sub>1 m z (Suc 0))
+                            \<longrightarrow> hamlet ((Rep_run \<rho>) z K\<^sub>2))) }
+                \<inter> \<lbrakk>\<lbrakk> \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> \<inter> \<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>\<close>
+    by blast
+  also have \<open>... = \<lbrakk>\<lbrakk> \<Gamma> \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m 
+                \<inter> {\<rho>. (\<not>counted_ticks \<rho> K\<^sub>1 m n (Suc 0) \<or> hamlet ((Rep_run \<rho>) n K\<^sub>2))}
+                \<inter> {\<rho>. (counted_ticks \<rho> K\<^sub>1 m n (Suc 0) \<or> (\<forall>z \<ge> Suc n. (counted_ticks \<rho> K\<^sub>1 m z (Suc 0))
+                            \<longrightarrow> hamlet ((Rep_run \<rho>) z K\<^sub>2))) }
+                \<inter> \<lbrakk>\<lbrakk> \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> \<inter> \<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>\<close>
 
 end

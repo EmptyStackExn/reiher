@@ -26,8 +26,8 @@ text\<open>
   (strictly or not) a given instant index.
 \<close>
 datatype cnt_expr =
-  TickCountLess \<open>clock\<close> \<open>instant_index\<close> ("#\<^sup><")
-| TickCountLeq \<open>clock\<close> \<open>instant_index\<close>  ("#\<^sup>\<le>")
+  TickCountLess \<open>clock\<close> \<open>instant_index\<close> (\<open>#\<^sup><\<close>)
+| TickCountLeq \<open>clock\<close> \<open>instant_index\<close>  (\<open>#\<^sup>\<le>\<close>)
 
 subsection\<open> Symbolic Primitives for Runs \<close>
 
@@ -35,37 +35,37 @@ text\<open>
   Tag values are used to refer to the time on a clock at a given instant index.
 \<close>
 datatype tag_val =
-  TSchematic \<open>clock * instant_index\<close> ("\<tau>\<^sub>v\<^sub>a\<^sub>r")
+  TSchematic \<open>clock * instant_index\<close> (\<open>\<tau>\<^sub>v\<^sub>a\<^sub>r\<close>)
 
 datatype '\<tau> constr =
 \<comment> \<open>@{term \<open>c \<Down> n @ \<tau>\<close>} constrains clock @{term \<open>c\<close>} to have time @{term \<open>\<tau>\<close>}
     at instant @{term \<open>n\<close>} of the run.\<close>
-  Timestamp     \<open>clock\<close>   \<open>instant_index\<close> \<open>'\<tau> tag_const\<close>         ("_ \<Down> _ @ _")
+  Timestamp     \<open>clock\<close>   \<open>instant_index\<close> \<open>'\<tau> tag_const\<close>         (\<open>_ \<Down> _ @ _\<close>)
 \<comment> \<open>@{term \<open>m @ n \<oplus> \<delta>t \<Rightarrow> s\<close>} constrains clock @{term \<open>s\<close>} to tick at the
     first instant at which the time on @{term \<open>m\<close>} has increased by @{term \<open>\<delta>t\<close>}
     from the value it had at instant @{term \<open>n\<close>} of the run.\<close>
-| TimeDelay     \<open>clock\<close>   \<open>instant_index\<close> \<open>'\<tau> tag_const\<close> \<open>clock\<close> ("_ @ _ \<oplus> _ \<Rightarrow> _")
+| TimeDelay     \<open>clock\<close>   \<open>instant_index\<close> \<open>'\<tau> tag_const\<close> \<open>clock\<close> (\<open>_ @ _ \<oplus> _ \<Rightarrow> _\<close>)
 \<comment> \<open>@{term \<open>c \<Up> n\<close>} constrains clock @{term \<open>c\<close>} to tick
     at instant @{term \<open>n\<close>} of the run.\<close>
-| Ticks         \<open>clock\<close>   \<open>instant_index\<close>                        ("_ \<Up> _")
+| Ticks         \<open>clock\<close>   \<open>instant_index\<close>                        (\<open>_ \<Up> _\<close>)
 \<comment> \<open>@{term \<open>c \<not>\<Up> n\<close>} constrains clock @{term \<open>c\<close>} not to tick
     at instant @{term \<open>n\<close>} of the run.\<close>
-| NotTicks      \<open>clock\<close>   \<open>instant_index\<close>                        ("_ \<not>\<Up> _")
+| NotTicks      \<open>clock\<close>   \<open>instant_index\<close>                        (\<open>_ \<not>\<Up> _\<close>)
 \<comment> \<open>@{term \<open>c \<not>\<Up> < n\<close>} constrains clock @{term \<open>c\<close>} not to tick
     before instant @{term \<open>n\<close>} of the run.\<close>
-| NotTicksUntil \<open>clock\<close>   \<open>instant_index\<close>                        ("_ \<not>\<Up> < _")
+| NotTicksUntil \<open>clock\<close>   \<open>instant_index\<close>                        (\<open>_ \<not>\<Up> < _\<close>)
 \<comment> \<open>@{term \<open>c \<not>\<Up> \<ge> n\<close>} constrains clock @{term \<open>c\<close>} not to tick
     at and after instant @{term \<open>n\<close>} of the run.\<close>
-| NotTicksFrom  \<open>clock\<close>   \<open>instant_index\<close>                        ("_ \<not>\<Up> \<ge> _")
+| NotTicksFrom  \<open>clock\<close>   \<open>instant_index\<close>                        (\<open>_ \<not>\<Up> \<ge> _\<close>)
 \<comment> \<open>@{term \<open>\<lfloor>\<tau>\<^sub>1, \<tau>\<^sub>2\<rfloor> \<in> R\<close>} constrains tag variables @{term \<open>\<tau>\<^sub>1\<close>} and  @{term \<open>\<tau>\<^sub>2\<close>} 
     to be in relation @{term \<open>R\<close>}.\<close>
-| TagArith      \<open>tag_val\<close> \<open>tag_val\<close> \<open>('\<tau> tag_const \<times> '\<tau> tag_const) \<Rightarrow> bool\<close> ("\<lfloor>_, _\<rfloor> \<in> _")
+| TagArith      \<open>tag_val\<close> \<open>tag_val\<close> \<open>('\<tau> tag_const \<times> '\<tau> tag_const) \<Rightarrow> bool\<close> (\<open>\<lfloor>_, _\<rfloor> \<in> _\<close>)
 \<comment> \<open>@{term \<open>\<lceil>k\<^sub>1, k\<^sub>2\<rceil> \<in> R\<close>} constrains counter expressions @{term \<open>k\<^sub>1\<close>} and  @{term \<open>k\<^sub>2\<close>} 
     to be in relation @{term \<open>R\<close>}.\<close>
-| TickCntArith  \<open>cnt_expr\<close> \<open>cnt_expr\<close> \<open>(nat \<times> nat) \<Rightarrow> bool\<close>      ("\<lceil>_, _\<rceil> \<in> _")
+| TickCntArith  \<open>cnt_expr\<close> \<open>cnt_expr\<close> \<open>(nat \<times> nat) \<Rightarrow> bool\<close>      (\<open>\<lceil>_, _\<rceil> \<in> _\<close>)
 \<comment> \<open>@{term \<open>k\<^sub>1 \<preceq> k\<^sub>2\<close>} constrains counter expression @{term \<open>k\<^sub>1\<close>} to be less or equal 
     to counter expression @{term \<open>k\<^sub>2\<close>}.\<close>
-| TickCntLeq    \<open>cnt_expr\<close> \<open>cnt_expr\<close>                            ("_ \<preceq> _")
+| TickCntLeq    \<open>cnt_expr\<close> \<open>cnt_expr\<close>                            (\<open>_ \<preceq> _\<close>)
 
 type_synonym '\<tau> system = \<open>'\<tau> constr list\<close>
 
@@ -90,14 +90,14 @@ text\<open>
   the semantics of TESL formulae.
 \<close>
 fun counter_expr_eval :: \<open>('\<tau>::linordered_field) run \<Rightarrow> cnt_expr \<Rightarrow> nat\<close>
-  ("\<lbrakk> _ \<turnstile> _ \<rbrakk>\<^sub>c\<^sub>n\<^sub>t\<^sub>e\<^sub>x\<^sub>p\<^sub>r")
+  (\<open>\<lbrakk> _ \<turnstile> _ \<rbrakk>\<^sub>c\<^sub>n\<^sub>t\<^sub>e\<^sub>x\<^sub>p\<^sub>r\<close>)
 where
   \<open>\<lbrakk> \<rho> \<turnstile> #\<^sup>< clk indx \<rbrakk>\<^sub>c\<^sub>n\<^sub>t\<^sub>e\<^sub>x\<^sub>p\<^sub>r = run_tick_count_strictly \<rho> clk indx\<close>
 | \<open>\<lbrakk> \<rho> \<turnstile> #\<^sup>\<le> clk indx \<rbrakk>\<^sub>c\<^sub>n\<^sub>t\<^sub>e\<^sub>x\<^sub>p\<^sub>r = run_tick_count \<rho> clk indx\<close>
 
 
 fun symbolic_run_interpretation_primitive
-  ::\<open>('\<tau>::linordered_field) constr \<Rightarrow> '\<tau> run set\<close> ("\<lbrakk> _ \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m")
+  ::\<open>('\<tau>::linordered_field) constr \<Rightarrow> '\<tau> run set\<close> (\<open>\<lbrakk> _ \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m\<close>)
 where
   \<open>\<lbrakk> K \<Up> n  \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m     = {\<rho>. hamlet ((Rep_run \<rho>) n K) }\<close>
 | \<open>\<lbrakk> K @ n\<^sub>0 \<oplus> \<delta>t \<Rightarrow> K' \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m =
@@ -118,7 +118,7 @@ text\<open>
 \<close>
 fun symbolic_run_interpretation
   ::\<open>('\<tau>::linordered_field) constr list \<Rightarrow> ('\<tau>::linordered_field) run set\<close>
-  ("\<lbrakk>\<lbrakk> _ \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m")
+  (\<open>\<lbrakk>\<lbrakk> _ \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m\<close>)
 where
   \<open>\<lbrakk>\<lbrakk> [] \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m = {\<rho>. True }\<close>
 | \<open>\<lbrakk>\<lbrakk> \<gamma> # \<Gamma> \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m = \<lbrakk> \<gamma> \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk>\<lbrakk> \<Gamma> \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m\<close>
@@ -137,7 +137,7 @@ text\<open>
   In order to build a run, we can start from an initial run in which no clock 
   ticks and the time is always 0 on any clock.
 \<close>
-abbreviation initial_run :: \<open>('\<tau>::linordered_field) run\<close> ("\<rho>\<^sub>\<odot>") where
+abbreviation initial_run :: \<open>('\<tau>::linordered_field) run\<close> (\<open>\<rho>\<^sub>\<odot>\<close>) where
   \<open>\<rho>\<^sub>\<odot> \<equiv> Abs_run ((\<lambda>_ _. (False, \<tau>\<^sub>c\<^sub>s\<^sub>t 0)) ::nat \<Rightarrow> clock \<Rightarrow> (bool \<times> '\<tau> tag_const))\<close>
 
 text\<open>
@@ -161,7 +161,7 @@ unfolding consistent_context_def by auto
 
 \<comment> \<open>This is very restrictive\<close>
 inductive context_independency
-  ::\<open>('\<tau>::linordered_field) constr \<Rightarrow> '\<tau> constr list \<Rightarrow> bool\<close> ("_ \<bowtie> _")
+  ::\<open>('\<tau>::linordered_field) constr \<Rightarrow> '\<tau> constr list \<Rightarrow> bool\<close> (\<open>_ \<bowtie> _\<close>)
 where
   NotTicks_independency:
   \<open>(K \<Up> n) \<notin> set \<Gamma> \<Longrightarrow> (K \<not>\<Up> n) \<bowtie> \<Gamma>\<close>

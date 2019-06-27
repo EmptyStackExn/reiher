@@ -331,7 +331,7 @@ proof -
   qed
   hence \<open>\<forall>n. hamlet (Rep_run r n c\<^sub>1) \<longrightarrow> (\<forall>m \<ge> n. \<not> hamlet (Rep_run r m c\<^sub>2))\<close>
     using ticks_imp_ticks_subk[OF *] by blast
-  thus ?thesis using TESL_interpretation_atomic.simps(8) by blast
+  thus ?thesis using TESL_interpretation_atomic.simps(9) by blast
 qed
 
 lemmas atomic_sub_lemmas = sporadic_sub tagrel_sub implies_sub implies_not_sub
@@ -344,26 +344,59 @@ text \<open>
 \<close>
 lemma atomic_sub: 
   assumes \<open>sub \<lless> r\<close>
+      and \<open>spec_atom \<phi>\<close>
       and \<open>sub \<in> \<lbrakk> \<phi> \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<close>
     shows \<open>r \<in> \<lbrakk> \<phi> \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<close>
-using assms(2) atomic_sub_lemmas[OF assms(1)] by (cases \<phi>, simp_all)
+proof (cases \<phi>)
+  case (DelayCount x101 x102 x103 x104)
+    with assms(2) spec_atom.simps(1) have False by simp
+    thus ?thesis by simp
+next
+  case (SporadicOn x11 x12 x13)
+    thus ?thesis using assms(1,3) sporadic_sub by blast
+next
+  case (TagRelation x21 x22 x23)
+    thus ?thesis using assms(1,3) tagrel_sub by blast
+next
+  case (Implies x31 x32)
+    thus ?thesis using assms(1,3) implies_sub by blast
+next
+  case (ImpliesNot x41 x42)
+    thus ?thesis using assms(1,3) implies_not_sub by blast
+next
+  case (TimeDelayedBy x51 x52 x53 x54)
+    thus ?thesis using assms(1,3) time_delayed_sub by blast
+next
+  case (DelayedBy x61 x62 x63 x64)
+    thus ?thesis using assms(1,3) sorry
+next
+  case (WeaklyPrecedes x71 x72)
+    thus ?thesis using assms(1,3) weakly_precedes_sub by blast
+next
+  case (StrictlyPrecedes x81 x82)
+    thus ?thesis using assms(1,3) strictly_precedes_sub by blast
+next
+  case (Kills x91 x92)
+    thus ?thesis using assms(1,3) kill_sub by blast
+qed
 
 text \<open>
   Finally, any TESL specification is invariant by stuttering.
 \<close>
 theorem TESL_stuttering_invariant:
   assumes \<open>sub \<lless> r\<close>
-    shows \<open>sub \<in> \<lbrakk>\<lbrakk> S \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L \<Longrightarrow> r \<in> \<lbrakk>\<lbrakk> S \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<close>
+    shows \<open>\<lbrakk> spec_formula S; sub \<in> \<lbrakk>\<lbrakk> S \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L \<rbrakk> \<Longrightarrow> r \<in> \<lbrakk>\<lbrakk> S \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<close>
 proof (induction S)
   case Nil
     thus ?case by simp
 next
   case (Cons a s)
+    hence 1:\<open>spec_atom a\<close> by simp
     from Cons.prems have sa:\<open>sub \<in> \<lbrakk> a \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<close> and sb:\<open>sub \<in> \<lbrakk>\<lbrakk> s \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<close>
       using TESL_interpretation_image by simp+
-    from Cons.IH[OF sb] have \<open>r \<in> \<lbrakk>\<lbrakk> s \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<close> .
-    moreover from atomic_sub[OF assms(1) sa] have \<open>r \<in> \<lbrakk> a \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<close> .
-    ultimately show ?case using  TESL_interpretation_image by simp
+    from Cons.IH sb have \<open>spec_formula s \<Longrightarrow> r \<in> \<lbrakk>\<lbrakk> s \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<close> by simp
+    moreover from atomic_sub[OF assms 1 sa] have \<open>r \<in> \<lbrakk> a \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<close> .
+    ultimately show ?case using TESL_interpretation_image Cons.prems(1) by auto
 qed
 
 end
