@@ -21,7 +21,7 @@ text\<open>
 datatype     clock         = Clk \<open>string\<close>
 type_synonym instant_index = \<open>nat\<close>
 
-datatype     '\<tau> tag_const =  TConst   (the_tag_const : '\<tau>)         ("\<tau>\<^sub>c\<^sub>s\<^sub>t")
+datatype     '\<tau> tag_const =  TConst   (the_tag_const : '\<tau>)         (\<open>\<tau>\<^sub>c\<^sub>s\<^sub>t\<close>)
 
 
 subsection\<open>Operators for the TESL language\<close>
@@ -29,16 +29,16 @@ text\<open>
   The type of atomic TESL constraints, which can be combined to form specifications.
 \<close>
 datatype '\<tau> TESL_atomic =
-    SporadicOn       \<open>clock\<close> \<open>'\<tau> tag_const\<close>  \<open>clock\<close>  ("_ sporadic _ on _" 55)
+    SporadicOn       \<open>clock\<close> \<open>'\<tau> tag_const\<close>  \<open>clock\<close>  (\<open>_ sporadic _ on _\<close> 55)
   | TagRelation      \<open>clock\<close> \<open>clock\<close> \<open>('\<tau> tag_const \<times> '\<tau> tag_const) \<Rightarrow> bool\<close> 
-                                                      ("time-relation \<lfloor>_, _\<rfloor> \<in> _" 55)
-  | Implies          \<open>clock\<close> \<open>clock\<close>                  (infixr "implies" 55)
-  | ImpliesNot       \<open>clock\<close> \<open>clock\<close>                  (infixr "implies not" 55)
+                                                      (\<open>time-relation \<lfloor>_, _\<rfloor> \<in> _\<close> 55)
+  | Implies          \<open>clock\<close> \<open>clock\<close>                  (infixr \<open>implies\<close> 55)
+  | ImpliesNot       \<open>clock\<close> \<open>clock\<close>                  (infixr \<open>implies not\<close> 55)
   | TimeDelayedBy    \<open>clock\<close> \<open>'\<tau> tag_const\<close> \<open>clock\<close> \<open>clock\<close> 
-                                                      ("_ time-delayed by _ on _ implies _" 55)
-  | WeaklyPrecedes   \<open>clock\<close> \<open>clock\<close>                  (infixr "weakly precedes" 55)
-  | StrictlyPrecedes \<open>clock\<close> \<open>clock\<close>                  (infixr "strictly precedes" 55)
-  | Kills            \<open>clock\<close> \<open>clock\<close>                  (infixr "kills" 55)
+                                                      (\<open>_ time-delayed by _ on _ implies _\<close> 55)
+  | WeaklyPrecedes   \<open>clock\<close> \<open>clock\<close>                  (infixr \<open>weakly precedes\<close> 55)
+  | StrictlyPrecedes \<open>clock\<close> \<open>clock\<close>                  (infixr \<open>strictly precedes\<close> 55)
+  | Kills            \<open>clock\<close> \<open>clock\<close>                  (infixr \<open>kills\<close> 55)
 
 text\<open>
   A TESL formula is just a list of atomic constraints, with implicit conjunction

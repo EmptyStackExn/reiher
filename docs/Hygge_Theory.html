@@ -1,9 +1,9 @@
-<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-<title>Theory Hygge_Theory (Isabelle2018: August 2018)</title>
+<title>Theory Hygge_Theory (Isabelle2019: June 2019)</title>
 <link media="all" rel="stylesheet" type="text/css" href="isabelle.css"/>
 </head>
 
@@ -804,14 +804,14 @@
   Since this computation terminates when the list of constraints for the present
   instant becomes empty, we introduce a measure for this formula.
 &#8250;</span></span></span><span>
-</span><span class="keyword1"><span class="command">primrec</span></span><span> </span><span>measure_interpretation</span><span> </span><span class="delimiter">::</span><span> </span><span class="cartouche"><span class="delete"><span class="delete">&#8249;&#39;&#964;::linordered_field TESL_formula &#8658; nat&#8250;</span></span></span><span> </span><span class="delimiter">(</span><span class="string"><span class="delete"><span class="delete">&quot;&#956;&quot;</span></span></span><span class="delimiter">)</span><span>
+</span><span class="keyword1"><span class="command">primrec</span></span><span> </span><span>measure_interpretation</span><span> </span><span class="delimiter">::</span><span> </span><span class="cartouche"><span class="delete"><span class="delete">&#8249;&#39;&#964;::linordered_field TESL_formula &#8658; nat&#8250;</span></span></span><span> </span><span class="delimiter">(</span><span class="cartouche"><span class="delete"><span class="delete">&#8249;&#956;&#8250;</span></span></span><span class="delimiter">)</span><span>
 </span><span class="keyword2"><span class="keyword">where</span></span><span>
 </span><span>  </span><span class="cartouche"><span class="delete"><span class="delete">&#8249;&#956; [] = (0::nat)&#8250;</span></span></span><span>
 </span><span class="delimiter">|</span><span> </span><span class="cartouche"><span class="delete"><span class="delete">&#8249;&#956; (&#966; # &#934;) = (case &#966; of
                       _ sporadic _ on _ &#8658; 1 + &#956; &#934;
                     | _                 &#8658; 2 + &#956; &#934;)&#8250;</span></span></span><span>
 </span><span>
-</span><span class="keyword1"><span class="command">fun</span></span><span> </span><span>measure_interpretation_config</span><span> </span><span class="delimiter">::</span><span> </span><span class="cartouche"><span class="delete"><span class="delete">&#8249;&#39;&#964;::linordered_field config &#8658; nat&#8250;</span></span></span><span> </span><span class="delimiter">(</span><span class="string"><span class="delete"><span class="delete">&quot;&#956;<span class="hidden">&#8681;</span><sub>c</sub><span class="hidden">&#8681;</span><sub>o</sub><span class="hidden">&#8681;</span><sub>n</sub><span class="hidden">&#8681;</span><sub>f</sub><span class="hidden">&#8681;</span><sub>i</sub><span class="hidden">&#8681;</span><sub>g</sub>&quot;</span></span></span><span class="delimiter">)</span><span>
+</span><span class="keyword1"><span class="command">fun</span></span><span> </span><span>measure_interpretation_config</span><span> </span><span class="delimiter">::</span><span> </span><span class="cartouche"><span class="delete"><span class="delete">&#8249;&#39;&#964;::linordered_field config &#8658; nat&#8250;</span></span></span><span> </span><span class="delimiter">(</span><span class="cartouche"><span class="delete"><span class="delete">&#8249;&#956;<span class="hidden">&#8681;</span><sub>c</sub><span class="hidden">&#8681;</span><sub>o</sub><span class="hidden">&#8681;</span><sub>n</sub><span class="hidden">&#8681;</span><sub>f</sub><span class="hidden">&#8681;</span><sub>i</sub><span class="hidden">&#8681;</span><sub>g</sub>&#8250;</span></span></span><span class="delimiter">)</span><span>
 </span><span class="keyword2"><span class="keyword">where</span></span><span>
 </span><span>  </span><span class="cartouche"><span class="delete"><span class="delete">&#8249;&#956;<span class="hidden">&#8681;</span><sub>c</sub><span class="hidden">&#8681;</span><sub>o</sub><span class="hidden">&#8681;</span><sub>n</sub><span class="hidden">&#8681;</span><sub>f</sub><span class="hidden">&#8681;</span><sub>i</sub><span class="hidden">&#8681;</span><sub>g</sub> (&#915;, n &#8866; &#936; &#9657; &#934;) = &#956; &#936;&#8250;</span></span></span><span>
 </span><span>

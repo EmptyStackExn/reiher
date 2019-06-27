@@ -44,7 +44,7 @@ text\<open>
   in the interval \<^verbatim>\<open>[0, n]\<close> of run @{term \<open>\<rho>\<close>}.
 \<close>
 fun run_tick_count :: \<open>('\<tau>::linordered_field) run \<Rightarrow> clock \<Rightarrow> nat \<Rightarrow> nat\<close>
-  ("#\<^sub>\<le> _ _ _")
+  (\<open>#\<^sub>\<le> _ _ _\<close>)
 where
   \<open>(#\<^sub>\<le> \<rho> K 0)       = (if hamlet ((Rep_run \<rho>) 0 K)
                        then 1
@@ -58,7 +58,7 @@ text\<open>
   clock @{term \<open>K\<close>} in the interval \<^verbatim>\<open>[0, n[\<close> of run @{term \<open>\<rho>\<close>}.
 \<close>
 fun run_tick_count_strictly :: \<open>('\<tau>::linordered_field) run \<Rightarrow> clock \<Rightarrow> nat \<Rightarrow> nat\<close>
-  ("#\<^sub>< _ _ _")
+  (\<open>#\<^sub>< _ _ _\<close>)
 where
   \<open>(#\<^sub>< \<rho> K 0)       = 0\<close>
 | \<open>(#\<^sub>< \<rho> K (Suc n)) = #\<^sub>\<le> \<rho> K n\<close>

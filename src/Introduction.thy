@@ -53,13 +53,13 @@ consts dummyBOOL     :: \<open>bool set\<close>
 consts dummyTIMES    :: \<open>'a set\<close> 
 consts dummyLEQ      :: \<open>'a \<Rightarrow> 'a \<Rightarrow> bool\<close>
 
-notation dummyInfty    ("(_\<^sup>\<infinity>)" [1000] 999)
-notation dummyTESLSTAR ("TESL\<^sup>*")
-notation dummyFUN      (infixl "\<rightarrow>" 100)
-notation dummyCLOCK    ("\<K>") 
-notation dummyBOOL     ("\<bool>") 
-notation dummyTIMES    ("\<T>") 
-notation dummyLEQ      (infixl "\<le>\<^sub>\<T>" 100)
+notation dummyInfty    (\<open>(_\<^sup>\<infinity>)\<close> [1000] 999)
+notation dummyTESLSTAR (\<open>TESL\<^sup>*\<close>)
+notation dummyFUN      (infixl \<open>\<rightarrow>\<close> 100)
+notation dummyCLOCK    (\<open>\<K>\<close>) 
+notation dummyBOOL     (\<open>\<bool>\<close>) 
+notation dummyTIMES    (\<open>\<T>\<close>) 
+notation dummyLEQ      (infixl \<open>\<le>\<^sub>\<T>\<close> 100)
 (*>*)
 
 text\<open>
@@ -155,13 +155,13 @@ text\<open>
 
 
 (*<*)
-no_notation dummyInfty      ("(_\<^sup>\<infinity>)" )
-no_notation dummyTESLSTAR   ("TESL\<^sup>*")
-no_notation dummyFUN        (infixl "\<rightarrow>" 100)
-no_notation dummyCLOCK      ("\<K>") 
-no_notation dummyBOOL       ("\<bool>") 
-no_notation dummyTIMES      ("\<T>") 
-no_notation dummyLEQ        (infixl "\<le>\<^sub>\<T>" 100)
+no_notation dummyInfty      (\<open>(_\<^sup>\<infinity>)\<close> )
+no_notation dummyTESLSTAR   (\<open>TESL\<^sup>*\<close>)
+no_notation dummyFUN        (infixl \<open>\<rightarrow>\<close> 100)
+no_notation dummyCLOCK      (\<open>\<K>\<close>) 
+no_notation dummyBOOL       (\<open>\<bool>\<close>) 
+no_notation dummyTIMES      (\<open>\<T>\<close>) 
+no_notation dummyLEQ        (infixl \<open>\<le>\<^sub>\<T>\<close> 100)
 
 
 end

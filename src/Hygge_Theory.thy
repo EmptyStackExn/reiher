@@ -787,14 +787,14 @@ text \<open>
   Since this computation terminates when the list of constraints for the present
   instant becomes empty, we introduce a measure for this formula.
 \<close>
-primrec measure_interpretation :: \<open>'\<tau>::linordered_field TESL_formula \<Rightarrow> nat\<close> ("\<mu>")
+primrec measure_interpretation :: \<open>'\<tau>::linordered_field TESL_formula \<Rightarrow> nat\<close> (\<open>\<mu>\<close>)
 where
   \<open>\<mu> [] = (0::nat)\<close>
 | \<open>\<mu> (\<phi> # \<Phi>) = (case \<phi> of
                       _ sporadic _ on _ \<Rightarrow> 1 + \<mu> \<Phi>
                     | _                 \<Rightarrow> 2 + \<mu> \<Phi>)\<close>
 
-fun measure_interpretation_config :: \<open>'\<tau>::linordered_field config \<Rightarrow> nat\<close> ("\<mu>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g")
+fun measure_interpretation_config :: \<open>'\<tau>::linordered_field config \<Rightarrow> nat\<close> (\<open>\<mu>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g\<close>)
 where
   \<open>\<mu>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g (\<Gamma>, n \<turnstile> \<Psi> \<triangleright> \<Phi>) = \<mu> \<Psi>\<close>
 
