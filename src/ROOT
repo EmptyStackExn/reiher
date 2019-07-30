@@ -1,4 +1,4 @@
-session "TESL" = "HOL"
+session "TESL_Language" = "HOL"
 +  options [document = pdf,
   				 document_output = "output",
   				 document_variants="document:outline=/proof,/ML"
