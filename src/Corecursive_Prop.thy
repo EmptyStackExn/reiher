@@ -51,7 +51,9 @@ text \<open>
 \<close>
 lemma TESL_interp_unfold_stepwise_sporadicon:
   \<open>\<lbrakk> K\<^sub>1 sporadic \<tau> on K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<Union> {Y. \<exists>n::nat. Y = \<lbrakk> K\<^sub>1 sporadic \<tau> on K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup>}\<close>
-by auto
+apply auto
+apply (smt case_prodI mem_Collect_eq order_refl)
+by force
 
 lemma TESL_interp_unfold_stepwise_tagrelgen:
   \<open>\<lbrakk> time-relation \<lfloor>K\<^sub>1, K\<^sub>2\<rfloor> \<in> R \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L
@@ -61,18 +63,23 @@ by auto
 lemma TESL_interp_unfold_stepwise_implies:
   \<open>\<lbrakk> master implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L
     = \<Inter> {Y. \<exists>n::nat. Y = \<lbrakk> master implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup>}\<close>
-by auto
+apply auto
+apply (metis case_prod_conv)
+by (metis (no_types, lifting) case_prodD case_prodI dual_order.refl mem_Collect_eq)
 
 lemma TESL_interp_unfold_stepwise_implies_not:
   \<open>\<lbrakk> master implies not slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L
     = \<Inter> {Y. \<exists>n::nat. Y = \<lbrakk> master implies not slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup>}\<close>
-by auto
+apply auto
+by (smt case_prodI mem_Collect_eq order_refl)+
 
 lemma TESL_interp_unfold_stepwise_timedelayed:
   \<open>\<lbrakk> master time-delayed by \<delta>\<tau> on measuring implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L
     = \<Inter> {Y. \<exists>n::nat.
           Y = \<lbrakk> master time-delayed by \<delta>\<tau> on measuring implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup>}\<close>
-by auto
+apply auto
+apply (metis case_prod_conv)
+by (metis (no_types, lifting) case_prodD case_prodI dual_order.refl mem_Collect_eq)
 
 lemma TESL_interp_unfold_stepwise_weakly_precedes:
   \<open>\<lbrakk> K\<^sub>1 weakly precedes K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L
@@ -86,7 +93,10 @@ by auto
 
 lemma TESL_interp_unfold_stepwise_kills:
   \<open>\<lbrakk> master kills slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<Inter> {Y. \<exists>n::nat. Y = \<lbrakk> master kills slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup>}\<close>
-by auto
+apply auto
+apply (metis case_prod_conv)
+by (metis (no_types, lifting) case_prodI dual_order.refl mem_Collect_eq)
+
 
 text \<open>
   Positive atomic formulae (the ones that create ticks from nothing) are unfolded
@@ -202,7 +212,7 @@ unfolding TESL_interpretation_atomic_stepwise.simps(1)
           symbolic_run_interpretation_primitive.simps(1,6)
 using exists_nat_set_suc[of \<open>n\<close> \<open>\<lambda>\<rho> n. hamlet (Rep_run \<rho> n K\<^sub>1)
                                      \<and> time (Rep_run \<rho> n K\<^sub>2) = \<tau>\<close>]
-by (simp add: Collect_conj_eq)
+by (metis Collect_conj_eq)
 
 
 lemma TESL_interp_stepwise_tagrel_coind_unfold:
@@ -223,30 +233,16 @@ lemma TESL_interp_stepwise_implies_coind_unfold:
      (   \<lbrakk> master \<not>\<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m                     \<comment> \<open>rule @{term implies_e1}\<close>
        \<union> \<lbrakk> master \<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk> slave \<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m)  \<comment> \<open>rule @{term implies_e2}\<close>
      \<inter> \<lbrakk> master implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>\<close>
-proof -
-  have \<open>{\<rho>. \<forall>m\<ge>n. hamlet ((Rep_run \<rho>) m master) \<longrightarrow> hamlet ((Rep_run \<rho>) m slave)}
-        = {\<rho>. hamlet ((Rep_run \<rho>) n master) \<longrightarrow> hamlet ((Rep_run \<rho>) n slave)}
-        \<inter> {\<rho>. \<forall>m\<ge>Suc n. hamlet ((Rep_run \<rho>) m master)
-                     \<longrightarrow> hamlet ((Rep_run \<rho>) m slave)}\<close>
-    using forall_nat_set_suc[of \<open>n\<close> \<open>\<lambda>x y. hamlet ((Rep_run x) y master)
-                                \<longrightarrow> hamlet ((Rep_run x) y slave)\<close>] by simp
-  thus ?thesis by auto
-qed
+  apply auto
+  by (metis case_prod_conv le_simps(3) order_less_le)+
 
 lemma TESL_interp_stepwise_implies_not_coind_unfold:
-  \<open>\<lbrakk> master implies not slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> =
+  \<open>\<lbrakk> master implies not slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> =                                                                 
      (    \<lbrakk> master \<not>\<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m                       \<comment> \<open>rule @{term implies_not_e1}\<close>
         \<union> \<lbrakk> master \<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk> slave \<not>\<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m)  \<comment> \<open>rule @{term implies_not_e2}\<close>
      \<inter> \<lbrakk> master implies not slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>\<close>
-proof -
-  have \<open>{\<rho>. \<forall>m\<ge>n. hamlet ((Rep_run \<rho>) m master) \<longrightarrow> \<not> hamlet ((Rep_run \<rho>) m slave)}
-       = {\<rho>. hamlet ((Rep_run \<rho>) n master) \<longrightarrow> \<not> hamlet ((Rep_run \<rho>) n slave)}
-          \<inter> {\<rho>. \<forall>m\<ge>Suc n. hamlet ((Rep_run \<rho>) m master)
-                     \<longrightarrow> \<not> hamlet ((Rep_run \<rho>) m slave)}\<close>
-    using forall_nat_set_suc[of \<open>n\<close> \<open>\<lambda>x y. hamlet ((Rep_run x) y master)
-                               \<longrightarrow> \<not>hamlet ((Rep_run x) y slave)\<close>] by simp
-  thus ?thesis by auto
-qed
+  apply auto
+  by (metis case_prod_conv le_simps(3) order_less_le)+
 
 lemma TESL_interp_stepwise_timedelayed_coind_unfold:
   \<open>\<lbrakk> master time-delayed by \<delta>\<tau> on measuring implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> =
@@ -254,18 +250,11 @@ lemma TESL_interp_stepwise_timedelayed_coind_unfold:
         \<union> (\<lbrakk> master \<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk> measuring @ n \<oplus> \<delta>\<tau> \<Rightarrow> slave \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m))
                                              \<comment> \<open>rule @{term timedelayed_e2}\<close>
      \<inter> \<lbrakk> master time-delayed by \<delta>\<tau> on measuring implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>\<close>
-proof -
-  let ?prop = \<open>\<lambda>\<rho> m. hamlet ((Rep_run \<rho>) m master) \<longrightarrow>
-                 (let measured_time = time ((Rep_run \<rho>) m measuring) in
-                  \<forall>p \<ge> m. first_time \<rho> measuring p (measured_time + \<delta>\<tau>)
-                           \<longrightarrow> hamlet ((Rep_run \<rho>) p slave))\<close>
-  have \<open>{\<rho>. \<forall>m \<ge> n. ?prop \<rho> m} = {\<rho>. ?prop \<rho> n} \<inter> {\<rho>. \<forall>m \<ge> Suc n. ?prop \<rho> m}\<close>
-    using forall_nat_set_suc[of \<open>n\<close> ?prop] by blast
-  also have \<open>... = {\<rho>. ?prop \<rho> n}
-              \<inter> \<lbrakk> master time-delayed by \<delta>\<tau> on measuring implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>\<close>
-    by simp
-  finally show ?thesis by auto
-qed
+  apply auto
+  apply fastforce
+  apply (metis Suc_leD case_prod_conv)
+  apply (metis case_prod_conv le_simps(3) order_le_less)
+  by (metis case_prod_conv le_simps(3) order_le_less)
 
 lemma TESL_interp_stepwise_weakly_precedes_coind_unfold:
    \<open>\<lbrakk> K\<^sub>1 weakly precedes K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> =                 \<comment> \<open>rule @{term weakly_precedes_e}\<close>
@@ -305,7 +294,8 @@ proof -
                              \<longrightarrow> (\<forall>m\<ge>p. \<not> hamlet ((Rep_run \<rho>) m K\<^sub>2))\<close>
   let ?ticks = \<open>\<lambda>n \<rho> c. hamlet ((Rep_run \<rho>) n c)\<close>
   let ?dead = \<open>\<lambda>n \<rho> c. \<forall>m \<ge> n. \<not>hamlet ((Rep_run \<rho>) m c)\<close>
-  have \<open>\<lbrakk> K\<^sub>1 kills K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> = {\<rho>. ?kills n \<rho>}\<close> by simp
+  have \<open>\<lbrakk> K\<^sub>1 kills K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> = {\<rho>. ?kills n \<rho>}\<close>
+    by fastforce
   also have \<open>... = ({\<rho>. \<not> ?ticks n \<rho> K\<^sub>1}  \<inter> {\<rho>. ?kills (Suc n) \<rho>})
                  \<union> ({\<rho>. ?ticks n \<rho> K\<^sub>1} \<inter> {\<rho>. ?dead n \<rho> K\<^sub>2})\<close>
   proof
@@ -313,33 +303,35 @@ proof -
       assume \<open>\<rho> \<in> {\<rho>. ?kills n \<rho>}\<close>
       hence \<open>?kills n \<rho>\<close> by simp
       hence \<open>(?ticks n \<rho> K\<^sub>1 \<and> ?dead n \<rho> K\<^sub>2) \<or> (\<not>?ticks n \<rho> K\<^sub>1 \<and> ?kills (Suc n) \<rho>)\<close>
-        using Suc_leD by blast
+        using Suc_leD by (meson le_refl)
       hence \<open>\<rho> \<in> ({\<rho>. ?ticks n \<rho> K\<^sub>1} \<inter> {\<rho>. ?dead n \<rho> K\<^sub>2})
-               \<union> ({\<rho>. \<not> ?ticks n \<rho> K\<^sub>1} \<inter> {\<rho>. ?kills (Suc n) \<rho>})\<close>
-        by blast
+               \<union> ({\<rho>. \<not> ?ticks n \<rho> K\<^sub>1} \<inter> {\<rho>. ?kills (Suc n) \<rho>})\<close> by simp
     } thus \<open>{\<rho>. ?kills n \<rho>}
            \<subseteq> {\<rho>. \<not> ?ticks n \<rho> K\<^sub>1} \<inter> {\<rho>. ?kills (Suc n) \<rho>} 
-            \<union> {\<rho>. ?ticks n \<rho> K\<^sub>1} \<inter> {\<rho>. ?dead n \<rho> K\<^sub>2}\<close> by blast
+            \<union> {\<rho>. ?ticks n \<rho> K\<^sub>1} \<inter> {\<rho>. ?dead n \<rho> K\<^sub>2}\<close> by (smt subsetI sup_commute)
   next
     { fix \<rho>::\<open>'\<tau>::linordered_field run\<close>
       assume \<open>\<rho> \<in> ({\<rho>. \<not> ?ticks n \<rho> K\<^sub>1}  \<inter> {\<rho>. ?kills (Suc n) \<rho>})
                  \<union> ({\<rho>. ?ticks n \<rho> K\<^sub>1} \<inter> {\<rho>. ?dead n \<rho> K\<^sub>2})\<close>
       hence \<open>\<not> ?ticks n \<rho> K\<^sub>1 \<and> ?kills (Suc n) \<rho>
-             \<or> ?ticks n \<rho> K\<^sub>1 \<and> ?dead n \<rho> K\<^sub>2\<close> by blast
+             \<or> ?ticks n \<rho> K\<^sub>1 \<and> ?dead n \<rho> K\<^sub>2\<close> by auto
       moreover have \<open>((\<not> ?ticks n \<rho> K\<^sub>1) \<and> (?kills (Suc n) \<rho>)) \<longrightarrow> ?kills n \<rho>\<close>
-        using dual_order.antisym not_less_eq_eq by blast
-      ultimately have \<open>?kills n \<rho> \<or> ?ticks n \<rho> K\<^sub>1 \<and> ?dead n \<rho> K\<^sub>2\<close> by blast
-      hence \<open>?kills n \<rho>\<close> using le_trans by blast
+        using dual_order.antisym not_less_eq_eq by (metis (mono_tags))
+      ultimately have \<open>?kills n \<rho> \<or> ?ticks n \<rho> K\<^sub>1 \<and> ?dead n \<rho> K\<^sub>2\<close> by presburger
+      hence \<open>?kills n \<rho>\<close> using le_trans by meson
     } thus \<open>({\<rho>. \<not> ?ticks n \<rho> K\<^sub>1}  \<inter> {\<rho>. ?kills (Suc n) \<rho>})
                  \<union> ({\<rho>. ?ticks n \<rho> K\<^sub>1} \<inter> {\<rho>. ?dead n \<rho> K\<^sub>2})
-          \<subseteq> {\<rho>. ?kills n \<rho>}\<close> by blast
+          \<subseteq> {\<rho>. ?kills n \<rho>}\<close> by (smt mem_Collect_eq subsetI)
   qed
   also have \<open>... = {\<rho>. \<not> ?ticks n \<rho> K\<^sub>1} \<inter> {\<rho>. ?kills (Suc n) \<rho>}
                  \<union> {\<rho>. ?ticks n \<rho> K\<^sub>1} \<inter> {\<rho>. ?dead n \<rho> K\<^sub>2} \<inter> {\<rho>. ?kills (Suc n) \<rho>}\<close>
-    using Collect_cong Collect_disj_eq by auto
+    apply auto
+    apply (metis Suc_leD old.prod.case order.trans)
+    by (metis Suc_leD old.prod.case order_trans)
   also have \<open>... = \<lbrakk> K\<^sub>1 \<not>\<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk> K\<^sub>1 kills K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>
                  \<union> \<lbrakk> K\<^sub>1 \<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk> K\<^sub>2 \<not>\<Up> \<ge> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m
-                 \<inter> \<lbrakk> K\<^sub>1 kills K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>\<close> by simp
+                 \<inter> \<lbrakk> K\<^sub>1 kills K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>\<close> 
+    by (metis (no_types) TESL_interpretation_atomic_stepwise.simps(8) symbolic_run_interpretation_primitive.simps(1) symbolic_run_interpretation_primitive.simps(3) symbolic_run_interpretation_primitive.simps(5))
   finally show ?thesis by blast
 qed
 
@@ -447,8 +439,9 @@ proof -
       using TESL_interp_stepwise_sporadicon_coind_unfold by blast
     hence \<open>\<lbrakk>\<lbrakk> ((K\<^sub>1 \<Up> n) # (K\<^sub>2 \<Down> n @ \<tau>) # \<Gamma>) \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk>\<lbrakk> \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup>
             \<union> \<lbrakk>\<lbrakk> \<Gamma> \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk>\<lbrakk> \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> \<inter> \<lbrakk> K\<^sub>1 sporadic \<tau> on K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>
-           = \<lbrakk>\<lbrakk> (K\<^sub>1 sporadic \<tau> on K\<^sub>2) # \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> \<inter> \<lbrakk>\<lbrakk> \<Gamma> \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m\<close> by auto
-    thus ?thesis by auto
+           = \<lbrakk>\<lbrakk> (K\<^sub>1 sporadic \<tau> on K\<^sub>2) # \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> \<inter> \<lbrakk>\<lbrakk> \<Gamma> \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m\<close> by fastforce
+    thus ?thesis
+      by (smt TESL_interpretation_stepwise.simps(2) \<open>\<lbrakk> K\<^sub>1 \<Up> n # K\<^sub>2 \<Down> n @ \<tau> # \<Gamma>, n \<turnstile> \<Psi> \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g = \<lbrakk>\<lbrakk> K\<^sub>1 \<Up> n # K\<^sub>2 \<Down> n @ \<tau> # \<Gamma> \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk>\<lbrakk> \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> \<inter> \<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>\<close> \<open>\<lbrakk> \<Gamma>, n \<turnstile> (K\<^sub>1 sporadic \<tau> on K\<^sub>2) # \<Psi> \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g = \<lbrakk>\<lbrakk> \<Gamma> \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk>\<lbrakk> (K\<^sub>1 sporadic \<tau> on K\<^sub>2) # \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> \<inter> \<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>\<close> \<open>\<lbrakk> \<Gamma>, n \<turnstile> \<Psi> \<triangleright> (K\<^sub>1 sporadic \<tau> on K\<^sub>2) # \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g = \<lbrakk>\<lbrakk> \<Gamma> \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk>\<lbrakk> \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> \<inter> \<lbrakk>\<lbrakk> (K\<^sub>1 sporadic \<tau> on K\<^sub>2) # \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>\<close> inf_assoc inf_sup_aci(1) inf_sup_distrib2 sup_commute)
   qed
 qed
 

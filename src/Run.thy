@@ -12,10 +12,11 @@ text \<open>
   not to tick), the second element is called the \<^emph>\<open>time\<close>.
 \<close>
 
-abbreviation hamlet where \<open>hamlet \<equiv> fst\<close>
-abbreviation time   where \<open>time \<equiv> snd\<close>
+abbreviation hamlet where \<open>hamlet \<equiv> (\<lambda>t. case t of (x, _, _) \<Rightarrow> x)\<close>
+abbreviation time   where \<open>time   \<equiv> (\<lambda>t. case t of (_, x, _) \<Rightarrow> x)\<close>
+abbreviation qty    where \<open>qty    \<equiv> (\<lambda>t. case t of (_, _, x) \<Rightarrow> x)\<close>
 
-type_synonym '\<tau> instant = \<open>clock \<Rightarrow> (bool \<times> '\<tau> tag_const)\<close>
+type_synonym '\<tau> instant = \<open>clock \<Rightarrow> (bool \<times> '\<tau> tag_const \<times> '\<tau> tag_const)\<close>
 
 text\<open>
   Runs have the additional constraint that time cannot go backwards on any clock
@@ -25,7 +26,7 @@ text\<open>
 typedef (overloaded) '\<tau>::linordered_field run =
   \<open>{ \<rho>::nat \<Rightarrow> '\<tau> instant. \<forall>c. mono (\<lambda>n. time (\<rho> n c)) }\<close>
 proof
-  show \<open>(\<lambda>_ _. (True, \<tau>\<^sub>c\<^sub>s\<^sub>t 0)) \<in> {\<rho>. \<forall>c. mono (\<lambda>n. time (\<rho> n c))}\<close> 
+  show \<open>(\<lambda>_ _. (True, \<tau>\<^sub>c\<^sub>s\<^sub>t 0, \<tau>\<^sub>c\<^sub>s\<^sub>t 0)) \<in> {\<rho>. \<forall>c. mono (\<lambda>n. time (\<rho> n c))}\<close> 
     unfolding mono_def by blast
 qed
 
