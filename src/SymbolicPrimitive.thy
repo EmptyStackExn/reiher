@@ -38,12 +38,9 @@ datatype tag_val =
   TSchematic \<open>clock * instant_index\<close> (\<open>\<tau>\<^sub>v\<^sub>a\<^sub>r\<close>)
 
 datatype '\<tau> constr =
-\<comment> \<open>@{term \<open>c \<Down> n @ \<tau>\<close>} constrains clock @{term \<open>c\<close>} to have quantity @{term \<open>\<tau>\<close>}
-    at instant @{term \<open>n\<close>} of the run.\<close>
-  Qtystamp      \<open>clock\<close>   \<open>instant_index\<close> \<open>'\<tau> tag_const\<close>         (\<open>_ \<down> _ @ _\<close>)
 \<comment> \<open>@{term \<open>c \<Down> n @ \<tau>\<close>} constrains clock @{term \<open>c\<close>} to have time @{term \<open>\<tau>\<close>}
     at instant @{term \<open>n\<close>} of the run.\<close>
-| Timestamp     \<open>clock\<close>   \<open>instant_index\<close> \<open>'\<tau> tag_const\<close>         (\<open>_ \<Down> _ @ _\<close>)
+  Timestamp     \<open>clock\<close>   \<open>instant_index\<close> \<open>'\<tau> tag_const\<close>         (\<open>_ \<Down> _ @ _\<close>)
 \<comment> \<open>@{term \<open>m @ n \<oplus> \<delta>t \<Rightarrow> s\<close>} constrains clock @{term \<open>s\<close>} to tick at the
     first instant at which the time on @{term \<open>m\<close>} has increased by @{term \<open>\<delta>t\<close>}
     from the value it had at instant @{term \<open>n\<close>} of the run.\<close>
@@ -110,7 +107,6 @@ where
 | \<open>\<lbrakk> K \<not>\<Up> < n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m   = {\<rho>. \<forall>i < n. \<not> hamlet ((Rep_run \<rho>) i K)}\<close>
 | \<open>\<lbrakk> K \<not>\<Up> \<ge> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m   = {\<rho>. \<forall>i \<ge> n. \<not> hamlet ((Rep_run \<rho>) i K) }\<close>
 | \<open>\<lbrakk> K \<Down> n @ \<tau> \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m = {\<rho>. time ((Rep_run \<rho>) n K) = \<tau> }\<close>
-| \<open>\<lbrakk> K \<down> n @ \<tau> \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m = {\<rho>. qty ((Rep_run \<rho>) n K) = \<tau> }\<close>
 | \<open>\<lbrakk> \<lfloor>\<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>1, n\<^sub>1), \<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>2, n\<^sub>2)\<rfloor> \<in> R \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m =
     { \<rho>. R (time ((Rep_run \<rho>) n\<^sub>1 K\<^sub>1), time ((Rep_run \<rho>) n\<^sub>2 K\<^sub>2)) }\<close>
 | \<open>\<lbrakk> \<lceil>e\<^sub>1, e\<^sub>2\<rceil> \<in> R \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m = { \<rho>. R (\<lbrakk> \<rho> \<turnstile> e\<^sub>1 \<rbrakk>\<^sub>c\<^sub>n\<^sub>t\<^sub>e\<^sub>x\<^sub>p\<^sub>r, \<lbrakk> \<rho> \<turnstile> e\<^sub>2 \<rbrakk>\<^sub>c\<^sub>n\<^sub>t\<^sub>e\<^sub>x\<^sub>p\<^sub>r) }\<close>
@@ -142,7 +138,7 @@ text\<open>
   ticks and the time is always 0 on any clock.
 \<close>
 abbreviation initial_run :: \<open>('\<tau>::linordered_field) run\<close> (\<open>\<rho>\<^sub>\<odot>\<close>) where
-  \<open>\<rho>\<^sub>\<odot> \<equiv> Abs_run ((\<lambda>_ _. (False, \<tau>\<^sub>c\<^sub>s\<^sub>t 0, \<tau>\<^sub>c\<^sub>s\<^sub>t 0)) ::nat \<Rightarrow> clock \<Rightarrow> (bool \<times> '\<tau> tag_const \<times> '\<tau> tag_const))\<close>
+  \<open>\<rho>\<^sub>\<odot> \<equiv> Abs_run ((\<lambda>_ _. (False, \<tau>\<^sub>c\<^sub>s\<^sub>t 0)) ::nat \<Rightarrow> clock \<Rightarrow> (bool \<times> '\<tau> tag_const))\<close>
 
 text\<open>
   To help avoiding that time flows backward, setting the time on a clock at a given 
@@ -153,7 +149,7 @@ fun time_update
       \<Rightarrow> (nat \<Rightarrow> '\<tau> instant)\<close>
 where
   \<open>time_update n K \<tau> \<rho> = (\<lambda>n' K'. if K = K' \<and> n \<le> n'
-                                  then (hamlet (\<rho> n K), \<tau>, qty (\<rho> n K))
+                                  then (hamlet (\<rho> n K), \<tau>)
                                   else \<rho> n' K')\<close>
 
 
