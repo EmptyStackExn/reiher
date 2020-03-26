@@ -3,6 +3,9 @@ chapter \<open>Symbolic Primitives for Building Runs\<close>
 theory SymbolicPrimitive
   imports Run
 
+ keywords
+  "reflect_ML_exports" :: thy_decl
+
 begin
 
 text\<open>
@@ -329,5 +332,55 @@ lemma symrun_interp_absorb2:
   assumes \<open>set \<Gamma>\<^sub>2 \<subseteq> set \<Gamma>\<^sub>1\<close>
     shows \<open>\<lbrakk>\<lbrakk> \<Gamma>\<^sub>1 @ \<Gamma>\<^sub>2 \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m = \<lbrakk>\<lbrakk> \<Gamma>\<^sub>1 \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m\<close>
 using symrun_interp_absorb1 symrun_interp_commute assms by blast
+
+
+section\<open>Code-Generation\<close>
+
+export_code  TickCountLess  TickCountLeq                           
+             TSchematic
+             Timestamp   
+              
+             TimeDelay     Ticks         NotTicks     
+             NotTicksUntil NotTicksFrom  TagArith     
+             TickCntArith  TickCntLeq   
+
+             in SML   module_name HyggePrimitives 
+
+
+subsection\<open>Infrastructure for Reflecting exported SML code\<close>
+ML\<open>
+  fun reflect_local_ML_exports args trans =  let
+    fun eval_ML_context ctxt = let 
+      fun is_sml_file f = String.isSuffix ".ML" (Path.implode (#path f))
+      val files = (map (Generated_Files.check_files_in (Context.proof_of ctxt)) args) 
+      val ml_files = filter is_sml_file (map #1 (maps Generated_Files.get_files_in files))
+      val ml_content = map (fn f => Syntax.read_input (#content f)) ml_files
+      fun eval ml_content   = fold (fn sml => (ML_Context.exec 
+                                           (fn () => ML_Context.eval_source ML_Compiler.flags sml))) 
+                                   ml_content 
+    in 
+      (eval ml_content #> Local_Theory.propagate_ml_env) ctxt
+    end
+  in
+    Toplevel.generic_theory eval_ML_context trans
+  end
+
+
+  val files_in_theory =
+    (Parse.underscore >> K [] || Scan.repeat1 Parse.path_binding) --
+      Scan.option (\<^keyword>\<open>(\<close> |-- Parse.!!! (\<^keyword>\<open>in\<close> 
+                     |-- Parse.theory_name --| \<^keyword>\<open>)\<close>));
+
+  val _ =
+    Outer_Syntax.command \<^command_keyword>\<open>reflect_ML_exports\<close> 
+      "evaluate generated Standard ML files"
+      (Parse.and_list1 files_in_theory  >> (fn args => reflect_local_ML_exports args));
+\<close>
+
+
+reflect_ML_exports _
+
+ML\<open>open HyggePrimitives\<close>
+
 
 end
