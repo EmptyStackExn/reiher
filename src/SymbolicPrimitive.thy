@@ -18,7 +18,8 @@ text\<open>
   the composition of specifications: adding an instant where no clock ticks to 
   a run that satisfies a formula should yield another run that satisfies the 
   same formula. However, when constructing runs that satisfy a formula, we
-  need to be able to refer to the time or hamlet of a clock at a given instant.
+  need to be able to refer to the time or ticking predicate of a clock at a given
+  instant.
 \<close>
 
 text\<open>
@@ -99,13 +100,13 @@ where
 fun symbolic_run_interpretation_primitive
   ::\<open>('\<tau>::linordered_field) constr \<Rightarrow> '\<tau> run set\<close> (\<open>\<lbrakk> _ \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m\<close>)
 where
-  \<open>\<lbrakk> K \<Up> n  \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m     = {\<rho>. hamlet ((Rep_run \<rho>) n K) }\<close>
+  \<open>\<lbrakk> K \<Up> n  \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m     = {\<rho>. ticks ((Rep_run \<rho>) n K) }\<close>
 | \<open>\<lbrakk> K @ n\<^sub>0 \<oplus> \<delta>t \<Rightarrow> K' \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m =
                   {\<rho>. \<forall>n \<ge> n\<^sub>0. first_time \<rho> K n (time ((Rep_run \<rho>) n\<^sub>0 K) + \<delta>t)
-                               \<longrightarrow> hamlet ((Rep_run \<rho>) n K')}\<close>
-| \<open>\<lbrakk> K \<not>\<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m     = {\<rho>. \<not>hamlet ((Rep_run \<rho>) n K) }\<close>
-| \<open>\<lbrakk> K \<not>\<Up> < n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m   = {\<rho>. \<forall>i < n. \<not> hamlet ((Rep_run \<rho>) i K)}\<close>
-| \<open>\<lbrakk> K \<not>\<Up> \<ge> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m   = {\<rho>. \<forall>i \<ge> n. \<not> hamlet ((Rep_run \<rho>) i K) }\<close>
+                               \<longrightarrow> ticks ((Rep_run \<rho>) n K')}\<close>
+| \<open>\<lbrakk> K \<not>\<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m     = {\<rho>. \<not>ticks ((Rep_run \<rho>) n K) }\<close>
+| \<open>\<lbrakk> K \<not>\<Up> < n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m   = {\<rho>. \<forall>i < n. \<not> ticks ((Rep_run \<rho>) i K)}\<close>
+| \<open>\<lbrakk> K \<not>\<Up> \<ge> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m   = {\<rho>. \<forall>i \<ge> n. \<not> ticks ((Rep_run \<rho>) i K) }\<close>
 | \<open>\<lbrakk> K \<Down> n @ \<tau> \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m = {\<rho>. time ((Rep_run \<rho>) n K) = \<tau> }\<close>
 | \<open>\<lbrakk> \<lfloor>\<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>1, n\<^sub>1), \<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>2, n\<^sub>2)\<rfloor> \<in> R \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m =
     { \<rho>. R (time ((Rep_run \<rho>) n\<^sub>1 K\<^sub>1), time ((Rep_run \<rho>) n\<^sub>2 K\<^sub>2)) }\<close>
@@ -149,7 +150,7 @@ fun time_update
       \<Rightarrow> (nat \<Rightarrow> '\<tau> instant)\<close>
 where
   \<open>time_update n K \<tau> \<rho> = (\<lambda>n' K'. if K = K' \<and> n \<le> n'
-                                  then (hamlet (\<rho> n K), \<tau>)
+                                  then (ticks (\<rho> n K), \<tau>)
                                   else \<rho> n' K')\<close>
 
 

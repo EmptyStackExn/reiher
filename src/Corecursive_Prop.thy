@@ -24,18 +24,18 @@ fun TESL_interpretation_atomic_stepwise
     :: \<open>('\<tau>::linordered_field) TESL_atomic \<Rightarrow> nat \<Rightarrow> '\<tau> run set\<close> (\<open>\<lbrakk> _ \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> _\<^esup>\<close>)
 where
   \<open>\<lbrakk> K\<^sub>1 sporadic \<tau> on K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> i\<^esup> =
-      {\<rho>. \<exists>n\<ge>i. hamlet ((Rep_run \<rho>) n K\<^sub>1) \<and> time ((Rep_run \<rho>) n K\<^sub>2) = \<tau>}\<close>
+      {\<rho>. \<exists>n\<ge>i. ticks ((Rep_run \<rho>) n K\<^sub>1) \<and> time ((Rep_run \<rho>) n K\<^sub>2) = \<tau>}\<close>
 | \<open>\<lbrakk> time-relation \<lfloor>K\<^sub>1, K\<^sub>2\<rfloor> \<in> R \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> i\<^esup> =
       {\<rho>. \<forall>n\<ge>i. R (time ((Rep_run \<rho>) n K\<^sub>1), time ((Rep_run \<rho>) n K\<^sub>2))}\<close>
 | \<open>\<lbrakk> master implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> i\<^esup> =
-      {\<rho>. \<forall>n\<ge>i. hamlet ((Rep_run \<rho>) n master) \<longrightarrow> hamlet ((Rep_run \<rho>) n slave)}\<close>
+      {\<rho>. \<forall>n\<ge>i. ticks ((Rep_run \<rho>) n master) \<longrightarrow> ticks ((Rep_run \<rho>) n slave)}\<close>
 | \<open>\<lbrakk> master implies not slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> i\<^esup> =
-      {\<rho>. \<forall>n\<ge>i. hamlet ((Rep_run \<rho>) n master) \<longrightarrow> \<not> hamlet ((Rep_run \<rho>) n slave)}\<close>
+      {\<rho>. \<forall>n\<ge>i. ticks ((Rep_run \<rho>) n master) \<longrightarrow> \<not> ticks ((Rep_run \<rho>) n slave)}\<close>
 | \<open>\<lbrakk> master time-delayed by \<delta>\<tau> on measuring implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> i\<^esup> =
-      {\<rho>. \<forall>n\<ge>i. hamlet ((Rep_run \<rho>) n master) \<longrightarrow>
+      {\<rho>. \<forall>n\<ge>i. ticks ((Rep_run \<rho>) n master) \<longrightarrow>
                (let measured_time = time ((Rep_run \<rho>) n measuring) in
                 \<forall>m \<ge> n. first_time \<rho> measuring m (measured_time + \<delta>\<tau>)
-                         \<longrightarrow> hamlet ((Rep_run \<rho>) m slave)
+                         \<longrightarrow> ticks ((Rep_run \<rho>) m slave)
                )
       }\<close>
 | \<open>\<lbrakk> K\<^sub>1 weakly precedes K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> i\<^esup> =
@@ -43,7 +43,7 @@ where
 | \<open>\<lbrakk> K\<^sub>1 strictly precedes K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> i\<^esup> =
       {\<rho>. \<forall>n\<ge>i. (run_tick_count \<rho> K\<^sub>2 n) \<le> (run_tick_count_strictly \<rho> K\<^sub>1 n)}\<close>
 | \<open>\<lbrakk> K\<^sub>1 kills K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> i\<^esup> =
-      {\<rho>. \<forall>n\<ge>i. hamlet ((Rep_run \<rho>) n K\<^sub>1) \<longrightarrow> (\<forall>m\<ge>n. \<not> hamlet ((Rep_run \<rho>) m K\<^sub>2))}\<close>
+      {\<rho>. \<forall>n\<ge>i. ticks ((Rep_run \<rho>) n K\<^sub>1) \<longrightarrow> (\<forall>m\<ge>n. \<not> ticks ((Rep_run \<rho>) m K\<^sub>2))}\<close>
 
 text \<open>
   The denotational interpretation of TESL formulae can be unfolded into the 
@@ -200,7 +200,7 @@ lemma TESL_interp_stepwise_sporadicon_coind_unfold:
     \<union> \<lbrakk> K\<^sub>1 sporadic \<tau> on K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>\<close>   \<comment> \<open>rule @{term sporadic_on_e1}\<close>
 unfolding TESL_interpretation_atomic_stepwise.simps(1)
           symbolic_run_interpretation_primitive.simps(1,6)
-using exists_nat_set_suc[of \<open>n\<close> \<open>\<lambda>\<rho> n. hamlet (Rep_run \<rho> n K\<^sub>1)
+using exists_nat_set_suc[of \<open>n\<close> \<open>\<lambda>\<rho> n. ticks (Rep_run \<rho> n K\<^sub>1)
                                      \<and> time (Rep_run \<rho> n K\<^sub>2) = \<tau>\<close>]
 by (simp add: Collect_conj_eq)
 
@@ -224,12 +224,12 @@ lemma TESL_interp_stepwise_implies_coind_unfold:
        \<union> \<lbrakk> master \<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk> slave \<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m)  \<comment> \<open>rule @{term implies_e2}\<close>
      \<inter> \<lbrakk> master implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>\<close>
 proof -
-  have \<open>{\<rho>. \<forall>m\<ge>n. hamlet ((Rep_run \<rho>) m master) \<longrightarrow> hamlet ((Rep_run \<rho>) m slave)}
-        = {\<rho>. hamlet ((Rep_run \<rho>) n master) \<longrightarrow> hamlet ((Rep_run \<rho>) n slave)}
-        \<inter> {\<rho>. \<forall>m\<ge>Suc n. hamlet ((Rep_run \<rho>) m master)
-                     \<longrightarrow> hamlet ((Rep_run \<rho>) m slave)}\<close>
-    using forall_nat_set_suc[of \<open>n\<close> \<open>\<lambda>x y. hamlet ((Rep_run x) y master)
-                                \<longrightarrow> hamlet ((Rep_run x) y slave)\<close>] by simp
+  have \<open>{\<rho>. \<forall>m\<ge>n. ticks ((Rep_run \<rho>) m master) \<longrightarrow> ticks ((Rep_run \<rho>) m slave)}
+        = {\<rho>. ticks ((Rep_run \<rho>) n master) \<longrightarrow> ticks ((Rep_run \<rho>) n slave)}
+        \<inter> {\<rho>. \<forall>m\<ge>Suc n. ticks ((Rep_run \<rho>) m master)
+                     \<longrightarrow> ticks ((Rep_run \<rho>) m slave)}\<close>
+    using forall_nat_set_suc[of \<open>n\<close> \<open>\<lambda>x y. ticks ((Rep_run x) y master)
+                                \<longrightarrow> ticks ((Rep_run x) y slave)\<close>] by simp
   thus ?thesis by auto
 qed
 
@@ -239,12 +239,12 @@ lemma TESL_interp_stepwise_implies_not_coind_unfold:
         \<union> \<lbrakk> master \<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk> slave \<not>\<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m)  \<comment> \<open>rule @{term implies_not_e2}\<close>
      \<inter> \<lbrakk> master implies not slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>\<close>
 proof -
-  have \<open>{\<rho>. \<forall>m\<ge>n. hamlet ((Rep_run \<rho>) m master) \<longrightarrow> \<not> hamlet ((Rep_run \<rho>) m slave)}
-       = {\<rho>. hamlet ((Rep_run \<rho>) n master) \<longrightarrow> \<not> hamlet ((Rep_run \<rho>) n slave)}
-          \<inter> {\<rho>. \<forall>m\<ge>Suc n. hamlet ((Rep_run \<rho>) m master)
-                     \<longrightarrow> \<not> hamlet ((Rep_run \<rho>) m slave)}\<close>
-    using forall_nat_set_suc[of \<open>n\<close> \<open>\<lambda>x y. hamlet ((Rep_run x) y master)
-                               \<longrightarrow> \<not>hamlet ((Rep_run x) y slave)\<close>] by simp
+  have \<open>{\<rho>. \<forall>m\<ge>n. ticks ((Rep_run \<rho>) m master) \<longrightarrow> \<not> ticks ((Rep_run \<rho>) m slave)}
+       = {\<rho>. ticks ((Rep_run \<rho>) n master) \<longrightarrow> \<not> ticks ((Rep_run \<rho>) n slave)}
+          \<inter> {\<rho>. \<forall>m\<ge>Suc n. ticks ((Rep_run \<rho>) m master)
+                     \<longrightarrow> \<not> ticks ((Rep_run \<rho>) m slave)}\<close>
+    using forall_nat_set_suc[of \<open>n\<close> \<open>\<lambda>x y. ticks ((Rep_run x) y master)
+                               \<longrightarrow> \<not>ticks ((Rep_run x) y slave)\<close>] by simp
   thus ?thesis by auto
 qed
 
@@ -255,10 +255,10 @@ lemma TESL_interp_stepwise_timedelayed_coind_unfold:
                                              \<comment> \<open>rule @{term timedelayed_e2}\<close>
      \<inter> \<lbrakk> master time-delayed by \<delta>\<tau> on measuring implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>\<close>
 proof -
-  let ?prop = \<open>\<lambda>\<rho> m. hamlet ((Rep_run \<rho>) m master) \<longrightarrow>
+  let ?prop = \<open>\<lambda>\<rho> m. ticks ((Rep_run \<rho>) m master) \<longrightarrow>
                  (let measured_time = time ((Rep_run \<rho>) m measuring) in
                   \<forall>p \<ge> m. first_time \<rho> measuring p (measured_time + \<delta>\<tau>)
-                           \<longrightarrow> hamlet ((Rep_run \<rho>) p slave))\<close>
+                           \<longrightarrow> ticks ((Rep_run \<rho>) p slave))\<close>
   have \<open>{\<rho>. \<forall>m \<ge> n. ?prop \<rho> m} = {\<rho>. ?prop \<rho> n} \<inter> {\<rho>. \<forall>m \<ge> Suc n. ?prop \<rho> m}\<close>
     using forall_nat_set_suc[of \<open>n\<close> ?prop] by blast
   also have \<open>... = {\<rho>. ?prop \<rho> n}
@@ -301,10 +301,10 @@ lemma TESL_interp_stepwise_kills_coind_unfold:
         \<union> \<lbrakk> K\<^sub>1 \<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk> K\<^sub>2 \<not>\<Up> \<ge> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m)    \<comment> \<open>rule @{term kills_e2}\<close>
       \<inter> \<lbrakk> K\<^sub>1 kills K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>\<close>
 proof -
-  let ?kills = \<open>\<lambda>n \<rho>. \<forall>p\<ge>n. hamlet ((Rep_run \<rho>) p K\<^sub>1)
-                             \<longrightarrow> (\<forall>m\<ge>p. \<not> hamlet ((Rep_run \<rho>) m K\<^sub>2))\<close>
-  let ?ticks = \<open>\<lambda>n \<rho> c. hamlet ((Rep_run \<rho>) n c)\<close>
-  let ?dead = \<open>\<lambda>n \<rho> c. \<forall>m \<ge> n. \<not>hamlet ((Rep_run \<rho>) m c)\<close>
+  let ?kills = \<open>\<lambda>n \<rho>. \<forall>p\<ge>n. ticks ((Rep_run \<rho>) p K\<^sub>1)
+                             \<longrightarrow> (\<forall>m\<ge>p. \<not> ticks ((Rep_run \<rho>) m K\<^sub>2))\<close>
+  let ?ticks = \<open>\<lambda>n \<rho> c. ticks ((Rep_run \<rho>) n c)\<close>
+  let ?dead = \<open>\<lambda>n \<rho> c. \<forall>m \<ge> n. \<not>ticks ((Rep_run \<rho>) m c)\<close>
   have \<open>\<lbrakk> K\<^sub>1 kills K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> = {\<rho>. ?kills n \<rho>}\<close> by simp
   also have \<open>... = ({\<rho>. \<not> ?ticks n \<rho> K\<^sub>1}  \<inter> {\<rho>. ?kills (Suc n) \<rho>})
                  \<union> ({\<rho>. ?ticks n \<rho> K\<^sub>1} \<inter> {\<rho>. ?dead n \<rho> K\<^sub>2})\<close>

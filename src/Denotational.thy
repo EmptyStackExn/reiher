@@ -28,7 +28,7 @@ where
   \<comment> \<open>@{term \<open>K\<^sub>1 sporadic \<tau> on K\<^sub>2\<close>} means that @{term \<open>K\<^sub>1\<close>} should tick at an 
       instant where the time on @{term \<open>K\<^sub>2\<close>} is @{term \<open>\<tau>\<close>}.\<close>
     \<open>\<lbrakk> K\<^sub>1 sporadic \<tau> on K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
-        {\<rho>. \<exists>n::nat. hamlet ((Rep_run \<rho>) n K\<^sub>1) \<and> time ((Rep_run \<rho>) n K\<^sub>2) = \<tau>}\<close>
+        {\<rho>. \<exists>n::nat. ticks ((Rep_run \<rho>) n K\<^sub>1) \<and> time ((Rep_run \<rho>) n K\<^sub>2) = \<tau>}\<close>
   \<comment> \<open>@{term \<open>time-relation \<lfloor>K\<^sub>1, K\<^sub>2\<rfloor> \<in> R\<close>} means that at each instant, the time 
       on @{term \<open>K\<^sub>1\<close>} and the time on @{term \<open>K\<^sub>2\<close>} are in relation~@{term \<open>R\<close>}.\<close>
   | \<open>\<lbrakk> time-relation \<lfloor>K\<^sub>1, K\<^sub>2\<rfloor> \<in> R \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
@@ -36,11 +36,11 @@ where
   \<comment> \<open>@{term \<open>master implies slave\<close>} means that at each instant at which 
       @{term \<open>master\<close>} ticks, @{term \<open>slave\<close>} also ticks.\<close>
   | \<open>\<lbrakk> master implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
-        {\<rho>. \<forall>n::nat. hamlet ((Rep_run \<rho>) n master) \<longrightarrow> hamlet ((Rep_run \<rho>) n slave)}\<close>
+        {\<rho>. \<forall>n::nat. ticks ((Rep_run \<rho>) n master) \<longrightarrow> ticks ((Rep_run \<rho>) n slave)}\<close>
   \<comment> \<open>@{term \<open>master implies not slave\<close>} means that at each instant at which 
       @{term \<open>master\<close>} ticks, @{term \<open>slave\<close>} does not tick.\<close>
   | \<open>\<lbrakk> master implies not slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
-        {\<rho>. \<forall>n::nat. hamlet ((Rep_run \<rho>) n master) \<longrightarrow> \<not>hamlet ((Rep_run \<rho>) n slave)}\<close>
+        {\<rho>. \<forall>n::nat. ticks ((Rep_run \<rho>) n master) \<longrightarrow> \<not>ticks ((Rep_run \<rho>) n slave)}\<close>
   \<comment> \<open>@{term \<open>master time-delayed by \<delta>\<tau> on measuring implies slave\<close>} means that 
       at each instant at which  @{term \<open>master\<close>} ticks, @{term \<open>slave\<close>} will
       tick after a delay @{term \<open>\<delta>\<tau>\<close>} measured on the time scale 
@@ -51,10 +51,10 @@ where
       at the first instant when the date on measuring is @{term \<open>t\<^sub>0+\<delta>t\<close>}, 
       slave has to tick.
     \<close>
-        {\<rho>. \<forall>n. hamlet ((Rep_run \<rho>) n master) \<longrightarrow>
+        {\<rho>. \<forall>n. ticks ((Rep_run \<rho>) n master) \<longrightarrow>
                  (let measured_time = time ((Rep_run \<rho>) n measuring) in
                   \<forall>m \<ge> n.  first_time \<rho> measuring m (measured_time + \<delta>\<tau>)
-                            \<longrightarrow> hamlet ((Rep_run \<rho>) m slave)
+                            \<longrightarrow> ticks ((Rep_run \<rho>) m slave)
                  )
         }\<close>
   \<comment> \<open>@{term \<open>K\<^sub>1 weakly precedes K\<^sub>2\<close>} means that each tick on @{term \<open>K\<^sub>2\<close>}
@@ -73,8 +73,8 @@ where
   \<comment> \<open>@{term \<open>K\<^sub>1 kills K\<^sub>2\<close>} means that when @{term \<open>K\<^sub>1\<close>} ticks, @{term \<open>K\<^sub>2\<close>}
         cannot tick and is not allowed to tick at any further instant.\<close>
   | \<open>\<lbrakk> K\<^sub>1 kills K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
-        {\<rho>. \<forall>n::nat. hamlet ((Rep_run \<rho>) n K\<^sub>1)
-                        \<longrightarrow> (\<forall>m\<ge>n. \<not> hamlet ((Rep_run \<rho>) m K\<^sub>2))}\<close>
+        {\<rho>. \<forall>n::nat. ticks ((Rep_run \<rho>) n K\<^sub>1)
+                        \<longrightarrow> (\<forall>m\<ge>n. \<not> ticks ((Rep_run \<rho>) m K\<^sub>2))}\<close>
 
 section \<open>Denotational interpretation for TESL formulae\<close>
 
