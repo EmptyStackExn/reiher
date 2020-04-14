@@ -22,7 +22,16 @@ datatype     clock         = Clk \<open>string\<close>
 type_synonym instant_index = \<open>nat\<close>
 
 datatype     '\<tau> tag_const =  TConst   (the_tag_const : '\<tau>)         (\<open>\<tau>\<^sub>c\<^sub>s\<^sub>t\<close>)
-
+text\<open>
+  Tag values are used to refer to the time on a clock at a given instant index.
+\<close>
+datatype tag_val =
+  TSchematic \<open>clock * instant_index\<close> (\<open>\<tau>\<^sub>v\<^sub>a\<^sub>r\<close>)
+datatype '\<tau> tag_expr      =  (* Const    "'\<tau> tag_const"          ("\<lparr> _ \<rparr>") *)
+                              AddDelay "tag_val" "'\<tau> tag_const" ("\<lparr> _ \<oplus> _ \<rparr>")
+(* datatype tag_var          =  TSchematic "clock * instant_index" ("\<tau>\<^sub>v\<^sub>a\<^sub>r")
+datatype '\<tau> tag_expr      =  Const    "'\<tau> tag_const"          ("\<lparr> _ \<rparr>")
+                           |  AddDelay "tag_var" "'\<tau> tag_const" ("\<lparr> _ \<oplus> _ \<rparr>") *)
 
 subsection\<open>Operators for the TESL language\<close>
 text\<open>
@@ -30,12 +39,16 @@ text\<open>
 \<close>
 datatype '\<tau> TESL_atomic =
     SporadicOn       \<open>clock\<close> \<open>'\<tau> tag_const\<close>  \<open>clock\<close>  (\<open>_ sporadic _ on _\<close> 55)
+  | SporadicAdd      \<open>clock\<close> \<open>'\<tau> tag_expr\<close>  \<open>clock\<close>   (\<open>_ sporadic-add _ on _\<close> 55) 
   | TagRelation      \<open>clock\<close> \<open>clock\<close> \<open>('\<tau> tag_const \<times> '\<tau> tag_const) \<Rightarrow> bool\<close> 
                                                       (\<open>time-relation \<lfloor>_, _\<rfloor> \<in> _\<close> 55)
   | Implies          \<open>clock\<close> \<open>clock\<close>                  (infixr \<open>implies\<close> 55)
   | ImpliesNot       \<open>clock\<close> \<open>clock\<close>                  (infixr \<open>implies not\<close> 55)
-  | TimeDelayedBy    \<open>clock\<close> \<open>'\<tau> tag_const\<close> \<open>clock\<close> \<open>clock\<close> 
+  | TimeDelayedBy    \<open>clock\<close> \<open>'\<tau> tag_const\<close> \<open>clock\<close> \<open>clock\<close> (* Targets stutter-invariance *)
                                                       (\<open>_ time-delayed by _ on _ implies _\<close> 55)
+  | TimeDelayedBy2   \<open>clock\<close> \<open>'\<tau> tag_const\<close> \<open>clock\<close> \<open>clock\<close> (* Targets operational semantics *)
+                                                      ("_ time-delayed2 by _ on _ implies _" 55)
+                                                      
   | WeaklyPrecedes   \<open>clock\<close> \<open>clock\<close>                  (infixr \<open>weakly precedes\<close> 55)
   | StrictlyPrecedes \<open>clock\<close> \<open>clock\<close>                  (infixr \<open>strictly precedes\<close> 55)
   | Kills            \<open>clock\<close> \<open>clock\<close>                  (infixr \<open>kills\<close> 55)
@@ -52,6 +65,7 @@ text\<open>
 \<close>
 fun positive_atom :: \<open>'\<tau> TESL_atomic \<Rightarrow> bool\<close> where
     \<open>positive_atom (_ sporadic _ on _) = True\<close>
+  | \<open>positive_atom (_ sporadic-add _ on _) = True\<close>
   | \<open>positive_atom _                   = False\<close>
 
 text\<open>

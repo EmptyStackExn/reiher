@@ -25,6 +25,9 @@ fun TESL_interpretation_atomic_stepwise
 where
   \<open>\<lbrakk> K\<^sub>1 sporadic \<tau> on K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> i\<^esup> =
       {\<rho>. \<exists>n\<ge>i. ticks ((Rep_run \<rho>) n K\<^sub>1) \<and> time ((Rep_run \<rho>) n K\<^sub>2) = \<tau>}\<close>
+| \<open>\<lbrakk> K\<^sub>1 sporadic-add \<lparr>\<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>p\<^sub>a\<^sub>s\<^sub>t, n\<^sub>p\<^sub>a\<^sub>s\<^sub>t) \<oplus> \<delta>\<tau>\<rparr> on K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> i\<^esup> =
+      {\<rho>. \<exists>n\<ge>i. ticks ((Rep_run \<rho>) n K\<^sub>1)
+                         \<and> time ((Rep_run \<rho>) n K\<^sub>2) = time ((Rep_run \<rho>) n\<^sub>p\<^sub>a\<^sub>s\<^sub>t K\<^sub>p\<^sub>a\<^sub>s\<^sub>t) + \<delta>\<tau> }\<close>
 | \<open>\<lbrakk> time-relation \<lfloor>K\<^sub>1, K\<^sub>2\<rfloor> \<in> R \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> i\<^esup> =
       {\<rho>. \<forall>n\<ge>i. R (time ((Rep_run \<rho>) n K\<^sub>1), time ((Rep_run \<rho>) n K\<^sub>2))}\<close>
 | \<open>\<lbrakk> master implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> i\<^esup> =
@@ -36,6 +39,13 @@ where
                (let measured_time = time ((Rep_run \<rho>) n measuring) in
                 \<forall>m \<ge> n. first_time \<rho> measuring m (measured_time + \<delta>\<tau>)
                          \<longrightarrow> ticks ((Rep_run \<rho>) m slave)
+               )
+      }\<close>
+| \<open>\<lbrakk> master time-delayed2 by \<delta>\<tau> on measuring implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> i\<^esup> =
+      {\<rho>. \<forall>n\<ge>i. ticks ((Rep_run \<rho>) n master) \<longrightarrow>
+               (let measured_time = time ((Rep_run \<rho>) n measuring) in
+                \<exists>m \<ge> n. ticks ((Rep_run \<rho>) m slave)
+                          \<and> time ((Rep_run \<rho>) m measuring) = measured_time + \<delta>\<tau>
                )
       }\<close>
 | \<open>\<lbrakk> K\<^sub>1 weakly precedes K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> i\<^esup> =
@@ -52,6 +62,15 @@ text \<open>
 lemma TESL_interp_unfold_stepwise_sporadicon:
   \<open>\<lbrakk> K\<^sub>1 sporadic \<tau> on K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<Union> {Y. \<exists>n::nat. Y = \<lbrakk> K\<^sub>1 sporadic \<tau> on K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup>}\<close>
 by auto
+
+lemma TESL_interp_unfold_stepwise_sporadicon_add:
+  \<open>\<lbrakk> K\<^sub>1 sporadic-add \<lparr>\<tau>\<^sub>v\<^sub>a\<^sub>r(K, n') \<oplus> \<tau>\<rparr> on K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<Union> {Y. \<exists>n::nat. Y = \<lbrakk> K\<^sub>1 sporadic-add \<lparr>\<tau>\<^sub>v\<^sub>a\<^sub>r(K, n') \<oplus> \<tau>\<rparr> on K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup>}\<close>
+by auto
+
+lemma TESL_interp_unfold_stepwise_sporadicon_add2:
+  shows \<open>\<lbrakk> K\<^sub>1 sporadic-add \<tau>\<^sub>e\<^sub>x\<^sub>p\<^sub>r on K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<Union> {Y. \<exists>n::nat. Y = \<lbrakk> K\<^sub>1 sporadic-add \<tau>\<^sub>e\<^sub>x\<^sub>p\<^sub>r on K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup>}\<close>
+using TESL_interp_unfold_stepwise_sporadicon_add
+by (metis old.prod.exhaust tag_expr.exhaust tag_val.exhaust)
 
 lemma TESL_interp_unfold_stepwise_tagrelgen:
   \<open>\<lbrakk> time-relation \<lfloor>K\<^sub>1, K\<^sub>2\<rfloor> \<in> R \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L
@@ -74,6 +93,12 @@ lemma TESL_interp_unfold_stepwise_timedelayed:
           Y = \<lbrakk> master time-delayed by \<delta>\<tau> on measuring implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup>}\<close>
 by auto
 
+lemma TESL_interp_unfold_stepwise_timedelayed2:
+  \<open>\<lbrakk> master time-delayed2 by \<delta>\<tau> on measuring implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L
+    = \<Inter> {Y. \<exists>n::nat.
+          Y = \<lbrakk> master time-delayed2 by \<delta>\<tau> on measuring implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup>}\<close>
+by auto
+
 lemma TESL_interp_unfold_stepwise_weakly_precedes:
   \<open>\<lbrakk> K\<^sub>1 weakly precedes K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L
     = \<Inter> {Y. \<exists>n::nat. Y = \<lbrakk> K\<^sub>1 weakly precedes K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup>}\<close>
@@ -92,15 +117,40 @@ text \<open>
   Positive atomic formulae (the ones that create ticks from nothing) are unfolded
   as the union of the stepwise interpretations.
 \<close>
+
 theorem TESL_interp_unfold_stepwise_positive_atoms:
   assumes \<open>positive_atom \<phi>\<close>
     shows \<open>\<lbrakk> \<phi>::'\<tau>::linordered_field TESL_atomic \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L
             = \<Union> {Y. \<exists>n::nat. Y = \<lbrakk> \<phi> \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup>}\<close>
+proof (cases \<phi>)
+  case SporadicOn thus ?thesis using TESL_interp_unfold_stepwise_sporadicon by simp
+next
+  case SporadicAdd thus ?thesis using TESL_interp_unfold_stepwise_sporadicon_add2 by simp
+next
+  case TagRelation thus ?thesis using assms by simp
+next
+  case Implies thus ?thesis using assms by simp
+next
+  case ImpliesNot thus ?thesis using assms by simp
+next
+  case TimeDelayedBy thus ?thesis using assms by simp
+next
+  case TimeDelayedBy2 thus ?thesis using assms by simp
+next
+  case WeaklyPrecedes thus ?thesis using assms by simp
+next
+  case StrictlyPrecedes thus ?thesis using assms by simp
+next
+  case Kills thus ?thesis using assms by simp
+  qed
+(*
 proof -
   from positive_atom.elims(2)[OF assms]
     obtain u v w where \<open>\<phi> = (u sporadic v on w)\<close> by blast
   with TESL_interp_unfold_stepwise_sporadicon show ?thesis by simp
 qed
+*)
+  
 
 text \<open>
   Negative atomic formulae are unfolded
@@ -111,6 +161,8 @@ theorem TESL_interp_unfold_stepwise_negative_atoms:
     shows \<open>\<lbrakk> \<phi> \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<Inter> {Y. \<exists>n::nat. Y = \<lbrakk> \<phi> \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup>}\<close>
 proof (cases \<phi>)
   case SporadicOn thus ?thesis using assms by simp
+next
+  case SporadicAdd thus ?thesis using assms by simp
 next
   case TagRelation
     thus ?thesis using TESL_interp_unfold_stepwise_tagrelgen by simp
@@ -123,6 +175,9 @@ next
 next
   case TimeDelayedBy
     thus ?thesis using TESL_interp_unfold_stepwise_timedelayed by simp
+next
+  case TimeDelayedBy2
+    thus ?thesis using TESL_interp_unfold_stepwise_timedelayed2 by simp
 next
   case WeaklyPrecedes
     thus ?thesis
@@ -194,6 +249,7 @@ text \<open>
   in the construction of a run. They correspond to the rules of the operational 
   semantics.
 \<close>
+
 lemma TESL_interp_stepwise_sporadicon_coind_unfold:
   \<open>\<lbrakk> K\<^sub>1 sporadic \<tau> on K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> =
     \<lbrakk> K\<^sub>1 \<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk> K\<^sub>2 \<Down> n @ \<tau> \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m        \<comment> \<open>rule @{term sporadic_on_e2}\<close>
@@ -204,6 +260,24 @@ using exists_nat_set_suc[of \<open>n\<close> \<open>\<lambda>\<rho> n. ticks (Re
                                      \<and> time (Rep_run \<rho> n K\<^sub>2) = \<tau>\<close>]
 by (simp add: Collect_conj_eq)
 
+lemma TESL_interp_stepwise_sporadicon_add_coind_unfold:
+  \<open>\<lbrakk> K\<^sub>1 sporadic-add \<lparr>\<tau>\<^sub>v\<^sub>a\<^sub>r(K, n') \<oplus> \<tau>\<rparr> on K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> =
+    \<lbrakk> K\<^sub>1 \<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk> K\<^sub>2 \<Down> n @@ \<lparr>\<tau>\<^sub>v\<^sub>a\<^sub>r(K, n') \<oplus> \<tau>\<rparr> \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m
+    \<union> \<lbrakk> K\<^sub>1 sporadic-add \<lparr>\<tau>\<^sub>v\<^sub>a\<^sub>r(K, n') \<oplus> \<tau>\<rparr> on K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>\<close>
+proof -
+  have "{ \<rho>. \<exists>m\<ge>n. ticks ((Rep_run \<rho>) m K\<^sub>1) = True \<and> time ((Rep_run \<rho>) m K\<^sub>2) = time ((Rep_run \<rho>) n' K) + \<tau> }
+      = { \<rho>. ticks ((Rep_run \<rho>) n K\<^sub>1) = True \<and> time ((Rep_run \<rho>) n K\<^sub>2) = time ((Rep_run \<rho>) n' K) + \<tau>
+             \<or> (\<exists>m\<ge>Suc n. ticks ((Rep_run \<rho>) m K\<^sub>1) = True \<and> time ((Rep_run \<rho>) m K\<^sub>2) = time ((Rep_run \<rho>) n' K) + \<tau>) }"
+    using Suc_leD not_less_eq_eq by fastforce
+  then show ?thesis by auto
+qed
+
+lemma TESL_interp_stepwise_sporadicon_add_coind_unfold2:
+  \<open>\<lbrakk> K\<^sub>1 sporadic-add \<tau>\<^sub>e\<^sub>x\<^sub>p\<^sub>r on K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> =
+    \<lbrakk> K\<^sub>1 \<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk> K\<^sub>2 \<Down> n @@ \<tau>\<^sub>e\<^sub>x\<^sub>p\<^sub>r \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m        \<comment> \<open>rule @{term sporadic_add_e2}\<close>
+    \<union> \<lbrakk> K\<^sub>1 sporadic-add \<tau>\<^sub>e\<^sub>x\<^sub>p\<^sub>r on K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>\<close>   \<comment> \<open>rule @{term sporadic_add_e1}\<close>
+using TESL_interp_stepwise_sporadicon_add_coind_unfold
+by (metis old.prod.exhaust tag_expr.exhaust tag_val.exhaust)
 
 lemma TESL_interp_stepwise_tagrel_coind_unfold:
   \<open>\<lbrakk> time-relation \<lfloor>K\<^sub>1, K\<^sub>2\<rfloor> \<in> R \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> =        \<comment> \<open>rule @{term tagrel_e}\<close>
@@ -266,6 +340,14 @@ proof -
     by simp
   finally show ?thesis by auto
 qed
+
+lemma TESL_interp_stepwise_timedelayed2_coind_unfold:
+  \<open>\<lbrakk> master time-delayed2 by \<delta>\<tau> on measuring implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> =
+     (     \<lbrakk> master \<not>\<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m               \<comment> \<open>rule @{term timedelayed2_e1}\<close>
+        \<union> (\<lbrakk> master \<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk> K\<^sub>3 sporadic-add \<lparr>\<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>2, n) \<oplus> \<delta>\<tau>\<rparr> on K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup>))
+                                             \<comment> \<open>rule @{term timedelayed2_e2}\<close>
+     \<inter> \<lbrakk> master time-delayed2 by \<delta>\<tau> on measuring implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>\<close>
+sorry
 
 lemma TESL_interp_stepwise_weakly_precedes_coind_unfold:
    \<open>\<lbrakk> K\<^sub>1 weakly precedes K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> =                 \<comment> \<open>rule @{term weakly_precedes_e}\<close>
@@ -364,7 +446,49 @@ text \<open>
 \<close>
 lemma TESL_interpretation_stepwise_zero:
   \<open>\<lbrakk> \<phi> \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<lbrakk> \<phi> \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> 0\<^esup>\<close>
-by (induction \<phi>, simp+)
+proof (induction \<phi>)
+case (SporadicOn x1 x2 x3)
+  then show ?case by simp
+next
+  case (SporadicAdd K\<^sub>1 \<tau>\<^sub>e\<^sub>x\<^sub>p\<^sub>r K\<^sub>2)
+  then show ?case 
+  proof (induction \<tau>\<^sub>e\<^sub>x\<^sub>p\<^sub>r)
+    case (AddDelay \<tau>\<^sub>v\<^sub>a\<^sub>r\<^sub>0 \<delta>\<tau>)
+    then show ?case
+    proof (induction \<tau>\<^sub>v\<^sub>a\<^sub>r\<^sub>0)
+      case (TSchematic tuple)
+      then show ?case
+      proof (induction tuple)
+        case (Pair K\<^sub>p\<^sub>a\<^sub>s\<^sub>t n\<^sub>p\<^sub>a\<^sub>s\<^sub>t)
+        then show ?case by simp
+      qed
+    qed
+  qed
+next
+case (TagRelation x1 x2 x3)
+  then show ?case by simp 
+next
+  case (Implies x1 x2)
+then show ?case by simp 
+next
+  case (ImpliesNot x1 x2)
+  then show ?case by simp
+next
+  case (TimeDelayedBy x1 x2 x3 x4)
+then show ?case by simp
+next
+  case (TimeDelayedBy2 x1 x2 x3 x4)
+  then show ?case by simp
+next
+  case (WeaklyPrecedes x1 x2)
+  then show ?case by simp
+next
+  case (StrictlyPrecedes x1 x2)
+  then show ?case by simp
+next
+  case (Kills x1 x2)
+then show ?case by simp
+qed
 
 lemma TESL_interpretation_stepwise_zero':
   \<open>\<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L = \<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> 0\<^esup>\<close>
@@ -451,6 +575,12 @@ proof -
     thus ?thesis by auto
   qed
 qed
+
+lemma HeronConf_interp_stepwise_sporadicon_add_cases:
+   \<open>\<lbrakk> \<Gamma>, n \<turnstile> ((K\<^sub>1 sporadic-add \<tau>\<^sub>e\<^sub>x\<^sub>p\<^sub>r on K\<^sub>2) # \<Psi>) \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
+    = \<lbrakk> \<Gamma>, n \<turnstile> \<Psi> \<triangleright> ((K\<^sub>1 sporadic-add \<tau>\<^sub>e\<^sub>x\<^sub>p\<^sub>r on K\<^sub>2) # \<Phi>) \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
+    \<union> \<lbrakk> ((K\<^sub>1 \<Up> n) # (K\<^sub>2 \<Down> n @@ \<tau>\<^sub>e\<^sub>x\<^sub>p\<^sub>r) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g\<close>
+sorry
 
 lemma HeronConf_interp_stepwise_tagrel_cases:
    \<open>\<lbrakk> \<Gamma>, n \<turnstile> ((time-relation \<lfloor>K\<^sub>1, K\<^sub>2\<rfloor> \<in> R) # \<Psi>) \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
@@ -586,6 +716,13 @@ proof -
     then show ?thesis by (simp add: inf_assoc inf_sup_distrib2)
   qed
 qed
+
+lemma HeronConf_interp_stepwise_timedelayed2_cases:
+  \<open>\<lbrakk> \<Gamma>, n \<turnstile> ((K\<^sub>1 time-delayed2 by \<delta>\<tau> on K\<^sub>2 implies K\<^sub>3) # \<Psi>) \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
+    = \<lbrakk> ((K\<^sub>1 \<not>\<Up> n) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> ((K\<^sub>1 time-delayed by \<delta>\<tau> on K\<^sub>2 implies K\<^sub>3) # \<Phi>) \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
+    \<union> \<lbrakk> ((K\<^sub>1 \<Up> n) # \<Gamma>), n
+        \<turnstile> (K\<^sub>3 sporadic-add \<lparr>\<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>2, n) \<oplus> \<delta>\<tau>\<rparr> on K\<^sub>2) # \<Psi> \<triangleright> ((K\<^sub>1 time-delayed by \<delta>\<tau> on K\<^sub>2 implies K\<^sub>3) # \<Phi>) \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g\<close>
+  sorry
 
 lemma HeronConf_interp_stepwise_weakly_precedes_cases:
    \<open>\<lbrakk> \<Gamma>, n \<turnstile> ((K\<^sub>1 weakly precedes K\<^sub>2) # \<Psi>) \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
