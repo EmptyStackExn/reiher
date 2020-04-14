@@ -65,6 +65,16 @@ proof -
       thus ?P using HeronConf_interp_stepwise_sporadicon_cases
                     HeronConf_interpretation.simps by blast
     next
+      fix \<Gamma> n K\<^sub>1 \<tau>\<^sub>e\<^sub>x\<^sub>p\<^sub>r K\<^sub>2 \<Psi> \<Phi>
+      assume \<open>\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1 = \<Gamma>, n \<turnstile> (K\<^sub>1 sporadic-add \<tau>\<^sub>e\<^sub>x\<^sub>p\<^sub>r on K\<^sub>2) # \<Psi> \<triangleright> \<Phi>\<close>
+      and \<open>\<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2 = \<Gamma>, n \<turnstile> \<Psi> \<triangleright> (K\<^sub>1 sporadic-add \<tau>\<^sub>e\<^sub>x\<^sub>p\<^sub>r on K\<^sub>2) # \<Phi>\<close>
+      thus ?P sorry
+    next
+      fix \<Gamma> n K\<^sub>1 \<tau>\<^sub>e\<^sub>x\<^sub>p\<^sub>r K\<^sub>2 \<Psi> \<Phi>
+      assume \<open>\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1 = \<Gamma>, n \<turnstile> (K\<^sub>1 sporadic-add \<tau>\<^sub>e\<^sub>x\<^sub>p\<^sub>r on K\<^sub>2) # \<Psi> \<triangleright> \<Phi>\<close>
+      and \<open>\<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2 = K\<^sub>1 \<Up> n # K\<^sub>2 \<Down> n @@ \<tau>\<^sub>e\<^sub>x\<^sub>p\<^sub>r # \<Gamma>, n \<turnstile> \<Psi> \<triangleright> \<Phi>\<close>
+      thus ?P sorry
+    next
       fix \<Gamma> n K\<^sub>1 K\<^sub>2 R \<Psi> \<Phi>
       assume \<open>(\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1) = (\<Gamma>, n \<turnstile> (time-relation \<lfloor>K\<^sub>1, K\<^sub>2\<rfloor> \<in> R) # \<Psi> \<triangleright> \<Phi>)\<close>
       and \<open>(\<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2) = (((\<lfloor>\<tau>\<^sub>v\<^sub>a\<^sub>r (K\<^sub>1, n), \<tau>\<^sub>v\<^sub>a\<^sub>r (K\<^sub>2, n)\<rfloor> \<in> R) # \<Gamma>), n
@@ -114,6 +124,17 @@ proof -
                 \<turnstile> \<Psi> \<triangleright> ((K\<^sub>1 time-delayed by \<delta>\<tau> on K\<^sub>2 implies K\<^sub>3) # \<Phi>))\<close>
       thus ?P using HeronConf_interp_stepwise_timedelayed_cases
                     HeronConf_interpretation.simps by blast
+    next
+      fix \<Gamma> n K\<^sub>1 \<delta>\<tau> K\<^sub>2 K\<^sub>3 \<Psi> \<Phi>
+      assume \<open>\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1 = \<Gamma>, n \<turnstile> (K\<^sub>1 time-delayed2 by \<delta>\<tau> on K\<^sub>2 implies K\<^sub>3) # \<Psi> \<triangleright> \<Phi>\<close>
+      and \<open>\<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2 = K\<^sub>1 \<not>\<Up> n # \<Gamma>, n \<turnstile> \<Psi> \<triangleright> (K\<^sub>1 time-delayed2 by \<delta>\<tau> on K\<^sub>2 implies K\<^sub>3) # \<Phi>\<close>
+      thus ?P sorry
+    next
+      fix \<Gamma> n K\<^sub>1 \<delta>\<tau> K\<^sub>2 K\<^sub>3 \<Psi> \<Phi>
+      assume \<open>\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1 = \<Gamma>, n \<turnstile> (K\<^sub>1 time-delayed2 by \<delta>\<tau> on K\<^sub>2 implies K\<^sub>3) # \<Psi> \<triangleright> \<Phi>\<close>
+      and \<open>\<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2 = K\<^sub>1 \<Up> n # \<Gamma>, n \<turnstile> (K\<^sub>3 sporadic-add \<lparr> \<tau>\<^sub>v\<^sub>a\<^sub>r (K\<^sub>2, n) \<oplus> \<delta>\<tau> \<rparr> on K\<^sub>2) #
+               \<Psi> \<triangleright> (K\<^sub>1 time-delayed2 by \<delta>\<tau> on K\<^sub>2 implies K\<^sub>3) # \<Phi>\<close>
+      thus ?P sorry
     next
       fix \<Gamma> n K\<^sub>1 K\<^sub>2 \<Psi> \<Phi>
       assume \<open>(\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1) = (\<Gamma>, n \<turnstile> ((K\<^sub>1 weakly precedes K\<^sub>2) # \<Psi>) \<triangleright> \<Phi>)\<close>
@@ -217,6 +238,9 @@ lemma complete_direct_successors:
                                       [of \<open>\<Gamma>\<close> \<open>n\<close> \<open>K1\<close> \<open>\<tau>\<close> \<open>K2\<close> \<open>\<Psi>\<close> \<open>\<Phi>\<close>]
                 Cnext_solve_sporadicon[of \<open>\<Gamma>\<close> \<open>n\<close> \<open>\<Psi>\<close> \<open>K1\<close> \<open>\<tau>\<close> \<open>K2\<close> \<open>\<Phi>\<close>] by blast
       next
+        case (SporadicAdd X1 X2 X3) thus ?thesis
+          sorry
+      next
         case (TagRelation K\<^sub>1 K\<^sub>2 R) thus ?thesis
           using HeronConf_interp_stepwise_tagrel_cases
                                   [of \<open>\<Gamma>\<close> \<open>n\<close> \<open>K\<^sub>1\<close> \<open>K\<^sub>2\<close> \<open>R\<close> \<open>\<Psi>\<close> \<open>\<Phi>\<close>]
@@ -237,6 +261,9 @@ lemma complete_direct_successors:
                           [of \<open>\<Gamma>\<close> \<open>n\<close> \<open>Kmast\<close> \<open>\<tau>\<close> \<open>Kmeas\<close> \<open>Kslave\<close> \<open>\<Psi>\<close> \<open>\<Phi>\<close>]
                 Cnext_solve_timedelayed
                           [of \<open>Kmast\<close> \<open>n\<close> \<open>\<Gamma>\<close> \<open>\<Psi>\<close> \<open>\<tau>\<close> \<open>Kmeas\<close> \<open>Kslave\<close> \<open>\<Phi>\<close>] by blast
+      next
+        case (TimeDelayedBy2 Kmast \<tau> Kmeas Kslave) thus ?thesis
+          sorry
       next
         case (WeaklyPrecedes K1 K2) thus ?thesis
           using HeronConf_interp_stepwise_weakly_precedes_cases
@@ -386,6 +413,10 @@ next
              \<union> \<lbrakk> ((K\<^sub>1 \<Up> n) # (K\<^sub>2 \<Down> n @ \<tau>) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g\<close>
           by simp
         with br1 br2 show ?case by blast
+    next
+      case (SporadicAdd X1 X2 X3)
+      show ?case
+        sorry
   next
     case (TagRelation K\<^sub>1 K\<^sub>2 R)
       have branches: \<open>\<lbrakk> \<Gamma>, n \<turnstile> ((time-relation \<lfloor>K\<^sub>1, K\<^sub>2\<rfloor> \<in> R) # \<Psi>) \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
@@ -592,6 +623,10 @@ next
       qed
       ultimately show ?case using TimeDelayedBy.prems(2) by blast
   next
+    case (TimeDelayedBy2 K\<^sub>1 \<delta>\<tau> K\<^sub>2 K\<^sub>3)
+    show ?case
+      sorry
+  next
     case (WeaklyPrecedes K\<^sub>1 K\<^sub>2)
       have \<open>\<lbrakk> \<Gamma>, n \<turnstile> ((K\<^sub>1 weakly precedes K\<^sub>2) # \<Psi>) \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g =
         \<lbrakk> ((\<lceil>#\<^sup>\<le> K\<^sub>2 n, #\<^sup>\<le> K\<^sub>1 n\<rceil> \<in> (\<lambda>(x, y). x \<le> y)) # \<Gamma>), n
@@ -792,6 +827,7 @@ where
   \<open>\<mu> [] = (0::nat)\<close>
 | \<open>\<mu> (\<phi> # \<Phi>) = (case \<phi> of
                       _ sporadic _ on _ \<Rightarrow> 1 + \<mu> \<Phi>
+                    | _ sporadic-add _ on _ \<Rightarrow> 1 + \<mu> \<Phi>
                     | _                 \<Rightarrow> 2 + \<mu> \<Phi>)\<close>
 
 fun measure_interpretation_config :: \<open>'\<tau>::linordered_field config \<Rightarrow> nat\<close> (\<open>\<mu>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g\<close>)
