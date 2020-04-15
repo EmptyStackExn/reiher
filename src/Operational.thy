@@ -221,6 +221,12 @@ by (simp add: operational_semantics_step.simps
               operational_semantics_elim.sporadic_on_e1
               operational_semantics_elim.sporadic_on_e2)
 
+lemma Cnext_solve_sporadicon_add:
+  \<open>(\<C>\<^sub>n\<^sub>e\<^sub>x\<^sub>t (\<Gamma>, n \<turnstile> ((K\<^sub>1 sporadic-add \<tau>\<^sub>e\<^sub>x\<^sub>p\<^sub>r on K\<^sub>2) # \<Psi>) \<triangleright> \<Phi>))
+    \<supseteq> { \<Gamma>, n \<turnstile> \<Psi> \<triangleright> ((K\<^sub>1 sporadic-add \<tau>\<^sub>e\<^sub>x\<^sub>p\<^sub>r on K\<^sub>2) # \<Phi>),
+        ((K\<^sub>1 \<Up> n) # (K\<^sub>2 \<Down> n @ \<tau>) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> \<Phi> }\<close>
+  sorry
+
 lemma Cnext_solve_tagrel:
   \<open>(\<C>\<^sub>n\<^sub>e\<^sub>x\<^sub>t (\<Gamma>, n \<turnstile> ((time-relation \<lfloor>K\<^sub>1, K\<^sub>2\<rfloor> \<in> R) # \<Psi>) \<triangleright> \<Phi>))
     \<supseteq> { ((\<lfloor>\<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>1, n), \<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>2, n)\<rfloor> \<in> R) # \<Gamma>),n
@@ -250,6 +256,13 @@ lemma Cnext_solve_timedelayed:
 by (simp add: operational_semantics_step.simps
               operational_semantics_elim.timedelayed_e1
               operational_semantics_elim.timedelayed_e2)
+
+lemma Cnext_solve_timedelayed2:
+  \<open>(\<C>\<^sub>n\<^sub>e\<^sub>x\<^sub>t (\<Gamma>, n \<turnstile> ((K\<^sub>1 time-delayed2 by \<delta>\<tau> on K\<^sub>2 implies K\<^sub>3) # \<Psi>) \<triangleright> \<Phi>))
+    \<supseteq> { ((K\<^sub>1 \<not>\<Up> n) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> ((K\<^sub>1 time-delayed2 by \<delta>\<tau> on K\<^sub>2 implies K\<^sub>3) # \<Phi>),
+        ((K\<^sub>1 \<Up> n) # \<Gamma>), n
+          \<turnstile> (K\<^sub>3 sporadic-add \<lparr>\<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>2, n) \<oplus> \<delta>\<tau>\<rparr> on K\<^sub>2) # \<Psi> \<triangleright> ((K\<^sub>1 time-delayed2 by \<delta>\<tau> on K\<^sub>2 implies K\<^sub>3) # \<Phi>) }\<close>
+  sorry
 
 lemma Cnext_solve_weakly_precedes:
   \<open>(\<C>\<^sub>n\<^sub>e\<^sub>x\<^sub>t (\<Gamma>, n \<turnstile> ((K\<^sub>1 weakly precedes K\<^sub>2) # \<Psi>) \<triangleright> \<Phi>))
