@@ -271,9 +271,9 @@ lemma TESL_interp_stepwise_sporadicon_tvar_coind_unfold:
     \<lbrakk> K\<^sub>1 \<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk> K\<^sub>2 \<Down> n @\<sharp> \<lparr>\<tau>\<^sub>v\<^sub>a\<^sub>r(K, n') \<oplus> \<tau>\<rparr> \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m
     \<union> \<lbrakk> K\<^sub>1 sporadic\<sharp> \<lparr>\<tau>\<^sub>v\<^sub>a\<^sub>r(K, n') \<oplus> \<tau>\<rparr> on K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>\<close>
 proof -
-  have "{ \<rho>. \<exists>m\<ge>n. ticks ((Rep_run \<rho>) m K\<^sub>1) = True \<and> time ((Rep_run \<rho>) m K\<^sub>2) = time ((Rep_run \<rho>) n' K) + \<tau> }
+  have \<open>{ \<rho>. \<exists>m\<ge>n. ticks ((Rep_run \<rho>) m K\<^sub>1) = True \<and> time ((Rep_run \<rho>) m K\<^sub>2) = time ((Rep_run \<rho>) n' K) + \<tau> }
       = { \<rho>. ticks ((Rep_run \<rho>) n K\<^sub>1) = True \<and> time ((Rep_run \<rho>) n K\<^sub>2) = time ((Rep_run \<rho>) n' K) + \<tau>
-             \<or> (\<exists>m\<ge>Suc n. ticks ((Rep_run \<rho>) m K\<^sub>1) = True \<and> time ((Rep_run \<rho>) m K\<^sub>2) = time ((Rep_run \<rho>) n' K) + \<tau>) }"
+             \<or> (\<exists>m\<ge>Suc n. ticks ((Rep_run \<rho>) m K\<^sub>1) = True \<and> time ((Rep_run \<rho>) m K\<^sub>2) = time ((Rep_run \<rho>) n' K) + \<tau>) }\<close>
     using Suc_leD not_less_eq_eq by fastforce
   then show ?thesis by auto
 qed
@@ -282,8 +282,12 @@ lemma TESL_interp_stepwise_sporadicon_tvar_coind_unfold2:
   \<open>\<lbrakk> K\<^sub>1 sporadic\<sharp> \<tau>\<^sub>e\<^sub>x\<^sub>p\<^sub>r on K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> =
     \<lbrakk> K\<^sub>1 \<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk> K\<^sub>2 \<Down> n @\<sharp> \<tau>\<^sub>e\<^sub>x\<^sub>p\<^sub>r \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m        \<comment> \<open>rule @{term sporadic_on_tvar_e2}\<close>
     \<union> \<lbrakk> K\<^sub>1 sporadic\<sharp> \<tau>\<^sub>e\<^sub>x\<^sub>p\<^sub>r on K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>\<close>   \<comment> \<open>rule @{term sporadic_on_tvar_e1}\<close>
-using TESL_interp_stepwise_sporadicon_tvar_coind_unfold
-by (metis old.prod.exhaust tag_expr.exhaust tag_var.exhaust)
+proof -
+  from tag_expr.exhaust obtain v \<tau> where \<open> \<tau>\<^sub>e\<^sub>x\<^sub>p\<^sub>r=\<lparr> v \<oplus> \<tau> \<rparr>\<close> by blast
+  moreover from tag_var.exhaust obtain K n where \<open>v=\<tau>\<^sub>v\<^sub>a\<^sub>r(K, n)\<close> by auto
+  ultimately have \<open>\<tau>\<^sub>e\<^sub>x\<^sub>p\<^sub>r=\<lparr> \<tau>\<^sub>v\<^sub>a\<^sub>r(K, n) \<oplus> \<tau> \<rparr>\<close> by simp
+  thus ?thesis using TESL_interp_stepwise_sporadicon_tvar_coind_unfold by blast
+qed
 
 lemma TESL_interp_stepwise_tagrel_coind_unfold:
   \<open>\<lbrakk> time-relation \<lfloor>K\<^sub>1, K\<^sub>2\<rfloor> \<in> R \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> =        \<comment> \<open>rule @{term tagrel_e}\<close>
@@ -347,22 +351,22 @@ proof -
   finally show ?thesis by auto
 qed
 
-lemma nat_set_suc:"{x. \<forall>m \<ge> n. P x m} = {x. P x n} \<inter> {x. \<forall>m \<ge> Suc n. P x m}"
+lemma nat_set_suc:\<open>{x. \<forall>m \<ge> n. P x m} = {x. P x n} \<inter> {x. \<forall>m \<ge> Suc n. P x m}\<close>
 proof
   { fix x
-    assume h:"x \<in> {x. \<forall>m \<ge> n. P x m}"
-    hence "P x n" by simp
-    moreover from h have "x \<in> {x. \<forall>m \<ge> Suc n. P x m}" by simp
-    ultimately have "x \<in> {x. P x n} \<inter> {x. \<forall>m \<ge> Suc n. P x m}" by simp
-  } thus "{x. \<forall>m \<ge> n. P x m} \<subseteq> {x. P x n} \<inter> {x. \<forall>m \<ge> Suc n. P x m}" ..
+    assume h:\<open>x \<in> {x. \<forall>m \<ge> n. P x m}\<close>
+    hence \<open>P x n\<close> by simp
+    moreover from h have \<open>x \<in> {x. \<forall>m \<ge> Suc n. P x m}\<close> by simp
+    ultimately have \<open>x \<in> {x. P x n} \<inter> {x. \<forall>m \<ge> Suc n. P x m}\<close> by simp
+  } thus \<open>{x. \<forall>m \<ge> n. P x m} \<subseteq> {x. P x n} \<inter> {x. \<forall>m \<ge> Suc n. P x m}\<close> ..
 next
   { fix x
-    assume h:"x \<in> {x. P x n} \<inter> {x. \<forall>m \<ge> Suc n. P x m}"
-    hence "P x n" by simp
-    moreover from h have "\<forall>m \<ge> Suc n. P x m" by simp
-    ultimately have "\<forall>m \<ge> n. P x m" using forall_nat_expansion by blast
-    hence "x \<in> {x. \<forall>m \<ge> n. P x m}" by simp
-  } thus "{x. P x n} \<inter> {x. \<forall>m \<ge> Suc n. P x m} \<subseteq> {x. \<forall>m \<ge> n. P x m}" ..
+    assume h:\<open>x \<in> {x. P x n} \<inter> {x. \<forall>m \<ge> Suc n. P x m}\<close>
+    hence \<open>P x n\<close> by simp
+    moreover from h have \<open>\<forall>m \<ge> Suc n. P x m\<close> by simp
+    ultimately have \<open>\<forall>m \<ge> n. P x m\<close> using forall_nat_expansion by blast
+    hence \<open>x \<in> {x. \<forall>m \<ge> n. P x m}\<close> by simp
+  } thus \<open>{x. P x n} \<inter> {x. \<forall>m \<ge> Suc n. P x m} \<subseteq> {x. \<forall>m \<ge> n. P x m}\<close> ..
 qed
 
 lemma TESL_interp_stepwise_timedelayed_tvar_coind_unfold:
@@ -372,18 +376,22 @@ lemma TESL_interp_stepwise_timedelayed_tvar_coind_unfold:
                                              \<comment> \<open>rule @{term timedelayed_tvar_e2}\<close>
      \<inter> \<lbrakk> master time-delayed\<sharp> by \<delta>\<tau> on measuring implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>\<close>
 proof -
-  have "{ \<rho>. \<forall>m\<ge>n. ticks ((Rep_run \<rho>) m master) \<longrightarrow>
+  have \<open>{ \<rho>. \<forall>m\<ge>n. ticks ((Rep_run \<rho>) m master) \<longrightarrow>
                (let measured_time = time ((Rep_run \<rho>) m measuring) in
-                \<exists>p \<ge> m. ticks ((Rep_run \<rho>) p slave) \<and> time ((Rep_run \<rho>) p measuring) = measured_time + \<delta>\<tau>)}
+                \<exists>p \<ge> m. ticks ((Rep_run \<rho>) p slave)
+                      \<and> time ((Rep_run \<rho>) p measuring) = measured_time + \<delta>\<tau>)}
        = { \<rho>. ticks ((Rep_run \<rho>) n master) \<longrightarrow>
                (let measured_time = time ((Rep_run \<rho>) n measuring) in
-                \<exists>p \<ge> n. ticks ((Rep_run \<rho>) p slave) \<and> time ((Rep_run \<rho>) p measuring) = measured_time + \<delta>\<tau>)}
+                \<exists>p \<ge> n. ticks ((Rep_run \<rho>) p slave)
+                      \<and> time ((Rep_run \<rho>) p measuring) = measured_time + \<delta>\<tau>)}
          \<inter> { \<rho>. \<forall>m\<ge>Suc n. ticks ((Rep_run \<rho>) m master) \<longrightarrow>
                (let measured_time = time ((Rep_run \<rho>) m measuring) in
-                \<exists>p \<ge> m. ticks ((Rep_run \<rho>) p slave) \<and> time ((Rep_run \<rho>) p measuring) = measured_time + \<delta>\<tau>)}"
-  using nat_set_suc[of "n" "\<lambda>x y. ticks ((Rep_run x) y master) \<longrightarrow>
+                \<exists>p \<ge> m. ticks ((Rep_run \<rho>) p slave)
+                      \<and> time ((Rep_run \<rho>) p measuring) = measured_time + \<delta>\<tau>)}\<close>
+  using nat_set_suc[of \<open>n\<close> \<open>\<lambda>x y. ticks ((Rep_run x) y master) \<longrightarrow>
                (let measured_time = time ((Rep_run x) y measuring) in
-                \<exists>p \<ge> y. ticks ((Rep_run x) p slave) \<and> time ((Rep_run x) p measuring) = measured_time + \<delta>\<tau>)"] by simp
+                \<exists>p \<ge> y. ticks ((Rep_run x) p slave)
+                      \<and> time ((Rep_run x) p measuring) = measured_time + \<delta>\<tau>)\<close>] by simp
   then show ?thesis by auto
 qed
 
@@ -618,26 +626,29 @@ lemma configuration_interp_stepwise_sporadicon_tvar_cases:
    \<open>\<lbrakk> \<Gamma>, n \<turnstile> ((K\<^sub>1 sporadic\<sharp> \<tau>\<^sub>e\<^sub>x\<^sub>p\<^sub>r on K\<^sub>2) # \<Psi>) \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
     = \<lbrakk> \<Gamma>, n \<turnstile> \<Psi> \<triangleright> ((K\<^sub>1 sporadic\<sharp> \<tau>\<^sub>e\<^sub>x\<^sub>p\<^sub>r on K\<^sub>2) # \<Phi>) \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
     \<union> \<lbrakk> ((K\<^sub>1 \<Up> n) # (K\<^sub>2 \<Down> n @\<sharp> \<tau>\<^sub>e\<^sub>x\<^sub>p\<^sub>r) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g\<close>
-proof (induction \<tau>\<^sub>e\<^sub>x\<^sub>p\<^sub>r)
-  case (AddDelay x1a \<delta>\<tau>)
-  then show ?case
-  proof (induction x1a)
-    case (TSchematic xa)
-    then show ?case
-      proof (induction xa)
-        case (Pair K\<^sub>p\<^sub>a\<^sub>s\<^sub>t n\<^sub>p\<^sub>a\<^sub>s\<^sub>t)
-        then show ?case
-        proof -
-          have "(\<lbrakk> K\<^sub>1 \<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk> K\<^sub>2 \<Down> n @\<sharp> \<lparr> \<tau>\<^sub>v\<^sub>a\<^sub>r (K\<^sub>p\<^sub>a\<^sub>s\<^sub>t, n\<^sub>p\<^sub>a\<^sub>s\<^sub>t) \<oplus> \<delta>\<tau> \<rparr> \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<union> \<lbrakk> K\<^sub>1 sporadic\<sharp> \<lparr> \<tau>\<^sub>v\<^sub>a\<^sub>r (K\<^sub>p\<^sub>a\<^sub>s\<^sub>t, n\<^sub>p\<^sub>a\<^sub>s\<^sub>t) \<oplus> \<delta>\<tau> \<rparr> on K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>) \<inter> (\<lbrakk>\<lbrakk> \<Gamma> \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk>\<lbrakk> \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup>) = \<lbrakk> K\<^sub>1 sporadic\<sharp> \<lparr> \<tau>\<^sub>v\<^sub>a\<^sub>r (K\<^sub>p\<^sub>a\<^sub>s\<^sub>t, n\<^sub>p\<^sub>a\<^sub>s\<^sub>t) \<oplus> \<delta>\<tau> \<rparr> on K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> \<inter> (\<lbrakk>\<lbrakk> \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> \<inter> \<lbrakk>\<lbrakk> \<Gamma> \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m)"
-            by (metis Int_commute TESL_interp_stepwise_sporadicon_tvar_coind_unfold)
-          then have "\<lbrakk>\<lbrakk> K\<^sub>1 \<Up> n # K\<^sub>2 \<Down> n @\<sharp> \<lparr> \<tau>\<^sub>v\<^sub>a\<^sub>r (K\<^sub>p\<^sub>a\<^sub>s\<^sub>t, n\<^sub>p\<^sub>a\<^sub>s\<^sub>t) \<oplus> \<delta>\<tau> \<rparr> # \<Gamma> \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk>\<lbrakk> \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> \<union> \<lbrakk>\<lbrakk> \<Gamma> \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk>\<lbrakk> \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> \<inter> \<lbrakk> K\<^sub>1 sporadic\<sharp> \<lparr> \<tau>\<^sub>v\<^sub>a\<^sub>r (K\<^sub>p\<^sub>a\<^sub>s\<^sub>t, n\<^sub>p\<^sub>a\<^sub>s\<^sub>t) \<oplus> \<delta>\<tau> \<rparr> on K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup> = \<lbrakk>\<lbrakk> \<Gamma> \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk>\<lbrakk> (K\<^sub>1 sporadic\<sharp> \<lparr> \<tau>\<^sub>v\<^sub>a\<^sub>r (K\<^sub>p\<^sub>a\<^sub>s\<^sub>t, n\<^sub>p\<^sub>a\<^sub>s\<^sub>t) \<oplus> \<delta>\<tau> \<rparr> on K\<^sub>2) # \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup>"
-            by auto
-          then have "\<lbrakk> \<Gamma>, n \<turnstile> (K\<^sub>1 sporadic\<sharp> \<lparr> \<tau>\<^sub>v\<^sub>a\<^sub>r (K\<^sub>p\<^sub>a\<^sub>s\<^sub>t, n\<^sub>p\<^sub>a\<^sub>s\<^sub>t) \<oplus> \<delta>\<tau> \<rparr> on K\<^sub>2) # \<Psi> \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g = \<lbrakk> K\<^sub>1 \<Up> n # K\<^sub>2 \<Down> n @\<sharp> \<lparr> \<tau>\<^sub>v\<^sub>a\<^sub>r (K\<^sub>p\<^sub>a\<^sub>s\<^sub>t, n\<^sub>p\<^sub>a\<^sub>s\<^sub>t) \<oplus> \<delta>\<tau> \<rparr> # \<Gamma>, n \<turnstile> \<Psi> \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g \<union> \<lbrakk> \<Gamma>, n \<turnstile> \<Psi> \<triangleright> (K\<^sub>1 sporadic\<sharp> \<lparr> \<tau>\<^sub>v\<^sub>a\<^sub>r (K\<^sub>p\<^sub>a\<^sub>s\<^sub>t, n\<^sub>p\<^sub>a\<^sub>s\<^sub>t) \<oplus> \<delta>\<tau> \<rparr> on K\<^sub>2) # \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g"
-            by auto
-          then show ?thesis
-            by blast
-        qed
-      qed
+proof -
+  from tag_expr.exhaust obtain v \<delta>\<tau> where \<open> \<tau>\<^sub>e\<^sub>x\<^sub>p\<^sub>r=\<lparr> v \<oplus> \<delta>\<tau> \<rparr>\<close> by blast
+  moreover from tag_var.exhaust obtain K\<^sub>p\<^sub>a\<^sub>s\<^sub>t n\<^sub>p\<^sub>a\<^sub>s\<^sub>t where \<open>v=\<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>p\<^sub>a\<^sub>s\<^sub>t, n\<^sub>p\<^sub>a\<^sub>s\<^sub>t)\<close> by auto
+  ultimately have *:\<open>\<tau>\<^sub>e\<^sub>x\<^sub>p\<^sub>r=\<lparr> \<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>p\<^sub>a\<^sub>s\<^sub>t, n\<^sub>p\<^sub>a\<^sub>s\<^sub>t) \<oplus> \<delta>\<tau> \<rparr>\<close> by simp
+  show ?thesis
+  proof -
+    have \<open>(\<lbrakk> K\<^sub>1 \<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk> K\<^sub>2 \<Down> n @\<sharp> \<lparr> \<tau>\<^sub>v\<^sub>a\<^sub>r (K\<^sub>p\<^sub>a\<^sub>s\<^sub>t, n\<^sub>p\<^sub>a\<^sub>s\<^sub>t) \<oplus> \<delta>\<tau> \<rparr> \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m
+         \<union> \<lbrakk> K\<^sub>1 sporadic\<sharp> \<lparr> \<tau>\<^sub>v\<^sub>a\<^sub>r (K\<^sub>p\<^sub>a\<^sub>s\<^sub>t, n\<^sub>p\<^sub>a\<^sub>s\<^sub>t) \<oplus> \<delta>\<tau> \<rparr> on K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>)
+        \<inter> (\<lbrakk>\<lbrakk> \<Gamma> \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk>\<lbrakk> \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup>)
+      = \<lbrakk> K\<^sub>1 sporadic\<sharp> \<lparr> \<tau>\<^sub>v\<^sub>a\<^sub>r (K\<^sub>p\<^sub>a\<^sub>s\<^sub>t, n\<^sub>p\<^sub>a\<^sub>s\<^sub>t) \<oplus> \<delta>\<tau> \<rparr> on K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> \<inter> (\<lbrakk>\<lbrakk> \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> \<inter> \<lbrakk>\<lbrakk> \<Gamma> \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m)\<close>
+      using TESL_interp_stepwise_sporadicon_tvar_coind_unfold[of \<open>K\<^sub>1\<close> \<open>K\<^sub>p\<^sub>a\<^sub>s\<^sub>t\<close> \<open>n\<^sub>p\<^sub>a\<^sub>s\<^sub>t\<close> \<open>\<delta>\<tau>\<close> \<open>K\<^sub>2\<close> \<open>n\<close>]
+            Int_commute by blast
+    then have \<open>\<lbrakk>\<lbrakk> (K\<^sub>1 \<Up> n) # (K\<^sub>2 \<Down> n @\<sharp> \<lparr> \<tau>\<^sub>v\<^sub>a\<^sub>r (K\<^sub>p\<^sub>a\<^sub>s\<^sub>t, n\<^sub>p\<^sub>a\<^sub>s\<^sub>t) \<oplus> \<delta>\<tau> \<rparr>) # \<Gamma> \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m
+            \<inter> \<lbrakk>\<lbrakk> \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> \<union> \<lbrakk>\<lbrakk> \<Gamma> \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk>\<lbrakk> \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup>
+            \<inter> \<lbrakk> K\<^sub>1 sporadic\<sharp> \<lparr> \<tau>\<^sub>v\<^sub>a\<^sub>r (K\<^sub>p\<^sub>a\<^sub>s\<^sub>t, n\<^sub>p\<^sub>a\<^sub>s\<^sub>t) \<oplus> \<delta>\<tau> \<rparr> on K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>
+        = \<lbrakk>\<lbrakk> \<Gamma> \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk>\<lbrakk> (K\<^sub>1 sporadic\<sharp> \<lparr> \<tau>\<^sub>v\<^sub>a\<^sub>r (K\<^sub>p\<^sub>a\<^sub>s\<^sub>t, n\<^sub>p\<^sub>a\<^sub>s\<^sub>t) \<oplus> \<delta>\<tau> \<rparr> on K\<^sub>2) # \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup>\<close>
+      by auto
+    then have \<open>\<lbrakk> \<Gamma>, n \<turnstile> ((K\<^sub>1 sporadic\<sharp> \<lparr> \<tau>\<^sub>v\<^sub>a\<^sub>r (K\<^sub>p\<^sub>a\<^sub>s\<^sub>t, n\<^sub>p\<^sub>a\<^sub>s\<^sub>t) \<oplus> \<delta>\<tau> \<rparr> on K\<^sub>2) # \<Psi>) \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
+        = \<lbrakk> ((K\<^sub>1 \<Up> n) # (K\<^sub>2 \<Down> n @\<sharp> \<lparr> \<tau>\<^sub>v\<^sub>a\<^sub>r (K\<^sub>p\<^sub>a\<^sub>s\<^sub>t, n\<^sub>p\<^sub>a\<^sub>s\<^sub>t) \<oplus> \<delta>\<tau> \<rparr>) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
+          \<union> \<lbrakk> \<Gamma>, n \<turnstile> \<Psi> \<triangleright> ((K\<^sub>1 sporadic\<sharp> \<lparr> \<tau>\<^sub>v\<^sub>a\<^sub>r (K\<^sub>p\<^sub>a\<^sub>s\<^sub>t, n\<^sub>p\<^sub>a\<^sub>s\<^sub>t) \<oplus> \<delta>\<tau> \<rparr> on K\<^sub>2) # \<Phi>) \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g\<close>
+      by auto
+    then show ?thesis using *
+      by blast
   qed
 qed
 
@@ -780,11 +791,20 @@ lemma configuration_interp_stepwise_timedelayed_tvar_cases:
   \<open>\<lbrakk> \<Gamma>, n \<turnstile> ((K\<^sub>1 time-delayed\<sharp> by \<delta>\<tau> on K\<^sub>2 implies K\<^sub>3) # \<Psi>) \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
     = \<lbrakk> ((K\<^sub>1 \<not>\<Up> n) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> ((K\<^sub>1 time-delayed\<sharp> by \<delta>\<tau> on K\<^sub>2 implies K\<^sub>3) # \<Phi>) \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
     \<union> \<lbrakk> ((K\<^sub>1 \<Up> n) # \<Gamma>), n
-        \<turnstile> (K\<^sub>3 sporadic\<sharp> \<lparr>\<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>2, n) \<oplus> \<delta>\<tau>\<rparr> on K\<^sub>2) # \<Psi> \<triangleright> ((K\<^sub>1 time-delayed\<sharp> by \<delta>\<tau> on K\<^sub>2 implies K\<^sub>3) # \<Phi>) \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g\<close>
+        \<turnstile> (K\<^sub>3 sporadic\<sharp> \<lparr>\<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>2, n) \<oplus> \<delta>\<tau>\<rparr> on K\<^sub>2) # \<Psi>
+        \<triangleright> ((K\<^sub>1 time-delayed\<sharp> by \<delta>\<tau> on K\<^sub>2 implies K\<^sub>3) # \<Phi>) \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g\<close>
 proof -
-  have "\<lbrakk>\<lbrakk> \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> \<inter> (\<lbrakk> K\<^sub>1 \<not>\<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<union> \<lbrakk> K\<^sub>1 \<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk> K\<^sub>3 sporadic\<sharp> \<lparr> \<tau>\<^sub>v\<^sub>a\<^sub>r (K\<^sub>2, n) \<oplus> \<delta>\<tau> \<rparr> on K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup>) \<inter> \<lbrakk> K\<^sub>1 time-delayed\<sharp> by \<delta>\<tau> on K\<^sub>2 implies K\<^sub>3 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup> = \<lbrakk>\<lbrakk> \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> \<inter> \<lbrakk> K\<^sub>1 time-delayed\<sharp> by \<delta>\<tau> on K\<^sub>2 implies K\<^sub>3 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup>"
-    by (metis Int_assoc TESL_interp_stepwise_timedelayed_tvar_coind_unfold)
-  then have "\<lbrakk> \<Gamma>, n \<turnstile> (K\<^sub>1 time-delayed\<sharp> by \<delta>\<tau> on K\<^sub>2 implies K\<^sub>3) # \<Psi> \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g = \<lbrakk>\<lbrakk> \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> \<inter> (\<lbrakk> K\<^sub>1 \<not>\<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<union> \<lbrakk> K\<^sub>1 \<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk> K\<^sub>3 sporadic\<sharp> \<lparr> \<tau>\<^sub>v\<^sub>a\<^sub>r (K\<^sub>2, n) \<oplus> \<delta>\<tau> \<rparr> on K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup>) \<inter> \<lbrakk> K\<^sub>1 time-delayed\<sharp> by \<delta>\<tau> on K\<^sub>2 implies K\<^sub>3 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup> \<inter> (\<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup> \<inter> \<lbrakk>\<lbrakk> \<Gamma> \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m)"
+  have \<open>\<lbrakk>\<lbrakk> \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup>
+       \<inter> (\<lbrakk> K\<^sub>1 \<not>\<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<union> \<lbrakk> K\<^sub>1 \<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk> K\<^sub>3 sporadic\<sharp> \<lparr> \<tau>\<^sub>v\<^sub>a\<^sub>r (K\<^sub>2, n) \<oplus> \<delta>\<tau> \<rparr> on K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup>)
+       \<inter> \<lbrakk> K\<^sub>1 time-delayed\<sharp> by \<delta>\<tau> on K\<^sub>2 implies K\<^sub>3 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>
+      = \<lbrakk>\<lbrakk> \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> \<inter> \<lbrakk> K\<^sub>1 time-delayed\<sharp> by \<delta>\<tau> on K\<^sub>2 implies K\<^sub>3 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup>\<close>
+    using TESL_interp_stepwise_timedelayed_tvar_coind_unfold[of \<open>K\<^sub>1\<close> \<open>\<delta>\<tau>\<close> \<open>K\<^sub>2\<close> \<open>K\<^sub>3\<close> \<open>n\<close>]
+          Int_assoc by blast
+  then have \<open>\<lbrakk> \<Gamma>, n \<turnstile> (K\<^sub>1 time-delayed\<sharp> by \<delta>\<tau> on K\<^sub>2 implies K\<^sub>3) # \<Psi> \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
+          = \<lbrakk>\<lbrakk> \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup>
+          \<inter> (\<lbrakk> K\<^sub>1 \<not>\<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<union> \<lbrakk> K\<^sub>1 \<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk> K\<^sub>3 sporadic\<sharp> \<lparr> \<tau>\<^sub>v\<^sub>a\<^sub>r (K\<^sub>2, n) \<oplus> \<delta>\<tau> \<rparr> on K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup>)
+          \<inter> \<lbrakk> K\<^sub>1 time-delayed\<sharp> by \<delta>\<tau> on K\<^sub>2 implies K\<^sub>3 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>
+          \<inter> (\<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup> \<inter> \<lbrakk>\<lbrakk> \<Gamma> \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m)\<close>
     by force
   then show ?thesis
     by auto

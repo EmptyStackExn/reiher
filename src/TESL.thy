@@ -28,8 +28,8 @@ text\<open>
 (* TODO: text *)
 datatype tag_var =
   TSchematic \<open>clock * instant_index\<close> (\<open>\<tau>\<^sub>v\<^sub>a\<^sub>r\<close>)
-datatype '\<tau> tag_expr      =  (* Const    "'\<tau> tag_const"          ("\<lparr> _ \<rparr>") *)
-                              AddDelay "tag_var" "'\<tau> tag_const" ("\<lparr> _ \<oplus> _ \<rparr>")
+datatype '\<tau> tag_expr      =  (* Const    \<open>'\<tau> tag_const\<close>          (\<open>\<lparr> _ \<rparr>\<close>) *)
+                              AddDelay \<open>tag_var\<close> \<open>'\<tau> tag_const\<close> (\<open>\<lparr> _ \<oplus> _ \<rparr>\<close>)
 
 subsection\<open>Operators for the TESL language\<close>
 text\<open>
@@ -45,8 +45,7 @@ datatype '\<tau> TESL_atomic =
   | TimeDelayedBy      \<open>clock\<close> \<open>'\<tau> tag_const\<close> \<open>clock\<close> \<open>clock\<close> (* Targets stutter-invariance *)
                                                       (\<open>_ time-delayed by _ on _ implies _\<close> 55)
   | TimeDelayedByTvar   \<open>clock\<close> \<open>'\<tau> tag_const\<close> \<open>clock\<close> \<open>clock\<close> (* Targets operational semantics *)
-                                                      ("_ time-delayed\<sharp> by _ on _ implies _" 55)
-                                                      
+                                                      (\<open>_ time-delayed\<sharp> by _ on _ implies _\<close> 55)
   | WeaklyPrecedes     \<open>clock\<close> \<open>clock\<close>                  (infixr \<open>weakly precedes\<close> 55)
   | StrictlyPrecedes   \<open>clock\<close> \<open>clock\<close>                  (infixr \<open>strictly precedes\<close> 55)
   | Kills              \<open>clock\<close> \<open>clock\<close>                  (infixr \<open>kills\<close> 55)
@@ -56,6 +55,19 @@ text\<open>
   for the semantics.
 \<close>
 type_synonym '\<tau> TESL_formula = \<open>'\<tau> TESL_atomic list\<close>
+
+text \<open>
+  Some constraint were introduced for the implementation of the operational semantics.
+  They are not allowed in user-level TESL specification and are not public.
+\<close>
+fun is_public_atom :: \<open>'\<tau> TESL_atomic \<Rightarrow> bool\<close> where
+    \<open>is_public_atom (_ sporadic\<sharp> _ on _)                  = False\<close>
+  | \<open>is_public_atom (_ time-delayed\<sharp> by _ on _ implies _) = False\<close>
+  | \<open>is_public_atom _                                     = True\<close>
+
+fun is_public_spec :: \<open>'\<tau> TESL_atomic list \<Rightarrow> bool\<close> where
+    \<open>is_public_spec [] = True\<close>
+  | \<open>is_public_spec (\<phi>#S) = ((is_public_atom \<phi>) \<and> (is_public_spec S))\<close>
 
 text\<open>
   We call \<^emph>\<open>positive atoms\<close> the atomic constraints that create ticks from nothing.
@@ -109,15 +121,17 @@ instance proof
   text\<open>Multiplication is associative.\<close>
   fix a::\<open>'\<tau>::field tag_const\<close> and b::\<open>'\<tau>::field tag_const\<close>
                                and c::\<open>'\<tau>::field tag_const\<close>
-  obtain u v w where \<open>a = \<tau>\<^sub>c\<^sub>s\<^sub>t u\<close> and \<open>b = \<tau>\<^sub>c\<^sub>s\<^sub>t v\<close> and \<open>c = \<tau>\<^sub>c\<^sub>s\<^sub>t w\<close>
-    using tag_const.exhaust by metis
-  thus \<open>a * b * c = a * (b * c)\<close>
+  obtain u where \<open>a = \<tau>\<^sub>c\<^sub>s\<^sub>t u\<close> using tag_const.exhaust by blast
+  moreover obtain v where \<open>b = \<tau>\<^sub>c\<^sub>s\<^sub>t v\<close> using tag_const.exhaust by blast
+  moreover obtain w where \<open>c = \<tau>\<^sub>c\<^sub>s\<^sub>t w\<close> using tag_const.exhaust by blast
+  ultimately show \<open>a * b * c = a * (b * c)\<close>
     by (simp add: TESL.times_tag_const.simps)
 next
   text\<open>Multiplication is commutative.\<close>
   fix a::\<open>'\<tau>::field tag_const\<close> and b::\<open>'\<tau>::field tag_const\<close>
-  obtain u v where \<open>a = \<tau>\<^sub>c\<^sub>s\<^sub>t u\<close> and \<open>b = \<tau>\<^sub>c\<^sub>s\<^sub>t v\<close> using tag_const.exhaust by metis
-  thus \<open> a * b = b * a\<close>
+  obtain u where \<open>a = \<tau>\<^sub>c\<^sub>s\<^sub>t u\<close> using tag_const.exhaust by blast
+  moreover obtain v where \<open>b = \<tau>\<^sub>c\<^sub>s\<^sub>t v\<close> using tag_const.exhaust by blast
+  ultimately show \<open> a * b = b * a\<close>
     by (simp add: TESL.times_tag_const.simps)
 next
   text\<open>One is neutral for multiplication.\<close>
@@ -129,15 +143,17 @@ next
   text\<open>Addition is associative.\<close>
   fix a::\<open>'\<tau>::field tag_const\<close> and b::\<open>'\<tau>::field tag_const\<close>
                                and c::\<open>'\<tau>::field tag_const\<close>
-  obtain u v w where \<open>a = \<tau>\<^sub>c\<^sub>s\<^sub>t u\<close> and \<open>b = \<tau>\<^sub>c\<^sub>s\<^sub>t v\<close> and \<open>c = \<tau>\<^sub>c\<^sub>s\<^sub>t w\<close>
-    using tag_const.exhaust by metis
-  thus \<open>a + b + c = a + (b + c)\<close>
+  obtain u where \<open>a = \<tau>\<^sub>c\<^sub>s\<^sub>t u\<close> using tag_const.exhaust by blast
+  moreover obtain v where \<open>b = \<tau>\<^sub>c\<^sub>s\<^sub>t v\<close> using tag_const.exhaust by blast
+  moreover obtain w where \<open>c = \<tau>\<^sub>c\<^sub>s\<^sub>t w\<close> using tag_const.exhaust by blast
+  ultimately show \<open>a + b + c = a + (b + c)\<close>
     by (simp add: TESL.plus_tag_const.simps)
 next
   text\<open>Addition is commutative.\<close>
   fix a::\<open>'\<tau>::field tag_const\<close> and b::\<open>'\<tau>::field tag_const\<close>
-  obtain u v where \<open>a = \<tau>\<^sub>c\<^sub>s\<^sub>t u\<close> and \<open>b = \<tau>\<^sub>c\<^sub>s\<^sub>t v\<close> using tag_const.exhaust by metis
-  thus \<open>a + b = b + a\<close>
+  obtain u where \<open>a = \<tau>\<^sub>c\<^sub>s\<^sub>t u\<close> using tag_const.exhaust by blast
+  moreover obtain v where \<open>b = \<tau>\<^sub>c\<^sub>s\<^sub>t v\<close> using tag_const.exhaust by blast
+  ultimately show \<open>a + b = b + a\<close>
     by (simp add: TESL.plus_tag_const.simps)
 next
   text\<open>Zero is neutral for addition.\<close>
@@ -156,8 +172,9 @@ next
 next
   text\<open>Subtraction is adding the opposite.\<close>
   fix a::\<open>'\<tau>::field tag_const\<close> and b::\<open>'\<tau>::field tag_const\<close>
-  obtain u v where \<open>a = \<tau>\<^sub>c\<^sub>s\<^sub>t u\<close> and \<open>b = \<tau>\<^sub>c\<^sub>s\<^sub>t v\<close> using tag_const.exhaust by metis
-  thus \<open>a - b = a + -b\<close>
+  obtain u where \<open>a = \<tau>\<^sub>c\<^sub>s\<^sub>t u\<close> using tag_const.exhaust by blast
+  moreover obtain v where \<open>b = \<tau>\<^sub>c\<^sub>s\<^sub>t v\<close> using tag_const.exhaust by blast
+  ultimately show \<open>a - b = a + -b\<close>
     by (simp add: TESL.minus_tag_const.simps
                   TESL.plus_tag_const.simps
                   TESL.uminus_tag_const.simps)
@@ -165,9 +182,10 @@ next
   text\<open>Distributive property of multiplication over addition.\<close>
   fix a::\<open>'\<tau>::field tag_const\<close> and b::\<open>'\<tau>::field tag_const\<close>
                                and c::\<open>'\<tau>::field tag_const\<close>
-  obtain u v w where \<open>a = \<tau>\<^sub>c\<^sub>s\<^sub>t u\<close> and \<open>b = \<tau>\<^sub>c\<^sub>s\<^sub>t v\<close> and \<open>c = \<tau>\<^sub>c\<^sub>s\<^sub>t w\<close>
-    using tag_const.exhaust by metis
-  thus \<open>(a + b) * c = a * c + b * c\<close>
+  obtain u where \<open>a = \<tau>\<^sub>c\<^sub>s\<^sub>t u\<close> using tag_const.exhaust by blast
+  moreover obtain v where \<open>b = \<tau>\<^sub>c\<^sub>s\<^sub>t v\<close> using tag_const.exhaust by blast
+  moreover obtain w where \<open>c = \<tau>\<^sub>c\<^sub>s\<^sub>t w\<close> using tag_const.exhaust by blast
+  ultimately show \<open>(a + b) * c = a * c + b * c\<close>
     by (simp add: TESL.plus_tag_const.simps
                   TESL.times_tag_const.simps
                   ring_class.ring_distribs(2))
@@ -187,8 +205,9 @@ next
 next
   text\<open>Dividing is multiplying by the inverse.\<close>
   fix a::\<open>'\<tau>::field tag_const\<close> and b::\<open>'\<tau>::field tag_const\<close>
-  obtain u v where \<open>a = \<tau>\<^sub>c\<^sub>s\<^sub>t u\<close> and \<open>b = \<tau>\<^sub>c\<^sub>s\<^sub>t v\<close> using tag_const.exhaust by metis
-  thus \<open>a div b = a * inverse b\<close>
+  obtain u where \<open>a = \<tau>\<^sub>c\<^sub>s\<^sub>t u\<close> using tag_const.exhaust by blast
+  moreover obtain v where \<open>b = \<tau>\<^sub>c\<^sub>s\<^sub>t v\<close> using tag_const.exhaust by blast
+  ultimately show \<open>a div b = a * inverse b\<close>
     by (simp add: TESL.divide_tag_const.simps
                   TESL.inverse_tag_const.simps
                   TESL.times_tag_const.simps
@@ -243,12 +262,5 @@ begin
   qed
 
 end
-
-(* TODO: text *)
-fun suited_for_sttuter_inv_atom :: \<open>'\<tau> TESL_atomic \<Rightarrow> bool\<close> where
-    \<open>suited_for_sttuter_inv_atom (_ sporadic\<sharp> _ on _)                  = False\<close>
-  | \<open>suited_for_sttuter_inv_atom (_ time-delayed\<sharp> by _ on _ implies _) = False\<close>
-  | \<open>suited_for_sttuter_inv_atom _                                     = True\<close>
-
 
 end

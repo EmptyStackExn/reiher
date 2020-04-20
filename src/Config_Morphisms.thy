@@ -25,12 +25,15 @@ begin
 definition morphism_TESL_atomic : 
           \<open>(\<Psi>::'\<tau> TESL_atomic) \<Otimes> (f::('\<tau>::linorder \<Rightarrow> '\<tau>)) = 
               (case \<Psi> of
-                (C sporadic t on C')     \<Rightarrow> (C sporadic (t\<Otimes>f) on C') 
-              | (time-relation \<lfloor>C, C'\<rfloor>\<in>R)\<Rightarrow> (time-relation \<lfloor>C, C'\<rfloor> \<in> (\<lambda>(t, t'). R(t\<Otimes>f,t'\<Otimes>f)))
-              | (C implies C')           \<Rightarrow> (C implies C')
-              | (C implies not C')       \<Rightarrow> (C implies not C')       
+                (C sporadic t on C')      \<Rightarrow> (C sporadic (t\<Otimes>f) on C')
+              | (C sporadic\<sharp> t on C')     \<Rightarrow> (C sporadic\<sharp> (t\<Otimes>f) on C')
+              | (time-relation \<lfloor>C, C'\<rfloor>\<in>R) \<Rightarrow> (time-relation \<lfloor>C, C'\<rfloor> \<in> (\<lambda>(t, t'). R(t\<Otimes>f,t'\<Otimes>f)))
+              | (C implies C')            \<Rightarrow> (C implies C')
+              | (C implies not C')        \<Rightarrow> (C implies not C')
               | (C time-delayed by t on C' implies C'') 
                                          \<Rightarrow> (C time-delayed by t\<Otimes>f on C' implies C'')
+              | (C time-delayed\<sharp> by t on C' implies C'') 
+                                         \<Rightarrow> (C time-delayed\<sharp> by t\<Otimes>f on C' implies C'')
               | (C weakly precedes C')   \<Rightarrow> (C weakly precedes C')
               | (C strictly precedes C') \<Rightarrow> (C strictly precedes C') 
               | (C kills C')             \<Rightarrow> (C kills C'))\<close> 
