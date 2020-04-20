@@ -151,7 +151,7 @@ proof -
   have 4 : \<open>\<Psi>\<^sub>1 =  \<Psi>\<^sub>2 \<Otimes> f\<close> 
     using retract_condition by auto
   show ?thesis
-    sorry
+    oops
 qed
 
 end

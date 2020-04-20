@@ -78,6 +78,15 @@ The following items appear in specifications:
 \isanewline
 \isacommand{datatype}\isamarkupfalse%
 \ \ \ \ \ {\isacharprime}{\isasymtau}\ tag{\isacharunderscore}const\ {\isacharequal}\ \ TConst\ \ \ {\isacharparenleft}the{\isacharunderscore}tag{\isacharunderscore}const\ {\isacharcolon}\ {\isacharprime}{\isasymtau}{\isacharparenright}\ \ \ \ \ \ \ \ \ {\isacharparenleft}{\isacartoucheopen}{\isasymtau}\isactrlsub c\isactrlsub s\isactrlsub t{\isacartoucheclose}{\isacharparenright}%
+\begin{isamarkuptext}%
+Tag values are used to refer to the time on a clock at a given instant index.%
+\end{isamarkuptext}\isamarkuptrue%
+\isacommand{datatype}\isamarkupfalse%
+\ tag{\isacharunderscore}var\ {\isacharequal}\isanewline
+\ \ TSchematic\ {\isacartoucheopen}clock\ {\isacharasterisk}\ instant{\isacharunderscore}index{\isacartoucheclose}\ {\isacharparenleft}{\isacartoucheopen}{\isasymtau}\isactrlsub v\isactrlsub a\isactrlsub r{\isacartoucheclose}{\isacharparenright}\isanewline
+\isacommand{datatype}\isamarkupfalse%
+\ {\isacharprime}{\isasymtau}\ tag{\isacharunderscore}expr\ \ \ \ \ \ {\isacharequal}\ \ \isanewline
+\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ AddDelay\ {\isacartoucheopen}tag{\isacharunderscore}var{\isacartoucheclose}\ {\isacartoucheopen}{\isacharprime}{\isasymtau}\ tag{\isacharunderscore}const{\isacartoucheclose}\ {\isacharparenleft}{\isacartoucheopen}{\isasymlparr}\ {\isacharunderscore}\ {\isasymoplus}\ {\isacharunderscore}\ {\isasymrparr}{\isacartoucheclose}{\isacharparenright}%
 \isadelimdocument
 %
 \endisadelimdocument
@@ -100,16 +109,19 @@ The type of atomic TESL constraints, which can be combined to form specification
 \end{isamarkuptext}\isamarkuptrue%
 \isacommand{datatype}\isamarkupfalse%
 \ {\isacharprime}{\isasymtau}\ TESL{\isacharunderscore}atomic\ {\isacharequal}\isanewline
-\ \ \ \ SporadicOn\ \ \ \ \ \ \ {\isacartoucheopen}clock{\isacartoucheclose}\ {\isacartoucheopen}{\isacharprime}{\isasymtau}\ tag{\isacharunderscore}const{\isacartoucheclose}\ \ {\isacartoucheopen}clock{\isacartoucheclose}\ \ {\isacharparenleft}{\isacartoucheopen}{\isacharunderscore}\ sporadic\ {\isacharunderscore}\ on\ {\isacharunderscore}{\isacartoucheclose}\ {\isadigit{5}}{\isadigit{5}}{\isacharparenright}\isanewline
-\ \ {\isacharbar}\ TagRelation\ \ \ \ \ \ {\isacartoucheopen}clock{\isacartoucheclose}\ {\isacartoucheopen}clock{\isacartoucheclose}\ {\isacartoucheopen}{\isacharparenleft}{\isacharprime}{\isasymtau}\ tag{\isacharunderscore}const\ {\isasymtimes}\ {\isacharprime}{\isasymtau}\ tag{\isacharunderscore}const{\isacharparenright}\ {\isasymRightarrow}\ bool{\isacartoucheclose}\ \isanewline
+\ \ \ \ SporadicOn\ \ \ \ \ \ \ \ \ {\isacartoucheopen}clock{\isacartoucheclose}\ {\isacartoucheopen}{\isacharprime}{\isasymtau}\ tag{\isacharunderscore}const{\isacartoucheclose}\ \ {\isacartoucheopen}clock{\isacartoucheclose}\ \ {\isacharparenleft}{\isacartoucheopen}{\isacharunderscore}\ sporadic\ {\isacharunderscore}\ on\ {\isacharunderscore}{\isacartoucheclose}\ {\isadigit{5}}{\isadigit{5}}{\isacharparenright}\isanewline
+\ \ {\isacharbar}\ SporadicOnTvar\ \ \ \ \ {\isacartoucheopen}clock{\isacartoucheclose}\ {\isacartoucheopen}{\isacharprime}{\isasymtau}\ tag{\isacharunderscore}expr{\isacartoucheclose}\ \ {\isacartoucheopen}clock{\isacartoucheclose}\ \ \ {\isacharparenleft}{\isacartoucheopen}{\isacharunderscore}\ sporadic{\isasymsharp}\ {\isacharunderscore}\ on\ {\isacharunderscore}{\isacartoucheclose}\ {\isadigit{5}}{\isadigit{5}}{\isacharparenright}\ \isanewline
+\ \ {\isacharbar}\ TagRelation\ \ \ \ \ \ \ \ {\isacartoucheopen}clock{\isacartoucheclose}\ {\isacartoucheopen}clock{\isacartoucheclose}\ {\isacartoucheopen}{\isacharparenleft}{\isacharprime}{\isasymtau}\ tag{\isacharunderscore}const\ {\isasymtimes}\ {\isacharprime}{\isasymtau}\ tag{\isacharunderscore}const{\isacharparenright}\ {\isasymRightarrow}\ bool{\isacartoucheclose}\ \isanewline
 \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ {\isacharparenleft}{\isacartoucheopen}time{\isacharminus}relation\ {\isasymlfloor}{\isacharunderscore}{\isacharcomma}\ {\isacharunderscore}{\isasymrfloor}\ {\isasymin}\ {\isacharunderscore}{\isacartoucheclose}\ {\isadigit{5}}{\isadigit{5}}{\isacharparenright}\isanewline
-\ \ {\isacharbar}\ Implies\ \ \ \ \ \ \ \ \ \ {\isacartoucheopen}clock{\isacartoucheclose}\ {\isacartoucheopen}clock{\isacartoucheclose}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ {\isacharparenleft}\isakeyword{infixr}\ {\isacartoucheopen}implies{\isacartoucheclose}\ {\isadigit{5}}{\isadigit{5}}{\isacharparenright}\isanewline
-\ \ {\isacharbar}\ ImpliesNot\ \ \ \ \ \ \ {\isacartoucheopen}clock{\isacartoucheclose}\ {\isacartoucheopen}clock{\isacartoucheclose}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ {\isacharparenleft}\isakeyword{infixr}\ {\isacartoucheopen}implies\ not{\isacartoucheclose}\ {\isadigit{5}}{\isadigit{5}}{\isacharparenright}\isanewline
-\ \ {\isacharbar}\ TimeDelayedBy\ \ \ \ {\isacartoucheopen}clock{\isacartoucheclose}\ {\isacartoucheopen}{\isacharprime}{\isasymtau}\ tag{\isacharunderscore}const{\isacartoucheclose}\ {\isacartoucheopen}clock{\isacartoucheclose}\ {\isacartoucheopen}clock{\isacartoucheclose}\ \isanewline
+\ \ {\isacharbar}\ Implies\ \ \ \ \ \ \ \ \ \ \ \ {\isacartoucheopen}clock{\isacartoucheclose}\ {\isacartoucheopen}clock{\isacartoucheclose}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ {\isacharparenleft}\isakeyword{infixr}\ {\isacartoucheopen}implies{\isacartoucheclose}\ {\isadigit{5}}{\isadigit{5}}{\isacharparenright}\isanewline
+\ \ {\isacharbar}\ ImpliesNot\ \ \ \ \ \ \ \ \ {\isacartoucheopen}clock{\isacartoucheclose}\ {\isacartoucheopen}clock{\isacartoucheclose}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ {\isacharparenleft}\isakeyword{infixr}\ {\isacartoucheopen}implies\ not{\isacartoucheclose}\ {\isadigit{5}}{\isadigit{5}}{\isacharparenright}\isanewline
+\ \ {\isacharbar}\ TimeDelayedBy\ \ \ \ \ \ {\isacartoucheopen}clock{\isacartoucheclose}\ {\isacartoucheopen}{\isacharprime}{\isasymtau}\ tag{\isacharunderscore}const{\isacartoucheclose}\ {\isacartoucheopen}clock{\isacartoucheclose}\ {\isacartoucheopen}clock{\isacartoucheclose}\ \isanewline
 \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ {\isacharparenleft}{\isacartoucheopen}{\isacharunderscore}\ time{\isacharminus}delayed\ by\ {\isacharunderscore}\ on\ {\isacharunderscore}\ implies\ {\isacharunderscore}{\isacartoucheclose}\ {\isadigit{5}}{\isadigit{5}}{\isacharparenright}\isanewline
-\ \ {\isacharbar}\ WeaklyPrecedes\ \ \ {\isacartoucheopen}clock{\isacartoucheclose}\ {\isacartoucheopen}clock{\isacartoucheclose}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ {\isacharparenleft}\isakeyword{infixr}\ {\isacartoucheopen}weakly\ precedes{\isacartoucheclose}\ {\isadigit{5}}{\isadigit{5}}{\isacharparenright}\isanewline
-\ \ {\isacharbar}\ StrictlyPrecedes\ {\isacartoucheopen}clock{\isacartoucheclose}\ {\isacartoucheopen}clock{\isacartoucheclose}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ {\isacharparenleft}\isakeyword{infixr}\ {\isacartoucheopen}strictly\ precedes{\isacartoucheclose}\ {\isadigit{5}}{\isadigit{5}}{\isacharparenright}\isanewline
-\ \ {\isacharbar}\ Kills\ \ \ \ \ \ \ \ \ \ \ \ {\isacartoucheopen}clock{\isacartoucheclose}\ {\isacartoucheopen}clock{\isacartoucheclose}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ {\isacharparenleft}\isakeyword{infixr}\ {\isacartoucheopen}kills{\isacartoucheclose}\ {\isadigit{5}}{\isadigit{5}}{\isacharparenright}%
+\ \ {\isacharbar}\ TimeDelayedByTvar\ \ \ {\isacartoucheopen}clock{\isacartoucheclose}\ {\isacartoucheopen}{\isacharprime}{\isasymtau}\ tag{\isacharunderscore}const{\isacartoucheclose}\ {\isacartoucheopen}clock{\isacartoucheclose}\ {\isacartoucheopen}clock{\isacartoucheclose}\ \isanewline
+\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ {\isacharparenleft}{\isacartoucheopen}{\isacharunderscore}\ time{\isacharminus}delayed{\isasymsharp}\ by\ {\isacharunderscore}\ on\ {\isacharunderscore}\ implies\ {\isacharunderscore}{\isacartoucheclose}\ {\isadigit{5}}{\isadigit{5}}{\isacharparenright}\isanewline
+\ \ {\isacharbar}\ WeaklyPrecedes\ \ \ \ \ {\isacartoucheopen}clock{\isacartoucheclose}\ {\isacartoucheopen}clock{\isacartoucheclose}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ {\isacharparenleft}\isakeyword{infixr}\ {\isacartoucheopen}weakly\ precedes{\isacartoucheclose}\ {\isadigit{5}}{\isadigit{5}}{\isacharparenright}\isanewline
+\ \ {\isacharbar}\ StrictlyPrecedes\ \ \ {\isacartoucheopen}clock{\isacartoucheclose}\ {\isacartoucheopen}clock{\isacartoucheclose}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ {\isacharparenleft}\isakeyword{infixr}\ {\isacartoucheopen}strictly\ precedes{\isacartoucheclose}\ {\isadigit{5}}{\isadigit{5}}{\isacharparenright}\isanewline
+\ \ {\isacharbar}\ Kills\ \ \ \ \ \ \ \ \ \ \ \ \ \ {\isacartoucheopen}clock{\isacartoucheclose}\ {\isacartoucheopen}clock{\isacartoucheclose}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ {\isacharparenleft}\isakeyword{infixr}\ {\isacartoucheopen}kills{\isacartoucheclose}\ {\isadigit{5}}{\isadigit{5}}{\isacharparenright}%
 \begin{isamarkuptext}%
 A TESL formula is just a list of atomic constraints, with implicit conjunction
   for the semantics.%
@@ -117,12 +129,27 @@ A TESL formula is just a list of atomic constraints, with implicit conjunction
 \isacommand{type{\isacharunderscore}synonym}\isamarkupfalse%
 \ {\isacharprime}{\isasymtau}\ TESL{\isacharunderscore}formula\ {\isacharequal}\ {\isacartoucheopen}{\isacharprime}{\isasymtau}\ TESL{\isacharunderscore}atomic\ list{\isacartoucheclose}%
 \begin{isamarkuptext}%
+Some constraint were introduced for the implementation of the operational semantics.
+  They are not allowed in user-level TESL specification and are not public.%
+\end{isamarkuptext}\isamarkuptrue%
+\isacommand{fun}\isamarkupfalse%
+\ is{\isacharunderscore}public{\isacharunderscore}atom\ {\isacharcolon}{\isacharcolon}\ {\isacartoucheopen}{\isacharprime}{\isasymtau}\ TESL{\isacharunderscore}atomic\ {\isasymRightarrow}\ bool{\isacartoucheclose}\ \isakeyword{where}\isanewline
+\ \ \ \ {\isacartoucheopen}is{\isacharunderscore}public{\isacharunderscore}atom\ {\isacharparenleft}{\isacharunderscore}\ sporadic{\isasymsharp}\ {\isacharunderscore}\ on\ {\isacharunderscore}{\isacharparenright}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ {\isacharequal}\ False{\isacartoucheclose}\isanewline
+\ \ {\isacharbar}\ {\isacartoucheopen}is{\isacharunderscore}public{\isacharunderscore}atom\ {\isacharparenleft}{\isacharunderscore}\ time{\isacharminus}delayed{\isasymsharp}\ by\ {\isacharunderscore}\ on\ {\isacharunderscore}\ implies\ {\isacharunderscore}{\isacharparenright}\ {\isacharequal}\ False{\isacartoucheclose}\isanewline
+\ \ {\isacharbar}\ {\isacartoucheopen}is{\isacharunderscore}public{\isacharunderscore}atom\ {\isacharunderscore}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ {\isacharequal}\ True{\isacartoucheclose}\isanewline
+\isanewline
+\isacommand{fun}\isamarkupfalse%
+\ is{\isacharunderscore}public{\isacharunderscore}spec\ {\isacharcolon}{\isacharcolon}\ {\isacartoucheopen}{\isacharprime}{\isasymtau}\ TESL{\isacharunderscore}atomic\ list\ {\isasymRightarrow}\ bool{\isacartoucheclose}\ \isakeyword{where}\isanewline
+\ \ \ \ {\isacartoucheopen}is{\isacharunderscore}public{\isacharunderscore}spec\ {\isacharbrackleft}{\isacharbrackright}\ {\isacharequal}\ True{\isacartoucheclose}\isanewline
+\ \ {\isacharbar}\ {\isacartoucheopen}is{\isacharunderscore}public{\isacharunderscore}spec\ {\isacharparenleft}{\isasymphi}{\isacharhash}S{\isacharparenright}\ {\isacharequal}\ {\isacharparenleft}{\isacharparenleft}is{\isacharunderscore}public{\isacharunderscore}atom\ {\isasymphi}{\isacharparenright}\ {\isasymand}\ {\isacharparenleft}is{\isacharunderscore}public{\isacharunderscore}spec\ S{\isacharparenright}{\isacharparenright}{\isacartoucheclose}%
+\begin{isamarkuptext}%
 We call \emph{positive atoms} the atomic constraints that create ticks from nothing.
   Only sporadic constraints are positive in the current version of TESL.%
 \end{isamarkuptext}\isamarkuptrue%
 \isacommand{fun}\isamarkupfalse%
 \ positive{\isacharunderscore}atom\ {\isacharcolon}{\isacharcolon}\ {\isacartoucheopen}{\isacharprime}{\isasymtau}\ TESL{\isacharunderscore}atomic\ {\isasymRightarrow}\ bool{\isacartoucheclose}\ \isakeyword{where}\isanewline
 \ \ \ \ {\isacartoucheopen}positive{\isacharunderscore}atom\ {\isacharparenleft}{\isacharunderscore}\ sporadic\ {\isacharunderscore}\ on\ {\isacharunderscore}{\isacharparenright}\ {\isacharequal}\ True{\isacartoucheclose}\isanewline
+\ \ {\isacharbar}\ {\isacartoucheopen}positive{\isacharunderscore}atom\ {\isacharparenleft}{\isacharunderscore}\ sporadic{\isasymsharp}\ {\isacharunderscore}\ on\ {\isacharunderscore}{\isacharparenright}\ {\isacharequal}\ True{\isacartoucheclose}\isanewline
 \ \ {\isacharbar}\ {\isacartoucheopen}positive{\isacharunderscore}atom\ {\isacharunderscore}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ {\isacharequal}\ False{\isacartoucheclose}%
 \begin{isamarkuptext}%
 The \isa{NoSporadic} function removes sporadic constraints from a TESL formula.%
@@ -204,11 +231,21 @@ Multiplication is associative.%
 \ a{\isacharcolon}{\isacharcolon}{\isacartoucheopen}{\isacharprime}{\isasymtau}{\isacharcolon}{\isacharcolon}field\ tag{\isacharunderscore}const{\isacartoucheclose}\ \isakeyword{and}\ b{\isacharcolon}{\isacharcolon}{\isacartoucheopen}{\isacharprime}{\isasymtau}{\isacharcolon}{\isacharcolon}field\ tag{\isacharunderscore}const{\isacartoucheclose}\isanewline
 \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \isakeyword{and}\ c{\isacharcolon}{\isacharcolon}{\isacartoucheopen}{\isacharprime}{\isasymtau}{\isacharcolon}{\isacharcolon}field\ tag{\isacharunderscore}const{\isacartoucheclose}\isanewline
 \ \ \isacommand{obtain}\isamarkupfalse%
-\ u\ v\ w\ \isakeyword{where}\ {\isacartoucheopen}a\ {\isacharequal}\ {\isasymtau}\isactrlsub c\isactrlsub s\isactrlsub t\ u{\isacartoucheclose}\ \isakeyword{and}\ {\isacartoucheopen}b\ {\isacharequal}\ {\isasymtau}\isactrlsub c\isactrlsub s\isactrlsub t\ v{\isacartoucheclose}\ \isakeyword{and}\ {\isacartoucheopen}c\ {\isacharequal}\ {\isasymtau}\isactrlsub c\isactrlsub s\isactrlsub t\ w{\isacartoucheclose}\isanewline
-\ \ \ \ \isacommand{using}\isamarkupfalse%
+\ u\ \isakeyword{where}\ {\isacartoucheopen}a\ {\isacharequal}\ {\isasymtau}\isactrlsub c\isactrlsub s\isactrlsub t\ u{\isacartoucheclose}\ \isacommand{using}\isamarkupfalse%
 \ tag{\isacharunderscore}const{\isachardot}exhaust\ \isacommand{by}\isamarkupfalse%
-\ metis\isanewline
-\ \ \isacommand{thus}\isamarkupfalse%
+\ blast\isanewline
+\ \ \isacommand{moreover}\isamarkupfalse%
+\ \isacommand{obtain}\isamarkupfalse%
+\ v\ \isakeyword{where}\ {\isacartoucheopen}b\ {\isacharequal}\ {\isasymtau}\isactrlsub c\isactrlsub s\isactrlsub t\ v{\isacartoucheclose}\ \isacommand{using}\isamarkupfalse%
+\ tag{\isacharunderscore}const{\isachardot}exhaust\ \isacommand{by}\isamarkupfalse%
+\ blast\isanewline
+\ \ \isacommand{moreover}\isamarkupfalse%
+\ \isacommand{obtain}\isamarkupfalse%
+\ w\ \isakeyword{where}\ {\isacartoucheopen}c\ {\isacharequal}\ {\isasymtau}\isactrlsub c\isactrlsub s\isactrlsub t\ w{\isacartoucheclose}\ \isacommand{using}\isamarkupfalse%
+\ tag{\isacharunderscore}const{\isachardot}exhaust\ \isacommand{by}\isamarkupfalse%
+\ blast\isanewline
+\ \ \isacommand{ultimately}\isamarkupfalse%
+\ \isacommand{show}\isamarkupfalse%
 \ {\isacartoucheopen}a\ {\isacharasterisk}\ b\ {\isacharasterisk}\ c\ {\isacharequal}\ a\ {\isacharasterisk}\ {\isacharparenleft}b\ {\isacharasterisk}\ c{\isacharparenright}{\isacartoucheclose}\isanewline
 \ \ \ \ \isacommand{by}\isamarkupfalse%
 \ {\isacharparenleft}simp\ add{\isacharcolon}\ TESL{\isachardot}times{\isacharunderscore}tag{\isacharunderscore}const{\isachardot}simps{\isacharparenright}\isanewline
@@ -220,10 +257,16 @@ Multiplication is commutative.%
 \ \ \isacommand{fix}\isamarkupfalse%
 \ a{\isacharcolon}{\isacharcolon}{\isacartoucheopen}{\isacharprime}{\isasymtau}{\isacharcolon}{\isacharcolon}field\ tag{\isacharunderscore}const{\isacartoucheclose}\ \isakeyword{and}\ b{\isacharcolon}{\isacharcolon}{\isacartoucheopen}{\isacharprime}{\isasymtau}{\isacharcolon}{\isacharcolon}field\ tag{\isacharunderscore}const{\isacartoucheclose}\isanewline
 \ \ \isacommand{obtain}\isamarkupfalse%
-\ u\ v\ \isakeyword{where}\ {\isacartoucheopen}a\ {\isacharequal}\ {\isasymtau}\isactrlsub c\isactrlsub s\isactrlsub t\ u{\isacartoucheclose}\ \isakeyword{and}\ {\isacartoucheopen}b\ {\isacharequal}\ {\isasymtau}\isactrlsub c\isactrlsub s\isactrlsub t\ v{\isacartoucheclose}\ \isacommand{using}\isamarkupfalse%
+\ u\ \isakeyword{where}\ {\isacartoucheopen}a\ {\isacharequal}\ {\isasymtau}\isactrlsub c\isactrlsub s\isactrlsub t\ u{\isacartoucheclose}\ \isacommand{using}\isamarkupfalse%
 \ tag{\isacharunderscore}const{\isachardot}exhaust\ \isacommand{by}\isamarkupfalse%
-\ metis\isanewline
-\ \ \isacommand{thus}\isamarkupfalse%
+\ blast\isanewline
+\ \ \isacommand{moreover}\isamarkupfalse%
+\ \isacommand{obtain}\isamarkupfalse%
+\ v\ \isakeyword{where}\ {\isacartoucheopen}b\ {\isacharequal}\ {\isasymtau}\isactrlsub c\isactrlsub s\isactrlsub t\ v{\isacartoucheclose}\ \isacommand{using}\isamarkupfalse%
+\ tag{\isacharunderscore}const{\isachardot}exhaust\ \isacommand{by}\isamarkupfalse%
+\ blast\isanewline
+\ \ \isacommand{ultimately}\isamarkupfalse%
+\ \isacommand{show}\isamarkupfalse%
 \ {\isacartoucheopen}\ a\ {\isacharasterisk}\ b\ {\isacharequal}\ b\ {\isacharasterisk}\ a{\isacartoucheclose}\isanewline
 \ \ \ \ \isacommand{by}\isamarkupfalse%
 \ {\isacharparenleft}simp\ add{\isacharcolon}\ TESL{\isachardot}times{\isacharunderscore}tag{\isacharunderscore}const{\isachardot}simps{\isacharparenright}\isanewline
@@ -251,11 +294,21 @@ Addition is associative.%
 \ a{\isacharcolon}{\isacharcolon}{\isacartoucheopen}{\isacharprime}{\isasymtau}{\isacharcolon}{\isacharcolon}field\ tag{\isacharunderscore}const{\isacartoucheclose}\ \isakeyword{and}\ b{\isacharcolon}{\isacharcolon}{\isacartoucheopen}{\isacharprime}{\isasymtau}{\isacharcolon}{\isacharcolon}field\ tag{\isacharunderscore}const{\isacartoucheclose}\isanewline
 \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \isakeyword{and}\ c{\isacharcolon}{\isacharcolon}{\isacartoucheopen}{\isacharprime}{\isasymtau}{\isacharcolon}{\isacharcolon}field\ tag{\isacharunderscore}const{\isacartoucheclose}\isanewline
 \ \ \isacommand{obtain}\isamarkupfalse%
-\ u\ v\ w\ \isakeyword{where}\ {\isacartoucheopen}a\ {\isacharequal}\ {\isasymtau}\isactrlsub c\isactrlsub s\isactrlsub t\ u{\isacartoucheclose}\ \isakeyword{and}\ {\isacartoucheopen}b\ {\isacharequal}\ {\isasymtau}\isactrlsub c\isactrlsub s\isactrlsub t\ v{\isacartoucheclose}\ \isakeyword{and}\ {\isacartoucheopen}c\ {\isacharequal}\ {\isasymtau}\isactrlsub c\isactrlsub s\isactrlsub t\ w{\isacartoucheclose}\isanewline
-\ \ \ \ \isacommand{using}\isamarkupfalse%
+\ u\ \isakeyword{where}\ {\isacartoucheopen}a\ {\isacharequal}\ {\isasymtau}\isactrlsub c\isactrlsub s\isactrlsub t\ u{\isacartoucheclose}\ \isacommand{using}\isamarkupfalse%
 \ tag{\isacharunderscore}const{\isachardot}exhaust\ \isacommand{by}\isamarkupfalse%
-\ metis\isanewline
-\ \ \isacommand{thus}\isamarkupfalse%
+\ blast\isanewline
+\ \ \isacommand{moreover}\isamarkupfalse%
+\ \isacommand{obtain}\isamarkupfalse%
+\ v\ \isakeyword{where}\ {\isacartoucheopen}b\ {\isacharequal}\ {\isasymtau}\isactrlsub c\isactrlsub s\isactrlsub t\ v{\isacartoucheclose}\ \isacommand{using}\isamarkupfalse%
+\ tag{\isacharunderscore}const{\isachardot}exhaust\ \isacommand{by}\isamarkupfalse%
+\ blast\isanewline
+\ \ \isacommand{moreover}\isamarkupfalse%
+\ \isacommand{obtain}\isamarkupfalse%
+\ w\ \isakeyword{where}\ {\isacartoucheopen}c\ {\isacharequal}\ {\isasymtau}\isactrlsub c\isactrlsub s\isactrlsub t\ w{\isacartoucheclose}\ \isacommand{using}\isamarkupfalse%
+\ tag{\isacharunderscore}const{\isachardot}exhaust\ \isacommand{by}\isamarkupfalse%
+\ blast\isanewline
+\ \ \isacommand{ultimately}\isamarkupfalse%
+\ \isacommand{show}\isamarkupfalse%
 \ {\isacartoucheopen}a\ {\isacharplus}\ b\ {\isacharplus}\ c\ {\isacharequal}\ a\ {\isacharplus}\ {\isacharparenleft}b\ {\isacharplus}\ c{\isacharparenright}{\isacartoucheclose}\isanewline
 \ \ \ \ \isacommand{by}\isamarkupfalse%
 \ {\isacharparenleft}simp\ add{\isacharcolon}\ TESL{\isachardot}plus{\isacharunderscore}tag{\isacharunderscore}const{\isachardot}simps{\isacharparenright}\isanewline
@@ -267,10 +320,16 @@ Addition is commutative.%
 \ \ \isacommand{fix}\isamarkupfalse%
 \ a{\isacharcolon}{\isacharcolon}{\isacartoucheopen}{\isacharprime}{\isasymtau}{\isacharcolon}{\isacharcolon}field\ tag{\isacharunderscore}const{\isacartoucheclose}\ \isakeyword{and}\ b{\isacharcolon}{\isacharcolon}{\isacartoucheopen}{\isacharprime}{\isasymtau}{\isacharcolon}{\isacharcolon}field\ tag{\isacharunderscore}const{\isacartoucheclose}\isanewline
 \ \ \isacommand{obtain}\isamarkupfalse%
-\ u\ v\ \isakeyword{where}\ {\isacartoucheopen}a\ {\isacharequal}\ {\isasymtau}\isactrlsub c\isactrlsub s\isactrlsub t\ u{\isacartoucheclose}\ \isakeyword{and}\ {\isacartoucheopen}b\ {\isacharequal}\ {\isasymtau}\isactrlsub c\isactrlsub s\isactrlsub t\ v{\isacartoucheclose}\ \isacommand{using}\isamarkupfalse%
+\ u\ \isakeyword{where}\ {\isacartoucheopen}a\ {\isacharequal}\ {\isasymtau}\isactrlsub c\isactrlsub s\isactrlsub t\ u{\isacartoucheclose}\ \isacommand{using}\isamarkupfalse%
 \ tag{\isacharunderscore}const{\isachardot}exhaust\ \isacommand{by}\isamarkupfalse%
-\ metis\isanewline
-\ \ \isacommand{thus}\isamarkupfalse%
+\ blast\isanewline
+\ \ \isacommand{moreover}\isamarkupfalse%
+\ \isacommand{obtain}\isamarkupfalse%
+\ v\ \isakeyword{where}\ {\isacartoucheopen}b\ {\isacharequal}\ {\isasymtau}\isactrlsub c\isactrlsub s\isactrlsub t\ v{\isacartoucheclose}\ \isacommand{using}\isamarkupfalse%
+\ tag{\isacharunderscore}const{\isachardot}exhaust\ \isacommand{by}\isamarkupfalse%
+\ blast\isanewline
+\ \ \isacommand{ultimately}\isamarkupfalse%
+\ \isacommand{show}\isamarkupfalse%
 \ {\isacartoucheopen}a\ {\isacharplus}\ b\ {\isacharequal}\ b\ {\isacharplus}\ a{\isacartoucheclose}\isanewline
 \ \ \ \ \isacommand{by}\isamarkupfalse%
 \ {\isacharparenleft}simp\ add{\isacharcolon}\ TESL{\isachardot}plus{\isacharunderscore}tag{\isacharunderscore}const{\isachardot}simps{\isacharparenright}\isanewline
@@ -314,10 +373,16 @@ Subtraction is adding the opposite.%
 \ \ \isacommand{fix}\isamarkupfalse%
 \ a{\isacharcolon}{\isacharcolon}{\isacartoucheopen}{\isacharprime}{\isasymtau}{\isacharcolon}{\isacharcolon}field\ tag{\isacharunderscore}const{\isacartoucheclose}\ \isakeyword{and}\ b{\isacharcolon}{\isacharcolon}{\isacartoucheopen}{\isacharprime}{\isasymtau}{\isacharcolon}{\isacharcolon}field\ tag{\isacharunderscore}const{\isacartoucheclose}\isanewline
 \ \ \isacommand{obtain}\isamarkupfalse%
-\ u\ v\ \isakeyword{where}\ {\isacartoucheopen}a\ {\isacharequal}\ {\isasymtau}\isactrlsub c\isactrlsub s\isactrlsub t\ u{\isacartoucheclose}\ \isakeyword{and}\ {\isacartoucheopen}b\ {\isacharequal}\ {\isasymtau}\isactrlsub c\isactrlsub s\isactrlsub t\ v{\isacartoucheclose}\ \isacommand{using}\isamarkupfalse%
+\ u\ \isakeyword{where}\ {\isacartoucheopen}a\ {\isacharequal}\ {\isasymtau}\isactrlsub c\isactrlsub s\isactrlsub t\ u{\isacartoucheclose}\ \isacommand{using}\isamarkupfalse%
 \ tag{\isacharunderscore}const{\isachardot}exhaust\ \isacommand{by}\isamarkupfalse%
-\ metis\isanewline
-\ \ \isacommand{thus}\isamarkupfalse%
+\ blast\isanewline
+\ \ \isacommand{moreover}\isamarkupfalse%
+\ \isacommand{obtain}\isamarkupfalse%
+\ v\ \isakeyword{where}\ {\isacartoucheopen}b\ {\isacharequal}\ {\isasymtau}\isactrlsub c\isactrlsub s\isactrlsub t\ v{\isacartoucheclose}\ \isacommand{using}\isamarkupfalse%
+\ tag{\isacharunderscore}const{\isachardot}exhaust\ \isacommand{by}\isamarkupfalse%
+\ blast\isanewline
+\ \ \isacommand{ultimately}\isamarkupfalse%
+\ \isacommand{show}\isamarkupfalse%
 \ {\isacartoucheopen}a\ {\isacharminus}\ b\ {\isacharequal}\ a\ {\isacharplus}\ {\isacharminus}b{\isacartoucheclose}\isanewline
 \ \ \ \ \isacommand{by}\isamarkupfalse%
 \ {\isacharparenleft}simp\ add{\isacharcolon}\ TESL{\isachardot}minus{\isacharunderscore}tag{\isacharunderscore}const{\isachardot}simps\isanewline
@@ -332,11 +397,21 @@ Distributive property of multiplication over addition.%
 \ a{\isacharcolon}{\isacharcolon}{\isacartoucheopen}{\isacharprime}{\isasymtau}{\isacharcolon}{\isacharcolon}field\ tag{\isacharunderscore}const{\isacartoucheclose}\ \isakeyword{and}\ b{\isacharcolon}{\isacharcolon}{\isacartoucheopen}{\isacharprime}{\isasymtau}{\isacharcolon}{\isacharcolon}field\ tag{\isacharunderscore}const{\isacartoucheclose}\isanewline
 \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \isakeyword{and}\ c{\isacharcolon}{\isacharcolon}{\isacartoucheopen}{\isacharprime}{\isasymtau}{\isacharcolon}{\isacharcolon}field\ tag{\isacharunderscore}const{\isacartoucheclose}\isanewline
 \ \ \isacommand{obtain}\isamarkupfalse%
-\ u\ v\ w\ \isakeyword{where}\ {\isacartoucheopen}a\ {\isacharequal}\ {\isasymtau}\isactrlsub c\isactrlsub s\isactrlsub t\ u{\isacartoucheclose}\ \isakeyword{and}\ {\isacartoucheopen}b\ {\isacharequal}\ {\isasymtau}\isactrlsub c\isactrlsub s\isactrlsub t\ v{\isacartoucheclose}\ \isakeyword{and}\ {\isacartoucheopen}c\ {\isacharequal}\ {\isasymtau}\isactrlsub c\isactrlsub s\isactrlsub t\ w{\isacartoucheclose}\isanewline
-\ \ \ \ \isacommand{using}\isamarkupfalse%
+\ u\ \isakeyword{where}\ {\isacartoucheopen}a\ {\isacharequal}\ {\isasymtau}\isactrlsub c\isactrlsub s\isactrlsub t\ u{\isacartoucheclose}\ \isacommand{using}\isamarkupfalse%
 \ tag{\isacharunderscore}const{\isachardot}exhaust\ \isacommand{by}\isamarkupfalse%
-\ metis\isanewline
-\ \ \isacommand{thus}\isamarkupfalse%
+\ blast\isanewline
+\ \ \isacommand{moreover}\isamarkupfalse%
+\ \isacommand{obtain}\isamarkupfalse%
+\ v\ \isakeyword{where}\ {\isacartoucheopen}b\ {\isacharequal}\ {\isasymtau}\isactrlsub c\isactrlsub s\isactrlsub t\ v{\isacartoucheclose}\ \isacommand{using}\isamarkupfalse%
+\ tag{\isacharunderscore}const{\isachardot}exhaust\ \isacommand{by}\isamarkupfalse%
+\ blast\isanewline
+\ \ \isacommand{moreover}\isamarkupfalse%
+\ \isacommand{obtain}\isamarkupfalse%
+\ w\ \isakeyword{where}\ {\isacartoucheopen}c\ {\isacharequal}\ {\isasymtau}\isactrlsub c\isactrlsub s\isactrlsub t\ w{\isacartoucheclose}\ \isacommand{using}\isamarkupfalse%
+\ tag{\isacharunderscore}const{\isachardot}exhaust\ \isacommand{by}\isamarkupfalse%
+\ blast\isanewline
+\ \ \isacommand{ultimately}\isamarkupfalse%
+\ \isacommand{show}\isamarkupfalse%
 \ {\isacartoucheopen}{\isacharparenleft}a\ {\isacharplus}\ b{\isacharparenright}\ {\isacharasterisk}\ c\ {\isacharequal}\ a\ {\isacharasterisk}\ c\ {\isacharplus}\ b\ {\isacharasterisk}\ c{\isacartoucheclose}\isanewline
 \ \ \ \ \isacommand{by}\isamarkupfalse%
 \ {\isacharparenleft}simp\ add{\isacharcolon}\ TESL{\isachardot}plus{\isacharunderscore}tag{\isacharunderscore}const{\isachardot}simps\isanewline
@@ -383,10 +458,16 @@ Dividing is multiplying by the inverse.%
 \ \ \isacommand{fix}\isamarkupfalse%
 \ a{\isacharcolon}{\isacharcolon}{\isacartoucheopen}{\isacharprime}{\isasymtau}{\isacharcolon}{\isacharcolon}field\ tag{\isacharunderscore}const{\isacartoucheclose}\ \isakeyword{and}\ b{\isacharcolon}{\isacharcolon}{\isacartoucheopen}{\isacharprime}{\isasymtau}{\isacharcolon}{\isacharcolon}field\ tag{\isacharunderscore}const{\isacartoucheclose}\isanewline
 \ \ \isacommand{obtain}\isamarkupfalse%
-\ u\ v\ \isakeyword{where}\ {\isacartoucheopen}a\ {\isacharequal}\ {\isasymtau}\isactrlsub c\isactrlsub s\isactrlsub t\ u{\isacartoucheclose}\ \isakeyword{and}\ {\isacartoucheopen}b\ {\isacharequal}\ {\isasymtau}\isactrlsub c\isactrlsub s\isactrlsub t\ v{\isacartoucheclose}\ \isacommand{using}\isamarkupfalse%
+\ u\ \isakeyword{where}\ {\isacartoucheopen}a\ {\isacharequal}\ {\isasymtau}\isactrlsub c\isactrlsub s\isactrlsub t\ u{\isacartoucheclose}\ \isacommand{using}\isamarkupfalse%
 \ tag{\isacharunderscore}const{\isachardot}exhaust\ \isacommand{by}\isamarkupfalse%
-\ metis\isanewline
-\ \ \isacommand{thus}\isamarkupfalse%
+\ blast\isanewline
+\ \ \isacommand{moreover}\isamarkupfalse%
+\ \isacommand{obtain}\isamarkupfalse%
+\ v\ \isakeyword{where}\ {\isacartoucheopen}b\ {\isacharequal}\ {\isasymtau}\isactrlsub c\isactrlsub s\isactrlsub t\ v{\isacartoucheclose}\ \isacommand{using}\isamarkupfalse%
+\ tag{\isacharunderscore}const{\isachardot}exhaust\ \isacommand{by}\isamarkupfalse%
+\ blast\isanewline
+\ \ \isacommand{ultimately}\isamarkupfalse%
+\ \isacommand{show}\isamarkupfalse%
 \ {\isacartoucheopen}a\ div\ b\ {\isacharequal}\ a\ {\isacharasterisk}\ inverse\ b{\isacartoucheclose}\isanewline
 \ \ \ \ \isacommand{by}\isamarkupfalse%
 \ {\isacharparenleft}simp\ add{\isacharcolon}\ TESL{\isachardot}divide{\isacharunderscore}tag{\isacharunderscore}const{\isachardot}simps\isanewline
@@ -541,7 +622,7 @@ For ensuring that time does never flow backwards, we need a total order on tags.
 %
 \end{isabellebody}%
 \endinput
-%:%file=~/Documents/Recherche/Thesards/2014_Hai_NGUYEN_VAN/Heron_git/reiher2/reiher/src/TESL.thy%:%
+%:%file=~/Documents/Recherche/Thesards/2014_Hai_NGUYEN_VAN/Heron_git/reiher2/reiher-double-time-delayed/hygge/src/TESL.thy%:%
 %:%6=2%:%
 %:%14=4%:%
 %:%15=4%:%
@@ -561,325 +642,402 @@ For ensuring that time does never flow backwards, we need a total order on tags.
 %:%78=23%:%
 %:%79=24%:%
 %:%80=24%:%
-%:%87=27%:%
-%:%99=29%:%
-%:%101=31%:%
-%:%102=31%:%
-%:%103=32%:%
-%:%104=33%:%
-%:%105=34%:%
-%:%106=35%:%
-%:%107=36%:%
-%:%108=37%:%
-%:%109=38%:%
-%:%110=39%:%
-%:%111=40%:%
-%:%112=41%:%
-%:%114=44%:%
-%:%115=45%:%
-%:%117=47%:%
-%:%118=47%:%
-%:%120=50%:%
-%:%121=51%:%
-%:%123=53%:%
-%:%124=53%:%
-%:%125=54%:%
-%:%126=55%:%
-%:%128=58%:%
-%:%130=60%:%
-%:%131=60%:%
-%:%132=61%:%
-%:%133=62%:%
-%:%142=66%:%
-%:%154=68%:%
-%:%155=69%:%
-%:%156=70%:%
-%:%158=72%:%
-%:%159=72%:%
-%:%160=73%:%
-%:%161=74%:%
-%:%162=74%:%
-%:%163=75%:%
-%:%164=76%:%
-%:%165=77%:%
-%:%166=77%:%
-%:%167=78%:%
-%:%168=79%:%
-%:%169=80%:%
-%:%170=80%:%
-%:%171=81%:%
-%:%172=82%:%
-%:%173=83%:%
-%:%174=83%:%
-%:%175=84%:%
-%:%176=85%:%
-%:%177=86%:%
-%:%178=86%:%
-%:%179=87%:%
-%:%180=88%:%
-%:%181=88%:%
-%:%182=89%:%
-%:%183=90%:%
-%:%184=91%:%
-%:%185=91%:%
-%:%186=92%:%
-%:%187=93%:%
-%:%188=93%:%
-%:%189=94%:%
-%:%190=95%:%
-%:%191=96%:%
-%:%194=96%:%
-%:%198=96%:%
-%:%201=97%:%
-%:%203=98%:%
-%:%204=98%:%
-%:%205=99%:%
-%:%206=100%:%
-%:%207=100%:%
-%:%208=101%:%
-%:%209=101%:%
-%:%210=101%:%
-%:%211=102%:%
-%:%212=102%:%
-%:%213=103%:%
-%:%214=103%:%
-%:%215=104%:%
-%:%218=105%:%
-%:%220=106%:%
-%:%221=106%:%
-%:%222=107%:%
-%:%223=107%:%
-%:%224=107%:%
-%:%225=107%:%
-%:%226=108%:%
-%:%227=108%:%
-%:%228=109%:%
-%:%229=109%:%
-%:%230=110%:%
-%:%233=111%:%
-%:%235=112%:%
-%:%236=112%:%
-%:%237=113%:%
-%:%238=113%:%
-%:%239=113%:%
-%:%240=113%:%
-%:%241=114%:%
-%:%242=114%:%
-%:%243=115%:%
-%:%244=115%:%
-%:%245=116%:%
-%:%248=117%:%
-%:%250=118%:%
-%:%251=118%:%
-%:%252=119%:%
-%:%253=120%:%
-%:%254=120%:%
-%:%255=121%:%
-%:%256=121%:%
-%:%257=121%:%
-%:%258=122%:%
-%:%259=122%:%
-%:%260=123%:%
-%:%261=123%:%
-%:%262=124%:%
-%:%265=125%:%
-%:%267=126%:%
-%:%268=126%:%
-%:%269=127%:%
-%:%270=127%:%
-%:%271=127%:%
-%:%272=127%:%
-%:%273=128%:%
-%:%274=128%:%
-%:%275=129%:%
-%:%276=129%:%
-%:%277=130%:%
-%:%280=131%:%
-%:%282=132%:%
-%:%283=132%:%
-%:%284=133%:%
-%:%285=133%:%
-%:%286=133%:%
-%:%287=133%:%
-%:%288=134%:%
-%:%289=134%:%
-%:%290=135%:%
-%:%291=135%:%
-%:%292=136%:%
-%:%295=137%:%
-%:%297=138%:%
-%:%298=138%:%
-%:%299=139%:%
-%:%300=139%:%
-%:%301=139%:%
-%:%302=139%:%
-%:%303=140%:%
-%:%304=140%:%
-%:%305=141%:%
-%:%306=141%:%
-%:%307=142%:%
-%:%308=143%:%
-%:%309=144%:%
-%:%312=145%:%
-%:%314=146%:%
-%:%315=146%:%
-%:%316=147%:%
-%:%317=147%:%
-%:%318=147%:%
-%:%319=147%:%
-%:%320=148%:%
-%:%321=148%:%
-%:%322=149%:%
-%:%323=149%:%
-%:%324=150%:%
-%:%325=151%:%
-%:%326=152%:%
-%:%329=153%:%
-%:%331=154%:%
-%:%332=154%:%
-%:%333=155%:%
-%:%334=156%:%
-%:%335=156%:%
-%:%336=157%:%
-%:%337=157%:%
-%:%338=157%:%
-%:%339=158%:%
-%:%340=158%:%
-%:%341=159%:%
-%:%342=159%:%
-%:%343=160%:%
+%:%82=26%:%
+%:%84=29%:%
+%:%85=29%:%
+%:%86=30%:%
+%:%87=31%:%
+%:%88=31%:%
+%:%89=32%:%
+%:%96=34%:%
+%:%108=36%:%
+%:%110=38%:%
+%:%111=38%:%
+%:%112=39%:%
+%:%113=40%:%
+%:%114=41%:%
+%:%115=42%:%
+%:%116=43%:%
+%:%117=44%:%
+%:%118=45%:%
+%:%119=46%:%
+%:%120=47%:%
+%:%121=48%:%
+%:%122=49%:%
+%:%123=50%:%
+%:%124=51%:%
+%:%126=54%:%
+%:%127=55%:%
+%:%129=57%:%
+%:%130=57%:%
+%:%132=60%:%
+%:%133=61%:%
+%:%135=63%:%
+%:%136=63%:%
+%:%137=64%:%
+%:%138=65%:%
+%:%139=66%:%
+%:%140=67%:%
+%:%141=68%:%
+%:%142=68%:%
+%:%143=69%:%
+%:%144=70%:%
+%:%146=73%:%
+%:%147=74%:%
+%:%149=76%:%
+%:%150=76%:%
+%:%151=77%:%
+%:%152=78%:%
+%:%153=79%:%
+%:%155=82%:%
+%:%157=84%:%
+%:%158=84%:%
+%:%159=85%:%
+%:%160=86%:%
+%:%169=90%:%
+%:%181=92%:%
+%:%182=93%:%
+%:%183=94%:%
+%:%185=96%:%
+%:%186=96%:%
+%:%187=97%:%
+%:%188=98%:%
+%:%189=98%:%
+%:%190=99%:%
+%:%191=100%:%
+%:%192=101%:%
+%:%193=101%:%
+%:%194=102%:%
+%:%195=103%:%
+%:%196=104%:%
+%:%197=104%:%
+%:%198=105%:%
+%:%199=106%:%
+%:%200=107%:%
+%:%201=107%:%
+%:%202=108%:%
+%:%203=109%:%
+%:%204=110%:%
+%:%205=110%:%
+%:%206=111%:%
+%:%207=112%:%
+%:%208=112%:%
+%:%209=113%:%
+%:%210=114%:%
+%:%211=115%:%
+%:%212=115%:%
+%:%213=116%:%
+%:%214=117%:%
+%:%215=117%:%
+%:%216=118%:%
+%:%217=119%:%
+%:%218=120%:%
+%:%221=120%:%
+%:%225=120%:%
+%:%228=121%:%
+%:%230=122%:%
+%:%231=122%:%
+%:%232=123%:%
+%:%233=124%:%
+%:%234=124%:%
+%:%235=124%:%
+%:%236=124%:%
+%:%237=125%:%
+%:%238=125%:%
+%:%239=125%:%
+%:%240=125%:%
+%:%241=125%:%
+%:%242=126%:%
+%:%243=126%:%
+%:%244=126%:%
+%:%245=126%:%
+%:%246=126%:%
+%:%247=127%:%
+%:%248=127%:%
+%:%249=127%:%
+%:%250=128%:%
+%:%251=128%:%
+%:%252=129%:%
+%:%255=130%:%
+%:%257=131%:%
+%:%258=131%:%
+%:%259=132%:%
+%:%260=132%:%
+%:%261=132%:%
+%:%262=132%:%
+%:%263=133%:%
+%:%264=133%:%
+%:%265=133%:%
+%:%266=133%:%
+%:%267=133%:%
+%:%268=134%:%
+%:%269=134%:%
+%:%270=134%:%
+%:%271=135%:%
+%:%272=135%:%
+%:%273=136%:%
+%:%276=137%:%
+%:%278=138%:%
+%:%279=138%:%
+%:%280=139%:%
+%:%281=139%:%
+%:%282=139%:%
+%:%283=139%:%
+%:%284=140%:%
+%:%285=140%:%
+%:%286=141%:%
+%:%287=141%:%
+%:%288=142%:%
+%:%291=143%:%
+%:%293=144%:%
+%:%294=144%:%
+%:%295=145%:%
+%:%296=146%:%
+%:%297=146%:%
+%:%298=146%:%
+%:%299=146%:%
+%:%300=147%:%
+%:%301=147%:%
+%:%302=147%:%
+%:%303=147%:%
+%:%304=147%:%
+%:%305=148%:%
+%:%306=148%:%
+%:%307=148%:%
+%:%308=148%:%
+%:%309=148%:%
+%:%310=149%:%
+%:%311=149%:%
+%:%312=149%:%
+%:%313=150%:%
+%:%314=150%:%
+%:%315=151%:%
+%:%318=152%:%
+%:%320=153%:%
+%:%321=153%:%
+%:%322=154%:%
+%:%323=154%:%
+%:%324=154%:%
+%:%325=154%:%
+%:%326=155%:%
+%:%327=155%:%
+%:%328=155%:%
+%:%329=155%:%
+%:%330=155%:%
+%:%331=156%:%
+%:%332=156%:%
+%:%333=156%:%
+%:%334=157%:%
+%:%335=157%:%
+%:%336=158%:%
+%:%339=159%:%
+%:%341=160%:%
+%:%342=160%:%
+%:%343=161%:%
 %:%344=161%:%
-%:%345=162%:%
-%:%348=163%:%
-%:%350=164%:%
+%:%345=161%:%
+%:%346=161%:%
+%:%347=162%:%
+%:%348=162%:%
+%:%349=163%:%
+%:%350=163%:%
 %:%351=164%:%
-%:%352=165%:%
-%:%353=165%:%
-%:%354=166%:%
-%:%357=167%:%
-%:%359=168%:%
-%:%360=168%:%
-%:%361=168%:%
-%:%362=169%:%
-%:%363=169%:%
+%:%354=165%:%
+%:%356=166%:%
+%:%357=166%:%
+%:%358=167%:%
+%:%359=167%:%
+%:%360=167%:%
+%:%361=167%:%
+%:%362=168%:%
+%:%363=168%:%
 %:%364=169%:%
 %:%365=169%:%
 %:%366=170%:%
-%:%367=170%:%
-%:%368=170%:%
-%:%369=170%:%
-%:%370=170%:%
-%:%371=171%:%
-%:%372=171%:%
-%:%373=171%:%
-%:%374=172%:%
-%:%375=172%:%
-%:%376=173%:%
-%:%377=174%:%
+%:%367=171%:%
+%:%368=172%:%
+%:%371=173%:%
+%:%373=174%:%
+%:%374=174%:%
+%:%375=175%:%
+%:%376=175%:%
+%:%377=175%:%
 %:%378=175%:%
+%:%379=176%:%
+%:%380=176%:%
 %:%381=176%:%
-%:%383=177%:%
+%:%382=176%:%
+%:%383=176%:%
 %:%384=177%:%
-%:%385=178%:%
-%:%386=178%:%
+%:%385=177%:%
+%:%386=177%:%
 %:%387=178%:%
 %:%388=178%:%
 %:%389=179%:%
-%:%390=179%:%
-%:%391=180%:%
-%:%392=180%:%
-%:%393=181%:%
+%:%390=180%:%
+%:%391=181%:%
 %:%394=182%:%
-%:%395=183%:%
-%:%396=184%:%
+%:%396=183%:%
+%:%397=183%:%
+%:%398=184%:%
 %:%399=185%:%
-%:%401=186%:%
-%:%402=186%:%
-%:%403=187%:%
-%:%404=187%:%
-%:%405=188%:%
+%:%400=185%:%
+%:%401=185%:%
+%:%402=185%:%
+%:%403=186%:%
+%:%404=186%:%
+%:%405=186%:%
+%:%406=186%:%
+%:%407=186%:%
+%:%408=187%:%
+%:%409=187%:%
+%:%410=187%:%
+%:%411=187%:%
+%:%412=187%:%
 %:%413=188%:%
-%:%414=189%:%
-%:%415=190%:%
-%:%418=193%:%
-%:%420=196%:%
-%:%421=196%:%
-%:%422=197%:%
-%:%423=198%:%
-%:%424=198%:%
-%:%425=199%:%
-%:%426=200%:%
-%:%427=201%:%
-%:%428=202%:%
-%:%429=202%:%
-%:%430=203%:%
-%:%431=204%:%
-%:%434=204%:%
-%:%438=204%:%
-%:%439=204%:%
-%:%440=205%:%
-%:%441=205%:%
-%:%442=206%:%
-%:%443=206%:%
-%:%444=206%:%
-%:%445=207%:%
-%:%446=207%:%
-%:%447=208%:%
-%:%448=208%:%
-%:%449=209%:%
-%:%450=209%:%
-%:%451=209%:%
-%:%452=209%:%
-%:%453=210%:%
-%:%454=210%:%
-%:%455=210%:%
-%:%456=210%:%
-%:%457=211%:%
-%:%458=211%:%
-%:%459=212%:%
-%:%460=212%:%
-%:%461=213%:%
-%:%462=213%:%
-%:%463=213%:%
-%:%464=214%:%
-%:%465=214%:%
-%:%466=215%:%
-%:%467=215%:%
-%:%468=216%:%
-%:%469=216%:%
-%:%470=216%:%
-%:%471=217%:%
-%:%479=217%:%
-%:%480=218%:%
-%:%481=219%:%
-%:%484=222%:%
-%:%486=224%:%
-%:%487=224%:%
-%:%488=225%:%
-%:%489=226%:%
-%:%492=226%:%
-%:%496=226%:%
-%:%497=226%:%
-%:%498=227%:%
-%:%499=227%:%
-%:%500=228%:%
-%:%501=228%:%
-%:%502=228%:%
+%:%414=188%:%
+%:%415=188%:%
+%:%416=189%:%
+%:%417=189%:%
+%:%418=190%:%
+%:%419=191%:%
+%:%420=192%:%
+%:%423=193%:%
+%:%425=194%:%
+%:%426=194%:%
+%:%427=195%:%
+%:%428=195%:%
+%:%429=196%:%
+%:%432=197%:%
+%:%434=198%:%
+%:%435=198%:%
+%:%436=198%:%
+%:%437=199%:%
+%:%438=199%:%
+%:%439=199%:%
+%:%440=199%:%
+%:%441=200%:%
+%:%442=200%:%
+%:%443=200%:%
+%:%444=200%:%
+%:%445=200%:%
+%:%446=201%:%
+%:%447=201%:%
+%:%448=201%:%
+%:%449=202%:%
+%:%450=202%:%
+%:%451=203%:%
+%:%452=204%:%
+%:%453=205%:%
+%:%456=206%:%
+%:%458=207%:%
+%:%459=207%:%
+%:%460=208%:%
+%:%461=208%:%
+%:%462=208%:%
+%:%463=208%:%
+%:%464=209%:%
+%:%465=209%:%
+%:%466=209%:%
+%:%467=209%:%
+%:%468=209%:%
+%:%469=210%:%
+%:%470=210%:%
+%:%471=210%:%
+%:%472=211%:%
+%:%473=211%:%
+%:%474=212%:%
+%:%475=213%:%
+%:%476=214%:%
+%:%477=215%:%
+%:%480=216%:%
+%:%482=217%:%
+%:%483=217%:%
+%:%484=218%:%
+%:%485=218%:%
+%:%486=219%:%
+%:%494=219%:%
+%:%495=220%:%
+%:%496=221%:%
+%:%499=224%:%
+%:%501=227%:%
+%:%502=227%:%
 %:%503=228%:%
 %:%504=229%:%
 %:%505=229%:%
-%:%506=229%:%
-%:%507=229%:%
-%:%508=229%:%
-%:%509=230%:%
-%:%510=230%:%
-%:%511=230%:%
-%:%512=230%:%
-%:%513=230%:%
-%:%514=231%:%
-%:%522=231%:%
-%:%523=232%:%
-%:%524=233%:%
-%:%525=233%:%
-%:%528=234%:%
-%:%533=235%:%
+%:%506=230%:%
+%:%507=231%:%
+%:%508=232%:%
+%:%509=233%:%
+%:%510=233%:%
+%:%511=234%:%
+%:%512=235%:%
+%:%515=235%:%
+%:%519=235%:%
+%:%520=235%:%
+%:%521=236%:%
+%:%522=236%:%
+%:%523=237%:%
+%:%524=237%:%
+%:%525=237%:%
+%:%526=238%:%
+%:%527=238%:%
+%:%528=239%:%
+%:%529=239%:%
+%:%530=240%:%
+%:%531=240%:%
+%:%532=240%:%
+%:%533=240%:%
+%:%534=241%:%
+%:%535=241%:%
+%:%536=241%:%
+%:%537=241%:%
+%:%538=242%:%
+%:%539=242%:%
+%:%540=243%:%
+%:%541=243%:%
+%:%542=244%:%
+%:%543=244%:%
+%:%544=244%:%
+%:%545=245%:%
+%:%546=245%:%
+%:%547=246%:%
+%:%548=246%:%
+%:%549=247%:%
+%:%550=247%:%
+%:%551=247%:%
+%:%552=248%:%
+%:%560=248%:%
+%:%561=249%:%
+%:%562=250%:%
+%:%565=253%:%
+%:%567=255%:%
+%:%568=255%:%
+%:%569=256%:%
+%:%570=257%:%
+%:%573=257%:%
+%:%577=257%:%
+%:%578=257%:%
+%:%579=258%:%
+%:%580=258%:%
+%:%581=259%:%
+%:%582=259%:%
+%:%583=259%:%
+%:%584=259%:%
+%:%585=260%:%
+%:%586=260%:%
+%:%587=260%:%
+%:%588=260%:%
+%:%589=260%:%
+%:%590=261%:%
+%:%591=261%:%
+%:%592=261%:%
+%:%593=261%:%
+%:%594=261%:%
+%:%595=262%:%
+%:%603=262%:%
+%:%604=263%:%
+%:%605=264%:%
+%:%606=264%:%
+%:%609=265%:%
+%:%614=266%:%

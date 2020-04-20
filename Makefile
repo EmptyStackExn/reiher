@@ -1,4 +1,5 @@
-ISABELLE=/usr/local/bin/isabelle2019
+# ISABELLE=/usr/local/bin/isabelle2019
+ISABELLE=/usr/local/bin/isabelle2020
 
 browser_info:
 # 	rm -fr src/ROOT
@@ -18,7 +19,7 @@ browser_info:
 <p>Check out root theory <a href="Hygge_Theory.html">Hygge_Theory<\/a> for soundness, completeness, progress and termination properties, and <a href="Stuttering.html">Stuttering<\/a> for stuttering properties.<\/p>/g' docs/index.html
 	sed -i -e 's/<\/body>/<p>Copyright (c) 2017-2020 T. Balabonski, F. Boulanger, C. Keller, H. Nguyen Van, B. Valiron, B. Wolff, CentraleSupélec \/ Université Paris-Saclay \/ CNRS<\/p>\
 <\/body>/g' docs/index.html
-	sed -i -e 's/..\/..\/HOL\/HOL\//http:\/\/isabelle.in.tum.de\/website-Isabelle2019\/dist\/library\/HOL\/HOL\//g' docs/TESL.html
+	sed -i -e 's/..\/..\/HOL\/HOL\//http:\/\/isabelle.in.tum.de\/website-Isabelle2020\/dist\/library\/HOL\/HOL\//g' docs/TESL.html
 
 pdf_document:
 # 	rm -fr src/ROOT src/document

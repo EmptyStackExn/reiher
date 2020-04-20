@@ -790,8 +790,30 @@ next
                 \<turnstile> \<Psi> \<triangleright> ((K\<^sub>1 time-delayed\<sharp> by \<delta>\<tau> on K\<^sub>2 implies K\<^sub>3) # \<Phi>)) \<hookrightarrow>\<^bsup>k\<^esup> (\<Gamma>\<^sub>k, Suc n \<turnstile> \<Psi>\<^sub>k \<triangleright> \<Phi>\<^sub>k))
                 \<and> \<rho> \<in> \<lbrakk> \<Gamma>\<^sub>k, Suc n \<turnstile> \<Psi>\<^sub>k \<triangleright> \<Phi>\<^sub>k \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g\<close>
             using h2 TimeDelayedByTvar.prems by simp
-          then show ?thesis
-            by (meson elims_part relpowp_Suc_I2 timedelayed_tvar_e2 sporadic_on_tvar_e2)
+          from this obtain \<Gamma>\<^sub>k \<Psi>\<^sub>k \<Phi>\<^sub>k k where \<open>
+              ( (((K\<^sub>3 \<Up> n) # (K\<^sub>2 \<Down> n @\<sharp> \<lparr>\<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>2, n) \<oplus> \<delta>\<tau>\<rparr>) # (K\<^sub>1 \<Up> n) # \<Gamma>), n
+                   \<turnstile> \<Psi> \<triangleright> ((K\<^sub>1 time-delayed\<sharp> by \<delta>\<tau> on K\<^sub>2 implies K\<^sub>3) # \<Phi>))
+               \<hookrightarrow>\<^bsup>k\<^esup> (\<Gamma>\<^sub>k, Suc n \<turnstile> \<Psi>\<^sub>k \<triangleright> \<Phi>\<^sub>k))\<close>
+           and *:\<open>\<rho> \<in> \<lbrakk> \<Gamma>\<^sub>k, Suc n \<turnstile> \<Psi>\<^sub>k \<triangleright> \<Phi>\<^sub>k \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g\<close> by blast
+          moreover have \<open>(  ((K\<^sub>1 \<Up> n) # \<Gamma>), n \<turnstile> (K\<^sub>3 sporadic\<sharp> \<lparr> \<tau>\<^sub>v\<^sub>a\<^sub>r (K\<^sub>2, n) \<oplus> \<delta>\<tau> \<rparr> on K\<^sub>2) # \<Psi>
+                  \<triangleright> ((K\<^sub>1 time-delayed\<sharp> by \<delta>\<tau> on K\<^sub>2 implies K\<^sub>3) # \<Phi>))
+                        \<hookrightarrow> (((K\<^sub>3 \<Up> n) # (K\<^sub>2 \<Down> n @\<sharp> \<lparr>\<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>2, n) \<oplus> \<delta>\<tau>\<rparr>) # (K\<^sub>1 \<Up> n) # \<Gamma>), n
+                   \<turnstile> \<Psi> \<triangleright> ((K\<^sub>1 time-delayed\<sharp> by \<delta>\<tau> on K\<^sub>2 implies K\<^sub>3) # \<Phi>))\<close>
+            by (simp add: elims_part sporadic_on_tvar_e2)
+          ultimately have \<open>( ((K\<^sub>1 \<Up> n) # \<Gamma>), n
+                            \<turnstile> (K\<^sub>3 sporadic\<sharp> \<lparr> \<tau>\<^sub>v\<^sub>a\<^sub>r (K\<^sub>2, n) \<oplus> \<delta>\<tau> \<rparr> on K\<^sub>2) # \<Psi>
+                            \<triangleright> ((K\<^sub>1 time-delayed\<sharp> by \<delta>\<tau> on K\<^sub>2 implies K\<^sub>3) # \<Phi>))
+                         \<hookrightarrow>\<^bsup>Suc k\<^esup> (\<Gamma>\<^sub>k, Suc n \<turnstile> \<Psi>\<^sub>k \<triangleright> \<Phi>\<^sub>k)\<close>
+            using relpowp_Suc_I2[of \<open>operational_semantics_step\<close>] by blast
+          moreover have \<open>(\<Gamma>, n \<turnstile> ((K\<^sub>1 time-delayed\<sharp> by \<delta>\<tau> on K\<^sub>2 implies K\<^sub>3) # \<Psi>) \<triangleright> \<Phi>)
+                      \<hookrightarrow> ( ((K\<^sub>1 \<Up> n) # \<Gamma>), n
+                            \<turnstile> (K\<^sub>3 sporadic\<sharp> \<lparr> \<tau>\<^sub>v\<^sub>a\<^sub>r (K\<^sub>2, n) \<oplus> \<delta>\<tau> \<rparr> on K\<^sub>2) # \<Psi>
+                            \<triangleright> ((K\<^sub>1 time-delayed\<sharp> by \<delta>\<tau> on K\<^sub>2 implies K\<^sub>3) # \<Phi>))\<close>
+            by (simp add: elims_part timedelayed_tvar_e2)
+          ultimately have \<open>(\<Gamma>, n \<turnstile> ((K\<^sub>1 time-delayed\<sharp> by \<delta>\<tau> on K\<^sub>2 implies K\<^sub>3) # \<Psi>) \<triangleright> \<Phi>)
+                      \<hookrightarrow>\<^bsup>Suc(Suc k)\<^esup> (\<Gamma>\<^sub>k, Suc n \<turnstile> \<Psi>\<^sub>k \<triangleright> \<Phi>\<^sub>k)\<close>
+            using relpowp_Suc_I2[of \<open>operational_semantics_step\<close>] by blast
+          with * show ?thesis by blast
         qed
         ultimately show ?case using TimeDelayedByTvar.prems(2) branches more_branches by blast
   next
