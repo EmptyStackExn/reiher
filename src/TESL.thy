@@ -15,6 +15,7 @@ subsection\<open>Basic elements of a specification\<close>
 text\<open>
   The following items appear in specifications:
   \<^item> Clocks, which are identified by a name.
+  \<^item> An instant on a clock is identified by its index, starting from 0
   \<^item> Tag constants are just constants of a type which denotes the metric time space.
 \<close>
 
@@ -22,10 +23,11 @@ datatype     clock         = Clk \<open>string\<close>
 type_synonym instant_index = \<open>nat\<close>
 
 datatype     '\<tau> tag_const =  TConst   (the_tag_const : '\<tau>)         (\<open>\<tau>\<^sub>c\<^sub>s\<^sub>t\<close>)
+
 text\<open>
-  Tag values are used to refer to the time on a clock at a given instant index.
+  Tag variables are used to refer to the time on a clock at a given instant index.
+  Tag expressions are used to build a new tag by adding a constant delay to a tag variable.
 \<close>
-(* TODO: text *)
 datatype tag_var =
   TSchematic \<open>clock * instant_index\<close> (\<open>\<tau>\<^sub>v\<^sub>a\<^sub>r\<close>)
 datatype '\<tau> tag_expr      =  (* Const    \<open>'\<tau> tag_const\<close>          (\<open>\<lparr> _ \<rparr>\<close>) *)
@@ -37,24 +39,20 @@ text\<open>
 \<close>
 datatype '\<tau> TESL_atomic =
     SporadicOn         \<open>clock\<close> \<open>'\<tau> tag_const\<close>  \<open>clock\<close>  (\<open>_ sporadic _ on _\<close> 55)
-  | SporadicOnTvar     \<open>clock\<close> \<open>'\<tau> tag_expr\<close>  \<open>clock\<close>   (\<open>_ sporadic\<sharp> _ on _\<close> 55) 
   | TagRelation        \<open>clock\<close> \<open>clock\<close> \<open>('\<tau> tag_const \<times> '\<tau> tag_const) \<Rightarrow> bool\<close> 
                                                       (\<open>time-relation \<lfloor>_, _\<rfloor> \<in> _\<close> 55)
   | Implies            \<open>clock\<close> \<open>clock\<close>                  (infixr \<open>implies\<close> 55)
   | ImpliesNot         \<open>clock\<close> \<open>clock\<close>                  (infixr \<open>implies not\<close> 55)
-  | TimeDelayedBy      \<open>clock\<close> \<open>'\<tau> tag_const\<close> \<open>clock\<close> \<open>clock\<close> (* Targets stutter-invariance *)
+  | TimeDelayedBy      \<open>clock\<close> \<open>'\<tau> tag_const\<close> \<open>clock\<close> \<open>clock\<close>
                                                       (\<open>_ time-delayed by _ on _ implies _\<close> 55)
-  | TimeDelayedByTvar   \<open>clock\<close> \<open>'\<tau> tag_const\<close> \<open>clock\<close> \<open>clock\<close> (* Targets operational semantics *)
-                                                      (\<open>_ time-delayed\<sharp> by _ on _ implies _\<close> 55)
   | WeaklyPrecedes     \<open>clock\<close> \<open>clock\<close>                  (infixr \<open>weakly precedes\<close> 55)
   | StrictlyPrecedes   \<open>clock\<close> \<open>clock\<close>                  (infixr \<open>strictly precedes\<close> 55)
   | Kills              \<open>clock\<close> \<open>clock\<close>                  (infixr \<open>kills\<close> 55)
-
-text\<open>
-  A TESL formula is just a list of atomic constraints, with implicit conjunction
-  for the semantics.
-\<close>
-type_synonym '\<tau> TESL_formula = \<open>'\<tau> TESL_atomic list\<close>
+\<comment> \<open>The following constraints are not part of the TESL language,
+    they are added only for implementing the operational semantics\<close>
+  | SporadicOnTvar     \<open>clock\<close> \<open>'\<tau> tag_expr\<close>  \<open>clock\<close>   (\<open>_ sporadic\<sharp> _ on _\<close> 55)
+  | TimeDelayedByTvar  \<open>clock\<close> \<open>'\<tau> tag_const\<close> \<open>clock\<close> \<open>clock\<close> (* Targets operational semantics *)
+                                                      (\<open>_ time-delayed\<sharp> by _ on _ implies _\<close> 55)
 
 text \<open>
   Some constraint were introduced for the implementation of the operational semantics.
@@ -64,6 +62,12 @@ fun is_public_atom :: \<open>'\<tau> TESL_atomic \<Rightarrow> bool\<close> wher
     \<open>is_public_atom (_ sporadic\<sharp> _ on _)                  = False\<close>
   | \<open>is_public_atom (_ time-delayed\<sharp> by _ on _ implies _) = False\<close>
   | \<open>is_public_atom _                                     = True\<close>
+
+text\<open>
+  A TESL formula is just a list of atomic constraints, with implicit conjunction
+  for the semantics.
+\<close>
+type_synonym '\<tau> TESL_formula = \<open>'\<tau> TESL_atomic list\<close>
 
 fun is_public_spec :: \<open>'\<tau> TESL_atomic list \<Rightarrow> bool\<close> where
     \<open>is_public_spec [] = True\<close>

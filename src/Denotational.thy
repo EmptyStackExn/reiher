@@ -29,10 +29,6 @@ where
       instant where the time on @{term \<open>K\<^sub>2\<close>} is @{term \<open>\<tau>\<close>}.\<close>
     \<open>\<lbrakk> K\<^sub>1 sporadic \<tau> on K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
         {\<rho>. \<exists>n::nat. ticks ((Rep_run \<rho>) n K\<^sub>1) \<and> time ((Rep_run \<rho>) n K\<^sub>2) = \<tau>}\<close>
-  \<comment> \<open>@{term \<open>K\<^sub>1 sporadic\<sharp> \<lparr>\<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>p\<^sub>a\<^sub>s\<^sub>t, n\<^sub>p\<^sub>a\<^sub>s\<^sub>t) \<oplus> \<delta>\<tau>\<rparr> on K\<^sub>2\<close>} means that @{term \<open>K\<^sub>1\<close>} should tick at an 
-      instant where the time on @{term \<open>K\<^sub>2\<close>} is @{term \<open>\<lparr>\<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>p\<^sub>a\<^sub>s\<^sub>t, n\<^sub>p\<^sub>a\<^sub>s\<^sub>t) \<oplus> \<delta>\<tau>\<rparr>\<close>}.\<close>
-  | \<open>\<lbrakk> K\<^sub>1 sporadic\<sharp> \<lparr>\<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>p\<^sub>a\<^sub>s\<^sub>t, n\<^sub>p\<^sub>a\<^sub>s\<^sub>t) \<oplus> \<delta>\<tau>\<rparr> on K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
-        {\<rho>. \<exists>n::nat. ticks ((Rep_run \<rho>) n K\<^sub>1) \<and> time ((Rep_run \<rho>) n K\<^sub>2) = time ((Rep_run \<rho>) n\<^sub>p\<^sub>a\<^sub>s\<^sub>t K\<^sub>p\<^sub>a\<^sub>s\<^sub>t) + \<delta>\<tau> }\<close>
   \<comment> \<open>@{term \<open>time-relation \<lfloor>K\<^sub>1, K\<^sub>2\<rfloor> \<in> R\<close>} means that at each instant, the time 
       on @{term \<open>K\<^sub>1\<close>} and the time on @{term \<open>K\<^sub>2\<close>} are in relation~@{term \<open>R\<close>}.\<close>
   | \<open>\<lbrakk> time-relation \<lfloor>K\<^sub>1, K\<^sub>2\<rfloor> \<in> R \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
@@ -61,20 +57,6 @@ where
                             \<longrightarrow> ticks ((Rep_run \<rho>) m slave)
                  )
         }\<close>
-  \<comment> \<open>@{term \<open>master time-delayed\<sharp> by \<delta>\<tau> on measuring implies slave\<close>} is similar
-        but targets operational execution and allow time to stagnate before
-        triggering slave  \<close>
-  | \<open>\<lbrakk> master time-delayed\<sharp> by \<delta>\<tau> on measuring implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
-    \<comment> \<open>
-      When master ticks, let's call @{term \<open>t\<^sub>0\<close>} the current date on measuring. Then, 
-      slave will be ticking whenever time @{term \<open>t\<^sub>0+\<delta>t\<close>} is measured on measuring.
-    \<close>
-        { \<rho>. \<forall>n. ticks ((Rep_run \<rho>) n master) \<longrightarrow>
-                 (let measured_time = time ((Rep_run \<rho>) n measuring) in
-                  \<exists>m \<ge> n. ticks ((Rep_run \<rho>) m slave)
-                          \<and> time ((Rep_run \<rho>) m measuring) = measured_time + \<delta>\<tau>
-                 )
-        }\<close>
   \<comment> \<open>@{term \<open>K\<^sub>1 weakly precedes K\<^sub>2\<close>} means that each tick on @{term \<open>K\<^sub>2\<close>}
         must be preceded by or coincide with at least one tick on @{term \<open>K\<^sub>1\<close>}.
         Therefore, at each instant @{term \<open>n\<close>}, the number of ticks on @{term \<open>K\<^sub>2\<close>} 
@@ -93,6 +75,25 @@ where
   | \<open>\<lbrakk> K\<^sub>1 kills K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
         {\<rho>. \<forall>n::nat. ticks ((Rep_run \<rho>) n K\<^sub>1)
                         \<longrightarrow> (\<forall>m\<ge>n. \<not> ticks ((Rep_run \<rho>) m K\<^sub>2))}\<close>
+  \<comment> \<open>Additional constraints for the operational semantics\<close>
+  \<comment> \<open>@{term \<open>K\<^sub>1 sporadic\<sharp> \<lparr>\<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>p\<^sub>a\<^sub>s\<^sub>t, n\<^sub>p\<^sub>a\<^sub>s\<^sub>t) \<oplus> \<delta>\<tau>\<rparr> on K\<^sub>2\<close>} means that @{term \<open>K\<^sub>1\<close>} should tick at an 
+      instant where the time on @{term \<open>K\<^sub>2\<close>} is @{term \<open>\<lparr>\<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>p\<^sub>a\<^sub>s\<^sub>t, n\<^sub>p\<^sub>a\<^sub>s\<^sub>t) \<oplus> \<delta>\<tau>\<rparr>\<close>}.\<close>
+  | \<open>\<lbrakk> K\<^sub>1 sporadic\<sharp> \<lparr>\<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>p\<^sub>a\<^sub>s\<^sub>t, n\<^sub>p\<^sub>a\<^sub>s\<^sub>t) \<oplus> \<delta>\<tau>\<rparr> on K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
+        {\<rho>. \<exists>n::nat. ticks ((Rep_run \<rho>) n K\<^sub>1) \<and> time ((Rep_run \<rho>) n K\<^sub>2) = time ((Rep_run \<rho>) n\<^sub>p\<^sub>a\<^sub>s\<^sub>t K\<^sub>p\<^sub>a\<^sub>s\<^sub>t) + \<delta>\<tau> }\<close>
+  \<comment> \<open>@{term \<open>master time-delayed\<sharp> by \<delta>\<tau> on measuring implies slave\<close>} is similar
+        but targets operational execution and allow time to stagnate before
+        triggering slave  \<close>
+  | \<open>\<lbrakk> master time-delayed\<sharp> by \<delta>\<tau> on measuring implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
+    \<comment> \<open>
+      When master ticks, let's call @{term \<open>t\<^sub>0\<close>} the current date on measuring. Then, 
+      slave will be ticking whenever time @{term \<open>t\<^sub>0+\<delta>t\<close>} is measured on measuring.
+    \<close>
+        { \<rho>. \<forall>n. ticks ((Rep_run \<rho>) n master) \<longrightarrow>
+                 (let measured_time = time ((Rep_run \<rho>) n measuring) in
+                  \<exists>m \<ge> n. ticks ((Rep_run \<rho>) m slave)
+                          \<and> time ((Rep_run \<rho>) m measuring) = measured_time + \<delta>\<tau>
+                 )
+        }\<close>
 
 section \<open>Denotational interpretation for TESL formulae\<close>
 

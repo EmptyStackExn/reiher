@@ -179,7 +179,7 @@ proof -
   from assms(2) have \<open>\<forall>n. ticks ((Rep_run sub) n a)
                           \<longrightarrow> (\<forall>m \<ge> n. first_time sub ms m (time ((Rep_run sub) n ms) + \<delta>\<tau>)
                                        \<longrightarrow> ticks ((Rep_run sub) m b))\<close>
-    using TESL_interpretation_atomic.simps(6)[of \<open>a\<close> \<open>\<delta>\<tau>\<close> \<open>ms\<close> \<open>b\<close>] by simp
+    using TESL_interpretation_atomic.simps(5)[of \<open>a\<close> \<open>\<delta>\<tau>\<close> \<open>ms\<close> \<open>b\<close>] by simp
   hence **:\<open>\<forall>n\<^sub>0. ticks ((Rep_run r) (f n\<^sub>0) a)
                   \<longrightarrow> (\<forall>m\<^sub>0 \<ge> n\<^sub>0. first_time r ms (f m\<^sub>0) (time ((Rep_run r) (f n\<^sub>0) ms) + \<delta>\<tau>)
                                   \<longrightarrow> ticks ((Rep_run r) (f m\<^sub>0) b))  \<close>
@@ -238,7 +238,7 @@ lemma tagrel_sub':
     shows \<open>R (time ((Rep_run r) n c\<^sub>1), time ((Rep_run r) n c\<^sub>2))\<close>
 proof -
   from assms(1) is_subrun_def obtain f where *:\<open>dilating f sub r\<close> by blast
-  moreover from assms(2) TESL_interpretation_atomic.simps(3) have
+  moreover from assms(2) TESL_interpretation_atomic.simps(2) have
     \<open>sub \<in> {r. \<forall>n. R (time ((Rep_run r) n c\<^sub>1), time ((Rep_run r) n c\<^sub>2))}\<close> by blast
   hence 1:\<open>\<forall>n. R (time ((Rep_run sub) n c\<^sub>1), time ((Rep_run sub) n c\<^sub>2))\<close> by simp
   show ?thesis
@@ -283,7 +283,7 @@ lemma tagrel_sub_inv:
     shows \<open>sub \<in> \<lbrakk> time-relation \<lfloor>c\<^sub>1, c\<^sub>2\<rfloor> \<in> R \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<close>
 proof -
   from assms(1) is_subrun_def obtain f where df:\<open>dilating f sub r\<close> by blast
-  moreover from assms(2) TESL_interpretation_atomic.simps(3) have
+  moreover from assms(2) TESL_interpretation_atomic.simps(2) have
     \<open>r \<in> {\<rho>. \<forall>n. R (time ((Rep_run \<rho>) n c\<^sub>1), time ((Rep_run \<rho>) n c\<^sub>2))}\<close> by blast
   hence \<open>\<forall>n. R (time ((Rep_run r) n c\<^sub>1), time ((Rep_run r) n c\<^sub>2))\<close> by simp
   hence \<open>\<forall>n. (\<exists>n\<^sub>0. f n\<^sub>0 = n) \<longrightarrow> R (time ((Rep_run r) n c\<^sub>1), time ((Rep_run r) n c\<^sub>2))\<close> by simp
@@ -331,7 +331,7 @@ proof -
   qed
   hence \<open>\<forall>n. ticks (Rep_run r n c\<^sub>1) \<longrightarrow> (\<forall>m \<ge> n. \<not> ticks (Rep_run r m c\<^sub>2))\<close>
     using ticks_imp_ticks_subk[OF *] by blast
-  thus ?thesis using TESL_interpretation_atomic.simps(10) by blast
+  thus ?thesis using TESL_interpretation_atomic.simps(8) by blast
 qed
 
 lemmas atomic_sub_lemmas = sporadic_sub tagrel_sub implies_sub implies_not_sub

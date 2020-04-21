@@ -37,6 +37,9 @@ datatype '\<tau> constr =
     at instant @{term \<open>n\<close>} of the run.\<close>
   Timestamp     \<open>clock\<close>   \<open>instant_index\<close> \<open>'\<tau> tag_const\<close>         (\<open>_ \<Down> _ @ _\<close>)
 (* TODO: text *)
+\<comment> \<open>@{term \<open>c \<Down> n @\<sharp> \<tau>\<^sub>e\<^sub>x\<^sub>p\<^sub>r\<close>} constrains clock @{term \<open>c\<close>} to have time @{term \<open>\<tau>\<^sub>e\<^sub>x\<^sub>p\<^sub>r\<close>}
+    at instant @{term \<open>n\<close>} of the run.
+    @{term \<open>\<tau>\<^sub>e\<^sub>x\<^sub>p\<^sub>r\<close>} refers to the time at some previous instant on a clock\<close>
 | TimestampTvar    \<open>clock\<close>   \<open>instant_index\<close> \<open>'\<tau> tag_expr\<close>          (\<open>_ \<Down> _ @\<sharp> _\<close>)
 \<comment> \<open>@{term \<open>m @ n \<oplus> \<delta>t \<Rightarrow> s\<close>} constrains clock @{term \<open>s\<close>} to tick at the
     first instant at which the time on @{term \<open>m\<close>} has increased by @{term \<open>\<delta>t\<close>}
