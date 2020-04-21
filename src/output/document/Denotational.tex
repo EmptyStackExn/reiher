@@ -109,6 +109,17 @@ The denotational semantics maps TESL formulae to sets of satisfying runs.
 \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ {\isasymlongrightarrow}\ ticks\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ m\ slave{\isacharparenright}\isanewline
 \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ {\isacharparenright}\isanewline
 \ \ \ \ \ \ \ \ {\isacharbraceright}{\isacartoucheclose}\isanewline
+\ \ {\isacharbar}\ {\isacartoucheopen}{\isasymlbrakk}\ master\ time{\isacharminus}delayed{\isasymbowtie}\ by\ {\isasymdelta}{\isasymtau}\ on\ measuring\ implies\ slave\ {\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L\ {\isacharequal}\isanewline
+\ \ \ \ %
+\isamarkupcmt{When master ticks, let's call \isa{t\isactrlsub {\isadigit{0}}} the current date on measuring. Then, 
+      slave will be ticking at some instant(s) when the time on measuring is \isa{t\isactrlsub {\isadigit{0}}\ {\isacharplus}\ {\isasymdelta}t}.%
+}\isanewline
+\ \ \ \ \ \ \ \ {\isacharbraceleft}\ {\isasymrho}{\isachardot}\ {\isasymforall}n{\isachardot}\ ticks\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ n\ master{\isacharparenright}\ {\isasymlongrightarrow}\isanewline
+\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ {\isacharparenleft}let\ measured{\isacharunderscore}time\ {\isacharequal}\ time\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ n\ measuring{\isacharparenright}\ in\isanewline
+\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ {\isasymexists}m\ {\isasymge}\ n{\isachardot}\ ticks\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ m\ slave{\isacharparenright}\isanewline
+\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ {\isasymand}\ time\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ m\ measuring{\isacharparenright}\ {\isacharequal}\ measured{\isacharunderscore}time\ {\isacharplus}\ {\isasymdelta}{\isasymtau}\isanewline
+\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ {\isacharparenright}\isanewline
+\ \ \ \ \ \ \ \ {\isacharbraceright}{\isacartoucheclose}\isanewline
 \ \ %
 \isamarkupcmt{\isa{K\isactrlsub {\isadigit{1}}\ weakly\ precedes\ K\isactrlsub {\isadigit{2}}} means that each tick on \isa{K\isactrlsub {\isadigit{2}}}
         must be preceded by or coincide with at least one tick on \isa{K\isactrlsub {\isadigit{1}}}.
@@ -143,21 +154,10 @@ The denotational semantics maps TESL formulae to sets of satisfying runs.
 \ \ {\isacharbar}\ {\isacartoucheopen}{\isasymlbrakk}\ K\isactrlsub {\isadigit{1}}\ sporadic{\isasymsharp}\ {\isasymlparr}{\isasymtau}\isactrlsub v\isactrlsub a\isactrlsub r{\isacharparenleft}K\isactrlsub p\isactrlsub a\isactrlsub s\isactrlsub t{\isacharcomma}\ n\isactrlsub p\isactrlsub a\isactrlsub s\isactrlsub t{\isacharparenright}\ {\isasymoplus}\ {\isasymdelta}{\isasymtau}{\isasymrparr}\ on\ K\isactrlsub {\isadigit{2}}\ {\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L\ {\isacharequal}\isanewline
 \ \ \ \ \ \ \ \ {\isacharbraceleft}{\isasymrho}{\isachardot}\ {\isasymexists}n{\isacharcolon}{\isacharcolon}nat{\isachardot}\ ticks\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ n\ K\isactrlsub {\isadigit{1}}{\isacharparenright}\ {\isasymand}\ time\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ n\ K\isactrlsub {\isadigit{2}}{\isacharparenright}\ {\isacharequal}\ time\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ n\isactrlsub p\isactrlsub a\isactrlsub s\isactrlsub t\ K\isactrlsub p\isactrlsub a\isactrlsub s\isactrlsub t{\isacharparenright}\ {\isacharplus}\ {\isasymdelta}{\isasymtau}\ {\isacharbraceright}{\isacartoucheclose}\isanewline
 \ \ %
-\isamarkupcmt{\isa{master\ time{\isacharminus}delayed{\isasymsharp}\ by\ {\isasymdelta}{\isasymtau}\ on\ measuring\ implies\ slave} is similar
+\isamarkupcmt{\isa{master\ time{\isacharminus}delayed{\isasymbowtie}\ by\ {\isasymdelta}{\isasymtau}\ on\ measuring\ implies\ slave} is similar
         but targets operational execution and allow time to stagnate before
         triggering slave%
-}\isanewline
-\ \ {\isacharbar}\ {\isacartoucheopen}{\isasymlbrakk}\ master\ time{\isacharminus}delayed{\isasymsharp}\ by\ {\isasymdelta}{\isasymtau}\ on\ measuring\ implies\ slave\ {\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L\ {\isacharequal}\isanewline
-\ \ \ \ %
-\isamarkupcmt{When master ticks, let's call \isa{t\isactrlsub {\isadigit{0}}} the current date on measuring. Then, 
-      slave will be ticking whenever time \isa{t\isactrlsub {\isadigit{0}}\ {\isacharplus}\ {\isasymdelta}t} is measured on measuring.%
-}\isanewline
-\ \ \ \ \ \ \ \ {\isacharbraceleft}\ {\isasymrho}{\isachardot}\ {\isasymforall}n{\isachardot}\ ticks\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ n\ master{\isacharparenright}\ {\isasymlongrightarrow}\isanewline
-\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ {\isacharparenleft}let\ measured{\isacharunderscore}time\ {\isacharequal}\ time\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ n\ measuring{\isacharparenright}\ in\isanewline
-\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ {\isasymexists}m\ {\isasymge}\ n{\isachardot}\ ticks\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ m\ slave{\isacharparenright}\isanewline
-\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ {\isasymand}\ time\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ m\ measuring{\isacharparenright}\ {\isacharequal}\ measured{\isacharunderscore}time\ {\isacharplus}\ {\isasymdelta}{\isasymtau}\isanewline
-\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ {\isacharparenright}\isanewline
-\ \ \ \ \ \ \ \ {\isacharbraceright}{\isacartoucheclose}%
+}%
 \isadelimdocument
 %
 \endisadelimdocument
@@ -926,46 +926,46 @@ The semantics of specifications is contravariant with respect to their inclusion
 %:%105=53%:%
 %:%111=59%:%
 %:%112=60%:%
-%:%113=60%:%
-%:%114=61%:%
-%:%115=62%:%
-%:%116=63%:%
-%:%117=63%:%
-%:%118=64%:%
-%:%119=65%:%
-%:%120=66%:%
-%:%121=66%:%
-%:%122=67%:%
-%:%123=68%:%
-%:%124=69%:%
-%:%125=70%:%
-%:%126=70%:%
-%:%127=71%:%
-%:%128=72%:%
-%:%129=73%:%
-%:%130=73%:%
-%:%131=74%:%
-%:%132=74%:%
-%:%133=75%:%
-%:%135=77%:%
-%:%136=78%:%
-%:%137=78%:%
-%:%138=78%:%
-%:%139=79%:%
-%:%140=79%:%
-%:%141=80%:%
-%:%142=80%:%
-%:%143=81%:%
-%:%144=82%:%
-%:%145=83%:%
-%:%146=83%:%
-%:%147=84%:%
-%:%148=85%:%
-%:%149=85%:%
-%:%150=86%:%
-%:%152=88%:%
-%:%153=89%:%
-%:%154=90%:%
+%:%114=62%:%
+%:%115=63%:%
+%:%116=64%:%
+%:%122=70%:%
+%:%123=71%:%
+%:%124=71%:%
+%:%125=72%:%
+%:%126=73%:%
+%:%127=74%:%
+%:%128=74%:%
+%:%129=75%:%
+%:%130=76%:%
+%:%131=77%:%
+%:%132=77%:%
+%:%133=78%:%
+%:%134=79%:%
+%:%135=80%:%
+%:%136=81%:%
+%:%137=81%:%
+%:%138=82%:%
+%:%139=83%:%
+%:%140=84%:%
+%:%141=84%:%
+%:%142=85%:%
+%:%143=85%:%
+%:%144=86%:%
+%:%146=88%:%
+%:%147=89%:%
+%:%148=89%:%
+%:%149=89%:%
+%:%150=90%:%
+%:%151=90%:%
+%:%152=91%:%
+%:%153=91%:%
+%:%154=92%:%
+%:%155=93%:%
+%:%156=94%:%
+%:%157=94%:%
+%:%158=95%:%
+%:%159=96%:%
 %:%167=98%:%
 %:%179=101%:%
 %:%180=102%:%

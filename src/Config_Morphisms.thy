@@ -32,8 +32,8 @@ definition morphism_TESL_atomic :
               | (C implies not C')        \<Rightarrow> (C implies not C')
               | (C time-delayed by t on C' implies C'') 
                                          \<Rightarrow> (C time-delayed by t\<Otimes>f on C' implies C'')
-              | (C time-delayed\<sharp> by t on C' implies C'') 
-                                         \<Rightarrow> (C time-delayed\<sharp> by t\<Otimes>f on C' implies C'')
+              | (C time-delayed\<bowtie> by t on C' implies C'') 
+                                         \<Rightarrow> (C time-delayed\<bowtie> by t\<Otimes>f on C' implies C'')
               | (C weakly precedes C')   \<Rightarrow> (C weakly precedes C')
               | (C strictly precedes C') \<Rightarrow> (C strictly precedes C') 
               | (C kills C')             \<Rightarrow> (C kills C'))\<close> 

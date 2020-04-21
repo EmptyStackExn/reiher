@@ -231,6 +231,40 @@ proof -
   thus ?thesis by simp
 qed
 
+text \<open>
+  Relaxed time delayed relations are preserved in a dilated run.
+\<close>
+theorem relaxed_time_delayed_sub:
+  assumes \<open>sub \<lless> r\<close>
+      and \<open>sub \<in> \<lbrakk> a time-delayed\<bowtie> by \<delta>\<tau> on ms implies b \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<close>
+    shows \<open>r \<in> \<lbrakk> a time-delayed\<bowtie> by \<delta>\<tau> on ms implies b \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<close>
+proof -
+  from assms(1) is_subrun_def obtain f where *:\<open>dilating f sub r\<close> by blast
+  from assms(2) have \<open>\<forall>n. ticks ((Rep_run sub) n a)
+                          \<longrightarrow> (\<exists>m \<ge> n. ticks ((Rep_run sub) m b)
+                                     \<and> time ((Rep_run sub) m ms) = time ((Rep_run sub) n ms) + \<delta>\<tau>)\<close>
+    using TESL_interpretation_atomic.simps(6)[of \<open>a\<close> \<open>\<delta>\<tau>\<close> \<open>ms\<close> \<open>b\<close>] by simp
+  hence **:\<open>\<forall>n\<^sub>0. ticks ((Rep_run r) (f n\<^sub>0) a)
+                  \<longrightarrow> (\<exists>m\<^sub>0 \<ge> n\<^sub>0. ticks ((Rep_run r) (f m\<^sub>0) b)
+                               \<and> time ((Rep_run r) (f m\<^sub>0) ms) = time ((Rep_run r) (f n\<^sub>0) ms) + \<delta>\<tau>)\<close>
+    using first_time_image[OF *] dilating_def * by fastforce
+  hence \<open>\<forall>n. ticks ((Rep_run r) n a)
+                  \<longrightarrow> (\<exists>m \<ge> n. ticks ((Rep_run r) m b)
+                             \<and>  time ((Rep_run r) m ms) = time ((Rep_run r) n ms) + \<delta>\<tau>)\<close>
+  proof -
+    { fix n assume assm:\<open>ticks ((Rep_run r) n a)\<close>
+      from ticks_image_sub[OF * assm] obtain n\<^sub>0 where nfn0:\<open>n = f n\<^sub>0\<close> by blast
+      with ** assm have ft0:
+        \<open>(\<exists>m\<^sub>0 \<ge> n\<^sub>0. ticks ((Rep_run r) (f m\<^sub>0) b)
+                  \<and> time ((Rep_run r) (f m\<^sub>0) ms) = time ((Rep_run r) (f n\<^sub>0) ms) + \<delta>\<tau>)\<close> by blast
+      have \<open>(\<exists>m \<ge> n. ticks ((Rep_run r) m b)
+                  \<and> time ((Rep_run r) m ms) = time ((Rep_run r) n ms) + \<delta>\<tau>)\<close>
+        by (metis "*" dilating_def dilating_fun_def ft0 nfn0 strict_mono_less_eq)
+    } thus ?thesis by simp
+  qed
+  thus ?thesis by simp
+qed
+
 text \<open>Time relations are preserved through dilation of a run.\<close>
 lemma tagrel_sub':
   assumes \<open>sub \<lless> r\<close>
@@ -331,12 +365,12 @@ proof -
   qed
   hence \<open>\<forall>n. ticks (Rep_run r n c\<^sub>1) \<longrightarrow> (\<forall>m \<ge> n. \<not> ticks (Rep_run r m c\<^sub>2))\<close>
     using ticks_imp_ticks_subk[OF *] by blast
-  thus ?thesis using TESL_interpretation_atomic.simps(8) by blast
+  thus ?thesis using TESL_interpretation_atomic.simps(9) by blast
 qed
 
 lemmas atomic_sub_lemmas = sporadic_sub tagrel_sub implies_sub implies_not_sub
                            time_delayed_sub weakly_precedes_sub
-                           strictly_precedes_sub kill_sub
+                           strictly_precedes_sub kill_sub relaxed_time_delayed_sub
 
 text \<open>
   We can now prove that all atomic specification formulae are preserved

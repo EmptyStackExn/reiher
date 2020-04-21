@@ -45,14 +45,14 @@ datatype '\<tau> TESL_atomic =
   | ImpliesNot         \<open>clock\<close> \<open>clock\<close>                  (infixr \<open>implies not\<close> 55)
   | TimeDelayedBy      \<open>clock\<close> \<open>'\<tau> tag_const\<close> \<open>clock\<close> \<open>clock\<close>
                                                       (\<open>_ time-delayed by _ on _ implies _\<close> 55)
+  | RelaxedTimeDelayed \<open>clock\<close> \<open>'\<tau> tag_const\<close> \<open>clock\<close> \<open>clock\<close>
+                                                      (\<open>_ time-delayed\<bowtie> by _ on _ implies _\<close> 55)
   | WeaklyPrecedes     \<open>clock\<close> \<open>clock\<close>                  (infixr \<open>weakly precedes\<close> 55)
   | StrictlyPrecedes   \<open>clock\<close> \<open>clock\<close>                  (infixr \<open>strictly precedes\<close> 55)
   | Kills              \<open>clock\<close> \<open>clock\<close>                  (infixr \<open>kills\<close> 55)
 \<comment> \<open>The following constraints are not part of the TESL language,
     they are added only for implementing the operational semantics\<close>
   | SporadicOnTvar     \<open>clock\<close> \<open>'\<tau> tag_expr\<close>  \<open>clock\<close>   (\<open>_ sporadic\<sharp> _ on _\<close> 55)
-  | TimeDelayedByTvar  \<open>clock\<close> \<open>'\<tau> tag_const\<close> \<open>clock\<close> \<open>clock\<close> (* Targets operational semantics *)
-                                                      (\<open>_ time-delayed\<sharp> by _ on _ implies _\<close> 55)
 
 text \<open>
   Some constraint were introduced for the implementation of the operational semantics.
@@ -60,7 +60,7 @@ text \<open>
 \<close>
 fun is_public_atom :: \<open>'\<tau> TESL_atomic \<Rightarrow> bool\<close> where
     \<open>is_public_atom (_ sporadic\<sharp> _ on _)                  = False\<close>
-  | \<open>is_public_atom (_ time-delayed\<sharp> by _ on _ implies _) = False\<close>
+\<^cancel>\<open>  | \<open>is_public_atom (_ time-delayed\<sharp> by _ on _ implies _) = False\<close>\<close>
   | \<open>is_public_atom _                                     = True\<close>
 
 text\<open>
