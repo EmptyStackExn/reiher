@@ -25,14 +25,14 @@ notation dummyDeltaT (\<open>\<delta>t\<close>)
 fun TESL_interpretation_atomic
     :: \<open>('\<tau>::linordered_field) TESL_atomic \<Rightarrow> '\<tau> run set\<close> (\<open>\<lbrakk> _ \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<close>)
 where
-  \<comment> \<open>@{term \<open>K\<^sub>1 sporadic \<tau> on K\<^sub>2\<close>} means that @{term \<open>K\<^sub>1\<close>} should tick at an 
-      instant where the time on @{term \<open>K\<^sub>2\<close>} is @{term \<open>\<tau>\<close>}.\<close>
-    \<open>\<lbrakk> K\<^sub>1 sporadic \<tau> on K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
-        {\<rho>. \<exists>n::nat. ticks ((Rep_run \<rho>) n K\<^sub>1) \<and> time ((Rep_run \<rho>) n K\<^sub>2) = \<tau>}\<close>
-  \<comment> \<open>@{term \<open>time-relation \<lfloor>K\<^sub>1, K\<^sub>2\<rfloor> \<in> R\<close>} means that at each instant, the time 
-      on @{term \<open>K\<^sub>1\<close>} and the time on @{term \<open>K\<^sub>2\<close>} are in relation~@{term \<open>R\<close>}.\<close>
-  | \<open>\<lbrakk> time-relation \<lfloor>K\<^sub>1, K\<^sub>2\<rfloor> \<in> R \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
-        {\<rho>. \<forall>n::nat. R (time ((Rep_run \<rho>) n K\<^sub>1), time ((Rep_run \<rho>) n K\<^sub>2))}\<close>
+  \<comment> \<open>@{term \<open>C\<^sub>1 sporadic \<tau> on C\<^sub>2\<close>} means that @{term \<open>C\<^sub>1\<close>} should tick at an 
+      instant where the time on @{term \<open>C\<^sub>2\<close>} is @{term \<open>\<tau>\<close>}.\<close>
+    \<open>\<lbrakk> C\<^sub>1 sporadic \<tau> on C\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
+        {\<rho>. \<exists>n::nat. ticks ((Rep_run \<rho>) n C\<^sub>1) \<and> time ((Rep_run \<rho>) n C\<^sub>2) = \<tau>}\<close>
+  \<comment> \<open>@{term \<open>time-relation \<lfloor>C\<^sub>1, C\<^sub>2\<rfloor> \<in> R\<close>} means that at each instant, the time 
+      on @{term \<open>C\<^sub>1\<close>} and the time on @{term \<open>C\<^sub>2\<close>} are in relation~@{term \<open>R\<close>}.\<close>
+  | \<open>\<lbrakk> time-relation \<lfloor>C\<^sub>1, C\<^sub>2\<rfloor> \<in> R \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
+        {\<rho>. \<forall>n::nat. R (time ((Rep_run \<rho>) n C\<^sub>1), time ((Rep_run \<rho>) n C\<^sub>2))}\<close>
   \<comment> \<open>@{term \<open>master implies slave\<close>} means that at each instant at which 
       @{term \<open>master\<close>} ticks, @{term \<open>slave\<close>} also ticks.\<close>
   | \<open>\<lbrakk> master implies slave \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
@@ -68,29 +68,29 @@ where
                           \<and> time ((Rep_run \<rho>) m measuring) = measured_time + \<delta>\<tau>
                  )
         }\<close>
-  \<comment> \<open>@{term \<open>K\<^sub>1 weakly precedes K\<^sub>2\<close>} means that each tick on @{term \<open>K\<^sub>2\<close>}
-        must be preceded by or coincide with at least one tick on @{term \<open>K\<^sub>1\<close>}.
-        Therefore, at each instant @{term \<open>n\<close>}, the number of ticks on @{term \<open>K\<^sub>2\<close>} 
-        must be less or equal to the number of ticks on @{term \<open>K\<^sub>1\<close>}.\<close>
-  | \<open>\<lbrakk> K\<^sub>1 weakly precedes K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
-        {\<rho>. \<forall>n::nat. (run_tick_count \<rho> K\<^sub>2 n) \<le> (run_tick_count \<rho> K\<^sub>1 n)}\<close>
-  \<comment> \<open>@{term \<open>K\<^sub>1 strictly precedes K\<^sub>2\<close>} means that each tick on @{term \<open>K\<^sub>2\<close>}
-        must be preceded by at least one tick on @{term \<open>K\<^sub>1\<close>} at a previous instant.
-        Therefore, at each instant n, the number of ticks on @{term \<open>K\<^sub>2\<close>}
-        must be less or equal to the number of ticks on @{term \<open>K\<^sub>1\<close>} 
+  \<comment> \<open>@{term \<open>C\<^sub>1 weakly precedes C\<^sub>2\<close>} means that each tick on @{term \<open>C\<^sub>2\<close>}
+        must be preceded by or coincide with at least one tick on @{term \<open>C\<^sub>1\<close>}.
+        Therefore, at each instant @{term \<open>n\<close>}, the number of ticks on @{term \<open>C\<^sub>2\<close>} 
+        must be less or equal to the number of ticks on @{term \<open>C\<^sub>1\<close>}.\<close>
+  | \<open>\<lbrakk> C\<^sub>1 weakly precedes C\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
+        {\<rho>. \<forall>n::nat. (run_tick_count \<rho> C\<^sub>2 n) \<le> (run_tick_count \<rho> C\<^sub>1 n)}\<close>
+  \<comment> \<open>@{term \<open>C\<^sub>1 strictly precedes C\<^sub>2\<close>} means that each tick on @{term \<open>C\<^sub>2\<close>}
+        must be preceded by at least one tick on @{term \<open>C\<^sub>1\<close>} at a previous instant.
+        Therefore, at each instant n, the number of ticks on @{term \<open>C\<^sub>2\<close>}
+        must be less or equal to the number of ticks on @{term \<open>C\<^sub>1\<close>} 
         at instant n - 1.\<close>
-  | \<open>\<lbrakk> K\<^sub>1 strictly precedes K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
-        {\<rho>. \<forall>n::nat. (run_tick_count \<rho> K\<^sub>2 n) \<le> (run_tick_count_strictly \<rho> K\<^sub>1 n)}\<close>
-  \<comment> \<open>@{term \<open>K\<^sub>1 kills K\<^sub>2\<close>} means that when @{term \<open>K\<^sub>1\<close>} ticks, @{term \<open>K\<^sub>2\<close>}
+  | \<open>\<lbrakk> C\<^sub>1 strictly precedes C\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
+        {\<rho>. \<forall>n::nat. (run_tick_count \<rho> C\<^sub>2 n) \<le> (run_tick_count_strictly \<rho> C\<^sub>1 n)}\<close>
+  \<comment> \<open>@{term \<open>C\<^sub>1 kills C\<^sub>2\<close>} means that when @{term \<open>C\<^sub>1\<close>} ticks, @{term \<open>C\<^sub>2\<close>}
         cannot tick and is not allowed to tick at any further instant.\<close>
-  | \<open>\<lbrakk> K\<^sub>1 kills K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
-        {\<rho>. \<forall>n::nat. ticks ((Rep_run \<rho>) n K\<^sub>1)
-                        \<longrightarrow> (\<forall>m\<ge>n. \<not> ticks ((Rep_run \<rho>) m K\<^sub>2))}\<close>
+  | \<open>\<lbrakk> C\<^sub>1 kills C\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
+        {\<rho>. \<forall>n::nat. ticks ((Rep_run \<rho>) n C\<^sub>1)
+                        \<longrightarrow> (\<forall>m\<ge>n. \<not> ticks ((Rep_run \<rho>) m C\<^sub>2))}\<close>
   \<comment> \<open>Additional constraints for the operational semantics\<close>
-  \<comment> \<open>@{term \<open>K\<^sub>1 sporadic\<sharp> \<lparr>\<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>p\<^sub>a\<^sub>s\<^sub>t, n\<^sub>p\<^sub>a\<^sub>s\<^sub>t) \<oplus> \<delta>\<tau>\<rparr> on K\<^sub>2\<close>} means that @{term \<open>K\<^sub>1\<close>} should tick at an 
-      instant where the time on @{term \<open>K\<^sub>2\<close>} is @{term \<open>\<lparr>\<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>p\<^sub>a\<^sub>s\<^sub>t, n\<^sub>p\<^sub>a\<^sub>s\<^sub>t) \<oplus> \<delta>\<tau>\<rparr>\<close>}.\<close>
-  | \<open>\<lbrakk> K\<^sub>1 sporadic\<sharp> \<lparr>\<tau>\<^sub>v\<^sub>a\<^sub>r(K\<^sub>p\<^sub>a\<^sub>s\<^sub>t, n\<^sub>p\<^sub>a\<^sub>s\<^sub>t) \<oplus> \<delta>\<tau>\<rparr> on K\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
-        {\<rho>. \<exists>n::nat. ticks ((Rep_run \<rho>) n K\<^sub>1) \<and> time ((Rep_run \<rho>) n K\<^sub>2) = time ((Rep_run \<rho>) n\<^sub>p\<^sub>a\<^sub>s\<^sub>t K\<^sub>p\<^sub>a\<^sub>s\<^sub>t) + \<delta>\<tau> }\<close>
+  \<comment> \<open>@{term \<open>C\<^sub>1 sporadic\<sharp> \<lparr>\<tau>\<^sub>v\<^sub>a\<^sub>r(C\<^sub>p\<^sub>a\<^sub>s\<^sub>t, n\<^sub>p\<^sub>a\<^sub>s\<^sub>t) \<oplus> \<delta>\<tau>\<rparr> on C\<^sub>2\<close>} means that @{term \<open>C\<^sub>1\<close>} should tick at an 
+      instant where the time on @{term \<open>C\<^sub>2\<close>} is @{term \<open>\<lparr>\<tau>\<^sub>v\<^sub>a\<^sub>r(C\<^sub>p\<^sub>a\<^sub>s\<^sub>t, n\<^sub>p\<^sub>a\<^sub>s\<^sub>t) \<oplus> \<delta>\<tau>\<rparr>\<close>}.\<close>
+  | \<open>\<lbrakk> C\<^sub>1 sporadic\<sharp> \<lparr>\<tau>\<^sub>v\<^sub>a\<^sub>r(C\<^sub>p\<^sub>a\<^sub>s\<^sub>t, n\<^sub>p\<^sub>a\<^sub>s\<^sub>t) \<oplus> \<delta>\<tau>\<rparr> on C\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
+        {\<rho>. \<exists>n::nat. ticks ((Rep_run \<rho>) n C\<^sub>1) \<and> time ((Rep_run \<rho>) n C\<^sub>2) = time ((Rep_run \<rho>) n\<^sub>p\<^sub>a\<^sub>s\<^sub>t C\<^sub>p\<^sub>a\<^sub>s\<^sub>t) + \<delta>\<tau> }\<close>
   \<comment> \<open>@{term \<open>master time-delayed\<bowtie> by \<delta>\<tau> on measuring implies slave\<close>} is similar
         but targets operational execution and allow time to stagnate before
         triggering slave  \<close>
