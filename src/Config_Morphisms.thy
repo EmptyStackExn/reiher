@@ -152,6 +152,5 @@ proof -
     using retract_condition by auto
   show ?thesis
     oops
-qed
 
 end
