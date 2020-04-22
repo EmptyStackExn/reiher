@@ -55,12 +55,11 @@ datatype '\<tau> TESL_atomic =
   | SporadicOnTvar     \<open>clock\<close> \<open>'\<tau> tag_expr\<close>  \<open>clock\<close>   (\<open>_ sporadic\<sharp> _ on _\<close> 55)
 
 text \<open>
-  Some constraint were introduced for the implementation of the operational semantics.
+  Some constraints were introduced for the implementation of the operational semantics.
   They are not allowed in user-level TESL specification and are not public.
 \<close>
 fun is_public_atom :: \<open>'\<tau> TESL_atomic \<Rightarrow> bool\<close> where
     \<open>is_public_atom (_ sporadic\<sharp> _ on _)                  = False\<close>
-\<^cancel>\<open>  | \<open>is_public_atom (_ time-delayed\<sharp> by _ on _ implies _) = False\<close>\<close>
   | \<open>is_public_atom _                                     = True\<close>
 
 text\<open>

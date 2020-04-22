@@ -3,7 +3,7 @@
 \contentsline {section}{\numberline {1.2}The TESL Language}{6}{section.1.2}%
 \contentsline {subsection}{\numberline {1.2.1}Instantaneous Causal Operators}{7}{subsection.1.2.1}%
 \contentsline {subsection}{\numberline {1.2.2}Temporal Operators}{7}{subsection.1.2.2}%
-\contentsline {subsection}{\numberline {1.2.3}Asynchronous Operators}{7}{subsection.1.2.3}%
+\contentsline {subsection}{\numberline {1.2.3}Asynchronous Operators}{8}{subsection.1.2.3}%
 \contentsline {chapter}{\numberline {2}Core TESL: Syntax and Basics}{9}{chapter.2}%
 \contentsline {section}{\numberline {2.1}Syntactic Representation}{9}{section.2.1}%
 \contentsline {subsection}{\numberline {2.1.1}Basic elements of a specification}{9}{subsection.2.1.1}%

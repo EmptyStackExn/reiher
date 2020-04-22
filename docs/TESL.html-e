@@ -72,12 +72,11 @@
 </span><span>  </span><span class="delimiter">|</span><span> </span><span>SporadicOnTvar</span><span>     </span><span class="cartouche"><span class="delete"><span class="delete">&#8249;clock&#8250;</span></span></span><span> </span><span class="cartouche"><span class="delete"><span class="delete">&#8249;&#39;&#964; tag_expr&#8250;</span></span></span><span>  </span><span class="cartouche"><span class="delete"><span class="delete">&#8249;clock&#8250;</span></span></span><span>   </span><span class="delimiter">(</span><span class="cartouche"><span class="delete"><span class="delete">&#8249;_ sporadic&#9839; _ on _&#8250;</span></span></span><span> </span><span>55</span><span class="delimiter">)</span><span>
 </span><span>
 </span><span class="keyword1"><span class="command">text</span></span><span> </span><span class="cartouche"><span class="delete"><span class="delete">&#8249;
-  Some constraint were introduced for the implementation of the operational semantics.
+  Some constraints were introduced for the implementation of the operational semantics.
   They are not allowed in user-level TESL specification and are not public.
 &#8250;</span></span></span><span>
 </span><span class="keyword1"><span class="command">fun</span></span><span> </span><span>is_public_atom</span><span> </span><span class="delimiter">::</span><span> </span><span class="cartouche"><span class="delete"><span class="delete">&#8249;&#39;&#964; TESL_atomic &#8658; bool&#8250;</span></span></span><span> </span><span class="keyword2"><span class="keyword">where</span></span><span>
 </span><span>    </span><span class="cartouche"><span class="delete"><span class="delete">&#8249;is_public_atom (_ sporadic&#9839; _ on _)                  = False&#8250;</span></span></span><span>
-</span><span class="comment">&#8998;&#8249;  | &#8249;is_public_atom (_ time-delayed&#9839; by _ on _ implies _) = False&#8250;&#8250;</span><span>
 </span><span>  </span><span class="delimiter">|</span><span> </span><span class="cartouche"><span class="delete"><span class="delete">&#8249;is_public_atom _                                     = True&#8250;</span></span></span><span>
 </span><span>
 </span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;
