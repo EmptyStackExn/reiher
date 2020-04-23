@@ -1,5 +1,5 @@
-theory Config_Morphisms
-  imports Hygge_Theory
+theory Time_Morphisms
+  imports Operational_SoundComplete
 begin
 
 text \<open>

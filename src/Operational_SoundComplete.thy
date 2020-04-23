@@ -1,6 +1,6 @@
 chapter\<open>Main Theorems\<close>
 
-theory Hygge_Theory
+theory Operational_SoundComplete
 imports
   Corecursive_Prop
 
