@@ -91,9 +91,6 @@ where
       instant where the time on @{term \<open>C\<^sub>2\<close>} is @{term \<open>\<lparr>\<tau>\<^sub>v\<^sub>a\<^sub>r(C\<^sub>p\<^sub>a\<^sub>s\<^sub>t, n\<^sub>p\<^sub>a\<^sub>s\<^sub>t) \<oplus> \<delta>\<tau>\<rparr>\<close>}.\<close>
   | \<open>\<lbrakk> C\<^sub>1 sporadic\<sharp> \<lparr>\<tau>\<^sub>v\<^sub>a\<^sub>r(C\<^sub>p\<^sub>a\<^sub>s\<^sub>t, n\<^sub>p\<^sub>a\<^sub>s\<^sub>t) \<oplus> \<delta>\<tau>\<rparr> on C\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L =
         {\<rho>. \<exists>n::nat. ticks ((Rep_run \<rho>) n C\<^sub>1) \<and> time ((Rep_run \<rho>) n C\<^sub>2) = time ((Rep_run \<rho>) n\<^sub>p\<^sub>a\<^sub>s\<^sub>t C\<^sub>p\<^sub>a\<^sub>s\<^sub>t) + \<delta>\<tau> }\<close>
-  \<comment> \<open>@{term \<open>master time-delayed\<bowtie> by \<delta>\<tau> on measuring implies slave\<close>} is similar
-        but targets operational execution and allow time to stagnate before
-        triggering slave  \<close>
 
 section \<open>Denotational interpretation for TESL formulae\<close>
 
