@@ -1,6 +1,5 @@
-# ISABELLE=/usr/local/bin/isabelle2019
-ISABELLE=/home/nguyen-van/.local/bin/Isabelle2020/bin/isabelle
-#ISABELLE=/usr/local/bin/isabelle2020
+# ISABELLE=~/.local/bin/Isabelle2020/bin/isabelle
+ISABELLE=/usr/local/bin/isabelle2020
 
 browser_info:
 # 	rm -fr src/ROOT
