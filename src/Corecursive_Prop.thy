@@ -560,11 +560,11 @@ text \<open>
 fun configuration_interpretation
   ::\<open>'\<tau>::linordered_field config \<Rightarrow> '\<tau> run set\<close>          (\<open>\<lbrakk> _ \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g\<close> 71)
 where
-  \<open>\<lbrakk> \<Gamma>, n \<turnstile> \<Psi> \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g = \<lbrakk>\<lbrakk> \<Gamma> \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk>\<lbrakk> \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> \<inter> \<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>\<close>
+  \<open>\<lbrakk> \<Gamma>, n \<Turnstile> \<Psi> \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g = \<lbrakk>\<lbrakk> \<Gamma> \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk>\<lbrakk> \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> \<inter> \<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>\<close>
 
 lemma configuration_interp_composition:
-   \<open>\<lbrakk> \<Gamma>\<^sub>1, n \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1 \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g \<inter> \<lbrakk> \<Gamma>\<^sub>2, n \<turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2 \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
-     = \<lbrakk> (\<Gamma>\<^sub>1 @ \<Gamma>\<^sub>2), n \<turnstile> (\<Psi>\<^sub>1 @ \<Psi>\<^sub>2) \<triangleright> (\<Phi>\<^sub>1 @ \<Phi>\<^sub>2) \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g\<close>
+   \<open>\<lbrakk> \<Gamma>\<^sub>1, n \<Turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1 \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g \<inter> \<lbrakk> \<Gamma>\<^sub>2, n \<Turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2 \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
+     = \<lbrakk> (\<Gamma>\<^sub>1 @ \<Gamma>\<^sub>2), n \<Turnstile> (\<Psi>\<^sub>1 @ \<Psi>\<^sub>2) \<triangleright> (\<Phi>\<^sub>1 @ \<Phi>\<^sub>2) \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g\<close>
   using TESL_interp_stepwise_composition symrun_interp_expansion
 by (simp add: TESL_interp_stepwise_composition
               symrun_interp_expansion inf_assoc inf_left_commute)
@@ -575,11 +575,11 @@ text \<open>
   This corresponds to the introduction rule of the operational semantics.
 \<close>
 lemma configuration_interp_stepwise_instant_cases:
-   \<open>\<lbrakk> \<Gamma>, n \<turnstile> [] \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g = \<lbrakk> \<Gamma>, Suc n \<turnstile> \<Phi> \<triangleright> [] \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g\<close>
+   \<open>\<lbrakk> \<Gamma>, n \<Turnstile> [] \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g = \<lbrakk> \<Gamma>, Suc n \<Turnstile> \<Phi> \<triangleright> [] \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g\<close>
 proof -
-  have \<open>\<lbrakk> \<Gamma>, n \<turnstile> [] \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g = \<lbrakk>\<lbrakk> \<Gamma> \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk>\<lbrakk> [] \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> \<inter> \<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>\<close>
+  have \<open>\<lbrakk> \<Gamma>, n \<Turnstile> [] \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g = \<lbrakk>\<lbrakk> \<Gamma> \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk>\<lbrakk> [] \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> \<inter> \<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>\<close>
     by simp
-  moreover have \<open>\<lbrakk> \<Gamma>, Suc n \<turnstile> \<Phi> \<triangleright> [] \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
+  moreover have \<open>\<lbrakk> \<Gamma>, Suc n \<Turnstile> \<Phi> \<triangleright> [] \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
                   = \<lbrakk>\<lbrakk> \<Gamma> \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup> \<inter> \<lbrakk>\<lbrakk> [] \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>\<close>
     by simp
   moreover have \<open>\<lbrakk>\<lbrakk> \<Gamma> \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk>\<lbrakk> [] \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> \<inter> \<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>
@@ -594,18 +594,18 @@ text \<open>
   match the elimination rules of the operational semantics.
 \<close>
 lemma configuration_interp_stepwise_sporadicon_cases:
-   \<open>\<lbrakk> \<Gamma>, n \<turnstile> ((C\<^sub>1 sporadic \<tau> on C\<^sub>2) # \<Psi>) \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
-    = \<lbrakk> \<Gamma>, n \<turnstile> \<Psi> \<triangleright> ((C\<^sub>1 sporadic \<tau> on C\<^sub>2) # \<Phi>) \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
-    \<union> \<lbrakk> ((C\<^sub>1 \<Up> n) # (C\<^sub>2 \<Down> n @ \<tau>) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g\<close>
+   \<open>\<lbrakk> \<Gamma>, n \<Turnstile> ((C\<^sub>1 sporadic \<tau> on C\<^sub>2) # \<Psi>) \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
+    = \<lbrakk> \<Gamma>, n \<Turnstile> \<Psi> \<triangleright> ((C\<^sub>1 sporadic \<tau> on C\<^sub>2) # \<Phi>) \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
+    \<union> \<lbrakk> ((C\<^sub>1 \<Up> n) # (C\<^sub>2 \<Down> n @ \<tau>) # \<Gamma>), n \<Turnstile> \<Psi> \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g\<close>
 proof -
-  have \<open>\<lbrakk> \<Gamma>, n \<turnstile> (C\<^sub>1 sporadic \<tau> on C\<^sub>2) # \<Psi> \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
+  have \<open>\<lbrakk> \<Gamma>, n \<Turnstile> (C\<^sub>1 sporadic \<tau> on C\<^sub>2) # \<Psi> \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
         = \<lbrakk>\<lbrakk> \<Gamma> \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk>\<lbrakk> (C\<^sub>1 sporadic \<tau> on C\<^sub>2) # \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> \<inter> \<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>\<close>
     by simp
-  moreover have \<open>\<lbrakk> \<Gamma>, n \<turnstile> \<Psi> \<triangleright> ((C\<^sub>1 sporadic \<tau> on C\<^sub>2) # \<Phi>) \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
+  moreover have \<open>\<lbrakk> \<Gamma>, n \<Turnstile> \<Psi> \<triangleright> ((C\<^sub>1 sporadic \<tau> on C\<^sub>2) # \<Phi>) \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
                  =  \<lbrakk>\<lbrakk> \<Gamma> \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk>\<lbrakk> \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup>
                   \<inter> \<lbrakk>\<lbrakk> (C\<^sub>1 sporadic \<tau> on C\<^sub>2) # \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>\<close>
     by simp
-  moreover have \<open>\<lbrakk> ((C\<^sub>1 \<Up> n) # (C\<^sub>2 \<Down> n @ \<tau>) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
+  moreover have \<open>\<lbrakk> ((C\<^sub>1 \<Up> n) # (C\<^sub>2 \<Down> n @ \<tau>) # \<Gamma>), n \<Turnstile> \<Psi> \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
                  =  \<lbrakk>\<lbrakk> ((C\<^sub>1 \<Up> n) # (C\<^sub>2 \<Down> n @ \<tau>) # \<Gamma>) \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m
                   \<inter> \<lbrakk>\<lbrakk> \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> \<inter> \<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>\<close>
     by simp
@@ -623,9 +623,9 @@ proof -
 qed
 
 lemma configuration_interp_stepwise_sporadicon_tvar_cases:
-   \<open>\<lbrakk> \<Gamma>, n \<turnstile> ((C\<^sub>1 sporadic\<sharp> \<tau>\<^sub>e\<^sub>x\<^sub>p\<^sub>r on C\<^sub>2) # \<Psi>) \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
-    = \<lbrakk> \<Gamma>, n \<turnstile> \<Psi> \<triangleright> ((C\<^sub>1 sporadic\<sharp> \<tau>\<^sub>e\<^sub>x\<^sub>p\<^sub>r on C\<^sub>2) # \<Phi>) \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
-    \<union> \<lbrakk> ((C\<^sub>1 \<Up> n) # (C\<^sub>2 \<Down> n @\<sharp> \<tau>\<^sub>e\<^sub>x\<^sub>p\<^sub>r) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g\<close>
+   \<open>\<lbrakk> \<Gamma>, n \<Turnstile> ((C\<^sub>1 sporadic\<sharp> \<tau>\<^sub>e\<^sub>x\<^sub>p\<^sub>r on C\<^sub>2) # \<Psi>) \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
+    = \<lbrakk> \<Gamma>, n \<Turnstile> \<Psi> \<triangleright> ((C\<^sub>1 sporadic\<sharp> \<tau>\<^sub>e\<^sub>x\<^sub>p\<^sub>r on C\<^sub>2) # \<Phi>) \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
+    \<union> \<lbrakk> ((C\<^sub>1 \<Up> n) # (C\<^sub>2 \<Down> n @\<sharp> \<tau>\<^sub>e\<^sub>x\<^sub>p\<^sub>r) # \<Gamma>), n \<Turnstile> \<Psi> \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g\<close>
 proof -
   from tag_expr.exhaust obtain v \<delta>\<tau> where \<open> \<tau>\<^sub>e\<^sub>x\<^sub>p\<^sub>r=\<lparr> v \<oplus> \<delta>\<tau> \<rparr>\<close> by blast
   moreover from tag_var.exhaust obtain C\<^sub>p\<^sub>a\<^sub>s\<^sub>t n\<^sub>p\<^sub>a\<^sub>s\<^sub>t where \<open>v=\<tau>\<^sub>v\<^sub>a\<^sub>r(C\<^sub>p\<^sub>a\<^sub>s\<^sub>t, n\<^sub>p\<^sub>a\<^sub>s\<^sub>t)\<close> by auto
@@ -643,9 +643,9 @@ proof -
             \<inter> \<lbrakk> C\<^sub>1 sporadic\<sharp> \<lparr> \<tau>\<^sub>v\<^sub>a\<^sub>r (C\<^sub>p\<^sub>a\<^sub>s\<^sub>t, n\<^sub>p\<^sub>a\<^sub>s\<^sub>t) \<oplus> \<delta>\<tau> \<rparr> on C\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>
         = \<lbrakk>\<lbrakk> \<Gamma> \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk>\<lbrakk> (C\<^sub>1 sporadic\<sharp> \<lparr> \<tau>\<^sub>v\<^sub>a\<^sub>r (C\<^sub>p\<^sub>a\<^sub>s\<^sub>t, n\<^sub>p\<^sub>a\<^sub>s\<^sub>t) \<oplus> \<delta>\<tau> \<rparr> on C\<^sub>2) # \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup>\<close>
       by auto
-    then have \<open>\<lbrakk> \<Gamma>, n \<turnstile> ((C\<^sub>1 sporadic\<sharp> \<lparr> \<tau>\<^sub>v\<^sub>a\<^sub>r (C\<^sub>p\<^sub>a\<^sub>s\<^sub>t, n\<^sub>p\<^sub>a\<^sub>s\<^sub>t) \<oplus> \<delta>\<tau> \<rparr> on C\<^sub>2) # \<Psi>) \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
-        = \<lbrakk> ((C\<^sub>1 \<Up> n) # (C\<^sub>2 \<Down> n @\<sharp> \<lparr> \<tau>\<^sub>v\<^sub>a\<^sub>r (C\<^sub>p\<^sub>a\<^sub>s\<^sub>t, n\<^sub>p\<^sub>a\<^sub>s\<^sub>t) \<oplus> \<delta>\<tau> \<rparr>) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
-          \<union> \<lbrakk> \<Gamma>, n \<turnstile> \<Psi> \<triangleright> ((C\<^sub>1 sporadic\<sharp> \<lparr> \<tau>\<^sub>v\<^sub>a\<^sub>r (C\<^sub>p\<^sub>a\<^sub>s\<^sub>t, n\<^sub>p\<^sub>a\<^sub>s\<^sub>t) \<oplus> \<delta>\<tau> \<rparr> on C\<^sub>2) # \<Phi>) \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g\<close>
+    then have \<open>\<lbrakk> \<Gamma>, n \<Turnstile> ((C\<^sub>1 sporadic\<sharp> \<lparr> \<tau>\<^sub>v\<^sub>a\<^sub>r (C\<^sub>p\<^sub>a\<^sub>s\<^sub>t, n\<^sub>p\<^sub>a\<^sub>s\<^sub>t) \<oplus> \<delta>\<tau> \<rparr> on C\<^sub>2) # \<Psi>) \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
+        = \<lbrakk> ((C\<^sub>1 \<Up> n) # (C\<^sub>2 \<Down> n @\<sharp> \<lparr> \<tau>\<^sub>v\<^sub>a\<^sub>r (C\<^sub>p\<^sub>a\<^sub>s\<^sub>t, n\<^sub>p\<^sub>a\<^sub>s\<^sub>t) \<oplus> \<delta>\<tau> \<rparr>) # \<Gamma>), n \<Turnstile> \<Psi> \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
+          \<union> \<lbrakk> \<Gamma>, n \<Turnstile> \<Psi> \<triangleright> ((C\<^sub>1 sporadic\<sharp> \<lparr> \<tau>\<^sub>v\<^sub>a\<^sub>r (C\<^sub>p\<^sub>a\<^sub>s\<^sub>t, n\<^sub>p\<^sub>a\<^sub>s\<^sub>t) \<oplus> \<delta>\<tau> \<rparr> on C\<^sub>2) # \<Phi>) \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g\<close>
       by auto
     then show ?thesis using *
       by blast
@@ -653,15 +653,15 @@ proof -
 qed
 
 lemma configuration_interp_stepwise_tagrel_cases:
-   \<open>\<lbrakk> \<Gamma>, n \<turnstile> ((time-relation \<lfloor>C\<^sub>1, C\<^sub>2\<rfloor> \<in> R) # \<Psi>) \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
+   \<open>\<lbrakk> \<Gamma>, n \<Turnstile> ((time-relation \<lfloor>C\<^sub>1, C\<^sub>2\<rfloor> \<in> R) # \<Psi>) \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
     = \<lbrakk> ((\<lfloor>\<tau>\<^sub>v\<^sub>a\<^sub>r(C\<^sub>1, n), \<tau>\<^sub>v\<^sub>a\<^sub>r(C\<^sub>2, n)\<rfloor> \<in> R) # \<Gamma>), n
-        \<turnstile> \<Psi> \<triangleright> ((time-relation \<lfloor>C\<^sub>1, C\<^sub>2\<rfloor> \<in> R) # \<Phi>) \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g\<close>
+        \<Turnstile> \<Psi> \<triangleright> ((time-relation \<lfloor>C\<^sub>1, C\<^sub>2\<rfloor> \<in> R) # \<Phi>) \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g\<close>
 proof -
-  have \<open>\<lbrakk> \<Gamma>, n \<turnstile> (time-relation \<lfloor>C\<^sub>1, C\<^sub>2\<rfloor> \<in> R) # \<Psi> \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
+  have \<open>\<lbrakk> \<Gamma>, n \<Turnstile> (time-relation \<lfloor>C\<^sub>1, C\<^sub>2\<rfloor> \<in> R) # \<Psi> \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
         = \<lbrakk>\<lbrakk> \<Gamma> \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk>\<lbrakk> (time-relation \<lfloor>C\<^sub>1, C\<^sub>2\<rfloor> \<in> R) # \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup>
         \<inter> \<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>\<close> by simp
   moreover have \<open>\<lbrakk> ((\<lfloor>\<tau>\<^sub>v\<^sub>a\<^sub>r(C\<^sub>1, n), \<tau>\<^sub>v\<^sub>a\<^sub>r(C\<^sub>2, n)\<rfloor> \<in> R) # \<Gamma>), n
-                  \<turnstile> \<Psi> \<triangleright> ((time-relation \<lfloor>C\<^sub>1, C\<^sub>2\<rfloor> \<in> R) # \<Phi>) \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
+                  \<Turnstile> \<Psi> \<triangleright> ((time-relation \<lfloor>C\<^sub>1, C\<^sub>2\<rfloor> \<in> R) # \<Phi>) \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
                  = \<lbrakk>\<lbrakk> (\<lfloor>\<tau>\<^sub>v\<^sub>a\<^sub>r(C\<^sub>1, n), \<tau>\<^sub>v\<^sub>a\<^sub>r(C\<^sub>2, n)\<rfloor> \<in> R) # \<Gamma> \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk>\<lbrakk> \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup>
                  \<inter> \<lbrakk>\<lbrakk> (time-relation \<lfloor>C\<^sub>1, C\<^sub>2\<rfloor> \<in> R) # \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>\<close>
     by simp
@@ -677,17 +677,17 @@ proof -
 qed
 
 lemma configuration_interp_stepwise_implies_cases:
-   \<open>\<lbrakk> \<Gamma>, n \<turnstile> ((C\<^sub>1 implies C\<^sub>2) # \<Psi>) \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
-      = \<lbrakk> ((C\<^sub>1 \<not>\<Up> n) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> ((C\<^sub>1 implies C\<^sub>2) # \<Phi>) \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
-      \<union> \<lbrakk> ((C\<^sub>1 \<Up> n) # (C\<^sub>2 \<Up> n) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> ((C\<^sub>1 implies C\<^sub>2) # \<Phi>) \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g\<close>
+   \<open>\<lbrakk> \<Gamma>, n \<Turnstile> ((C\<^sub>1 implies C\<^sub>2) # \<Psi>) \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
+      = \<lbrakk> ((C\<^sub>1 \<not>\<Up> n) # \<Gamma>), n \<Turnstile> \<Psi> \<triangleright> ((C\<^sub>1 implies C\<^sub>2) # \<Phi>) \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
+      \<union> \<lbrakk> ((C\<^sub>1 \<Up> n) # (C\<^sub>2 \<Up> n) # \<Gamma>), n \<Turnstile> \<Psi> \<triangleright> ((C\<^sub>1 implies C\<^sub>2) # \<Phi>) \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g\<close>
 proof -
-  have \<open>\<lbrakk> \<Gamma>, n \<turnstile> (C\<^sub>1 implies C\<^sub>2) # \<Psi> \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
+  have \<open>\<lbrakk> \<Gamma>, n \<Turnstile> (C\<^sub>1 implies C\<^sub>2) # \<Psi> \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
         = \<lbrakk>\<lbrakk> \<Gamma> \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk>\<lbrakk> (C\<^sub>1 implies C\<^sub>2) # \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> \<inter> \<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>\<close>
     by simp
-  moreover have \<open>\<lbrakk> ((C\<^sub>1 \<not>\<Up> n) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> ((C\<^sub>1 implies C\<^sub>2) # \<Phi>) \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
+  moreover have \<open>\<lbrakk> ((C\<^sub>1 \<not>\<Up> n) # \<Gamma>), n \<Turnstile> \<Psi> \<triangleright> ((C\<^sub>1 implies C\<^sub>2) # \<Phi>) \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
                 = \<lbrakk>\<lbrakk> (C\<^sub>1 \<not>\<Up> n) # \<Gamma> \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk>\<lbrakk> \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup>
                 \<inter> \<lbrakk>\<lbrakk> (C\<^sub>1 implies C\<^sub>2) # \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>\<close> by simp
-  moreover have \<open>\<lbrakk> ((C\<^sub>1 \<Up> n) # (C\<^sub>2 \<Up> n) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> ((C\<^sub>1 implies C\<^sub>2) # \<Phi>) \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
+  moreover have \<open>\<lbrakk> ((C\<^sub>1 \<Up> n) # (C\<^sub>2 \<Up> n) # \<Gamma>), n \<Turnstile> \<Psi> \<triangleright> ((C\<^sub>1 implies C\<^sub>2) # \<Phi>) \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
                 =  \<lbrakk>\<lbrakk> ((C\<^sub>1 \<Up> n) # (C\<^sub>2 \<Up> n) # \<Gamma>) \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk>\<lbrakk> \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup>
                  \<inter> \<lbrakk>\<lbrakk> (C\<^sub>1 implies C\<^sub>2) # \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>\<close> by simp
   ultimately show ?thesis
@@ -701,7 +701,7 @@ proof -
     have \<open>\<lbrakk> C\<^sub>1 \<not>\<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk>\<lbrakk> \<Gamma> \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<union> \<lbrakk> C\<^sub>1 \<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk>\<lbrakk> (C\<^sub>2 \<Up> n) # \<Gamma> \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m
          = (\<lbrakk> C\<^sub>1 \<not>\<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<union> \<lbrakk> C\<^sub>1 \<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk> C\<^sub>2 \<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m) \<inter> \<lbrakk>\<lbrakk> \<Gamma> \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m\<close>
       by force
-    hence \<open>\<lbrakk> \<Gamma>, n \<turnstile> ((C\<^sub>1 implies C\<^sub>2) # \<Psi>) \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
+    hence \<open>\<lbrakk> \<Gamma>, n \<Turnstile> ((C\<^sub>1 implies C\<^sub>2) # \<Psi>) \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
       = (\<lbrakk> C\<^sub>1 \<not>\<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk>\<lbrakk> \<Gamma> \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<union> \<lbrakk> C\<^sub>1 \<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk>\<lbrakk> (C\<^sub>2 \<Up> n) # \<Gamma> \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m)
         \<inter> (\<lbrakk>\<lbrakk> \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> \<inter> \<lbrakk>\<lbrakk> (C\<^sub>1 implies C\<^sub>2) # \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>)\<close>
       using f1 by (simp add: inf_left_commute inf_assoc)
@@ -710,17 +710,17 @@ proof -
 qed
 
 lemma configuration_interp_stepwise_implies_not_cases:
-   \<open>\<lbrakk> \<Gamma>, n \<turnstile> ((C\<^sub>1 implies not C\<^sub>2) # \<Psi>) \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
-      = \<lbrakk> ((C\<^sub>1 \<not>\<Up> n) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> ((C\<^sub>1 implies not C\<^sub>2) # \<Phi>) \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
-      \<union> \<lbrakk> ((C\<^sub>1 \<Up> n) # (C\<^sub>2 \<not>\<Up> n) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> ((C\<^sub>1 implies not C\<^sub>2) # \<Phi>) \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g\<close>
+   \<open>\<lbrakk> \<Gamma>, n \<Turnstile> ((C\<^sub>1 implies not C\<^sub>2) # \<Psi>) \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
+      = \<lbrakk> ((C\<^sub>1 \<not>\<Up> n) # \<Gamma>), n \<Turnstile> \<Psi> \<triangleright> ((C\<^sub>1 implies not C\<^sub>2) # \<Phi>) \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
+      \<union> \<lbrakk> ((C\<^sub>1 \<Up> n) # (C\<^sub>2 \<not>\<Up> n) # \<Gamma>), n \<Turnstile> \<Psi> \<triangleright> ((C\<^sub>1 implies not C\<^sub>2) # \<Phi>) \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g\<close>
 proof -
-  have \<open>\<lbrakk> \<Gamma>, n \<turnstile> (C\<^sub>1 implies not C\<^sub>2) # \<Psi> \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
+  have \<open>\<lbrakk> \<Gamma>, n \<Turnstile> (C\<^sub>1 implies not C\<^sub>2) # \<Psi> \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
         = \<lbrakk>\<lbrakk> \<Gamma> \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk>\<lbrakk> (C\<^sub>1 implies not C\<^sub>2) # \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> \<inter> \<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>\<close>
     by simp
-  moreover have \<open>\<lbrakk> ((C\<^sub>1 \<not>\<Up> n) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> ((C\<^sub>1 implies not C\<^sub>2) # \<Phi>) \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
+  moreover have \<open>\<lbrakk> ((C\<^sub>1 \<not>\<Up> n) # \<Gamma>), n \<Turnstile> \<Psi> \<triangleright> ((C\<^sub>1 implies not C\<^sub>2) # \<Phi>) \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
                   = \<lbrakk>\<lbrakk> (C\<^sub>1 \<not>\<Up> n) # \<Gamma> \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk>\<lbrakk> \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup>
                   \<inter> \<lbrakk>\<lbrakk> (C\<^sub>1 implies not C\<^sub>2) # \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>\<close> by simp
-  moreover have \<open>\<lbrakk> ((C\<^sub>1 \<Up> n) # (C\<^sub>2 \<not>\<Up> n) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> ((C\<^sub>1 implies not C\<^sub>2) # \<Phi>) \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
+  moreover have \<open>\<lbrakk> ((C\<^sub>1 \<Up> n) # (C\<^sub>2 \<not>\<Up> n) # \<Gamma>), n \<Turnstile> \<Psi> \<triangleright> ((C\<^sub>1 implies not C\<^sub>2) # \<Phi>) \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
                   = \<lbrakk>\<lbrakk> ((C\<^sub>1 \<Up> n) # (C\<^sub>2 \<not>\<Up> n) # \<Gamma>) \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk>\<lbrakk> \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup>
                   \<inter> \<lbrakk>\<lbrakk> (C\<^sub>1 implies not C\<^sub>2) # \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>\<close> by simp
   ultimately show ?thesis
@@ -734,7 +734,7 @@ proof -
     have \<open>\<lbrakk> C\<^sub>1 \<not>\<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk>\<lbrakk> \<Gamma> \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<union> \<lbrakk> C\<^sub>1 \<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk>\<lbrakk> (C\<^sub>2 \<not>\<Up> n) # \<Gamma> \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m
            = (\<lbrakk> C\<^sub>1 \<not>\<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<union> \<lbrakk> C\<^sub>1 \<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk> C\<^sub>2 \<not>\<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m) \<inter> \<lbrakk>\<lbrakk> \<Gamma> \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m\<close>
       by force
-    then have \<open>\<lbrakk> \<Gamma>, n \<turnstile> ((C\<^sub>1 implies not C\<^sub>2) # \<Psi>) \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
+    then have \<open>\<lbrakk> \<Gamma>, n \<Turnstile> ((C\<^sub>1 implies not C\<^sub>2) # \<Psi>) \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
                  = (\<lbrakk> C\<^sub>1 \<not>\<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk>\<lbrakk> \<Gamma> \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<union> \<lbrakk> C\<^sub>1 \<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m
                     \<inter> \<lbrakk>\<lbrakk> (C\<^sub>2 \<not>\<Up> n) # \<Gamma> \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m) \<inter> (\<lbrakk>\<lbrakk> \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup>
                     \<inter> \<lbrakk>\<lbrakk> (C\<^sub>1 implies not C\<^sub>2) # \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>)\<close>
@@ -744,31 +744,31 @@ proof -
 qed
 
 lemma configuration_interp_stepwise_timedelayed_cases:
-  \<open>\<lbrakk> \<Gamma>, n \<turnstile> ((C\<^sub>1 time-delayed by \<delta>\<tau> on C\<^sub>2 implies C\<^sub>3) # \<Psi>) \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
-    = \<lbrakk> ((C\<^sub>1 \<not>\<Up> n) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> ((C\<^sub>1 time-delayed by \<delta>\<tau> on C\<^sub>2 implies C\<^sub>3) # \<Phi>) \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
+  \<open>\<lbrakk> \<Gamma>, n \<Turnstile> ((C\<^sub>1 time-delayed by \<delta>\<tau> on C\<^sub>2 implies C\<^sub>3) # \<Psi>) \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
+    = \<lbrakk> ((C\<^sub>1 \<not>\<Up> n) # \<Gamma>), n \<Turnstile> \<Psi> \<triangleright> ((C\<^sub>1 time-delayed by \<delta>\<tau> on C\<^sub>2 implies C\<^sub>3) # \<Phi>) \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
     \<union> \<lbrakk> ((C\<^sub>1 \<Up> n) # (C\<^sub>2 @ n \<oplus> \<delta>\<tau> \<Rightarrow> C\<^sub>3) # \<Gamma>), n
-        \<turnstile> \<Psi> \<triangleright> ((C\<^sub>1 time-delayed by \<delta>\<tau> on C\<^sub>2 implies C\<^sub>3) # \<Phi>) \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g\<close>
+        \<Turnstile> \<Psi> \<triangleright> ((C\<^sub>1 time-delayed by \<delta>\<tau> on C\<^sub>2 implies C\<^sub>3) # \<Phi>) \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g\<close>
 proof -
-  have 1:\<open>\<lbrakk> \<Gamma>, n \<turnstile> (C\<^sub>1 time-delayed by \<delta>\<tau> on C\<^sub>2 implies C\<^sub>3) # \<Psi> \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
+  have 1:\<open>\<lbrakk> \<Gamma>, n \<Turnstile> (C\<^sub>1 time-delayed by \<delta>\<tau> on C\<^sub>2 implies C\<^sub>3) # \<Psi> \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
          = \<lbrakk>\<lbrakk> \<Gamma> \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk>\<lbrakk> (C\<^sub>1 time-delayed by \<delta>\<tau> on C\<^sub>2 implies C\<^sub>3) # \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup>
           \<inter> \<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>\<close> by simp
   moreover have \<open>\<lbrakk> ((C\<^sub>1 \<not>\<Up> n) # \<Gamma>), n
-                  \<turnstile> \<Psi> \<triangleright> ((C\<^sub>1 time-delayed by \<delta>\<tau> on C\<^sub>2 implies C\<^sub>3) # \<Phi>) \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
+                  \<Turnstile> \<Psi> \<triangleright> ((C\<^sub>1 time-delayed by \<delta>\<tau> on C\<^sub>2 implies C\<^sub>3) # \<Phi>) \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
                  = \<lbrakk>\<lbrakk> (C\<^sub>1 \<not>\<Up> n) # \<Gamma> \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk>\<lbrakk> \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup>
                   \<inter> \<lbrakk>\<lbrakk> (C\<^sub>1 time-delayed by \<delta>\<tau> on C\<^sub>2 implies C\<^sub>3) # \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>\<close>
     by simp
   moreover have \<open>\<lbrakk> ((C\<^sub>1 \<Up> n) # (C\<^sub>2 @ n \<oplus> \<delta>\<tau> \<Rightarrow> C\<^sub>3) # \<Gamma>), n
-                  \<turnstile> \<Psi> \<triangleright> ((C\<^sub>1 time-delayed by \<delta>\<tau> on C\<^sub>2 implies C\<^sub>3) # \<Phi>) \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
+                  \<Turnstile> \<Psi> \<triangleright> ((C\<^sub>1 time-delayed by \<delta>\<tau> on C\<^sub>2 implies C\<^sub>3) # \<Phi>) \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
                  = \<lbrakk>\<lbrakk> (C\<^sub>1 \<Up> n) # (C\<^sub>2 @ n \<oplus> \<delta>\<tau> \<Rightarrow> C\<^sub>3) # \<Gamma> \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk>\<lbrakk> \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup>
                   \<inter> \<lbrakk>\<lbrakk> (C\<^sub>1 time-delayed by \<delta>\<tau> on C\<^sub>2 implies C\<^sub>3) # \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>\<close>
     by simp
   ultimately show ?thesis
   proof -
-    have \<open>\<lbrakk> \<Gamma>, n \<turnstile> (C\<^sub>1 time-delayed by \<delta>\<tau> on C\<^sub>2 implies C\<^sub>3) # \<Psi> \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
+    have \<open>\<lbrakk> \<Gamma>, n \<Turnstile> (C\<^sub>1 time-delayed by \<delta>\<tau> on C\<^sub>2 implies C\<^sub>3) # \<Psi> \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
       = \<lbrakk>\<lbrakk> \<Gamma> \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> (\<lbrakk>\<lbrakk> (C\<^sub>1 time-delayed by \<delta>\<tau> on C\<^sub>2 implies C\<^sub>3) # \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup>
         \<inter> \<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>)\<close>
       using 1 by blast
-    hence \<open>\<lbrakk> \<Gamma>, n \<turnstile> (C\<^sub>1 time-delayed by \<delta>\<tau> on C\<^sub>2 implies C\<^sub>3) # \<Psi> \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
+    hence \<open>\<lbrakk> \<Gamma>, n \<Turnstile> (C\<^sub>1 time-delayed by \<delta>\<tau> on C\<^sub>2 implies C\<^sub>3) # \<Psi> \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
           = (\<lbrakk> C\<^sub>1 \<not>\<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<union> \<lbrakk> C\<^sub>1 \<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk> C\<^sub>2 @ n \<oplus> \<delta>\<tau> \<Rightarrow> C\<^sub>3 \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m)
             \<inter> (\<lbrakk>\<lbrakk> \<Gamma> \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> (\<lbrakk>\<lbrakk> \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup>
             \<inter> \<lbrakk>\<lbrakk> (C\<^sub>1 time-delayed by \<delta>\<tau> on C\<^sub>2 implies C\<^sub>3) # \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>))\<close>
@@ -788,10 +788,10 @@ proof -
 qed
 
 lemma configuration_interp_stepwise_timedelayed_tvar_cases:
-  \<open>\<lbrakk> \<Gamma>, n \<turnstile> ((C\<^sub>1 time-delayed\<bowtie> by \<delta>\<tau> on C\<^sub>2 implies C\<^sub>3) # \<Psi>) \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
-    = \<lbrakk> ((C\<^sub>1 \<not>\<Up> n) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> ((C\<^sub>1 time-delayed\<bowtie> by \<delta>\<tau> on C\<^sub>2 implies C\<^sub>3) # \<Phi>) \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
+  \<open>\<lbrakk> \<Gamma>, n \<Turnstile> ((C\<^sub>1 time-delayed\<bowtie> by \<delta>\<tau> on C\<^sub>2 implies C\<^sub>3) # \<Psi>) \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
+    = \<lbrakk> ((C\<^sub>1 \<not>\<Up> n) # \<Gamma>), n \<Turnstile> \<Psi> \<triangleright> ((C\<^sub>1 time-delayed\<bowtie> by \<delta>\<tau> on C\<^sub>2 implies C\<^sub>3) # \<Phi>) \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
     \<union> \<lbrakk> ((C\<^sub>1 \<Up> n) # \<Gamma>), n
-        \<turnstile> (C\<^sub>3 sporadic\<sharp> \<lparr>\<tau>\<^sub>v\<^sub>a\<^sub>r(C\<^sub>2, n) \<oplus> \<delta>\<tau>\<rparr> on C\<^sub>2) # \<Psi>
+        \<Turnstile> (C\<^sub>3 sporadic\<sharp> \<lparr>\<tau>\<^sub>v\<^sub>a\<^sub>r(C\<^sub>2, n) \<oplus> \<delta>\<tau>\<rparr> on C\<^sub>2) # \<Psi>
         \<triangleright> ((C\<^sub>1 time-delayed\<bowtie> by \<delta>\<tau> on C\<^sub>2 implies C\<^sub>3) # \<Phi>) \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g\<close>
 proof -
   have \<open>\<lbrakk>\<lbrakk> \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup>
@@ -800,7 +800,7 @@ proof -
       = \<lbrakk>\<lbrakk> \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> \<inter> \<lbrakk> C\<^sub>1 time-delayed\<bowtie> by \<delta>\<tau> on C\<^sub>2 implies C\<^sub>3 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup>\<close>
     using TESL_interp_stepwise_timedelayed_tvar_coind_unfold[of \<open>C\<^sub>1\<close> \<open>\<delta>\<tau>\<close> \<open>C\<^sub>2\<close> \<open>C\<^sub>3\<close> \<open>n\<close>]
           Int_assoc by blast
-  then have \<open>\<lbrakk> \<Gamma>, n \<turnstile> (C\<^sub>1 time-delayed\<bowtie> by \<delta>\<tau> on C\<^sub>2 implies C\<^sub>3) # \<Psi> \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
+  then have \<open>\<lbrakk> \<Gamma>, n \<Turnstile> (C\<^sub>1 time-delayed\<bowtie> by \<delta>\<tau> on C\<^sub>2 implies C\<^sub>3) # \<Psi> \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
           = \<lbrakk>\<lbrakk> \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup>
           \<inter> (\<lbrakk> C\<^sub>1 \<not>\<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<union> \<lbrakk> C\<^sub>1 \<Up> n \<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk> C\<^sub>3 sporadic\<sharp> \<lparr> \<tau>\<^sub>v\<^sub>a\<^sub>r (C\<^sub>2, n) \<oplus> \<delta>\<tau> \<rparr> on C\<^sub>2 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup>)
           \<inter> \<lbrakk> C\<^sub>1 time-delayed\<bowtie> by \<delta>\<tau> on C\<^sub>2 implies C\<^sub>3 \<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>
@@ -811,15 +811,15 @@ proof -
 qed
 
 lemma configuration_interp_stepwise_weakly_precedes_cases:
-   \<open>\<lbrakk> \<Gamma>, n \<turnstile> ((C\<^sub>1 weakly precedes C\<^sub>2) # \<Psi>) \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
+   \<open>\<lbrakk> \<Gamma>, n \<Turnstile> ((C\<^sub>1 weakly precedes C\<^sub>2) # \<Psi>) \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
     = \<lbrakk> ((\<lceil>#\<^sup>\<le> C\<^sub>2 n, #\<^sup>\<le> C\<^sub>1 n\<rceil> \<in> (\<lambda>(x,y). x\<le>y)) # \<Gamma>), n
-      \<turnstile> \<Psi> \<triangleright> ((C\<^sub>1 weakly precedes C\<^sub>2) # \<Phi>) \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g\<close>
+      \<Turnstile> \<Psi> \<triangleright> ((C\<^sub>1 weakly precedes C\<^sub>2) # \<Phi>) \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g\<close>
 proof -
-  have \<open>\<lbrakk> \<Gamma>, n \<turnstile> (C\<^sub>1 weakly precedes C\<^sub>2) # \<Psi> \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
+  have \<open>\<lbrakk> \<Gamma>, n \<Turnstile> (C\<^sub>1 weakly precedes C\<^sub>2) # \<Psi> \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
         = \<lbrakk>\<lbrakk> \<Gamma> \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk>\<lbrakk> (C\<^sub>1 weakly precedes C\<^sub>2) # \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup>
           \<inter> \<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>\<close> by simp
   moreover have \<open>\<lbrakk> ((\<lceil>#\<^sup>\<le> C\<^sub>2 n, #\<^sup>\<le> C\<^sub>1 n\<rceil> \<in> (\<lambda>(x,y). x\<le>y)) # \<Gamma>), n
-                  \<turnstile> \<Psi> \<triangleright> ((C\<^sub>1 weakly precedes C\<^sub>2) # \<Phi>) \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
+                  \<Turnstile> \<Psi> \<triangleright> ((C\<^sub>1 weakly precedes C\<^sub>2) # \<Phi>) \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
                 = \<lbrakk>\<lbrakk> (\<lceil>#\<^sup>\<le> C\<^sub>2 n, #\<^sup>\<le> C\<^sub>1 n\<rceil> \<in> (\<lambda>(x,y). x\<le>y)) # \<Gamma> \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m
                 \<inter> \<lbrakk>\<lbrakk> \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> \<inter> \<lbrakk>\<lbrakk> (C\<^sub>1 weakly precedes C\<^sub>2) # \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>\<close>
     by simp
@@ -835,15 +835,15 @@ proof -
 qed
 
 lemma configuration_interp_stepwise_strictly_precedes_cases:
-   \<open>\<lbrakk> \<Gamma>, n \<turnstile> ((C\<^sub>1 strictly precedes C\<^sub>2) # \<Psi>) \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
+   \<open>\<lbrakk> \<Gamma>, n \<Turnstile> ((C\<^sub>1 strictly precedes C\<^sub>2) # \<Psi>) \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
     = \<lbrakk> ((\<lceil>#\<^sup>\<le> C\<^sub>2 n, #\<^sup>< C\<^sub>1 n\<rceil> \<in> (\<lambda>(x,y). x\<le>y)) # \<Gamma>), n
-      \<turnstile> \<Psi> \<triangleright> ((C\<^sub>1 strictly precedes C\<^sub>2) # \<Phi>) \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g\<close>
+      \<Turnstile> \<Psi> \<triangleright> ((C\<^sub>1 strictly precedes C\<^sub>2) # \<Phi>) \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g\<close>
 proof -
-  have \<open>\<lbrakk> \<Gamma>, n \<turnstile> (C\<^sub>1 strictly precedes C\<^sub>2) # \<Psi> \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
+  have \<open>\<lbrakk> \<Gamma>, n \<Turnstile> (C\<^sub>1 strictly precedes C\<^sub>2) # \<Psi> \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
         = \<lbrakk>\<lbrakk> \<Gamma> \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk>\<lbrakk> (C\<^sub>1 strictly precedes C\<^sub>2) # \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup>
           \<inter> \<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>\<close> by simp
   moreover have \<open>\<lbrakk> ((\<lceil>#\<^sup>\<le> C\<^sub>2 n, #\<^sup>< C\<^sub>1 n\<rceil> \<in> (\<lambda>(x,y). x\<le>y)) # \<Gamma>), n
-                  \<turnstile> \<Psi> \<triangleright> ((C\<^sub>1 strictly precedes C\<^sub>2) # \<Phi>) \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
+                  \<Turnstile> \<Psi> \<triangleright> ((C\<^sub>1 strictly precedes C\<^sub>2) # \<Phi>) \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
                 = \<lbrakk>\<lbrakk> (\<lceil>#\<^sup>\<le> C\<^sub>2 n, #\<^sup>< C\<^sub>1 n\<rceil> \<in> (\<lambda>(x,y). x\<le>y)) # \<Gamma> \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m
                 \<inter> \<lbrakk>\<lbrakk> \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup>
                 \<inter> \<lbrakk>\<lbrakk> (C\<^sub>1 strictly precedes C\<^sub>2) # \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>\<close> by simp
@@ -859,17 +859,17 @@ proof -
 qed
 
 lemma configuration_interp_stepwise_kills_cases:
-   \<open>\<lbrakk> \<Gamma>, n \<turnstile> ((C\<^sub>1 kills C\<^sub>2) # \<Psi>) \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
-    = \<lbrakk> ((C\<^sub>1 \<not>\<Up> n) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> ((C\<^sub>1 kills C\<^sub>2) # \<Phi>) \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
-    \<union> \<lbrakk> ((C\<^sub>1 \<Up> n) # (C\<^sub>2 \<not>\<Up> \<ge> n) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> ((C\<^sub>1 kills C\<^sub>2) # \<Phi>) \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g\<close>
+   \<open>\<lbrakk> \<Gamma>, n \<Turnstile> ((C\<^sub>1 kills C\<^sub>2) # \<Psi>) \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
+    = \<lbrakk> ((C\<^sub>1 \<not>\<Up> n) # \<Gamma>), n \<Turnstile> \<Psi> \<triangleright> ((C\<^sub>1 kills C\<^sub>2) # \<Phi>) \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
+    \<union> \<lbrakk> ((C\<^sub>1 \<Up> n) # (C\<^sub>2 \<not>\<Up> \<ge> n) # \<Gamma>), n \<Turnstile> \<Psi> \<triangleright> ((C\<^sub>1 kills C\<^sub>2) # \<Phi>) \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g\<close>
 proof -
-  have \<open>\<lbrakk> \<Gamma>, n \<turnstile> ((C\<^sub>1 kills C\<^sub>2) # \<Psi>) \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
+  have \<open>\<lbrakk> \<Gamma>, n \<Turnstile> ((C\<^sub>1 kills C\<^sub>2) # \<Psi>) \<triangleright> \<Phi> \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
         = \<lbrakk>\<lbrakk> \<Gamma> \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk>\<lbrakk> (C\<^sub>1 kills C\<^sub>2) # \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup> \<inter> \<lbrakk>\<lbrakk> \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>\<close>
     by simp
-  moreover have \<open>\<lbrakk> ((C\<^sub>1 \<not>\<Up> n) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> ((C\<^sub>1 kills C\<^sub>2) # \<Phi>) \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
+  moreover have \<open>\<lbrakk> ((C\<^sub>1 \<not>\<Up> n) # \<Gamma>), n \<Turnstile> \<Psi> \<triangleright> ((C\<^sub>1 kills C\<^sub>2) # \<Phi>) \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
                 = \<lbrakk>\<lbrakk> (C\<^sub>1 \<not>\<Up> n) # \<Gamma> \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk>\<lbrakk> \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup>
                   \<inter> \<lbrakk>\<lbrakk> (C\<^sub>1 kills C\<^sub>2) # \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>\<close> by simp
-  moreover have \<open>\<lbrakk> ((C\<^sub>1 \<Up> n) # (C\<^sub>2 \<not>\<Up> \<ge> n) # \<Gamma>), n \<turnstile> \<Psi> \<triangleright> ((C\<^sub>1 kills C\<^sub>2) # \<Phi>) \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
+  moreover have \<open>\<lbrakk> ((C\<^sub>1 \<Up> n) # (C\<^sub>2 \<not>\<Up> \<ge> n) # \<Gamma>), n \<Turnstile> \<Psi> \<triangleright> ((C\<^sub>1 kills C\<^sub>2) # \<Phi>) \<rbrakk>\<^sub>c\<^sub>o\<^sub>n\<^sub>f\<^sub>i\<^sub>g
                 = \<lbrakk>\<lbrakk> (C\<^sub>1 \<Up> n) # (C\<^sub>2 \<not>\<Up> \<ge> n) # \<Gamma> \<rbrakk>\<rbrakk>\<^sub>p\<^sub>r\<^sub>i\<^sub>m \<inter> \<lbrakk>\<lbrakk> \<Psi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> n\<^esup>
                   \<inter> \<lbrakk>\<lbrakk> (C\<^sub>1 kills C\<^sub>2) # \<Phi> \<rbrakk>\<rbrakk>\<^sub>T\<^sub>E\<^sub>S\<^sub>L\<^bsup>\<ge> Suc n\<^esup>\<close> by simp
   ultimately show ?thesis
