@@ -1,4 +1,4 @@
-session "TESL_Language" = "HOL"
+session "TESL_Theory" = "HOL"
 +  options [document = pdf,
   				 document_output = "output",
   				 document_variants="document:outline=/proof,/ML"
@@ -10,7 +10,7 @@ session "TESL_Language" = "HOL"
     Denotational
     Operational
     SymbolicPrimitive Corecursive_Prop
-    Hygge_Theory
+    Operational_SoundComplete
     StutteringDefs StutteringLemmas Stuttering
   document_files
     "root.tex"

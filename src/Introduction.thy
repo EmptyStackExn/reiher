@@ -128,6 +128,12 @@ text\<open>
     a tick at the first instant where the time on \<^verbatim>\<open>m\<close> is \<^verbatim>\<open>d\<close> later than it was when \<^verbatim>\<open>c1\<close> had ticked.
     This means that every tick on \<^verbatim>\<open>c1\<close> is followed by a tick on \<^verbatim>\<open>c2\<close> after a delay \<^verbatim>\<open>d\<close> measured
     on the time scale of clock \<^verbatim>\<open>m\<close>.
+  \<^item> \<^verbatim>\<open>c1 time delayed\<bowtie> by d on m implies c2\<close> means that every time clock \<^verbatim>\<open>c1\<close> ticks, \<^verbatim>\<open>c2\<close> must have 
+    a tick at an instant where the time on \<^verbatim>\<open>m\<close> is \<^verbatim>\<open>d\<close> later than it was when \<^verbatim>\<open>c1\<close> had ticked.
+    This means that every tick on \<^verbatim>\<open>c1\<close> is followed by at least a tick on \<^verbatim>\<open>c2\<close> after a delay \<^verbatim>\<open>d\<close> 
+    measured on the time scale of clock \<^verbatim>\<open>m\<close>. Contrary to the strict version of \<^verbatim>\<open>time delayed\<close>,
+    \<^verbatim>\<open>c2\<close> may not tick at the first instant at which the delay expires, and it may tick at several
+    instants, provided that the time on  \<^verbatim>\<open>m\<close> is still  \<^verbatim>\<open>d\<close> later than it was when \<^verbatim>\<open>c1\<close> had ticked.
   \<^item> \<^verbatim>\<open>time relation (c1, c2) in R\<close> means that at every instant, the current time on clocks \<^verbatim>\<open>c1\<close>
     and \<^verbatim>\<open>c2\<close> must be in relation \<^verbatim>\<open>R\<close>. By default, the time lines of different clocks are 
     independent. This operator allows us to link two time lines, for instance to model the fact

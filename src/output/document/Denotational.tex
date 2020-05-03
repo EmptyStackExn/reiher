@@ -68,29 +68,29 @@ The denotational semantics maps TESL formulae to sets of satisfying runs.
 \ \ \ \ {\isacharcolon}{\isacharcolon}\ {\isacartoucheopen}{\isacharparenleft}{\isacharprime}{\isasymtau}{\isacharcolon}{\isacharcolon}linordered{\isacharunderscore}field{\isacharparenright}\ TESL{\isacharunderscore}atomic\ {\isasymRightarrow}\ {\isacharprime}{\isasymtau}\ run\ set{\isacartoucheclose}\ {\isacharparenleft}{\isacartoucheopen}{\isasymlbrakk}\ {\isacharunderscore}\ {\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L{\isacartoucheclose}{\isacharparenright}\isanewline
 \isakeyword{where}\isanewline
 \ \ %
-\isamarkupcmt{\isa{K\isactrlsub {\isadigit{1}}\ sporadic\ {\isasymtau}\ on\ K\isactrlsub {\isadigit{2}}} means that \isa{K\isactrlsub {\isadigit{1}}} should tick at an 
-      instant where the time on \isa{K\isactrlsub {\isadigit{2}}} is \isa{{\isasymtau}}.%
+\isamarkupcmt{\isa{C\isactrlsub {\isadigit{1}}\ sporadic\ {\isasymtau}\ on\ C\isactrlsub {\isadigit{2}}} means that \isa{C\isactrlsub {\isadigit{1}}} should tick at an 
+      instant where the time on \isa{C\isactrlsub {\isadigit{2}}} is \isa{{\isasymtau}}.%
 }\isanewline
-\ \ \ \ {\isacartoucheopen}{\isasymlbrakk}\ K\isactrlsub {\isadigit{1}}\ sporadic\ {\isasymtau}\ on\ K\isactrlsub {\isadigit{2}}\ {\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L\ {\isacharequal}\isanewline
-\ \ \ \ \ \ \ \ {\isacharbraceleft}{\isasymrho}{\isachardot}\ {\isasymexists}n{\isacharcolon}{\isacharcolon}nat{\isachardot}\ hamlet\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ n\ K\isactrlsub {\isadigit{1}}{\isacharparenright}\ {\isasymand}\ time\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ n\ K\isactrlsub {\isadigit{2}}{\isacharparenright}\ {\isacharequal}\ {\isasymtau}{\isacharbraceright}{\isacartoucheclose}\isanewline
+\ \ \ \ {\isacartoucheopen}{\isasymlbrakk}\ C\isactrlsub {\isadigit{1}}\ sporadic\ {\isasymtau}\ on\ C\isactrlsub {\isadigit{2}}\ {\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L\ {\isacharequal}\isanewline
+\ \ \ \ \ \ \ \ {\isacharbraceleft}{\isasymrho}{\isachardot}\ {\isasymexists}n{\isacharcolon}{\isacharcolon}nat{\isachardot}\ ticks\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ n\ C\isactrlsub {\isadigit{1}}{\isacharparenright}\ {\isasymand}\ time\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ n\ C\isactrlsub {\isadigit{2}}{\isacharparenright}\ {\isacharequal}\ {\isasymtau}{\isacharbraceright}{\isacartoucheclose}\isanewline
 \ \ %
-\isamarkupcmt{\isa{time{\isacharminus}relation\ {\isasymlfloor}K\isactrlsub {\isadigit{1}}{\isacharcomma}\ K\isactrlsub {\isadigit{2}}{\isasymrfloor}\ {\isasymin}\ R} means that at each instant, the time 
-      on \isa{K\isactrlsub {\isadigit{1}}} and the time on \isa{K\isactrlsub {\isadigit{2}}} are in relation~\isa{R}.%
+\isamarkupcmt{\isa{time{\isacharminus}relation\ {\isasymlfloor}C\isactrlsub {\isadigit{1}}{\isacharcomma}\ C\isactrlsub {\isadigit{2}}{\isasymrfloor}\ {\isasymin}\ R} means that at each instant, the time 
+      on \isa{C\isactrlsub {\isadigit{1}}} and the time on \isa{C\isactrlsub {\isadigit{2}}} are in relation~\isa{R}.%
 }\isanewline
-\ \ {\isacharbar}\ {\isacartoucheopen}{\isasymlbrakk}\ time{\isacharminus}relation\ {\isasymlfloor}K\isactrlsub {\isadigit{1}}{\isacharcomma}\ K\isactrlsub {\isadigit{2}}{\isasymrfloor}\ {\isasymin}\ R\ {\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L\ {\isacharequal}\isanewline
-\ \ \ \ \ \ \ \ {\isacharbraceleft}{\isasymrho}{\isachardot}\ {\isasymforall}n{\isacharcolon}{\isacharcolon}nat{\isachardot}\ R\ {\isacharparenleft}time\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ n\ K\isactrlsub {\isadigit{1}}{\isacharparenright}{\isacharcomma}\ time\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ n\ K\isactrlsub {\isadigit{2}}{\isacharparenright}{\isacharparenright}{\isacharbraceright}{\isacartoucheclose}\isanewline
+\ \ {\isacharbar}\ {\isacartoucheopen}{\isasymlbrakk}\ time{\isacharminus}relation\ {\isasymlfloor}C\isactrlsub {\isadigit{1}}{\isacharcomma}\ C\isactrlsub {\isadigit{2}}{\isasymrfloor}\ {\isasymin}\ R\ {\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L\ {\isacharequal}\isanewline
+\ \ \ \ \ \ \ \ {\isacharbraceleft}{\isasymrho}{\isachardot}\ {\isasymforall}n{\isacharcolon}{\isacharcolon}nat{\isachardot}\ R\ {\isacharparenleft}time\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ n\ C\isactrlsub {\isadigit{1}}{\isacharparenright}{\isacharcomma}\ time\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ n\ C\isactrlsub {\isadigit{2}}{\isacharparenright}{\isacharparenright}{\isacharbraceright}{\isacartoucheclose}\isanewline
 \ \ %
 \isamarkupcmt{\isa{master\ implies\ slave} means that at each instant at which 
       \isa{master} ticks, \isa{slave} also ticks.%
 }\isanewline
 \ \ {\isacharbar}\ {\isacartoucheopen}{\isasymlbrakk}\ master\ implies\ slave\ {\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L\ {\isacharequal}\isanewline
-\ \ \ \ \ \ \ \ {\isacharbraceleft}{\isasymrho}{\isachardot}\ {\isasymforall}n{\isacharcolon}{\isacharcolon}nat{\isachardot}\ hamlet\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ n\ master{\isacharparenright}\ {\isasymlongrightarrow}\ hamlet\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ n\ slave{\isacharparenright}{\isacharbraceright}{\isacartoucheclose}\isanewline
+\ \ \ \ \ \ \ \ {\isacharbraceleft}{\isasymrho}{\isachardot}\ {\isasymforall}n{\isacharcolon}{\isacharcolon}nat{\isachardot}\ ticks\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ n\ master{\isacharparenright}\ {\isasymlongrightarrow}\ ticks\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ n\ slave{\isacharparenright}{\isacharbraceright}{\isacartoucheclose}\isanewline
 \ \ %
 \isamarkupcmt{\isa{master\ implies\ not\ slave} means that at each instant at which 
       \isa{master} ticks, \isa{slave} does not tick.%
 }\isanewline
 \ \ {\isacharbar}\ {\isacartoucheopen}{\isasymlbrakk}\ master\ implies\ not\ slave\ {\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L\ {\isacharequal}\isanewline
-\ \ \ \ \ \ \ \ {\isacharbraceleft}{\isasymrho}{\isachardot}\ {\isasymforall}n{\isacharcolon}{\isacharcolon}nat{\isachardot}\ hamlet\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ n\ master{\isacharparenright}\ {\isasymlongrightarrow}\ {\isasymnot}hamlet\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ n\ slave{\isacharparenright}{\isacharbraceright}{\isacartoucheclose}\isanewline
+\ \ \ \ \ \ \ \ {\isacharbraceleft}{\isasymrho}{\isachardot}\ {\isasymforall}n{\isacharcolon}{\isacharcolon}nat{\isachardot}\ ticks\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ n\ master{\isacharparenright}\ {\isasymlongrightarrow}\ {\isasymnot}ticks\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ n\ slave{\isacharparenright}{\isacharbraceright}{\isacartoucheclose}\isanewline
 \ \ %
 \isamarkupcmt{\isa{master\ time{\isacharminus}delayed\ by\ {\isasymdelta}{\isasymtau}\ on\ measuring\ implies\ slave} means that 
       at each instant at which  \isa{master} ticks, \isa{slave} will
@@ -103,36 +103,56 @@ The denotational semantics maps TESL formulae to sets of satisfying runs.
       at the first instant when the date on measuring is \isa{t\isactrlsub {\isadigit{0}}\ {\isacharplus}\ {\isasymdelta}t}, 
       slave has to tick.%
 }\isanewline
-\ \ \ \ \ \ \ \ {\isacharbraceleft}{\isasymrho}{\isachardot}\ {\isasymforall}n{\isachardot}\ hamlet\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ n\ master{\isacharparenright}\ {\isasymlongrightarrow}\isanewline
+\ \ \ \ \ \ \ \ {\isacharbraceleft}{\isasymrho}{\isachardot}\ {\isasymforall}n{\isachardot}\ ticks\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ n\ master{\isacharparenright}\ {\isasymlongrightarrow}\isanewline
 \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ {\isacharparenleft}let\ measured{\isacharunderscore}time\ {\isacharequal}\ time\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ n\ measuring{\isacharparenright}\ in\isanewline
 \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ {\isasymforall}m\ {\isasymge}\ n{\isachardot}\ \ first{\isacharunderscore}time\ {\isasymrho}\ measuring\ m\ {\isacharparenleft}measured{\isacharunderscore}time\ {\isacharplus}\ {\isasymdelta}{\isasymtau}{\isacharparenright}\isanewline
-\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ {\isasymlongrightarrow}\ hamlet\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ m\ slave{\isacharparenright}\isanewline
+\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ {\isasymlongrightarrow}\ ticks\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ m\ slave{\isacharparenright}\isanewline
+\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ {\isacharparenright}\isanewline
+\ \ \ \ \ \ \ \ {\isacharbraceright}{\isacartoucheclose}\isanewline
+\ \ {\isacharbar}\ {\isacartoucheopen}{\isasymlbrakk}\ master\ time{\isacharminus}delayed{\isasymbowtie}\ by\ {\isasymdelta}{\isasymtau}\ on\ measuring\ implies\ slave\ {\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L\ {\isacharequal}\isanewline
+\ \ \ \ %
+\isamarkupcmt{When master ticks, let's call \isa{t\isactrlsub {\isadigit{0}}} the current date on measuring. Then, 
+      slave will be ticking at some instant(s) when the time on measuring is \isa{t\isactrlsub {\isadigit{0}}\ {\isacharplus}\ {\isasymdelta}t}.%
+}\isanewline
+\ \ \ \ \ \ \ \ {\isacharbraceleft}\ {\isasymrho}{\isachardot}\ {\isasymforall}n{\isachardot}\ ticks\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ n\ master{\isacharparenright}\ {\isasymlongrightarrow}\isanewline
+\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ {\isacharparenleft}let\ measured{\isacharunderscore}time\ {\isacharequal}\ time\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ n\ measuring{\isacharparenright}\ in\isanewline
+\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ {\isasymexists}m\ {\isasymge}\ n{\isachardot}\ ticks\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ m\ slave{\isacharparenright}\isanewline
+\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ {\isasymand}\ time\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ m\ measuring{\isacharparenright}\ {\isacharequal}\ measured{\isacharunderscore}time\ {\isacharplus}\ {\isasymdelta}{\isasymtau}\isanewline
 \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ {\isacharparenright}\isanewline
 \ \ \ \ \ \ \ \ {\isacharbraceright}{\isacartoucheclose}\isanewline
 \ \ %
-\isamarkupcmt{\isa{K\isactrlsub {\isadigit{1}}\ weakly\ precedes\ K\isactrlsub {\isadigit{2}}} means that each tick on \isa{K\isactrlsub {\isadigit{2}}}
-        must be preceded by or coincide with at least one tick on \isa{K\isactrlsub {\isadigit{1}}}.
-        Therefore, at each instant \isa{n}, the number of ticks on \isa{K\isactrlsub {\isadigit{2}}} 
-        must be less or equal to the number of ticks on \isa{K\isactrlsub {\isadigit{1}}}.%
+\isamarkupcmt{\isa{C\isactrlsub {\isadigit{1}}\ weakly\ precedes\ C\isactrlsub {\isadigit{2}}} means that each tick on \isa{C\isactrlsub {\isadigit{2}}}
+        must be preceded by or coincide with at least one tick on \isa{C\isactrlsub {\isadigit{1}}}.
+        Therefore, at each instant \isa{n}, the number of ticks on \isa{C\isactrlsub {\isadigit{2}}} 
+        must be less or equal to the number of ticks on \isa{C\isactrlsub {\isadigit{1}}}.%
 }\isanewline
-\ \ {\isacharbar}\ {\isacartoucheopen}{\isasymlbrakk}\ K\isactrlsub {\isadigit{1}}\ weakly\ precedes\ K\isactrlsub {\isadigit{2}}\ {\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L\ {\isacharequal}\isanewline
-\ \ \ \ \ \ \ \ {\isacharbraceleft}{\isasymrho}{\isachardot}\ {\isasymforall}n{\isacharcolon}{\isacharcolon}nat{\isachardot}\ {\isacharparenleft}run{\isacharunderscore}tick{\isacharunderscore}count\ {\isasymrho}\ K\isactrlsub {\isadigit{2}}\ n{\isacharparenright}\ {\isasymle}\ {\isacharparenleft}run{\isacharunderscore}tick{\isacharunderscore}count\ {\isasymrho}\ K\isactrlsub {\isadigit{1}}\ n{\isacharparenright}{\isacharbraceright}{\isacartoucheclose}\isanewline
+\ \ {\isacharbar}\ {\isacartoucheopen}{\isasymlbrakk}\ C\isactrlsub {\isadigit{1}}\ weakly\ precedes\ C\isactrlsub {\isadigit{2}}\ {\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L\ {\isacharequal}\isanewline
+\ \ \ \ \ \ \ \ {\isacharbraceleft}{\isasymrho}{\isachardot}\ {\isasymforall}n{\isacharcolon}{\isacharcolon}nat{\isachardot}\ {\isacharparenleft}run{\isacharunderscore}tick{\isacharunderscore}count\ {\isasymrho}\ C\isactrlsub {\isadigit{2}}\ n{\isacharparenright}\ {\isasymle}\ {\isacharparenleft}run{\isacharunderscore}tick{\isacharunderscore}count\ {\isasymrho}\ C\isactrlsub {\isadigit{1}}\ n{\isacharparenright}{\isacharbraceright}{\isacartoucheclose}\isanewline
 \ \ %
-\isamarkupcmt{\isa{K\isactrlsub {\isadigit{1}}\ strictly\ precedes\ K\isactrlsub {\isadigit{2}}} means that each tick on \isa{K\isactrlsub {\isadigit{2}}}
-        must be preceded by at least one tick on \isa{K\isactrlsub {\isadigit{1}}} at a previous instant.
-        Therefore, at each instant n, the number of ticks on \isa{K\isactrlsub {\isadigit{2}}}
-        must be less or equal to the number of ticks on \isa{K\isactrlsub {\isadigit{1}}} 
+\isamarkupcmt{\isa{C\isactrlsub {\isadigit{1}}\ strictly\ precedes\ C\isactrlsub {\isadigit{2}}} means that each tick on \isa{C\isactrlsub {\isadigit{2}}}
+        must be preceded by at least one tick on \isa{C\isactrlsub {\isadigit{1}}} at a previous instant.
+        Therefore, at each instant n, the number of ticks on \isa{C\isactrlsub {\isadigit{2}}}
+        must be less or equal to the number of ticks on \isa{C\isactrlsub {\isadigit{1}}} 
         at instant n - 1.%
 }\isanewline
-\ \ {\isacharbar}\ {\isacartoucheopen}{\isasymlbrakk}\ K\isactrlsub {\isadigit{1}}\ strictly\ precedes\ K\isactrlsub {\isadigit{2}}\ {\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L\ {\isacharequal}\isanewline
-\ \ \ \ \ \ \ \ {\isacharbraceleft}{\isasymrho}{\isachardot}\ {\isasymforall}n{\isacharcolon}{\isacharcolon}nat{\isachardot}\ {\isacharparenleft}run{\isacharunderscore}tick{\isacharunderscore}count\ {\isasymrho}\ K\isactrlsub {\isadigit{2}}\ n{\isacharparenright}\ {\isasymle}\ {\isacharparenleft}run{\isacharunderscore}tick{\isacharunderscore}count{\isacharunderscore}strictly\ {\isasymrho}\ K\isactrlsub {\isadigit{1}}\ n{\isacharparenright}{\isacharbraceright}{\isacartoucheclose}\isanewline
+\ \ {\isacharbar}\ {\isacartoucheopen}{\isasymlbrakk}\ C\isactrlsub {\isadigit{1}}\ strictly\ precedes\ C\isactrlsub {\isadigit{2}}\ {\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L\ {\isacharequal}\isanewline
+\ \ \ \ \ \ \ \ {\isacharbraceleft}{\isasymrho}{\isachardot}\ {\isasymforall}n{\isacharcolon}{\isacharcolon}nat{\isachardot}\ {\isacharparenleft}run{\isacharunderscore}tick{\isacharunderscore}count\ {\isasymrho}\ C\isactrlsub {\isadigit{2}}\ n{\isacharparenright}\ {\isasymle}\ {\isacharparenleft}run{\isacharunderscore}tick{\isacharunderscore}count{\isacharunderscore}strictly\ {\isasymrho}\ C\isactrlsub {\isadigit{1}}\ n{\isacharparenright}{\isacharbraceright}{\isacartoucheclose}\isanewline
 \ \ %
-\isamarkupcmt{\isa{K\isactrlsub {\isadigit{1}}\ kills\ K\isactrlsub {\isadigit{2}}} means that when \isa{K\isactrlsub {\isadigit{1}}} ticks, \isa{K\isactrlsub {\isadigit{2}}}
+\isamarkupcmt{\isa{C\isactrlsub {\isadigit{1}}\ kills\ C\isactrlsub {\isadigit{2}}} means that when \isa{C\isactrlsub {\isadigit{1}}} ticks, \isa{C\isactrlsub {\isadigit{2}}}
         cannot tick and is not allowed to tick at any further instant.%
 }\isanewline
-\ \ {\isacharbar}\ {\isacartoucheopen}{\isasymlbrakk}\ K\isactrlsub {\isadigit{1}}\ kills\ K\isactrlsub {\isadigit{2}}\ {\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L\ {\isacharequal}\isanewline
-\ \ \ \ \ \ \ \ {\isacharbraceleft}{\isasymrho}{\isachardot}\ {\isasymforall}n{\isacharcolon}{\isacharcolon}nat{\isachardot}\ hamlet\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ n\ K\isactrlsub {\isadigit{1}}{\isacharparenright}\isanewline
-\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ {\isasymlongrightarrow}\ {\isacharparenleft}{\isasymforall}m{\isasymge}n{\isachardot}\ {\isasymnot}\ hamlet\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ m\ K\isactrlsub {\isadigit{2}}{\isacharparenright}{\isacharparenright}{\isacharbraceright}{\isacartoucheclose}%
+\ \ {\isacharbar}\ {\isacartoucheopen}{\isasymlbrakk}\ C\isactrlsub {\isadigit{1}}\ kills\ C\isactrlsub {\isadigit{2}}\ {\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L\ {\isacharequal}\isanewline
+\ \ \ \ \ \ \ \ {\isacharbraceleft}{\isasymrho}{\isachardot}\ {\isasymforall}n{\isacharcolon}{\isacharcolon}nat{\isachardot}\ ticks\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ n\ C\isactrlsub {\isadigit{1}}{\isacharparenright}\isanewline
+\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ {\isasymlongrightarrow}\ {\isacharparenleft}{\isasymforall}m{\isasymge}n{\isachardot}\ {\isasymnot}\ ticks\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ m\ C\isactrlsub {\isadigit{2}}{\isacharparenright}{\isacharparenright}{\isacharbraceright}{\isacartoucheclose}\isanewline
+\ \ %
+\isamarkupcmt{Additional constraints for the operational semantics%
+}\isanewline
+\ \ %
+\isamarkupcmt{\isa{C\isactrlsub {\isadigit{1}}\ sporadic{\isasymsharp}\ {\isasymlparr}\ {\isasymtau}\isactrlsub v\isactrlsub a\isactrlsub r\ {\isacharparenleft}C\isactrlsub p\isactrlsub a\isactrlsub s\isactrlsub t{\isacharcomma}\ n\isactrlsub p\isactrlsub a\isactrlsub s\isactrlsub t{\isacharparenright}\ {\isasymoplus}\ {\isasymdelta}{\isasymtau}\ {\isasymrparr}\ on\ C\isactrlsub {\isadigit{2}}} means that \isa{C\isactrlsub {\isadigit{1}}} should tick at an 
+      instant where the time on \isa{C\isactrlsub {\isadigit{2}}} is \isa{{\isasymlparr}\ {\isasymtau}\isactrlsub v\isactrlsub a\isactrlsub r\ {\isacharparenleft}C\isactrlsub p\isactrlsub a\isactrlsub s\isactrlsub t{\isacharcomma}\ n\isactrlsub p\isactrlsub a\isactrlsub s\isactrlsub t{\isacharparenright}\ {\isasymoplus}\ {\isasymdelta}{\isasymtau}\ {\isasymrparr}}.%
+}\isanewline
+\ \ {\isacharbar}\ {\isacartoucheopen}{\isasymlbrakk}\ C\isactrlsub {\isadigit{1}}\ sporadic{\isasymsharp}\ {\isasymlparr}{\isasymtau}\isactrlsub v\isactrlsub a\isactrlsub r{\isacharparenleft}C\isactrlsub p\isactrlsub a\isactrlsub s\isactrlsub t{\isacharcomma}\ n\isactrlsub p\isactrlsub a\isactrlsub s\isactrlsub t{\isacharparenright}\ {\isasymoplus}\ {\isasymdelta}{\isasymtau}{\isasymrparr}\ on\ C\isactrlsub {\isadigit{2}}\ {\isasymrbrakk}\isactrlsub T\isactrlsub E\isactrlsub S\isactrlsub L\ {\isacharequal}\isanewline
+\ \ \ \ \ \ \ \ {\isacharbraceleft}{\isasymrho}{\isachardot}\ {\isasymexists}n{\isacharcolon}{\isacharcolon}nat{\isachardot}\ ticks\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ n\ C\isactrlsub {\isadigit{1}}{\isacharparenright}\ {\isasymand}\ time\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ n\ C\isactrlsub {\isadigit{2}}{\isacharparenright}\ {\isacharequal}\ time\ {\isacharparenleft}{\isacharparenleft}Rep{\isacharunderscore}run\ {\isasymrho}{\isacharparenright}\ n\isactrlsub p\isactrlsub a\isactrlsub s\isactrlsub t\ C\isactrlsub p\isactrlsub a\isactrlsub s\isactrlsub t{\isacharparenright}\ {\isacharplus}\ {\isasymdelta}{\isasymtau}\ {\isacharbraceright}{\isacartoucheclose}%
 \isadelimdocument
 %
 \endisadelimdocument
@@ -844,7 +864,7 @@ The semantics of specifications is contravariant with respect to their inclusion
 %
 \end{isabellebody}%
 \endinput
-%:%file=~/Documents/Recherche/Thesards/2014_Hai_NGUYEN_VAN/Heron_git/reiher2/reiher/src/Denotational.thy%:%
+%:%file=~/MEGAsync/code/these/hygge/src/Denotational.thy%:%
 %:%11=1%:%
 %:%27=3%:%
 %:%28=3%:%
@@ -901,308 +921,322 @@ The semantics of specifications is contravariant with respect to their inclusion
 %:%105=53%:%
 %:%111=59%:%
 %:%112=60%:%
-%:%113=60%:%
-%:%114=61%:%
-%:%115=62%:%
-%:%116=63%:%
-%:%117=63%:%
-%:%118=64%:%
-%:%119=65%:%
-%:%120=66%:%
-%:%121=66%:%
-%:%122=67%:%
-%:%123=68%:%
-%:%124=69%:%
-%:%125=70%:%
-%:%126=70%:%
-%:%127=71%:%
-%:%128=72%:%
-%:%129=73%:%
-%:%130=73%:%
-%:%131=74%:%
-%:%132=74%:%
-%:%133=75%:%
-%:%142=79%:%
-%:%154=82%:%
-%:%155=83%:%
-%:%156=84%:%
-%:%158=86%:%
-%:%159=86%:%
-%:%160=87%:%
-%:%161=88%:%
-%:%162=89%:%
-%:%163=90%:%
-%:%164=91%:%
-%:%165=92%:%
-%:%166=92%:%
-%:%167=93%:%
-%:%174=94%:%
-%:%175=94%:%
-%:%189=96%:%
-%:%199=98%:%
-%:%200=98%:%
-%:%201=99%:%
-%:%208=100%:%
-%:%209=100%:%
-%:%223=102%:%
-%:%235=103%:%
-%:%237=105%:%
-%:%238=105%:%
-%:%239=106%:%
-%:%246=107%:%
-%:%247=107%:%
-%:%261=109%:%
-%:%271=111%:%
-%:%272=111%:%
-%:%273=112%:%
-%:%280=113%:%
-%:%281=113%:%
-%:%286=113%:%
-%:%289=114%:%
-%:%290=115%:%
-%:%291=115%:%
-%:%292=116%:%
-%:%299=117%:%
-%:%300=117%:%
-%:%305=117%:%
-%:%308=118%:%
-%:%309=119%:%
-%:%310=119%:%
-%:%311=120%:%
-%:%318=121%:%
-%:%319=121%:%
-%:%320=121%:%
-%:%325=121%:%
-%:%328=122%:%
-%:%329=123%:%
-%:%330=123%:%
-%:%331=124%:%
-%:%338=125%:%
-%:%339=125%:%
-%:%340=125%:%
-%:%345=125%:%
-%:%348=126%:%
-%:%349=127%:%
-%:%350=127%:%
-%:%351=128%:%
-%:%358=129%:%
-%:%359=129%:%
-%:%360=129%:%
-%:%365=129%:%
-%:%368=130%:%
-%:%369=131%:%
-%:%370=131%:%
-%:%371=132%:%
-%:%378=133%:%
-%:%379=133%:%
-%:%380=133%:%
-%:%385=133%:%
-%:%388=134%:%
-%:%389=135%:%
-%:%390=135%:%
-%:%391=136%:%
-%:%392=137%:%
-%:%393=138%:%
-%:%395=140%:%
-%:%397=141%:%
-%:%398=141%:%
-%:%399=142%:%
-%:%406=143%:%
-%:%407=143%:%
-%:%412=143%:%
-%:%415=144%:%
-%:%416=145%:%
-%:%417=145%:%
-%:%418=146%:%
-%:%425=147%:%
-%:%426=147%:%
-%:%440=149%:%
-%:%452=151%:%
-%:%454=153%:%
-%:%455=153%:%
-%:%456=154%:%
-%:%463=155%:%
-%:%464=155%:%
-%:%469=155%:%
-%:%472=156%:%
-%:%473=157%:%
-%:%474=157%:%
-%:%475=158%:%
-%:%482=159%:%
-%:%483=159%:%
-%:%492=162%:%
-%:%494=164%:%
-%:%495=164%:%
-%:%496=165%:%
-%:%497=166%:%
-%:%504=167%:%
-%:%505=167%:%
-%:%506=168%:%
-%:%507=168%:%
-%:%508=168%:%
-%:%509=169%:%
-%:%510=169%:%
-%:%511=170%:%
-%:%512=170%:%
-%:%513=170%:%
-%:%514=171%:%
-%:%515=171%:%
-%:%516=171%:%
-%:%517=171%:%
-%:%518=172%:%
-%:%528=175%:%
-%:%530=177%:%
-%:%531=177%:%
-%:%532=178%:%
-%:%539=179%:%
-%:%540=179%:%
-%:%541=180%:%
-%:%542=180%:%
-%:%543=181%:%
-%:%544=181%:%
-%:%545=181%:%
-%:%546=181%:%
-%:%547=182%:%
-%:%548=182%:%
-%:%557=185%:%
-%:%559=187%:%
-%:%560=187%:%
-%:%561=188%:%
-%:%562=189%:%
-%:%569=190%:%
-%:%570=190%:%
-%:%571=191%:%
-%:%572=191%:%
-%:%573=192%:%
-%:%574=192%:%
-%:%575=193%:%
-%:%576=193%:%
-%:%577=193%:%
-%:%578=194%:%
-%:%579=194%:%
-%:%580=195%:%
-%:%581=195%:%
-%:%582=195%:%
-%:%583=196%:%
-%:%584=196%:%
-%:%585=197%:%
-%:%586=197%:%
-%:%587=197%:%
-%:%588=198%:%
-%:%589=198%:%
-%:%590=199%:%
-%:%591=199%:%
-%:%592=199%:%
-%:%593=199%:%
-%:%594=199%:%
-%:%595=200%:%
-%:%605=203%:%
-%:%607=205%:%
-%:%608=205%:%
-%:%609=206%:%
-%:%610=207%:%
-%:%617=208%:%
-%:%618=208%:%
-%:%619=209%:%
-%:%620=209%:%
-%:%621=209%:%
-%:%622=209%:%
-%:%623=210%:%
-%:%624=210%:%
-%:%625=210%:%
-%:%626=210%:%
-%:%627=211%:%
-%:%628=211%:%
-%:%629=211%:%
-%:%630=212%:%
-%:%631=212%:%
-%:%632=212%:%
-%:%633=213%:%
-%:%634=213%:%
-%:%635=213%:%
-%:%636=214%:%
-%:%637=214%:%
-%:%638=214%:%
-%:%639=215%:%
-%:%640=215%:%
-%:%641=215%:%
-%:%642=216%:%
-%:%643=216%:%
-%:%644=217%:%
-%:%645=217%:%
-%:%646=217%:%
-%:%647=217%:%
-%:%648=218%:%
-%:%649=218%:%
-%:%650=218%:%
-%:%651=218%:%
-%:%652=219%:%
-%:%658=219%:%
-%:%661=220%:%
-%:%662=221%:%
-%:%663=221%:%
-%:%664=222%:%
-%:%665=223%:%
-%:%672=224%:%
-%:%673=224%:%
-%:%674=224%:%
-%:%679=224%:%
-%:%682=225%:%
-%:%683=226%:%
-%:%684=226%:%
-%:%685=227%:%
-%:%686=228%:%
-%:%693=229%:%
-%:%694=229%:%
-%:%695=230%:%
-%:%696=230%:%
-%:%701=230%:%
-%:%704=231%:%
-%:%705=232%:%
-%:%706=232%:%
-%:%707=233%:%
-%:%708=234%:%
-%:%715=235%:%
-%:%716=235%:%
-%:%717=236%:%
-%:%722=236%:%
-%:%725=237%:%
-%:%726=238%:%
-%:%727=238%:%
-%:%728=239%:%
-%:%729=240%:%
-%:%736=241%:%
-%:%737=241%:%
-%:%738=241%:%
-%:%752=243%:%
-%:%762=245%:%
-%:%763=245%:%
-%:%764=246%:%
-%:%771=247%:%
-%:%772=247%:%
-%:%773=248%:%
-%:%774=248%:%
-%:%775=248%:%
-%:%776=248%:%
-%:%777=249%:%
-%:%778=249%:%
-%:%779=249%:%
-%:%780=249%:%
-%:%781=250%:%
-%:%787=250%:%
-%:%790=251%:%
-%:%791=252%:%
-%:%792=252%:%
-%:%793=253%:%
-%:%800=254%:%
-%:%801=254%:%
-%:%802=254%:%
-%:%807=254%:%
-%:%810=255%:%
-%:%811=256%:%
-%:%812=256%:%
-%:%813=257%:%
-%:%820=258%:%
-%:%821=258%:%
-%:%829=264%:%
-%:%836=265%:%
+%:%114=62%:%
+%:%115=63%:%
+%:%116=64%:%
+%:%122=70%:%
+%:%123=71%:%
+%:%124=71%:%
+%:%125=72%:%
+%:%126=73%:%
+%:%127=74%:%
+%:%128=74%:%
+%:%129=75%:%
+%:%130=76%:%
+%:%131=77%:%
+%:%132=77%:%
+%:%133=78%:%
+%:%134=79%:%
+%:%135=80%:%
+%:%136=81%:%
+%:%137=81%:%
+%:%138=82%:%
+%:%139=83%:%
+%:%140=84%:%
+%:%141=84%:%
+%:%142=85%:%
+%:%143=85%:%
+%:%144=86%:%
+%:%146=88%:%
+%:%147=89%:%
+%:%148=89%:%
+%:%149=89%:%
+%:%150=90%:%
+%:%151=90%:%
+%:%152=91%:%
+%:%153=91%:%
+%:%154=92%:%
+%:%162=95%:%
+%:%174=98%:%
+%:%175=99%:%
+%:%176=100%:%
+%:%178=102%:%
+%:%179=102%:%
+%:%180=103%:%
+%:%181=104%:%
+%:%182=105%:%
+%:%183=106%:%
+%:%184=107%:%
+%:%185=108%:%
+%:%186=108%:%
+%:%187=109%:%
+%:%194=110%:%
+%:%195=110%:%
+%:%209=112%:%
+%:%219=114%:%
+%:%220=114%:%
+%:%221=115%:%
+%:%228=116%:%
+%:%229=116%:%
+%:%243=118%:%
+%:%255=119%:%
+%:%257=121%:%
+%:%258=121%:%
+%:%259=122%:%
+%:%266=123%:%
+%:%267=123%:%
+%:%281=125%:%
+%:%291=127%:%
+%:%292=127%:%
+%:%293=128%:%
+%:%300=129%:%
+%:%301=129%:%
+%:%306=129%:%
+%:%309=130%:%
+%:%310=131%:%
+%:%311=131%:%
+%:%312=132%:%
+%:%319=133%:%
+%:%320=133%:%
+%:%325=133%:%
+%:%328=134%:%
+%:%329=135%:%
+%:%330=135%:%
+%:%331=136%:%
+%:%338=137%:%
+%:%339=137%:%
+%:%340=137%:%
+%:%345=137%:%
+%:%348=138%:%
+%:%349=139%:%
+%:%350=139%:%
+%:%351=140%:%
+%:%358=141%:%
+%:%359=141%:%
+%:%360=141%:%
+%:%365=141%:%
+%:%368=142%:%
+%:%369=143%:%
+%:%370=143%:%
+%:%371=144%:%
+%:%378=145%:%
+%:%379=145%:%
+%:%380=145%:%
+%:%385=145%:%
+%:%388=146%:%
+%:%389=147%:%
+%:%390=147%:%
+%:%391=148%:%
+%:%398=149%:%
+%:%399=149%:%
+%:%400=149%:%
+%:%405=149%:%
+%:%408=150%:%
+%:%409=151%:%
+%:%410=151%:%
+%:%411=152%:%
+%:%412=153%:%
+%:%413=154%:%
+%:%415=156%:%
+%:%417=157%:%
+%:%418=157%:%
+%:%419=158%:%
+%:%426=159%:%
+%:%427=159%:%
+%:%432=159%:%
+%:%435=160%:%
+%:%436=161%:%
+%:%437=161%:%
+%:%438=162%:%
+%:%445=163%:%
+%:%446=163%:%
+%:%460=165%:%
+%:%472=167%:%
+%:%474=169%:%
+%:%475=169%:%
+%:%476=170%:%
+%:%483=171%:%
+%:%484=171%:%
+%:%489=171%:%
+%:%492=172%:%
+%:%493=173%:%
+%:%494=173%:%
+%:%495=174%:%
+%:%502=175%:%
+%:%503=175%:%
+%:%512=178%:%
+%:%514=180%:%
+%:%515=180%:%
+%:%516=181%:%
+%:%517=182%:%
+%:%524=183%:%
+%:%525=183%:%
+%:%526=184%:%
+%:%527=184%:%
+%:%528=184%:%
+%:%529=185%:%
+%:%530=185%:%
+%:%531=186%:%
+%:%532=186%:%
+%:%533=186%:%
+%:%534=187%:%
+%:%535=187%:%
+%:%536=187%:%
+%:%537=187%:%
+%:%538=188%:%
+%:%548=191%:%
+%:%550=193%:%
+%:%551=193%:%
+%:%552=194%:%
+%:%559=195%:%
+%:%560=195%:%
+%:%561=196%:%
+%:%562=196%:%
+%:%563=197%:%
+%:%564=197%:%
+%:%565=197%:%
+%:%566=197%:%
+%:%567=198%:%
+%:%568=198%:%
+%:%577=201%:%
+%:%579=203%:%
+%:%580=203%:%
+%:%581=204%:%
+%:%582=205%:%
+%:%589=206%:%
+%:%590=206%:%
+%:%591=207%:%
+%:%592=207%:%
+%:%593=208%:%
+%:%594=208%:%
+%:%595=209%:%
+%:%596=209%:%
+%:%597=209%:%
+%:%598=210%:%
+%:%599=210%:%
+%:%600=211%:%
+%:%601=211%:%
+%:%602=211%:%
+%:%603=212%:%
+%:%604=212%:%
+%:%605=213%:%
+%:%606=213%:%
+%:%607=213%:%
+%:%608=214%:%
+%:%609=214%:%
+%:%610=215%:%
+%:%611=215%:%
+%:%612=215%:%
+%:%613=215%:%
+%:%614=215%:%
+%:%615=216%:%
+%:%625=219%:%
+%:%627=221%:%
+%:%628=221%:%
+%:%629=222%:%
+%:%630=223%:%
+%:%637=224%:%
+%:%638=224%:%
+%:%639=225%:%
+%:%640=225%:%
+%:%641=225%:%
+%:%642=225%:%
+%:%643=226%:%
+%:%644=226%:%
+%:%645=226%:%
+%:%646=226%:%
+%:%647=227%:%
+%:%648=227%:%
+%:%649=227%:%
+%:%650=228%:%
+%:%651=228%:%
+%:%652=228%:%
+%:%653=229%:%
+%:%654=229%:%
+%:%655=229%:%
+%:%656=230%:%
+%:%657=230%:%
+%:%658=230%:%
+%:%659=231%:%
+%:%660=231%:%
+%:%661=231%:%
+%:%662=232%:%
+%:%663=232%:%
+%:%664=233%:%
+%:%665=233%:%
+%:%666=233%:%
+%:%667=233%:%
+%:%668=234%:%
+%:%669=234%:%
+%:%670=234%:%
+%:%671=234%:%
+%:%672=235%:%
+%:%678=235%:%
+%:%681=236%:%
+%:%682=237%:%
+%:%683=237%:%
+%:%684=238%:%
+%:%685=239%:%
+%:%692=240%:%
+%:%693=240%:%
+%:%694=240%:%
+%:%699=240%:%
+%:%702=241%:%
+%:%703=242%:%
+%:%704=242%:%
+%:%705=243%:%
+%:%706=244%:%
+%:%713=245%:%
+%:%714=245%:%
+%:%715=246%:%
+%:%716=246%:%
+%:%721=246%:%
+%:%724=247%:%
+%:%725=248%:%
+%:%726=248%:%
+%:%727=249%:%
+%:%728=250%:%
+%:%735=251%:%
+%:%736=251%:%
+%:%737=252%:%
+%:%742=252%:%
+%:%745=253%:%
+%:%746=254%:%
+%:%747=254%:%
+%:%748=255%:%
+%:%749=256%:%
+%:%756=257%:%
+%:%757=257%:%
+%:%758=257%:%
+%:%772=259%:%
+%:%782=261%:%
+%:%783=261%:%
+%:%784=262%:%
+%:%791=263%:%
+%:%792=263%:%
+%:%793=264%:%
+%:%794=264%:%
+%:%795=264%:%
+%:%796=264%:%
+%:%797=265%:%
+%:%798=265%:%
+%:%799=265%:%
+%:%800=265%:%
+%:%801=266%:%
+%:%807=266%:%
+%:%810=267%:%
+%:%811=268%:%
+%:%812=268%:%
+%:%813=269%:%
+%:%820=270%:%
+%:%821=270%:%
+%:%822=270%:%
+%:%827=270%:%
+%:%830=271%:%
+%:%831=272%:%
+%:%832=272%:%
+%:%833=273%:%
+%:%840=274%:%
+%:%841=274%:%
+%:%849=280%:%
+%:%856=281%:%

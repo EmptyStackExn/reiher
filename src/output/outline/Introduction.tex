@@ -226,6 +226,13 @@ a tick at the first instant where the time on \isatt{m} is \isatt{d} later than 
 This means that every tick on \isatt{c1} is followed by a tick on \isatt{c2} after a delay \isatt{d} measured
 on the time scale of clock \isatt{m}.
 
+\item \isatt{c1\ time\ delayed{\char`\\}{\char`\<}bowtie{\char`\>}\ by\ d\ on\ m\ implies\ c2} means that every time clock \isatt{c1} ticks, \isatt{c2} must have 
+a tick at an instant where the time on \isatt{m} is \isatt{d} later than it was when \isatt{c1} had ticked.
+This means that every tick on \isatt{c1} is followed by at least a tick on \isatt{c2} after a delay \isatt{d} 
+measured on the time scale of clock \isatt{m}. Contrary to the strict version of \isatt{time\ delayed},
+\isatt{c2} may not tick at the first instant at which the delay expires, and it may tick at several
+instants, provided that the time on  \isatt{m} is still  \isatt{d} later than it was when \isatt{c1} had ticked.
+
 \item \isatt{time\ relation\ (c1{\char`\,}\ c2)\ in\ R} means that at every instant, the current time on clocks \isatt{c1}
 and \isatt{c2} must be in relation \isatt{R}. By default, the time lines of different clocks are 
 independent. This operator allows us to link two time lines, for instance to model the fact
@@ -289,7 +296,7 @@ equal to the number of ticks on \isatt{c1} from the beginning of the run to the 
 %
 \end{isabellebody}%
 \endinput
-%:%file=~/Documents/Recherche/Thesards/2014_Hai_NGUYEN_VAN/Heron_git/reiher2/reiher/src/Introduction.thy%:%
+%:%file=~/MEGAsync/code/these/hygge/src/Introduction.thy%:%
 %:%11=1%:%
 %:%41=10%:%
 %:%53=12%:%
@@ -376,18 +383,24 @@ equal to the number of ticks on \isatt{c1} from the beginning of the run to the 
 %:%232=134%:%
 %:%233=135%:%
 %:%234=136%:%
-%:%235=137%:%
-%:%236=138%:%
-%:%237=139%:%
-%:%247=141%:%
-%:%259=143%:%
-%:%260=144%:%
-%:%261=145%:%
-%:%265=146%:%
-%:%266=147%:%
-%:%267=148%:%
-%:%268=149%:%
-%:%270=150%:%
-%:%271=151%:%
+%:%236=137%:%
+%:%237=138%:%
+%:%238=139%:%
+%:%239=140%:%
+%:%240=141%:%
+%:%241=142%:%
+%:%242=143%:%
+%:%243=144%:%
+%:%244=145%:%
+%:%254=147%:%
+%:%266=149%:%
+%:%267=150%:%
+%:%268=151%:%
 %:%272=152%:%
 %:%273=153%:%
+%:%274=154%:%
+%:%275=155%:%
+%:%277=156%:%
+%:%278=157%:%
+%:%279=158%:%
+%:%280=159%:%

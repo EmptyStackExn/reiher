@@ -1,5 +1,5 @@
-theory Config_Morphisms
-  imports Hygge_Theory
+theory Time_Morphisms
+  imports Operational_SoundComplete
 begin
 
 text \<open>
@@ -25,12 +25,15 @@ begin
 definition morphism_TESL_atomic : 
           \<open>(\<Psi>::'\<tau> TESL_atomic) \<Otimes> (f::('\<tau>::linorder \<Rightarrow> '\<tau>)) = 
               (case \<Psi> of
-                (C sporadic t on C')     \<Rightarrow> (C sporadic (t\<Otimes>f) on C') 
-              | (time-relation \<lfloor>C, C'\<rfloor>\<in>R)\<Rightarrow> (time-relation \<lfloor>C, C'\<rfloor> \<in> (\<lambda>(t, t'). R(t\<Otimes>f,t'\<Otimes>f)))
-              | (C implies C')           \<Rightarrow> (C implies C')
-              | (C implies not C')       \<Rightarrow> (C implies not C')       
+                (C sporadic t on C')      \<Rightarrow> (C sporadic (t\<Otimes>f) on C')
+              | (C sporadic\<sharp> t on C')     \<Rightarrow> (C sporadic\<sharp> (t\<Otimes>f) on C')
+              | (time-relation \<lfloor>C, C'\<rfloor>\<in>R) \<Rightarrow> (time-relation \<lfloor>C, C'\<rfloor> \<in> (\<lambda>(t, t'). R(t\<Otimes>f,t'\<Otimes>f)))
+              | (C implies C')            \<Rightarrow> (C implies C')
+              | (C implies not C')        \<Rightarrow> (C implies not C')
               | (C time-delayed by t on C' implies C'') 
                                          \<Rightarrow> (C time-delayed by t\<Otimes>f on C' implies C'')
+              | (C time-delayed\<bowtie> by t on C' implies C'') 
+                                         \<Rightarrow> (C time-delayed\<bowtie> by t\<Otimes>f on C' implies C'')
               | (C weakly precedes C')   \<Rightarrow> (C weakly precedes C')
               | (C strictly precedes C') \<Rightarrow> (C strictly precedes C') 
               | (C kills C')             \<Rightarrow> (C kills C'))\<close> 
@@ -55,8 +58,8 @@ overloading morphism_TESL_config \<equiv>
             \<open>morphism :: ('\<tau>::linordered_field) config \<Rightarrow> ('\<tau> \<Rightarrow> '\<tau>) \<Rightarrow> '\<tau> config\<close> 
 begin 
 fun  morphism_TESL_config 
-  where  \<open>((\<Gamma>, n \<turnstile> \<Psi> \<triangleright> \<Phi>)::('\<tau>::linordered_field) config) \<Otimes> (f::('\<tau> \<Rightarrow> '\<tau>)) =
-           (\<Gamma>, n \<turnstile> (\<Psi>\<Otimes>f) \<triangleright> (\<Phi>\<Otimes>f))\<close> 
+  where  \<open>((\<Gamma>, n \<Turnstile> \<Psi> \<triangleright> \<Phi>)::('\<tau>::linordered_field) config) \<Otimes> (f::('\<tau> \<Rightarrow> '\<tau>)) =
+           (\<Gamma>, n \<Turnstile> (\<Psi>\<Otimes>f) \<triangleright> (\<Phi>\<Otimes>f))\<close> 
 end
 
 text \<open>
@@ -72,11 +75,11 @@ text \<open>
   If we can derive a consistent finite context from a TESL formula, the formula is consistent. 
 \<close>
 theorem consistency_finite :
-  assumes start             : \<open>([], 0 \<turnstile> \<Psi> \<triangleright> [])  \<hookrightarrow>\<^sup>*\<^sup>* (\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> [] \<triangleright> [])\<close>
+  assumes start             : \<open>([], 0 \<Turnstile> \<Psi> \<triangleright> [])  \<hookrightarrow>\<^sup>*\<^sup>* (\<Gamma>\<^sub>1, n\<^sub>1 \<Turnstile> [] \<triangleright> [])\<close>
       and init_invariant    : \<open>consistent_context \<Gamma>\<^sub>1\<close>
     shows \<open>consistent \<Psi>\<close>    
 proof -
-  have * : \<open>\<exists> n. (([], 0 \<turnstile> \<Psi> \<triangleright> []) \<hookrightarrow>\<^bsup>n\<^esup> (\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> [] \<triangleright> []))\<close>
+  have * : \<open>\<exists> n. (([], 0 \<Turnstile> \<Psi> \<triangleright> []) \<hookrightarrow>\<^bsup>n\<^esup> (\<Gamma>\<^sub>1, n\<^sub>1 \<Turnstile> [] \<triangleright> []))\<close>
     by (simp add: rtranclp_imp_relpowp start)
   show ?thesis
   unfolding consistent_context_def consistent_def
@@ -119,9 +122,9 @@ definition patch :: \<open>('\<tau>::linordered_field) run \<Rightarrow> nat \<R
 
 text \<open>
   For some infinite cases, the idea for a proof scheme looks as follows: if we can derive
-  from the initial configuration @{term \<open>([], 0 \<turnstile> \<Psi> \<triangleright> [])\<close>} a start-point of a lasso
-  @{term \<open>(\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1)\<close>}, and if we can traverse the lasso one time 
-  @{term \<open>(\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1) \<hookrightarrow>\<^sup>+\<^sup>+ (\<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2)\<close>} to isomorphic one, 
+  from the initial configuration @{term \<open>([], 0 \<Turnstile> \<Psi> \<triangleright> [])\<close>} a start-point of a lasso
+  @{term \<open>(\<Gamma>\<^sub>1, n\<^sub>1 \<Turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1)\<close>}, and if we can traverse the lasso one time 
+  @{term \<open>(\<Gamma>\<^sub>1, n\<^sub>1 \<Turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1) \<hookrightarrow>\<^sup>+\<^sup>+ (\<Gamma>\<^sub>2, n\<^sub>2 \<Turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2)\<close>} to isomorphic one, 
   we can always always make a derivation along the lasso. If the entry point of the lasso had traces 
   with prefixes consistent to @{term \<open>\<Gamma>\<^sub>1\<close>}, then there exist traces consisting of this prefix and 
   repetitions of the delta-prefix of the lasso which are consistent with @{term \<open>\<Psi>\<close>} which implies
@@ -132,23 +135,22 @@ text \<open>
 \<close>
 
 theorem consistency_coinduct : 
-  assumes start             : \<open>([], 0 \<turnstile> \<Psi> \<triangleright> [])   \<hookrightarrow>\<^sup>*\<^sup>* (\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1)\<close>
-      and loop              : \<open>(\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1) \<hookrightarrow>\<^sup>+\<^sup>+ (\<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2)\<close>
+  assumes start             : \<open>([], 0 \<Turnstile> \<Psi> \<triangleright> [])   \<hookrightarrow>\<^sup>*\<^sup>* (\<Gamma>\<^sub>1, n\<^sub>1 \<Turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1)\<close>
+      and loop              : \<open>(\<Gamma>\<^sub>1, n\<^sub>1 \<Turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1) \<hookrightarrow>\<^sup>+\<^sup>+ (\<Gamma>\<^sub>2, n\<^sub>2 \<Turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2)\<close>
       and init_invariant    : \<open>consistent_context \<Gamma>\<^sub>1\<close>
       and post_invariant    : \<open>consistent_context \<Gamma>\<^sub>2\<close>
-      and retract_condition : \<open>(\<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2) \<Otimes> (f::'\<tau> \<Rightarrow> '\<tau>) = (\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1) \<close> 
+      and retract_condition : \<open>(\<Gamma>\<^sub>2, n\<^sub>2 \<Turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2) \<Otimes> (f::'\<tau> \<Rightarrow> '\<tau>) = (\<Gamma>\<^sub>1, n\<^sub>1 \<Turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1) \<close> 
     shows \<open>consistent (\<Psi> :: ('\<tau> :: linordered_field)TESL_formula)\<close>    
 proof -
-  have 1 : \<open>\<exists> n. (([], 0 \<turnstile> \<Psi> \<triangleright> []) \<hookrightarrow>\<^bsup>n\<^esup> (\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1))\<close>
+  have 1 : \<open>\<exists> n. (([], 0 \<Turnstile> \<Psi> \<triangleright> []) \<hookrightarrow>\<^bsup>n\<^esup> (\<Gamma>\<^sub>1, n\<^sub>1 \<Turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1))\<close>
     by (meson rtranclp_power start)
-  have 2 : \<open>\<exists> m. ((\<Gamma>\<^sub>1, n\<^sub>1 \<turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1) \<hookrightarrow>\<^bsup>m\<^esup> (\<Gamma>\<^sub>2, n\<^sub>2 \<turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2)) \<and> m > 0\<close>
+  have 2 : \<open>\<exists> m. ((\<Gamma>\<^sub>1, n\<^sub>1 \<Turnstile> \<Psi>\<^sub>1 \<triangleright> \<Phi>\<^sub>1) \<hookrightarrow>\<^bsup>m\<^esup> (\<Gamma>\<^sub>2, n\<^sub>2 \<Turnstile> \<Psi>\<^sub>2 \<triangleright> \<Phi>\<^sub>2)) \<and> m > 0\<close>
     by (meson loop tranclp_power)
   have 3 : \<open>\<Phi>\<^sub>1 =  \<Phi>\<^sub>2 \<Otimes> f\<close> 
     using retract_condition by auto
   have 4 : \<open>\<Psi>\<^sub>1 =  \<Psi>\<^sub>2 \<Otimes> f\<close> 
     using retract_condition by auto
   show ?thesis
-    sorry
-qed
+    oops
 
 end
