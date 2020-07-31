@@ -29,6 +29,8 @@
 \contentsline {section}{\numberline {4.4}Equations for the interpretation of symbolic primitives}{24}{section.4.4}
 \contentsline {subsection}{\numberline {4.4.1}General laws}{24}{subsection.4.4.1}
 \contentsline {subsection}{\numberline {4.4.2}Decreasing interpretation of symbolic primitives}{25}{subsection.4.4.2}
+\contentsline {section}{\numberline {4.5}Code-Generation}{26}{section.4.5}
+\contentsline {subsection}{\numberline {4.5.1}Infrastructure for Reflecting exported SML code}{26}{subsection.4.5.1}
 \contentsline {chapter}{\numberline {5}Operational Semantics}{27}{chapter.5}
 \contentsline {section}{\numberline {5.1}Operational steps}{27}{section.5.1}
 \contentsline {section}{\numberline {5.2}Basic Lemmas}{30}{section.5.2}

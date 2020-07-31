@@ -9,7 +9,7 @@ session "TESL_Theory" = "HOL"
     TESL Run 
     Denotational
     Operational
-    SymbolicPrimitive Corecursive_Prop
+    SymbolicPrimitive Coinductive_Prop
     Operational_SoundComplete
     StutteringDefs StutteringLemmas Stuttering
   document_files
