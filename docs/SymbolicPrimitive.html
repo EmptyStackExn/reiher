@@ -20,6 +20,9 @@
 </span><span class="keyword1"><span class="command">theory</span></span><span> </span><span>SymbolicPrimitive</span><span>
 </span><span>  </span><span class="keyword2"><span class="keyword">imports</span></span><span> </span><span>Run</span><span>
 </span><span>
+</span><span> </span><span class="keyword2"><span class="keyword">keywords</span></span><span>
+</span><span>  </span><span class="string"><span class="delete"><span class="delete">&quot;reflect_ML_exports&quot;</span></span></span><span> </span><span class="delimiter">::</span><span> </span><span>thy_decl</span><span>
+</span><span>
 </span><span class="keyword2"><span class="keyword">begin</span></span><span>
 </span><span>
 </span><span class="keyword1"><span class="command">text</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;
@@ -347,6 +350,56 @@
 </span><span>  </span><span class="keyword2"><span class="keyword">assumes</span></span><span> </span><span class="cartouche"><span class="delete"><span class="delete">&#8249;set &#915;<span class="hidden">&#8681;</span><sub>2</sub> &#8838; set &#915;<span class="hidden">&#8681;</span><sub>1</sub>&#8250;</span></span></span><span>
 </span><span>    </span><span class="keyword2"><span class="keyword">shows</span></span><span> </span><span class="cartouche"><span class="delete"><span class="delete">&#8249;&#10214;&#10214; &#915;<span class="hidden">&#8681;</span><sub>1</sub> @ &#915;<span class="hidden">&#8681;</span><sub>2</sub> &#10215;&#10215;<span class="hidden">&#8681;</span><sub>p</sub><span class="hidden">&#8681;</span><sub>r</sub><span class="hidden">&#8681;</span><sub>i</sub><span class="hidden">&#8681;</span><sub>m</sub> = &#10214;&#10214; &#915;<span class="hidden">&#8681;</span><sub>1</sub> &#10215;&#10215;<span class="hidden">&#8681;</span><sub>p</sub><span class="hidden">&#8681;</span><sub>r</sub><span class="hidden">&#8681;</span><sub>i</sub><span class="hidden">&#8681;</span><sub>m</sub>&#8250;</span></span></span><span>
 </span><span class="keyword1"><span class="command">using</span></span><span> </span><span>symrun_interp_absorb1</span><span> </span><span>symrun_interp_commute</span><span> </span><span>assms</span><span> </span><span class="keyword1"><span class="command">by</span></span><span> </span><span>blast</span><span>
+</span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">section</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Code-Generation&#8250;</span></span></span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">export_code</span></span><span>  </span><span>TickCountLess</span><span>  </span><span>TickCountLeq</span><span>                           
+</span><span>             </span><span>TSchematic</span><span>
+</span><span>             </span><span>Timestamp</span><span>   
+</span><span>              
+</span><span>             </span><span>TimeDelay</span><span>     </span><span>Ticks</span><span>         </span><span>NotTicks</span><span>     
+</span><span>             </span><span>NotTicksUntil</span><span> </span><span>NotTicksFrom</span><span>  </span><span>TagArith</span><span>     
+</span><span>             </span><span>TickCntArith</span><span>  </span><span>TickCntLeq</span><span>   
+</span><span>
+</span><span>             </span><span class="keyword2"><span class="keyword">in</span></span><span> </span><span>SML</span><span>   </span><span class="keyword2"><span class="keyword">module_name</span></span><span> </span><span>HyggePrimitives</span><span> 
+</span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">subsection</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;Infrastructure for Reflecting exported SML code&#8250;</span></span></span><span>
+</span><span class="keyword1"><span class="command">ML</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;
+  fun reflect_local_ML_exports args trans =  let
+    fun eval_ML_context ctxt = let 
+      fun is_sml_file f = String.isSuffix &quot;.ML&quot; (Path.implode (#path f))
+      val files = (map (Generated_Files.check_files_in (Context.proof_of ctxt)) args) 
+      val ml_files = filter is_sml_file (map #1 (maps Generated_Files.get_files_in files))
+      val ml_content = map (fn f =&gt; Syntax.read_input (#content f)) ml_files
+      fun eval ml_content   = fold (fn sml =&gt; (ML_Context.exec 
+                                           (fn () =&gt; ML_Context.eval_source ML_Compiler.flags sml))) 
+                                   ml_content 
+    in 
+      (eval ml_content #&gt; Local_Theory.propagate_ml_env) ctxt
+    end
+  in
+    Toplevel.generic_theory eval_ML_context trans
+  end
+
+
+  val files_in_theory =
+    (Parse.underscore &gt;&gt; K [] || Scan.repeat1 Parse.path_binding) --
+      Scan.option (\&lt;^keyword&gt;&#8249;(&#8250; |-- Parse.!!! (\&lt;^keyword&gt;&#8249;in&#8250; 
+                     |-- Parse.theory_name --| \&lt;^keyword&gt;&#8249;)&#8250;));
+
+  val _ =
+    Outer_Syntax.command \&lt;^command_keyword&gt;&#8249;reflect_ML_exports&#8250; 
+      &quot;evaluate generated Standard ML files&quot;
+      (Parse.and_list1 files_in_theory  &gt;&gt; (fn args =&gt; reflect_local_ML_exports args));
+&#8250;</span></span></span><span>
+</span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">reflect_ML_exports</span></span><span> </span><span>_</span><span>
+</span><span>
+</span><span class="keyword1"><span class="command">ML</span></span><span class="cartouche"><span class="delete"><span class="delete">&#8249;open HyggePrimitives&#8250;</span></span></span><span>
+</span><span>
 </span><span>
 </span><span class="keyword2"><span class="keyword">end</span></span><span>
 </span></pre>
