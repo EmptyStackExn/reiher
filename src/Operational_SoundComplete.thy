@@ -2,7 +2,7 @@ chapter\<open>Main Theorems\<close>
 
 theory Operational_SoundComplete
 imports
-  Corecursive_Prop
+  Coinductive_Prop
 
 begin
 text \<open>

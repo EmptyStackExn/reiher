@@ -1,7 +1,7 @@
 (*chapter\<open>Equivalence of Operational and Denotational Semantics\<close>*)
 text\<open>\chapter[Semantics Equivalence]{Equivalence of the Operational and Denotational Semantics}\<close>
 
-theory Corecursive_Prop
+theory Coinductive_Prop
   imports
     SymbolicPrimitive
     Operational
